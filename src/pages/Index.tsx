@@ -5,6 +5,7 @@ import Benefits from "@/components/Benefits";
 import RequestDemo from "@/components/RequestDemo";
 import { DualLLMProcessor } from "@/components/DualLLMProcessor";
 import { RAGProcessor } from "@/components/RAGProcessor";
+import { BlockchainRecords } from "@/components/BlockchainRecords";
 
 const Index = () => {
   return (
@@ -14,6 +15,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8 space-y-8">
         <DualLLMProcessor input="Sample input for demonstration" />
         <RAGProcessor />
+        <BlockchainRecords />
       </div>
       <Features />
       <Benefits />
