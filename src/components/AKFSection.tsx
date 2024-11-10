@@ -1,29 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, LineChart, BarChart, Settings, Info, Network, Zap, 
-         Boxes, ArrowUpRight, Sparkles, Maximize2, Minimize2 } from 'lucide-react';
+import { ChevronDown, LineChart, BarChart, Settings, Network, Zap, Maximize2, Minimize2 } from 'lucide-react';
 import { MetricsChart } from './MetricsChart';
+import { FormulaDisplay } from './FormulaDisplay';
+import { ComponentGrid } from './ComponentGrid';
 import { performanceData } from '../data/performanceData';
+import { AKFSection as AKFSectionType, Relationship, ChartType } from '../types/akf';
 
 interface AKFSectionProps {
-  section: {
-    key: string;
-    title: string;
-    formula: string;
-    description: string;
-    icon: React.ReactNode;
-    components: Array<{
-      name: string;
-      description: string;
-    }>;
-  };
+  section: AKFSectionType;
   expanded: boolean;
   onToggle: () => void;
-  relationships: Array<{
-    from: string;
-    to: string;
-    description: string;
-  }>;
-  sections: Record<string, any>;
+  relationships: Relationship[];
+  sections: Record<string, AKFSectionType>;
 }
 
 export const AKFSection: React.FC<AKFSectionProps> = ({ 
@@ -33,11 +21,11 @@ export const AKFSection: React.FC<AKFSectionProps> = ({
   relationships, 
   sections 
 }) => {
-  const [chartType, setChartType] = useState('line');
+  const [chartType, setChartType] = useState<ChartType>('line');
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [showInfo, setShowInfo] = useState({});
+  const [showInfo, setShowInfo] = useState<Record<number, boolean>>({});
 
-  const toggleInfo = (componentId) => {
+  const toggleInfo = (componentId: number) => {
     setShowInfo(prev => ({
       ...prev,
       [componentId]: !prev[componentId]
@@ -52,7 +40,7 @@ export const AKFSection: React.FC<AKFSectionProps> = ({
   };
 
   useEffect(() => {
-    const handleEsc = (event) => {
+    const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsFullScreen(false);
       }
@@ -104,74 +92,19 @@ export const AKFSection: React.FC<AKFSectionProps> = ({
       {expanded && (
         <div className="px-5 pb-5">
           <div className="pl-8 border-l-2 border-dashed border-gray-200">
-            {/* Formula Display with Copy Button */}
-            <div className="relative bg-black rounded-xl p-4 font-mono text-sm text-emerald-400 
-                          overflow-x-auto shadow-[0_0_15px_rgba(52,211,153,0.1)] backdrop-blur-xl
-                          group">
-              <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 
-                            rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <Sparkles className="w-4 h-4 mb-2 text-emerald-500 inline-block mr-2" />
-              {section.formula}
-              <button
-                onClick={() => navigator.clipboard.writeText(section.formula)}
-                className="absolute right-2 top-2 p-2 text-gray-500 hover:text-white 
-                         opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                        d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                </svg>
-              </button>
-            </div>
+            <FormulaDisplay formula={section.formula} />
 
             <p className="mt-4 text-gray-600 leading-relaxed">
               {section.description}
             </p>
             
             <div className="mt-8 space-y-8">
-              {/* Components Grid */}
-              <div>
-                <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2">
-                  <Boxes className="w-4 h-4" />
-                  Core Components
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {section.components.map((comp, idx) => (
-                    <div key={idx} 
-                         className="group relative bg-white p-4 rounded-xl border border-gray-100 
-                                  shadow-sm hover:shadow-md transition-all duration-300
-                                  hover:border-transparent hover:-translate-y-0.5">
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-gray-50/50 to-white/50 
-                                    group-hover:from-violet-50/50 group-hover:to-fuchsia-50/50 transition-colors duration-500"/>
-                      <div className="relative">
-                        <div className="font-medium text-gray-800 flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            {comp.name}
-                            <button
-                              onClick={() => toggleInfo(idx)}
-                              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                            >
-                              <Info className="w-3.5 h-3.5 text-gray-400" />
-                            </button>
-                          </div>
-                          <ArrowUpRight className="w-3 h-3 text-gray-400 group-hover:text-violet-500 
-                                                 transition-colors duration-300" />
-                        </div>
-                        <div className="text-sm text-gray-600 mt-1.5 leading-relaxed">
-                          {comp.description}
-                        </div>
-                        {showInfo[idx] && (
-                          <div className="mt-2 p-2 bg-gray-50 rounded-lg text-xs text-gray-500">
-                            Additional information about {comp.name} and its role in the framework...
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ComponentGrid 
+                components={section.components}
+                showInfo={showInfo}
+                toggleInfo={toggleInfo}
+              />
               
-              {/* Metrics Visualization */}
               {section.key === 'performance' && (
                 <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
@@ -208,7 +141,6 @@ export const AKFSection: React.FC<AKFSectionProps> = ({
                 </div>
               )}
               
-              {/* Relationships */}
               <div>
                 <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2">
                   <Network className="w-4 h-4" />

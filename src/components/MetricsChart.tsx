@@ -1,6 +1,7 @@
 import React from 'react';
 import { LineChart as ReChartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
          ResponsiveContainer, BarChart as ReChartsBarChart, Bar } from 'recharts';
+import { ChartType } from '../types/akf';
 
 interface MetricsChartProps {
   data: Array<{
@@ -9,7 +10,7 @@ interface MetricsChartProps {
     compliance: number;
     risk: number;
   }>;
-  type?: 'line' | 'bar';
+  type?: ChartType;
 }
 
 export const MetricsChart: React.FC<MetricsChartProps> = ({ data, type = 'line' }) => {
