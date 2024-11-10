@@ -6,6 +6,7 @@ import RequestDemo from "@/components/RequestDemo";
 import { DualLLMProcessor } from "@/components/DualLLMProcessor";
 import { RAGProcessor } from "@/components/RAGProcessor";
 import { BlockchainRecords } from "@/components/BlockchainRecords";
+import { VoiceInterface } from "@/components/VoiceInterface";
 
 const Index = () => {
   return (
@@ -13,6 +14,7 @@ const Index = () => {
       <Navigation />
       <Hero />
       <div className="container mx-auto px-4 py-8 space-y-8">
+        <VoiceInterface />
         <DualLLMProcessor input="Sample input for demonstration" />
         <RAGProcessor />
         <BlockchainRecords />
