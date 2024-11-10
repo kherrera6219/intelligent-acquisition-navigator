@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ChevronRight, ChevronDown, Link2, Brain, Shield, Clock, Activity } from 'lucide-react';
+import { ChevronRight, ChevronDown, Link2, BookOpen, Shield, Clock, Activity } from 'lucide-react';
 
 const AKFVisualization = () => {
   const [expandedSection, setExpandedSection] = useState('core');
@@ -11,7 +11,7 @@ const AKFVisualization = () => {
       title: 'Core Function',
       formula: 'F**(AKF, t) = Ψ(P, L, B, N, R, C, M, Q, V, AI, S, G, T, RM, CT, PM, SC, VC, AT, ML)',
       description: 'Enhanced system integration function over time',
-      icon: <Brain className="w-6 h-6" />,
+      icon: <BookOpen className="w-6 h-6" />,
       components: [
         { name: 'Pillars (P)', description: 'Main knowledge domains' },
         { name: 'Levels (L)', description: 'Hierarchical organization' },
@@ -74,13 +74,13 @@ const AKFVisualization = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Alert className="mb-4">
+          <Alert>
             <AlertDescription>
               Interactive visualization of the AKF mathematical components and their relationships
             </AlertDescription>
           </Alert>
           
-          <div className="space-y-4">
+          <div className="space-y-4 mt-4">
             {Object.entries(sections).map(([key, section]) => (
               <div key={key} className="border rounded-lg p-4 bg-white">
                 <button
