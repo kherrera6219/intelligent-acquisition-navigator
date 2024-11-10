@@ -1,12 +1,13 @@
-import { PineconeClient } from '@pinecone-database/pinecone';
+import { Pinecone } from '@pinecone-database/pinecone';
 
-const pinecone = new PineconeClient();
+const pinecone = new Pinecone({
+  environment: import.meta.env.VITE_PINECONE_ENVIRONMENT || '',
+  apiKey: import.meta.env.VITE_PINECONE_API_KEY || '',
+});
 
 export const initVectorStore = async () => {
-  await pinecone.init({
-    environment: import.meta.env.VITE_PINECONE_ENVIRONMENT || '',
-    apiKey: import.meta.env.VITE_PINECONE_API_KEY || '',
-  });
+  // No need for explicit initialization with the new SDK
+  return pinecone;
 };
 
 export const queryVectorStore = async (query: string) => {
