@@ -3,12 +3,16 @@ import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import Benefits from "@/components/Benefits";
 import RequestDemo from "@/components/RequestDemo";
+import { DualLLMProcessor } from "@/components/DualLLMProcessor";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
       <Hero />
+      <div className="container mx-auto px-4 py-8">
+        <DualLLMProcessor input="Sample input for demonstration" />
+      </div>
       <Features />
       <Benefits />
       <RequestDemo />
