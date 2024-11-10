@@ -4,14 +4,16 @@ import Features from "@/components/Features";
 import Benefits from "@/components/Benefits";
 import RequestDemo from "@/components/RequestDemo";
 import { DualLLMProcessor } from "@/components/DualLLMProcessor";
+import { RAGProcessor } from "@/components/RAGProcessor";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
       <Hero />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 space-y-8">
         <DualLLMProcessor input="Sample input for demonstration" />
+        <RAGProcessor />
       </div>
       <Features />
       <Benefits />
