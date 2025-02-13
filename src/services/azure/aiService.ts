@@ -25,7 +25,7 @@ interface AzureAIResponse {
 // Initialize the Azure OpenAI client
 const client = new OpenAIClient(
   "https://knowledgedev2443059259.services.ai.azure.com/",
-  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY || '')
+  new AzureKeyCredential(import.meta.env.VITE_AZURE_OPENAI_API_KEY || '')
 );
 
 export const getAICompletion = async (messages: Array<{ role: string; content: string }>) => {
