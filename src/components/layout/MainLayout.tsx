@@ -11,6 +11,7 @@ interface MainLayoutProps {
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const isAuthPage = ['/login', '/signup', '/reset-password'].includes(location.pathname);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -19,13 +20,14 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         Skip to main content
       </a>
 
-      <Navigation />
+      {!isAuthPage && <Navigation />}
       
       <main 
         id="main-content" 
         className={cn(
           "transition-all duration-300",
-          !isHomePage && "ml-64 p-8"
+          !isAuthPage && !isHomePage && "ml-64 p-8",
+          isAuthPage && "flex items-center justify-center min-h-screen"
         )}
       >
         {children}

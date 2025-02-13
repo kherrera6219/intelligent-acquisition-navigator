@@ -1,21 +1,26 @@
 
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 interface ContainerProps {
   children: ReactNode;
-  size?: 'default' | 'sm' | 'lg';
   className?: string;
+  size?: "sm" | "default" | "lg";
 }
 
-export const Container = ({ children, size = 'default', className = '' }: ContainerProps) => {
-  const sizeClass = {
-    default: 'container-module',
-    sm: 'container-module-sm',
-    lg: 'container-module-lg',
-  }[size];
-
+export const Container = ({ 
+  children, 
+  className,
+  size = "default" 
+}: ContainerProps) => {
   return (
-    <div className={`${sizeClass} ${className}`}>
+    <div className={cn(
+      "mx-auto px-4 sm:px-6 lg:px-8",
+      size === "sm" && "max-w-3xl",
+      size === "default" && "max-w-7xl",
+      size === "lg" && "max-w-[1400px]",
+      className
+    )}>
       {children}
     </div>
   );
