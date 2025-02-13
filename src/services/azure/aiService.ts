@@ -1,0 +1,49 @@
+
+import { useToast } from "@/hooks/use-toast";
+
+interface AzureAIResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+  model: string;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
+export const getAICompletion = async (messages: Array<{ role: string; content: string }>) => {
+  const toast = useToast();
+  
+  try {
+    const response = await fetch('/api/azure-ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages,
+        max_tokens: 4096,
+        temperature: 1,
+        top_p: 1,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to get AI completion');
+    }
+
+    const data: AzureAIResponse = await response.json();
+    return data;
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: "Failed to process AI request. Please try again later.",
+      variant: "destructive",
+    });
+    throw error;
+  }
+};
