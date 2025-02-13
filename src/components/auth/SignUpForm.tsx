@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Shield, Mail, User, Building, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const SignUpForm = () => {
   const { toast } = useToast();
@@ -135,12 +136,20 @@ const SignUpForm = () => {
             Create Secure Account
           </Button>
 
-          <p className="text-center text-sm text-gray-400 mt-4">
-            Already have an account?{" "}
-            <a href="/login" className="text-fuchsia-400 hover:text-fuchsia-300">
-              Sign in
-            </a>
-          </p>
+          <div className="text-center space-y-2">
+            <p className="text-sm text-gray-400">
+              Already have an account?{" "}
+              <Link to="/login" className="text-fuchsia-400 hover:text-fuchsia-300">
+                Sign in
+              </Link>
+            </p>
+            <p className="text-sm text-gray-400">
+              Forgot your password?{" "}
+              <Link to="/reset-password" className="text-fuchsia-400 hover:text-fuchsia-300">
+                Reset it here
+              </Link>
+            </p>
+          </div>
         </form>
       </Card>
     </div>

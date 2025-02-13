@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import SignUpForm from "./components/auth/SignUpForm";
 import UserProfile from "./components/auth/UserProfile";
+import PasswordReset from "./components/auth/PasswordReset";
 import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/signup" element={<SignUpForm />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/reset-password" element={<PasswordReset />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
