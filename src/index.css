@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
@@ -40,29 +41,160 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold tracking-tight;
   }
-
-  /* High Contrast Mode */
-  @media (prefers-contrast: high) {
-    :root {
-      --primary: 0 0% 100%;
-      --destructive: 0 100% 50%;
-      --ring: 0 0% 100%;
-    }
-  }
-
-  /* Focus Styles for Keyboard Navigation */
-  :focus-visible {
-    @apply outline-2 outline-offset-2 outline-primary ring-2 ring-primary/50;
-  }
-
-  /* Skip to Main Content Link */
-  .skip-to-content {
-    @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 
-           focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground
-           focus:rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50;
-  }
 }
 
+/* Modular Flex System */
+.flex-module {
+  @apply flex;
+}
+
+.flex-module-center {
+  @apply flex items-center justify-center;
+}
+
+.flex-module-between {
+  @apply flex items-center justify-between;
+}
+
+.flex-module-start {
+  @apply flex items-start justify-start;
+}
+
+.flex-module-end {
+  @apply flex items-end justify-end;
+}
+
+.flex-module-col {
+  @apply flex flex-col;
+}
+
+.flex-module-wrap {
+  @apply flex flex-wrap;
+}
+
+.flex-module-gap-sm {
+  @apply gap-2;
+}
+
+.flex-module-gap-md {
+  @apply gap-4;
+}
+
+.flex-module-gap-lg {
+  @apply gap-6;
+}
+
+.flex-module-gap-xl {
+  @apply gap-8;
+}
+
+/* Modular Grid System */
+.grid-module {
+  @apply grid;
+}
+
+.grid-module-1 {
+  @apply grid grid-cols-1;
+}
+
+.grid-module-2 {
+  @apply grid grid-cols-1 md:grid-cols-2;
+}
+
+.grid-module-3 {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.grid-module-4 {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+}
+
+.grid-module-5 {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5;
+}
+
+.grid-module-6 {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6;
+}
+
+.grid-module-auto {
+  @apply grid grid-cols-auto-fit;
+}
+
+.grid-module-gap-sm {
+  @apply gap-2;
+}
+
+.grid-module-gap-md {
+  @apply gap-4;
+}
+
+.grid-module-gap-lg {
+  @apply gap-6;
+}
+
+.grid-module-gap-xl {
+  @apply gap-8;
+}
+
+/* Container Modules */
+.container-module {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.container-module-sm {
+  @apply max-w-3xl mx-auto px-4 sm:px-6;
+}
+
+.container-module-lg {
+  @apply max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Spacing Modules */
+.spacing-module-sm {
+  @apply p-2;
+}
+
+.spacing-module-md {
+  @apply p-4;
+}
+
+.spacing-module-lg {
+  @apply p-6;
+}
+
+.spacing-module-xl {
+  @apply p-8;
+}
+
+/* Glass Card Modules */
+.glass-card {
+  @apply bg-[#221F26]/40 backdrop-blur-lg border border-white/10 rounded-2xl 
+         transition-all duration-300 shadow-xl shadow-black/5;
+}
+
+.glass-card-hover {
+  @apply hover:bg-white/5;
+}
+
+/* Background & Grid Modules */
+.bg-grid {
+  background-size: 100px 100px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* Gradient Text Modules */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400;
+}
+
+.enterprise-gradient {
+  @apply bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500;
+}
+
+/* Animation Modules */
 @keyframes pulse {
   0%, 100% { 
     transform: scale(1);
@@ -89,30 +221,31 @@
   }
 }
 
-.glass-card {
-  @apply bg-[#221F26]/40 backdrop-blur-lg border border-white/10 rounded-2xl 
-           transition-all duration-300 shadow-xl shadow-black/5;
-}
-
-.bg-grid {
-  background-size: 100px 100px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-}
-
-.text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400;
-}
-
-.enterprise-gradient {
-  @apply bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500;
-}
-
 .animate-pulse-glow {
   animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --primary: 0 0% 100%;
+    --destructive: 0 100% 50%;
+    --ring: 0 0% 100%;
+  }
+}
+
+/* Focus Styles for Keyboard Navigation */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary ring-2 ring-primary/50;
+}
+
+/* Skip to Main Content Link */
+.skip-to-content {
+  @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 
+         focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground
+         focus:rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50;
 }
