@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { OpenAIClient, AzureKeyCredential } from "@azure/openai";
 
 const client = new OpenAIClient(
-  "https://knowledgedev2443059259.openai.azure.com",
+  "https://knowledgedev2443059259.services.ai.azure.com/",
   new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY || '')
 );
 
