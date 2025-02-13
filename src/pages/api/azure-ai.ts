@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { OpenAIClient, AzureKeyCredential } from "@azure/openai";
 
 const client = new OpenAIClient(
-  "https://knowledgedev2443059259.services.ai.azure.com/",
+  "https://knowledgedev2443059259.openai.azure.com",
   new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY || '')
 );
 
@@ -32,18 +32,13 @@ export default async function handler(req: Request, res: Response) {
     const { messages, isResearch } = req.body;
     const deploymentId = 'gpt-4o';
 
-    if (isResearch) {
-      messages.unshift({
-        role: "system",
-        content: `You are an AI assistant specialized in federal acquisition research. 
-                  Provide detailed, regulation-compliant responses with FAR citations.`
-      });
-    }
-
+    // Add rate limiting checks based on deployment settings
+    // Rate limits: 414,000 tokens/min, 2,484 requests/min
     const result = await client.getChatCompletions(deploymentId, messages, {
       maxTokens: 4096,
       temperature: isResearch ? 0.7 : 1,
-      topP: isResearch ? 0.95 : 1,
+      topP: 1,
+      apiVersion: "2024-08-01-preview"
     });
 
     return res.status(200).json(result);
