@@ -5,6 +5,11 @@ interface RequestConfig extends RequestInit {
   baseURL?: string;
 }
 
+interface APIError extends Error {
+  status?: number;
+  code?: string;
+}
+
 class APIClient {
   private baseURL: string;
   private toast: ReturnType<typeof useToast>['toast'];
@@ -12,6 +17,20 @@ class APIClient {
   constructor(baseURL: string = '', toast?: ReturnType<typeof useToast>['toast']) {
     this.baseURL = baseURL;
     this.toast = toast as ReturnType<typeof useToast>['toast'];
+  }
+
+  private handleError(error: unknown): never {
+    const apiError: APIError = error instanceof Error ? error : new Error('An unknown error occurred');
+    
+    if (this.toast) {
+      this.toast({
+        title: apiError.code || "Error",
+        description: apiError.message,
+        variant: "destructive",
+      });
+    }
+    
+    throw apiError;
   }
 
   async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
@@ -27,20 +46,16 @@ class APIClient {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const error = new Error(`HTTP error! status: ${response.status}`) as APIError;
+        error.status = response.status;
+        error.code = `HTTP_${response.status}`;
+        throw error;
       }
 
       const data = await response.json();
       return data as T;
     } catch (error) {
-      if (this.toast) {
-        this.toast({
-          title: "Error",
-          description: error instanceof Error ? error.message : "An error occurred",
-          variant: "destructive",
-        });
-      }
-      throw error;
+      return this.handleError(error);
     }
   }
 

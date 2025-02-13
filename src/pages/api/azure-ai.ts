@@ -7,17 +7,32 @@ const client = new OpenAIClient(
   new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY || '')
 );
 
+interface AIError extends Error {
+  code?: string;
+  status?: number;
+}
+
 export default async function handler(req: Request, res: Response) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      error: 'Method not allowed',
+      code: 'METHOD_NOT_ALLOWED',
+      status: 405 
+    });
   }
 
   try {
+    if (!process.env.AZURE_OPENAI_API_KEY) {
+      throw Object.assign(new Error('Azure OpenAI API key not configured'), {
+        code: 'CONFIGURATION_ERROR',
+        status: 500
+      });
+    }
+
     const { messages, isResearch } = req.body;
     const deploymentId = 'gpt-4o';
 
     if (isResearch) {
-      // Enhanced context for research queries
       messages.unshift({
         role: "system",
         content: `You are an AI assistant specialized in federal acquisition research. 
@@ -34,6 +49,12 @@ export default async function handler(req: Request, res: Response) {
     return res.status(200).json(result);
   } catch (error) {
     console.error('Azure AI API error:', error);
-    return res.status(500).json({ error: 'Failed to process request' });
+    
+    const aiError = error as AIError;
+    return res.status(aiError.status || 500).json({ 
+      error: aiError.message || 'Failed to process request',
+      code: aiError.code || 'AI_SERVICE_ERROR',
+      status: aiError.status || 500
+    });
   }
 }
