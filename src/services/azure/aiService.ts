@@ -31,7 +31,7 @@ const initializeClient = (apiKey: string) => {
   
   try {
     client = new OpenAIClient(
-      "https://knowledgedev2443059259.services.ai.azure.com/",
+      "https://knowledgedev2443059259.openai.azure.com",
       new AzureKeyCredential(apiKey)
     );
     return client;
