@@ -16,6 +16,9 @@ import Dashboard from "./pages/Dashboard";
 import Proposals from "./pages/Proposals";
 import Chat from "./pages/Chat";
 import Sitemap from "./pages/Sitemap";
+import SolicitationReview from "./pages/acquisition/SolicitationReview";
+import MarketResearch from "./pages/acquisition/MarketResearch";
+import DocumentControl from "./pages/acquisition/DocumentControl";
 
 const App = () => (
   <QueryProvider>
@@ -43,6 +46,9 @@ const App = () => (
             <Route path="/proposals" element={<Proposals />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/sitemap" element={<Sitemap />} />
+            <Route path="/acquisition/solicitation-review" element={<SolicitationReview />} />
+            <Route path="/acquisition/market-research" element={<MarketResearch />} />
+            <Route path="/acquisition/document-control" element={<DocumentControl />} />
           </Routes>
         </main>
       </BrowserRouter>
