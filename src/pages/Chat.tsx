@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,6 +31,7 @@ interface Message {
   timestamp: Date;
   userRole?: string;
   agencyRegulation?: string;
+  detailLevel?: string;
 }
 
 type AcquisitionRole = 
@@ -112,17 +112,26 @@ const AGENCY_LABELS: Record<AgencyRegulation, string> = {
   EDAR: "Department of Education Acquisition Regulation"
 };
 
+const DETAIL_LEVELS = {
+  BRIEF: "Brief (3-6 lines)",
+  STANDARD: "Standard (1 page report)",
+  COMPREHENSIVE: "Comprehensive (Detailed with citations)",
+} as const;
+
+type DetailLevel = keyof typeof DETAIL_LEVELS;
+
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [selectedRole, setSelectedRole] = useState<AcquisitionRole>("CONTRACT_SPECIALIST");
   const [selectedAgency, setSelectedAgency] = useState<AgencyRegulation>("DFARS");
+  const [selectedDetailLevel, setSelectedDetailLevel] = useState<DetailLevel>("BRIEF");
 
   const aiMutation = useAzureAI(
     messages.map(({ role, content }) => ({ 
       role, 
       content: role === "user" 
-        ? `[As ${ROLE_LABELS[selectedRole]} under ${AGENCY_LABELS[selectedAgency]}]: ${content}` 
+        ? `[As ${ROLE_LABELS[selectedRole]} under ${AGENCY_LABELS[selectedAgency]}, provide a ${selectedDetailLevel.toLowerCase()} response]: ${content}` 
         : content 
     })),
     {
@@ -149,6 +158,7 @@ const Chat = () => {
       timestamp: new Date(),
       userRole: selectedRole,
       agencyRegulation: selectedAgency,
+      detailLevel: selectedDetailLevel,
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -157,7 +167,7 @@ const Chat = () => {
     aiMutation.mutate([...messages, userMessage].map(({ role, content }) => ({ 
       role, 
       content: role === "user" 
-        ? `[As ${ROLE_LABELS[selectedRole]} under ${AGENCY_LABELS[selectedAgency]}]: ${content}` 
+        ? `[As ${ROLE_LABELS[selectedRole]} under ${AGENCY_LABELS[selectedAgency]}, provide a ${selectedDetailLevel.toLowerCase()} response]: ${content}` 
         : content 
     })));
   };
@@ -213,6 +223,28 @@ const Chat = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="flex items-center gap-4">
+                  <FileText className="w-5 h-5 text-violet-400" />
+                  <Select
+                    value={selectedDetailLevel}
+                    onValueChange={(value: DetailLevel) => setSelectedDetailLevel(value)}
+                  >
+                    <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
+                      <SelectValue placeholder="Select detail level" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700">
+                      {Object.entries(DETAIL_LEVELS).map(([level, label]) => (
+                        <SelectItem 
+                          key={level} 
+                          value={level}
+                          className="text-white hover:bg-gray-700 focus:bg-gray-700"
+                        >
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
 
@@ -238,6 +270,11 @@ const Chat = () => {
                           {message.agencyRegulation && (
                             <span className="ml-2">
                               • {AGENCY_LABELS[message.agencyRegulation as AgencyRegulation]}
+                            </span>
+                          )}
+                          {message.detailLevel && (
+                            <span className="ml-2">
+                              • {DETAIL_LEVELS[message.detailLevel as DetailLevel]}
                             </span>
                           )}
                         </div>
