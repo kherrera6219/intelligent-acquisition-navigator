@@ -14,21 +14,53 @@ import {
   Scale,
   Bot,
   Loader2,
+  UserCheck,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  userRole?: string;
 }
+
+type AcquisitionRole = 
+  | "CONTRACT_SPECIALIST"
+  | "CONTRACTING_OFFICER"
+  | "PROGRAM_MANAGER"
+  | "LEGAL_REVIEWER"
+  | "SMALL_BUSINESS_SPECIALIST"
+  | "COST_PRICE_ANALYST"
+  | "QUALITY_ASSURANCE";
+
+const ROLE_LABELS: Record<AcquisitionRole, string> = {
+  CONTRACT_SPECIALIST: "Contract Specialist",
+  CONTRACTING_OFFICER: "Contracting Officer",
+  PROGRAM_MANAGER: "Program Manager",
+  LEGAL_REVIEWER: "Legal Reviewer",
+  SMALL_BUSINESS_SPECIALIST: "Small Business Specialist",
+  COST_PRICE_ANALYST: "Cost/Price Analyst",
+  QUALITY_ASSURANCE: "Quality Assurance Specialist"
+};
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [selectedRole, setSelectedRole] = useState<AcquisitionRole>("CONTRACT_SPECIALIST");
 
   const aiMutation = useAzureAI(
-    messages.map(({ role, content }) => ({ role, content })),
+    messages.map(({ role, content }) => ({ 
+      role, 
+      content: role === "user" ? `[As ${ROLE_LABELS[selectedRole]}]: ${content}` : content 
+    })),
     {
       onSuccess: (data) => {
         const assistantMessage: Message = {
@@ -51,6 +83,7 @@ const Chat = () => {
       role: "user",
       content: input.trim(),
       timestamp: new Date(),
+      userRole: selectedRole,
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -58,7 +91,7 @@ const Chat = () => {
 
     aiMutation.mutate([...messages, userMessage].map(({ role, content }) => ({ 
       role, 
-      content 
+      content: role === "user" ? `[As ${ROLE_LABELS[selectedRole]}]: ${content}` : content 
     })));
   };
 
@@ -67,6 +100,31 @@ const Chat = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="bg-black/40 backdrop-blur-sm border-white/10">
           <div className="h-[600px] flex flex-col">
+            <div className="p-4 border-b border-white/10">
+              <div className="flex items-center gap-4">
+                <UserCheck className="w-5 h-5 text-violet-400" />
+                <Select
+                  value={selectedRole}
+                  onValueChange={(value: AcquisitionRole) => setSelectedRole(value)}
+                >
+                  <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    {Object.entries(ROLE_LABELS).map(([role, label]) => (
+                      <SelectItem 
+                        key={role} 
+                        value={role}
+                        className="text-white hover:bg-gray-700 focus:bg-gray-700"
+                      >
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <ScrollArea className="flex-1 p-4">
               <div className="space-y-4">
                 {messages.map((message) => (
@@ -83,6 +141,11 @@ const Chat = () => {
                           : "bg-gray-800/50 text-gray-100"
                       }`}
                     >
+                      {message.role === "user" && message.userRole && (
+                        <div className="text-xs text-violet-400 mb-1">
+                          {ROLE_LABELS[message.userRole as AcquisitionRole]}
+                        </div>
+                      )}
                       <p className="text-sm">{message.content}</p>
                       <span className="text-xs text-gray-400 mt-2 block">
                         {message.timestamp.toLocaleTimeString()}
