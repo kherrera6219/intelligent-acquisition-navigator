@@ -1,9 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-secondary overflow-hidden">
-      <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:60px_60px]" />
+      <div className="absolute inset-0 bg-grid" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-up">

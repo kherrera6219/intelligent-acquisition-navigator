@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 
@@ -5,7 +6,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b">
+    <nav className="fixed w-full bg-white/5 backdrop-blur-md z-50 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -13,16 +14,16 @@ const Navigation = () => {
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-600 hover:text-primary transition-colors">Features</a>
-            <a href="#benefits" className="text-gray-600 hover:text-primary transition-colors">Benefits</a>
-            <a href="#about" className="text-gray-600 hover:text-primary transition-colors">About</a>
+            <a href="#features" className="text-white/80 hover:text-white transition-colors">Features</a>
+            <a href="#benefits" className="text-white/80 hover:text-white transition-colors">Benefits</a>
+            <a href="#about" className="text-white/80 hover:text-white transition-colors">About</a>
             <Button variant="default">Request Demo</Button>
           </div>
 
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-600 hover:text-primary"
+              className="text-white/80 hover:text-white"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isOpen ? (
@@ -38,10 +39,10 @@ const Navigation = () => {
 
       {isOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-b">
-            <a href="#features" className="block px-3 py-2 text-gray-600 hover:text-primary">Features</a>
-            <a href="#benefits" className="block px-3 py-2 text-gray-600 hover:text-primary">Benefits</a>
-            <a href="#about" className="block px-3 py-2 text-gray-600 hover:text-primary">About</a>
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white/5 backdrop-blur-md border-b border-white/10">
+            <a href="#features" className="block px-3 py-2 text-white/80 hover:text-white">Features</a>
+            <a href="#benefits" className="block px-3 py-2 text-white/80 hover:text-white">Benefits</a>
+            <a href="#about" className="block px-3 py-2 text-white/80 hover:text-white">About</a>
             <Button variant="default" className="w-full mt-2">Request Demo</Button>
           </div>
         </div>
