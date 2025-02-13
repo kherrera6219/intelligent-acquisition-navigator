@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAzureAI } from "@/hooks/useAzureAI";
+import { CodeEnvironment } from "@/components/CodeEnvironment";
 import {
   Brain,
   Send,
@@ -130,6 +130,7 @@ const Chat = () => {
   const [selectedRole, setSelectedRole] = useState<AcquisitionRole>("CONTRACT_SPECIALIST");
   const [selectedAgency, setSelectedAgency] = useState<AgencyRegulation>("DFARS");
   const [selectedDetailLevel, setSelectedDetailLevel] = useState<DetailLevel>("BRIEF");
+  const [isEnvironmentOpen, setIsEnvironmentOpen] = useState(false);
 
   const aiMutation = useAzureAI(
     messages.map(({ role, content }) => ({ 
@@ -185,187 +186,193 @@ const Chat = () => {
   };
 
   const handleRunEnvironment = () => {
-    console.log("Starting web container environment");
+    setIsEnvironmentOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="bg-black/40 backdrop-blur-sm border-white/10">
-          <div className="h-[600px] flex flex-col">
-            <div className="p-4 border-b border-white/10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
-                    onClick={handleDocumentCreation}
-                  >
-                    <Paintbrush className="w-4 h-4 mr-2" />
-                    Canvas Tool
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
-                    onClick={handleCodeCreation}
-                  >
-                    <Code className="w-4 h-4 mr-2" />
-                    Code Editor
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
-                    onClick={handleRunEnvironment}
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    Run Environment
-                  </Button>
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Card className="bg-black/40 backdrop-blur-sm border-white/10">
+            <div className="h-[600px] flex flex-col">
+              <div className="p-4 border-b border-white/10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
+                      onClick={handleDocumentCreation}
+                    >
+                      <Paintbrush className="w-4 h-4 mr-2" />
+                      Canvas Tool
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
+                      onClick={handleCodeCreation}
+                    >
+                      <Code className="w-4 h-4 mr-2" />
+                      Code Editor
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
+                      onClick={handleRunEnvironment}
+                    >
+                      <Play className="w-4 h-4 mr-2" />
+                      Run Environment
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-4">
+                    <UserCheck className="w-5 h-5 text-violet-400" />
+                    <Select
+                      value={selectedRole}
+                      onValueChange={(value: AcquisitionRole) => setSelectedRole(value)}
+                    >
+                      <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
+                        <SelectValue placeholder="Select your role" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        {Object.entries(ROLE_LABELS).map(([role, label]) => (
+                          <SelectItem 
+                            key={role} 
+                            value={role}
+                            className="text-white hover:bg-gray-700 focus:bg-gray-700"
+                          >
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Building className="w-5 h-5 text-violet-400" />
+                    <Select
+                      value={selectedAgency}
+                      onValueChange={(value: AgencyRegulation) => setSelectedAgency(value)}
+                    >
+                      <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
+                        <SelectValue placeholder="Select agency regulation" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        {Object.entries(AGENCY_LABELS).map(([agency, label]) => (
+                          <SelectItem 
+                            key={agency} 
+                            value={agency}
+                            className="text-white hover:bg-gray-700 focus:bg-gray-700"
+                          >
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <FileText className="w-5 h-5 text-violet-400" />
+                    <Select
+                      value={selectedDetailLevel}
+                      onValueChange={(value: DetailLevel) => setSelectedDetailLevel(value)}
+                    >
+                      <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
+                        <SelectValue placeholder="Select detail level" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        {Object.entries(DETAIL_LEVELS).map(([level, label]) => (
+                          <SelectItem 
+                            key={level} 
+                            value={level}
+                            className="text-white hover:bg-gray-700 focus:bg-gray-700"
+                          >
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-4 flex-wrap">
-                <div className="flex items-center gap-4">
-                  <UserCheck className="w-5 h-5 text-violet-400" />
-                  <Select
-                    value={selectedRole}
-                    onValueChange={(value: AcquisitionRole) => setSelectedRole(value)}
-                  >
-                    <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700">
-                      {Object.entries(ROLE_LABELS).map(([role, label]) => (
-                        <SelectItem 
-                          key={role} 
-                          value={role}
-                          className="text-white hover:bg-gray-700 focus:bg-gray-700"
-                        >
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Building className="w-5 h-5 text-violet-400" />
-                  <Select
-                    value={selectedAgency}
-                    onValueChange={(value: AgencyRegulation) => setSelectedAgency(value)}
-                  >
-                    <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
-                      <SelectValue placeholder="Select agency regulation" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700">
-                      {Object.entries(AGENCY_LABELS).map(([agency, label]) => (
-                        <SelectItem 
-                          key={agency} 
-                          value={agency}
-                          className="text-white hover:bg-gray-700 focus:bg-gray-700"
-                        >
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center gap-4">
-                  <FileText className="w-5 h-5 text-violet-400" />
-                  <Select
-                    value={selectedDetailLevel}
-                    onValueChange={(value: DetailLevel) => setSelectedDetailLevel(value)}
-                  >
-                    <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
-                      <SelectValue placeholder="Select detail level" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700">
-                      {Object.entries(DETAIL_LEVELS).map(([level, label]) => (
-                        <SelectItem 
-                          key={level} 
-                          value={level}
-                          className="text-white hover:bg-gray-700 focus:bg-gray-700"
-                        >
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
 
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${
-                      message.role === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
+              <ScrollArea className="flex-1 p-4">
+                <div className="space-y-4">
+                  {messages.map((message) => (
                     <div
-                      className={`max-w-[80%] p-4 rounded-lg ${
-                        message.role === "user"
-                          ? "bg-violet-500/20 text-white"
-                          : "bg-gray-800/50 text-gray-100"
+                      key={message.id}
+                      className={`flex ${
+                        message.role === "user" ? "justify-end" : "justify-start"
                       }`}
                     >
-                      {message.role === "user" && message.userRole && (
-                        <div className="text-xs text-violet-400 mb-1">
-                          {ROLE_LABELS[message.userRole as AcquisitionRole]}
-                          {message.agencyRegulation && (
-                            <span className="ml-2">
-                              • {AGENCY_LABELS[message.agencyRegulation as AgencyRegulation]}
-                            </span>
-                          )}
-                          {message.detailLevel && (
-                            <span className="ml-2">
-                              • {DETAIL_LEVELS[message.detailLevel as DetailLevel]}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <p className="text-sm">{message.content}</p>
-                      <span className="text-xs text-gray-400 mt-2 block">
-                        {message.timestamp.toLocaleTimeString()}
-                      </span>
+                      <div
+                        className={`max-w-[80%] p-4 rounded-lg ${
+                          message.role === "user"
+                            ? "bg-violet-500/20 text-white"
+                            : "bg-gray-800/50 text-gray-100"
+                        }`}
+                      >
+                        {message.role === "user" && message.userRole && (
+                          <div className="text-xs text-violet-400 mb-1">
+                            {ROLE_LABELS[message.userRole as AcquisitionRole]}
+                            {message.agencyRegulation && (
+                              <span className="ml-2">
+                                • {AGENCY_LABELS[message.agencyRegulation as AgencyRegulation]}
+                              </span>
+                            )}
+                            {message.detailLevel && (
+                              <span className="ml-2">
+                                • {DETAIL_LEVELS[message.detailLevel as DetailLevel]}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <p className="text-sm">{message.content}</p>
+                        <span className="text-xs text-gray-400 mt-2 block">
+                          {message.timestamp.toLocaleTimeString()}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-                {aiMutation.isPending && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-800/50 p-4 rounded-lg">
-                      <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
+                  ))}
+                  {aiMutation.isPending && (
+                    <div className="flex justify-start">
+                      <div className="bg-gray-800/50 p-4 rounded-lg">
+                        <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            </ScrollArea>
-
-            <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
-              <div className="flex gap-2">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type your message..."
-                  className="flex-1 bg-gray-800/50 border-gray-700 text-white"
-                  disabled={aiMutation.isPending}
-                />
-                <Button 
-                  type="submit" 
-                  disabled={aiMutation.isPending || !input.trim()}
-                  className="bg-violet-500 hover:bg-violet-600"
-                >
-                  {aiMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4" />
                   )}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </Card>
+                </div>
+              </ScrollArea>
+
+              <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
+                <div className="flex gap-2">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type your message..."
+                    className="flex-1 bg-gray-800/50 border-gray-700 text-white"
+                    disabled={aiMutation.isPending}
+                  />
+                  <Button 
+                    type="submit" 
+                    disabled={aiMutation.isPending || !input.trim()}
+                    className="bg-violet-500 hover:bg-violet-600"
+                  >
+                    {aiMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </Card>
+        </div>
       </div>
-    </div>
+      <CodeEnvironment 
+        isOpen={isEnvironmentOpen} 
+        onClose={() => setIsEnvironmentOpen(false)} 
+      />
+    </>
   );
 };
 
