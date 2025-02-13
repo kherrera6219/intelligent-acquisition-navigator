@@ -22,6 +22,7 @@ interface AzureAIResponse {
   };
 }
 
+// Initialize the Azure OpenAI client
 const client = new OpenAIClient(
   "https://knowledgedev2443059259.services.ai.azure.com/",
   new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY || '')
@@ -91,7 +92,7 @@ export const getResearchCompletion = async (query: string) => {
       ],
       {
         maxTokens: 4096,
-        temperature: 0.7, // Lower temperature for more focused, research-oriented responses
+        temperature: 0.7,
         topP: 0.95,
       }
     );
@@ -123,7 +124,6 @@ const extractFARCitations = (content: string): string[] => {
 
 // Helper function to calculate confidence score based on response metadata
 const calculateConfidenceScore = (result: any): number => {
-  // Implement confidence scoring based on token usage, response length, etc.
   const baseScore = 0.8; // Base confidence score
   const tokenRatio = (result.usage?.completionTokens || 0) / 4096;
   return Math.min(baseScore + (tokenRatio * 0.2), 1);
