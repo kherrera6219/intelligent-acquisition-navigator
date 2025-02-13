@@ -19,22 +19,30 @@ import Chat from "./pages/Chat";
 const App = () => (
   <QueryProvider>
     <TooltipProvider>
+      {/* Skip to main content link for keyboard users */}
+      <a href="#main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       <Toaster />
       <Sonner />
+      
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/signup" element={<SignUpForm />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/reset-password" element={<PasswordReset />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/proposals" element={<Proposals />} />
-          <Route path="/chat" element={<Chat />} />
-        </Routes>
+        <main id="main-content" className="min-h-screen">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/signup" element={<SignUpForm />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/reset-password" element={<PasswordReset />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/proposals" element={<Proposals />} />
+            <Route path="/chat" element={<Chat />} />
+          </Routes>
+        </main>
       </BrowserRouter>
     </TooltipProvider>
   </QueryProvider>
