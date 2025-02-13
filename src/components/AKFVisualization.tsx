@@ -16,10 +16,10 @@ const AKFVisualization = () => {
           <div className="space-y-2">
             <CardTitle className="text-3xl font-bold flex items-center gap-3">
               <Globe className="w-8 h-8" />
-              4D Acquisition Knowledge Framework
+              4D Acquisition Knowledge Framework v32.4
             </CardTitle>
             <p className="text-violet-100 leading-relaxed">
-              Advanced Mathematical Model for Dynamic Acquisition Systems
+              Enterprise Knowledge Base with Azure Cloud and OpenAI Integration
             </p>
           </div>
         </CardHeader>
@@ -28,7 +28,7 @@ const AKFVisualization = () => {
                            text-violet-900 mb-8 rounded-xl shadow-sm">
             <AlertDescription className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-violet-500" />
-              Explore the interactive visualization of AKF's mathematical components and their dynamic relationships
+              FedRAMP High, CMMC Level 3, and NIST 800-53 Rev 5 Compliant System
             </AlertDescription>
           </Alert>
           
