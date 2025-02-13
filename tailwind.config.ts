@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -20,17 +21,17 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#1a365d",
-          hover: "#2c5282",
+          DEFAULT: "#00A3FF",
+          hover: "#0081CC",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#319795",
-          hover: "#2C7A7B",
+          DEFAULT: "#8A2BE2",
+          hover: "#6F24B5",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
+          DEFAULT: "#FF4444",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
@@ -49,9 +50,18 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: {
+          DEFAULT: "#00C851",
+          hover: "#00A040",
+        },
+        warning: {
+          DEFAULT: "#FFBB33",
+          hover: "#CC9529",
+        },
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ['Inter', 'sans-serif'],
+        mono: ['Courier New', 'Consolas', 'monospace'],
       },
       keyframes: {
         "fade-up": {
