@@ -15,6 +15,7 @@ import PasswordReset from "./components/auth/PasswordReset";
 import Dashboard from "./pages/Dashboard";
 import Proposals from "./pages/Proposals";
 import Chat from "./pages/Chat";
+import Sitemap from "./pages/Sitemap";
 
 const App = () => (
   <QueryProvider>
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/proposals" element={<Proposals />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/sitemap" element={<Sitemap />} />
           </Routes>
         </main>
       </BrowserRouter>

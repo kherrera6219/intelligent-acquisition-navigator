@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { 
@@ -8,7 +7,8 @@ import {
   BarChart2, 
   Settings, 
   HelpCircle,
-  AlertCircle 
+  AlertCircle, 
+  Map
 } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { accessControl } from '@/lib/security/accessControl';
@@ -50,6 +50,12 @@ const navigationItems = [
     icon: HelpCircle, 
     label: 'Help', 
     route: '/help',
+    permission: null
+  },
+  {
+    icon: Map,
+    label: 'Sitemap',
+    route: '/sitemap',
     permission: null
   }
 ];
