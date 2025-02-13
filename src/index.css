@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -54,12 +54,12 @@
   @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl transition-all duration-300;
 }
 
-.neon-glow {
-  box-shadow: 0 0 15px rgba(0, 163, 255, 0.5);
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400;
 }
 
-.text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400;
+.enterprise-gradient {
+  @apply bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500;
 }
 
 @keyframes float {
@@ -73,10 +73,31 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
-  50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.8); }
+  0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.5); }
+  50% { box-shadow: 0 0 40px rgba(37, 99, 235, 0.8); }
 }
 
 .pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Enterprise Card Styles */
+.enterprise-card {
+  @apply relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8 transition-all duration-300;
+}
+
+.enterprise-card::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300;
+}
+
+.enterprise-card:hover::before {
+  @apply opacity-100;
+}
+
+/* Enterprise Button Styles */
+.btn-enterprise {
+  @apply inline-flex items-center justify-center rounded-lg px-6 py-3 text-sm font-medium transition-all duration-300
+         bg-gradient-to-r from-blue-500 to-indigo-500 text-white
+         hover:from-blue-600 hover:to-indigo-600 hover:shadow-lg hover:shadow-blue-500/25;
 }
