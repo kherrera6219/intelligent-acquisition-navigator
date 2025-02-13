@@ -54,7 +54,15 @@ const Chat = () => {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    aiMutation.mutate();
+    
+    // Fix: Pass the updated messages array to mutate
+    aiMutation.mutate([
+      ...messages,
+      {
+        role: "user",
+        content: `[As ${ROLE_LABELS[selectedRole]} under ${AGENCY_LABELS[selectedAgency]}, provide a ${selectedDetailLevel.toLowerCase()} response]: ${input.trim()}`
+      }
+    ]);
   };
 
   const handleDocumentCreation = () => {
