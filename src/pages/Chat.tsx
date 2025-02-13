@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,7 @@ import {
   Loader2,
   UserCheck,
   Building,
-  PaintBrush,
+  Paintbrush,
   Code,
   Play,
 } from "lucide-react";
@@ -200,7 +201,7 @@ const Chat = () => {
                     className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
                     onClick={handleDocumentCreation}
                   >
-                    <PaintBrush className="w-4 h-4 mr-2" />
+                    <Paintbrush className="w-4 h-4 mr-2" />
                     Canvas Tool
                   </Button>
                   <Button
