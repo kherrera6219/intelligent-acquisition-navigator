@@ -20,6 +20,14 @@ export interface AuditLogPayload {
   details?: Record<string, unknown>;
 }
 
+export interface AuditLogFilters {
+  userId?: string;
+  action?: string;
+  resourceType?: string;
+  fromDate?: Date;
+  toDate?: Date;
+}
+
 class AuditLogger {
   private static instance: AuditLogger;
   private apiClient = createAPIClient('/api');
@@ -47,10 +55,23 @@ class AuditLogger {
     }
   }
 
-  async getAuditLogs(filters?: Partial<AuditLog>): Promise<AuditLog[]> {
-    return this.apiClient.get<AuditLog[]>('/audit-logs', {
-      params: filters,
+  async getAuditLogs(filters?: AuditLogFilters): Promise<AuditLog[]> {
+    const queryString = filters ? `?${new URLSearchParams(this.serializeFilters(filters))}` : '';
+    return this.apiClient.get<AuditLog[]>(`/audit-logs${queryString}`);
+  }
+
+  private serializeFilters(filters: AuditLogFilters): Record<string, string> {
+    const serialized: Record<string, string> = {};
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined) {
+        if (value instanceof Date) {
+          serialized[key] = value.toISOString();
+        } else {
+          serialized[key] = String(value);
+        }
+      }
     });
+    return serialized;
   }
 }
 
