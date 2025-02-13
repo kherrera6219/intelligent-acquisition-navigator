@@ -7,9 +7,7 @@ export const useAuditLogs = (filters?: Partial<AuditLog>) => {
   return useQuery({
     queryKey: ['auditLogs', filters],
     queryFn: () => auditLogger.getAuditLogs(filters),
-    // Don't show errors for missing API
-    retry: false,
-    useErrorBoundary: false
+    retry: false
   });
 };
 

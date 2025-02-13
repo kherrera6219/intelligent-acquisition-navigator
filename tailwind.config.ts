@@ -15,53 +15,80 @@ export default {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        // Main Brand Colors
         primary: {
-          DEFAULT: "#00A3FF",
-          hover: "#0081CC",
+          DEFAULT: "#0066CC",  // Deep Blue
+          hover: "#0052A3",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#8A2BE2",
-          hover: "#6F24B5",
+          DEFAULT: "#00A86B",  // Emerald Green
+          hover: "#008655",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        accent: {
+          DEFAULT: "#FFA500",  // Orange
+          hover: "#CC8400",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        // System Colors
+        success: {
+          DEFAULT: "#2E8540",
+          hover: "#246A33",
+        },
+        warning: {
+          DEFAULT: "#FFA500",
+          hover: "#CC8400",
+        },
         destructive: {
-          DEFAULT: "#FF4444",
+          DEFAULT: "#D83933",
+          hover: "#AD2D28",
           foreground: "hsl(var(--destructive-foreground))",
         },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+        // UI Colors
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+        muted: {
+          DEFAULT: "#F5F5F5",
+          hover: "#EBEBEB",
+          foreground: "#666666",
         },
-        success: {
-          DEFAULT: "#00C851",
-          hover: "#00A040",
-        },
-        warning: {
-          DEFAULT: "#FFBB33",
-          hover: "#CC9529",
-        },
+        // Border & Input Colors
+        border: "#E5E5E5",
+        input: "#F0F0F0",
+        ring: "#0066CC",
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        mono: ['Courier New', 'Consolas', 'monospace'],
+        heading: ['Roboto', 'sans-serif'],
+        sans: ['Open Sans', 'sans-serif'],
+        mono: ['Roboto Mono', 'monospace'],
+      },
+      fontSize: {
+        xs: ['0.75rem', { lineHeight: '1rem' }],
+        sm: ['0.875rem', { lineHeight: '1.25rem' }],
+        base: ['1rem', { lineHeight: '1.5rem' }],
+        lg: ['1.125rem', { lineHeight: '1.75rem' }],
+        xl: ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+      },
+      spacing: {
+        container: '2rem',
+        grid: '1.5rem',
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
         "fade-up": {
@@ -72,10 +99,15 @@ export default {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.5s ease-out",
-        "fade-in": "fade-in 0.5s ease-out",
+        "fade-in": "fade-in 0.3s ease-out",
+        "scale-in": "scale-in 0.2s ease-out",
       },
     },
   },
