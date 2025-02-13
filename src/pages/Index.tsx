@@ -8,7 +8,7 @@ import { DualLLMProcessor } from "@/components/DualLLMProcessor";
 import { RAGProcessor } from "@/components/RAGProcessor";
 import { BlockchainRecords } from "@/components/BlockchainRecords";
 import { VoiceInterface } from "@/components/VoiceInterface";
-import { AKFVisualization } from "@/components/AKFVisualization";
+import AKFVisualization from "@/components/AKFVisualization";
 
 const Index = () => {
   return (
