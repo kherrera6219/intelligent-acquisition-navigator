@@ -15,6 +15,9 @@ import {
   Loader2,
   UserCheck,
   Building,
+  PaintBrush,
+  Code,
+  Play,
 } from "lucide-react";
 import {
   Select,
@@ -172,12 +175,52 @@ const Chat = () => {
     })));
   };
 
+  const handleDocumentCreation = () => {
+    console.log("Opening document creation canvas");
+  };
+
+  const handleCodeCreation = () => {
+    console.log("Opening code editor");
+  };
+
+  const handleRunEnvironment = () => {
+    console.log("Starting web container environment");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="bg-black/40 backdrop-blur-sm border-white/10">
           <div className="h-[600px] flex flex-col">
             <div className="p-4 border-b border-white/10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
+                    onClick={handleDocumentCreation}
+                  >
+                    <PaintBrush className="w-4 h-4 mr-2" />
+                    Canvas Tool
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
+                    onClick={handleCodeCreation}
+                  >
+                    <Code className="w-4 h-4 mr-2" />
+                    Code Editor
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
+                    onClick={handleRunEnvironment}
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Run Environment
+                  </Button>
+                </div>
+              </div>
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-4">
                   <UserCheck className="w-5 h-5 text-violet-400" />
