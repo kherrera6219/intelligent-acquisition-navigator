@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import Benefits from "@/components/Benefits";
 import RequestDemo from "@/components/RequestDemo";
+import { AzureAIChat } from "@/components/AzureAIChat";
 import { DualLLMProcessor } from "@/components/DualLLMProcessor";
 import { RAGProcessor } from "@/components/RAGProcessor";
 import { BlockchainRecords } from "@/components/BlockchainRecords";
@@ -73,6 +74,13 @@ const Index = () => {
                 <h3 className="text-xl font-semibold text-white">Cloud Framework</h3>
               </div>
               <AKFVisualization />
+            </div>
+          </div>
+
+          <div className="mt-16">
+            <div className="glass-card p-8">
+              <h3 className="text-2xl font-semibold text-white mb-6">Try Our AI Assistant</h3>
+              <AzureAIChat />
             </div>
           </div>
 

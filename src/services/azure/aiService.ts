@@ -1,5 +1,5 @@
 
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface AzureAIResponse {
   choices: Array<{
@@ -16,8 +16,6 @@ interface AzureAIResponse {
 }
 
 export const getAICompletion = async (messages: Array<{ role: string; content: string }>) => {
-  const toast = useToast();
-  
   try {
     const response = await fetch('/api/azure-ai', {
       method: 'POST',
@@ -33,6 +31,11 @@ export const getAICompletion = async (messages: Array<{ role: string; content: s
     });
 
     if (!response.ok) {
+      toast({
+        title: "Error",
+        description: "Failed to get AI completion",
+        variant: "destructive",
+      });
       throw new Error('Failed to get AI completion');
     }
 
