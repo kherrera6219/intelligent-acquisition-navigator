@@ -1,95 +1,84 @@
 
-import Navigation from "@/components/Navigation";
-import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardCard } from "@/components/layout/DashboardCard";
+import { Grid } from "@/components/ui/universal/Grid";
+import { Container } from "@/components/ui/universal/Container";
+import { Card } from "@/components/ui/universal/Card";
 import { 
   FileText, 
   ShieldCheck, 
   TrendingUp, 
-  Clock 
+  Clock,
+  AlertCircle 
 } from 'lucide-react';
 
-const DashboardCard = ({ 
-  icon: Icon, 
-  title, 
-  value, 
-  change 
-}: { 
-  icon: React.ElementType, 
-  title: string, 
-  value: string, 
-  change: string 
-}) => (
-  <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300">
-    <div className="flex justify-between items-center">
-      <Icon className="h-8 w-8 text-primary" />
-      <span className={`text-sm ${change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
-        {change}
-      </span>
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-      <p className="text-2xl font-bold">{value}</p>
-    </div>
-  </Card>
-);
+const metrics = [
+  {
+    icon: <FileText className="h-6 w-6 text-violet-400" />,
+    title: "Pending Reviews",
+    value: "24",
+    change: "+5 from last week"
+  },
+  {
+    icon: <ShieldCheck className="h-6 w-6 text-emerald-400" />,
+    title: "Compliance Rate",
+    value: "95%",
+    change: "+2% improvement"
+  },
+  {
+    icon: <TrendingUp className="h-6 w-6 text-blue-400" />,
+    title: "Avg. Review Time",
+    value: "12m 34s",
+    change: "-3m from last week"
+  },
+  {
+    icon: <Clock className="h-6 w-6 text-amber-400" />,
+    title: "Tasks Completed",
+    value: "156",
+    change: "+22 this week"
+  }
+];
 
 const Dashboard = () => {
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
-      <Navigation />
-      
-      <main className="ml-64 flex-1 p-8 space-y-8">
-        <header>
-          <h1 className="text-3xl font-bold text-primary">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome to your acquisition workflow management system</p>
-        </header>
+    <Container>
+      <PageHeader
+        title="Dashboard"
+        description="Welcome to your acquisition workflow management system"
+      />
 
-        <section className="grid grid-cols-4 gap-6">
-          <DashboardCard 
-            icon={FileText}
-            title="Pending Reviews"
-            value="24"
-            change="+5 from last week"
-          />
-          <DashboardCard 
-            icon={ShieldCheck}
-            title="Compliance Rate"
-            value="95%"
-            change="+2% improvement"
-          />
-          <DashboardCard 
-            icon={TrendingUp}
-            title="Avg. Review Time"
-            value="12m 34s"
-            change="-3m from last week"
-          />
-          <DashboardCard 
-            icon={Clock}
-            title="Tasks Completed"
-            value="156"
-            change="+22 this week"
-          />
-        </section>
-
-        <section className="grid grid-cols-2 gap-6">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Task Queue</h2>
-            {/* Task Queue Table Placeholder */}
-            <div className="text-center text-muted-foreground">
-              Task queue visualization coming soon
+      <Grid columns={4} gap="lg" className="mb-8">
+        {metrics.map((metric, index) => (
+          <DashboardCard
+            key={index}
+            icon={metric.icon}
+            title={metric.title}
+            className="hover:bg-white/5 transition-colors"
+          >
+            <div className="mt-4">
+              <p className="text-2xl font-bold text-white">{metric.value}</p>
+              <p className="text-sm text-gray-400">{metric.change}</p>
             </div>
-          </Card>
+          </DashboardCard>
+        ))}
+      </Grid>
 
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Performance Metrics</h2>
-            {/* Performance Metrics Chart Placeholder */}
-            <div className="text-center text-muted-foreground">
-              Performance metrics visualization coming soon
-            </div>
-          </Card>
-        </section>
-      </main>
-    </div>
+      <Grid columns={2} gap="lg">
+        <Card className="spacing-module-lg">
+          <h2 className="text-xl font-semibold text-white mb-4">Task Queue</h2>
+          <div className="flex items-center justify-center h-48 bg-white/5 rounded-lg">
+            <p className="text-gray-400">Task queue visualization coming soon</p>
+          </div>
+        </Card>
+
+        <Card className="spacing-module-lg">
+          <h2 className="text-xl font-semibold text-white mb-4">Performance Metrics</h2>
+          <div className="flex items-center justify-center h-48 bg-white/5 rounded-lg">
+            <p className="text-gray-400">Performance metrics visualization coming soon</p>
+          </div>
+        </Card>
+      </Grid>
+    </Container>
   );
 };
 

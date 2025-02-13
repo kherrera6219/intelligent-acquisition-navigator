@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { MainLayout } from "@/components/layout/MainLayout";
 import Index from "./pages/Index";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
@@ -23,16 +24,8 @@ import DocumentControl from "./pages/acquisition/DocumentControl";
 const App = () => (
   <QueryProvider>
     <TooltipProvider>
-      {/* Skip to main content link for keyboard users */}
-      <a href="#main-content" className="skip-to-content">
-        Skip to main content
-      </a>
-
-      <Toaster />
-      <Sonner />
-      
       <BrowserRouter>
-        <main id="main-content" className="min-h-screen">
+        <MainLayout>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/features" element={<Features />} />
@@ -50,7 +43,9 @@ const App = () => (
             <Route path="/acquisition/market-research" element={<MarketResearch />} />
             <Route path="/acquisition/document-control" element={<DocumentControl />} />
           </Routes>
-        </main>
+        </MainLayout>
+        <Toaster />
+        <Sonner />
       </BrowserRouter>
     </TooltipProvider>
   </QueryProvider>
