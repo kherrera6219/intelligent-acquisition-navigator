@@ -43,16 +43,17 @@ export const useAzureAI = (
 
       return response.json();
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-      options.onError?.(error);
-    },
-    onSuccess: (data) => {
-      options.onSuccess?.(data);
+    onSettled: (data, error) => {
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        options.onError?.(error);
+      } else if (data) {
+        options.onSuccess?.(data);
+      }
     },
   });
 };
