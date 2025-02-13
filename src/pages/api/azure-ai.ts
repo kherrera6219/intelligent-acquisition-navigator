@@ -37,8 +37,7 @@ export default async function handler(req: Request, res: Response) {
     const result = await client.getChatCompletions(deploymentId, messages, {
       maxTokens: 4096,
       temperature: isResearch ? 0.7 : 1,
-      topP: 1,
-      apiVersion: "2024-08-01-preview"
+      topP: 1
     });
 
     return res.status(200).json(result);
