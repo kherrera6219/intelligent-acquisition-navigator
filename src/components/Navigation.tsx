@@ -1,76 +1,15 @@
 
 import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { 
-  Home, 
-  FileText, 
-  Shield, 
-  BarChart2, 
-  Settings, 
-  HelpCircle,
-  AlertCircle, 
-  Map,
-  UserCircle,
-  LogOut
-} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
+import { useToast } from '@/components/ui/use-toast';
 import { accessControl } from '@/lib/security/accessControl';
 import { errorTracker } from '@/lib/security/errorTracking';
 import { auditLogger } from '@/lib/audit';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
-
-const navigationItems = [
-  { 
-    icon: Home, 
-    label: 'Dashboard', 
-    route: '/dashboard',
-    permission: null,
-    description: 'View your personalized dashboard'
-  },
-  { 
-    icon: FileText, 
-    label: 'Solicitation Review', 
-    route: '/solicitation-review',
-    permission: 'READ_SOLICITATIONS' as const,
-    description: 'Review and manage solicitations'
-  },
-  { 
-    icon: Shield, 
-    label: 'Compliance', 
-    route: '/compliance',
-    permission: 'VIEW_AUDIT_LOGS' as const,
-    description: 'Monitor compliance and audit logs'
-  },
-  { 
-    icon: BarChart2, 
-    label: 'Analytics', 
-    route: '/analytics',
-    permission: 'EXPORT_DATA' as const,
-    description: 'View system analytics and reports'
-  },
-  { 
-    icon: Settings, 
-    label: 'Settings', 
-    route: '/settings',
-    permission: 'MANAGE_USERS' as const,
-    description: 'Manage system settings'
-  },
-  { 
-    icon: HelpCircle, 
-    label: 'Help', 
-    route: '/help',
-    permission: null,
-    description: 'Access help and documentation'
-  },
-  {
-    icon: Map,
-    label: 'Sitemap',
-    route: '/sitemap',
-    permission: null,
-    description: 'View complete site structure'
-  }
-];
+import { navigationItems } from '@/config/navigationItems';
+import { NavigationItem } from './navigation/NavigationItem';
+import { NavigationFooter } from './navigation/NavigationFooter';
+import { SystemStatus } from './navigation/SystemStatus';
 
 const Navigation = () => {
   const [activeRoute, setActiveRoute] = useState('/dashboard');
@@ -83,7 +22,6 @@ const Navigation = () => {
       const recentErrors = errorTracker.getRecentErrors();
       setErrors(recentErrors.length);
       
-      // Show toast for critical errors
       const criticalErrors = recentErrors.filter(error => error.severity === 'CRITICAL');
       if (criticalErrors.length > 0) {
         toast({
@@ -154,51 +92,25 @@ const Navigation = () => {
           if (!isVisible) return null;
 
           return (
-            <Button
+            <NavigationItem
               key={item.route}
-              variant={activeRoute === item.route ? 'default' : 'ghost'}
-              className="w-full justify-start gap-3"
+              {...item}
+              isActive={activeRoute === item.route}
               onClick={() => handleNavigation(item.route)}
-              aria-current={activeRoute === item.route ? 'page' : undefined}
-              aria-label={item.description}
-            >
-              <item.icon className="h-5 w-5" aria-hidden="true" />
-              <span>{item.label}</span>
-            </Button>
+            />
           );
         })}
       </nav>
 
-      {errors > 0 && (
-        <Button 
-          variant="destructive" 
-          className="mb-4 gap-2"
-          onClick={() => handleNavigation('/system-status')}
-          aria-label={`${errors} system errors detected`}
-        >
-          <AlertCircle className="h-4 w-4" />
-          System Errors ({errors})
-        </Button>
-      )}
+      <SystemStatus 
+        errors={errors}
+        onClick={() => handleNavigation('/system-status')}
+      />
 
-      <div className="mt-auto space-y-2">
-        <Button 
-          variant="outline" 
-          className="w-full gap-2"
-          onClick={() => handleNavigation('/profile')}
-        >
-          <UserCircle className="h-4 w-4" />
-          User Profile
-        </Button>
-        <Button 
-          variant="destructive" 
-          className="w-full gap-2"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4" />
-          Logout
-        </Button>
-      </div>
+      <NavigationFooter 
+        onProfileClick={() => handleNavigation('/profile')}
+        onLogout={handleLogout}
+      />
     </Card>
   );
 };
