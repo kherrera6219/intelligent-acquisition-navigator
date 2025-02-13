@@ -1,11 +1,9 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useToast } from "@/hooks/use-toast";
+import { useAzureAI } from "@/hooks/useAzureAI";
 import {
   Brain,
   Send,
@@ -16,6 +14,8 @@ import {
   Bot,
   Loader2,
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -27,8 +27,22 @@ interface Message {
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  const aiMutation = useAzureAI(
+    messages.map(({ role, content }) => ({ role, content })),
+    {
+      onSuccess: (data) => {
+        const assistantMessage: Message = {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: data.choices[0].message.content,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+      },
+    }
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,28 +57,11 @@ const Chat = () => {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsLoading(true);
 
-    try {
-      // Simulate AI response for now
-      setTimeout(() => {
-        const assistantMessage: Message = {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: "I understand your acquisition-related query. Based on FAR regulations, I recommend reviewing section 15.304 regarding evaluation factors. Would you like me to provide more specific guidance?",
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, assistantMessage]);
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to get response. Please try again.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-    }
+    aiMutation.mutate([...messages, userMessage].map(({ role, content }) => ({ 
+      role, 
+      content 
+    })));
   };
 
   return (
@@ -135,7 +132,7 @@ const Chat = () => {
                       </div>
                     </div>
                   ))}
-                  {isLoading && (
+                  {aiMutation.isLoading && (
                     <div className="flex justify-start">
                       <div className="bg-gray-800/50 p-4 rounded-lg">
                         <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
@@ -155,10 +152,10 @@ const Chat = () => {
               />
               <Button
                 type="submit"
-                disabled={isLoading || !input.trim()}
+                disabled={aiMutation.isLoading || !input.trim()}
                 className="bg-violet-500 hover:bg-violet-600"
               >
-                {isLoading ? (
+                {aiMutation.isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Send className="w-4 h-4" />
