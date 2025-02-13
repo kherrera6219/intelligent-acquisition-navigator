@@ -1,7 +1,9 @@
 
 import { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Navigation';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
@@ -22,16 +24,23 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
       {!isAuthPage && <Navigation />}
       
-      <main 
-        id="main-content" 
-        className={cn(
-          "transition-all duration-300",
-          !isAuthPage && !isHomePage && "ml-64 p-8",
-          isAuthPage && "flex items-center justify-center min-h-screen"
-        )}
-      >
-        {children}
-      </main>
+      <AnimatePresence mode="wait">
+        <motion.main 
+          id="main-content" 
+          className={cn(
+            "transition-all duration-300",
+            !isAuthPage && !isHomePage && "ml-64 p-8",
+            isAuthPage && "flex items-center justify-center min-h-screen"
+          )}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+        >
+          <ScrollArea className="h-full w-full">
+            {children}
+          </ScrollArea>
+        </motion.main>
+      </AnimatePresence>
     </div>
   );
 };
