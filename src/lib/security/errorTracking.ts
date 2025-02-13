@@ -71,13 +71,27 @@ class ErrorTracker {
       errorDetails.errorType = 'SECURITY';
     }
 
+    // Convert ErrorDetails to Record<string, unknown> for audit logging
+    const auditDetails: Record<string, unknown> = {
+      message: errorDetails.message,
+      stack: errorDetails.stack,
+      timestamp: errorDetails.timestamp,
+      userId: errorDetails.userId,
+      component: errorDetails.component,
+      severity: errorDetails.severity,
+      errorCode: errorDetails.errorCode,
+      errorType: errorDetails.errorType,
+      status: errorDetails.status,
+      additionalData: errorDetails.additionalData
+    };
+
     // Log to audit system
     auditLogger.log({
       action: 'ERROR_OCCURRED',
       resourceType: 'ERROR',
       resourceId: errorDetails.errorCode || 'system',
       severity: this.mapSeverityToAudit(errorDetails.severity),
-      details: errorDetails
+      details: auditDetails
     }).catch(console.error);
   }
 
