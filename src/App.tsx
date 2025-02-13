@@ -13,6 +13,7 @@ import SignUpForm from "./components/auth/SignUpForm";
 import UserProfile from "./components/auth/UserProfile";
 import PasswordReset from "./components/auth/PasswordReset";
 import Dashboard from "./pages/Dashboard";
+import Proposals from "./pages/Proposals";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/reset-password" element={<PasswordReset />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/proposals" element={<Proposals />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
