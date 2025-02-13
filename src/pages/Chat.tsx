@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,8 +15,6 @@ import {
   Bot,
   Loader2,
 } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -27,7 +26,6 @@ interface Message {
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const { toast } = useToast();
 
   const aiMutation = useAzureAI(
     messages.map(({ role, content }) => ({ role, content })),
@@ -66,104 +64,66 @@ const Chat = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <Card className="p-6 bg-black/50 backdrop-blur-sm border-gray-800">
-            <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-              <Bot className="w-5 h-5 text-violet-400" />
-              Acquisition Assistant
-            </h2>
-            <nav className="space-y-2">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
-              >
-                <MessagesSquare className="w-4 h-4 mr-2" />
-                New Chat
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Templates
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
-              >
-                <BookOpen className="w-4 h-4 mr-2" />
-                FAR Guide
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/10"
-              >
-                <Scale className="w-4 h-4 mr-2" />
-                Compliance
-              </Button>
-            </nav>
-          </Card>
-
-          {/* Main Chat Area */}
-          <Card className="lg:col-span-3 p-6 bg-black/50 backdrop-blur-sm border-gray-800 flex flex-col h-[80vh]">
-            <div className="flex-1 overflow-hidden">
-              <ScrollArea className="h-full pr-4">
-                <div className="space-y-4">
-                  {messages.map((message) => (
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Card className="bg-black/40 backdrop-blur-sm border-white/10">
+          <div className="h-[600px] flex flex-col">
+            <ScrollArea className="flex-1 p-4">
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${
+                      message.role === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
                     <div
-                      key={message.id}
-                      className={`flex ${
-                        message.role === "user" ? "justify-end" : "justify-start"
+                      className={`max-w-[80%] p-4 rounded-lg ${
+                        message.role === "user"
+                          ? "bg-violet-500/20 text-white"
+                          : "bg-gray-800/50 text-gray-100"
                       }`}
                     >
-                      <div
-                        className={`max-w-[80%] p-4 rounded-lg ${
-                          message.role === "user"
-                            ? "bg-violet-500/20 text-white"
-                            : "bg-gray-800/50 text-gray-100"
-                        }`}
-                      >
-                        <p className="text-sm">{message.content}</p>
-                        <span className="text-xs text-gray-400 mt-2 block">
-                          {message.timestamp.toLocaleTimeString()}
-                        </span>
-                      </div>
+                      <p className="text-sm">{message.content}</p>
+                      <span className="text-xs text-gray-400 mt-2 block">
+                        {message.timestamp.toLocaleTimeString()}
+                      </span>
                     </div>
-                  ))}
-                  {aiMutation.isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-gray-800/50 p-4 rounded-lg">
-                        <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
-                      </div>
+                  </div>
+                ))}
+                {aiMutation.isPending && (
+                  <div className="flex justify-start">
+                    <div className="bg-gray-800/50 p-4 rounded-lg">
+                      <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
                     </div>
-                  )}
-                </div>
-              </ScrollArea>
-            </div>
-
-            <form onSubmit={handleSubmit} className="mt-4 flex gap-2">
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about FAR regulations, compliance, or acquisition processes..."
-                className="flex-1 bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-400"
-              />
-              <Button
-                type="submit"
-                disabled={aiMutation.isLoading || !input.trim()}
-                className="bg-violet-500 hover:bg-violet-600"
-              >
-                {aiMutation.isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
+                  </div>
                 )}
-              </Button>
+              </div>
+            </ScrollArea>
+
+            <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
+              <div className="flex gap-2">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type your message..."
+                  className="flex-1 bg-gray-800/50 border-gray-700 text-white"
+                  disabled={aiMutation.isPending}
+                />
+                <Button 
+                  type="submit" 
+                  disabled={aiMutation.isPending || !input.trim()}
+                  className="bg-violet-500 hover:bg-violet-600"
+                >
+                  {aiMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
             </form>
-          </Card>
-        </div>
+          </div>
+        </Card>
       </div>
     </div>
   );

@@ -7,11 +7,11 @@ interface RequestConfig extends RequestInit {
 
 class APIClient {
   private baseURL: string;
-  private toast: ReturnType<typeof useToast>;
+  private toast: ReturnType<typeof useToast>['toast'];
 
-  constructor(baseURL: string = '', toast?: ReturnType<typeof useToast>) {
+  constructor(baseURL: string = '', toast?: ReturnType<typeof useToast>['toast']) {
     this.baseURL = baseURL;
-    this.toast = toast as ReturnType<typeof useToast>;
+    this.toast = toast as ReturnType<typeof useToast>['toast'];
   }
 
   async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
@@ -69,6 +69,6 @@ class APIClient {
   }
 }
 
-export const createAPIClient = (baseURL: string, toast?: ReturnType<typeof useToast>) => {
+export const createAPIClient = (baseURL: string, toast?: ReturnType<typeof useToast>['toast']) => {
   return new APIClient(baseURL, toast);
 };

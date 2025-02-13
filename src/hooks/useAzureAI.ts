@@ -1,5 +1,5 @@
 
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
 interface AIChatMessage {
@@ -7,16 +7,27 @@ interface AIChatMessage {
   content: string;
 }
 
+interface AIResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+}
+
 interface UseAzureAIOptions {
   enabled?: boolean;
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: AIResponse) => void;
   onError?: (error: Error) => void;
 }
 
-export const useAzureAI = (messages: AIChatMessage[], options: UseAzureAIOptions = {}) => {
+export const useAzureAI = (
+  messages: AIChatMessage[], 
+  options: UseAzureAIOptions = {}
+): UseMutationResult<AIResponse, Error, AIChatMessage[], unknown> => {
   const { toast } = useToast();
 
-  const mutation = useMutation({
+  return useMutation({
     mutationFn: async (messages: AIChatMessage[]) => {
       const response = await fetch('/api/azure-ai', {
         method: 'POST',
@@ -44,6 +55,4 @@ export const useAzureAI = (messages: AIChatMessage[], options: UseAzureAIOptions
       options.onSuccess?.(data);
     },
   });
-
-  return mutation;
 };
