@@ -7,6 +7,9 @@ export const useAuditLogs = (filters?: Partial<AuditLog>) => {
   return useQuery({
     queryKey: ['auditLogs', filters],
     queryFn: () => auditLogger.getAuditLogs(filters),
+    // Don't show errors for missing API
+    retry: false,
+    useErrorBoundary: false
   });
 };
 
@@ -16,12 +19,15 @@ export const useCreateAuditLog = () => {
   return useMutation({
     mutationFn: (payload: AuditLogPayload) => auditLogger.log(payload),
     onError: (error) => {
-      toast({
-        title: 'Audit Log Error',
-        description: 'Failed to create audit log entry',
-        variant: 'destructive',
-      });
-      console.error('Audit log error:', error);
+      // Only show toast for unexpected errors
+      if (!(error instanceof Error && error.message.includes('API not available'))) {
+        toast({
+          title: 'Audit Log Error',
+          description: 'Failed to create audit log entry',
+          variant: 'destructive',
+        });
+        console.error('Audit log error:', error);
+      }
     },
   });
 };

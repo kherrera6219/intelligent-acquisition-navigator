@@ -40,9 +40,12 @@ class AuditLogger {
   private static instance: AuditLogger;
   private apiClient = createAPIClient('/api');
   private sessionId: string;
+  private isAPIAvailable: boolean = true;
 
   private constructor() {
     this.sessionId = crypto.randomUUID();
+    // Check if API is available
+    this.checkAPIAvailability();
   }
 
   static getInstance(): AuditLogger {
@@ -52,21 +55,37 @@ class AuditLogger {
     return AuditLogger.instance;
   }
 
-  async log(payload: AuditLogPayload): Promise<void> {
+  private async checkAPIAvailability(): Promise<void> {
     try {
-      await this.apiClient.post<void>('/audit-logs', {
-        ...payload,
-        timestamp: new Date(),
-        ipAddress: window.location.hostname,
-        userAgent: navigator.userAgent,
-        sessionId: this.sessionId,
-        severity: payload.severity || 'INFO',
-        status: 'SUCCESS',
-        systemComponent: payload.systemComponent || 'FRONTEND'
-      });
+      await this.apiClient.get('/health-check');
+      this.isAPIAvailable = true;
     } catch (error) {
-      console.error('Failed to create audit log:', error);
-      // Create a local fallback log for failed audit attempts
+      this.isAPIAvailable = false;
+      console.warn('Audit logging API is not available, falling back to local storage');
+    }
+  }
+
+  async log(payload: AuditLogPayload): Promise<void> {
+    const logEntry = {
+      ...payload,
+      timestamp: new Date(),
+      ipAddress: window.location.hostname,
+      userAgent: navigator.userAgent,
+      sessionId: this.sessionId,
+      severity: payload.severity || 'INFO',
+      status: 'SUCCESS',
+      systemComponent: payload.systemComponent || 'FRONTEND'
+    };
+
+    if (!this.isAPIAvailable) {
+      this.createLocalFailureLog(payload, new Error('API not available'));
+      return;
+    }
+
+    try {
+      await this.apiClient.post<void>('/audit-logs', logEntry);
+    } catch (error) {
+      // Don't throw the error, just store locally
       this.createLocalFailureLog(payload, error);
     }
   }
@@ -80,7 +99,6 @@ class AuditLogger {
       sessionId: this.sessionId
     };
     
-    // Store in IndexedDB or localStorage as backup
     try {
       const logs = JSON.parse(localStorage.getItem('failedAuditLogs') || '[]');
       logs.push(failureLog);
@@ -91,11 +109,23 @@ class AuditLogger {
   }
 
   async getAuditLogs(filters?: AuditLogFilters): Promise<AuditLog[]> {
-    const queryString = filters ? `?${new URLSearchParams(this.serializeFilters(filters))}` : '';
-    return this.apiClient.get<AuditLog[]>(`/audit-logs${queryString}`);
+    if (!this.isAPIAvailable) {
+      // Return empty array if API is not available
+      return [];
+    }
+
+    try {
+      const queryString = filters ? `?${new URLSearchParams(this.serializeFilters(filters))}` : '';
+      return await this.apiClient.get<AuditLog[]>(`/audit-logs${queryString}`);
+    } catch (error) {
+      console.warn('Failed to fetch audit logs:', error);
+      return [];
+    }
   }
 
   async retryFailedLogs(): Promise<void> {
+    if (!this.isAPIAvailable) return;
+
     try {
       const failedLogs = JSON.parse(localStorage.getItem('failedAuditLogs') || '[]');
       if (failedLogs.length === 0) return;
