@@ -44,3 +44,5 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
     </div>
   );
 };
+
+export default MainLayout;
