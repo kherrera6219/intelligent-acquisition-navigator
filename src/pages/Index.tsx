@@ -11,7 +11,7 @@ import { BlockchainRecords } from "@/components/BlockchainRecords";
 import { VoiceInterface } from "@/components/VoiceInterface";
 import AKFVisualization from "@/components/AKFVisualization";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, Shield, Cloud, Sparkles } from "lucide-react";
+import { ArrowRight, Brain, Shield, Cloud, Sparkles, Book, Scale, CheckCircle } from "lucide-react";
 
 const Index = () => {
   return (
@@ -19,6 +19,69 @@ const Index = () => {
       <Navigation />
       <Hero />
       
+      {/* Reasoning Section */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid opacity-10" />
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center px-4 py-1.5 mb-4 
+                          bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 backdrop-blur-sm rounded-full">
+              <Book className="w-4 h-4 text-violet-400 mr-2" />
+              <span className="text-sm text-violet-300 font-medium">Why Choose Our Solution</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent 
+                         bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 mb-6">
+              Federal Acquisition Excellence
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Empowering acquisition professionals with AI-driven insights while maintaining 
+              strict compliance with federal regulations.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div className="glass-card p-8 hover:bg-white/10 group transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 rounded-lg bg-violet-500/20">
+                  <Scale className="h-6 w-6 text-violet-400 group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-xl font-semibold text-white">FAR Compliance</h3>
+              </div>
+              <p className="text-gray-400">
+                Built-in compliance checks ensure adherence to Federal Acquisition Regulations 
+                and agency-specific requirements.
+              </p>
+            </div>
+            
+            <div className="glass-card p-8 hover:bg-white/10 group transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 rounded-lg bg-fuchsia-500/20">
+                  <Shield className="h-6 w-6 text-fuchsia-400 group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-xl font-semibold text-white">Security First</h3>
+              </div>
+              <p className="text-gray-400">
+                FedRAMP High and CMMC Level 3 certified platform with end-to-end encryption 
+                and comprehensive audit trails.
+              </p>
+            </div>
+            
+            <div className="glass-card p-8 hover:bg-white/10 group transition-all duration-300">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 rounded-lg bg-pink-500/20">
+                  <CheckCircle className="h-6 w-6 text-pink-400 group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-xl font-semibold text-white">Proven Results</h3>
+              </div>
+              <p className="text-gray-400">
+                Streamline acquisition processes by up to 60% while maintaining accuracy 
+                and regulatory compliance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* AI Technology Stack Section */}
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-10" />
