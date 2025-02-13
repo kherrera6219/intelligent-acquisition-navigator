@@ -1,53 +1,81 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { 
+  Home, 
+  FileText, 
+  Shield, 
+  BarChart2, 
+  Settings, 
+  HelpCircle 
+} from 'lucide-react';
+import { Card } from "@/components/ui/card";
+
+const navigationItems = [
+  { 
+    icon: Home, 
+    label: 'Dashboard', 
+    route: '/dashboard' 
+  },
+  { 
+    icon: FileText, 
+    label: 'Solicitation Review', 
+    route: '/solicitation-review' 
+  },
+  { 
+    icon: Shield, 
+    label: 'Compliance', 
+    route: '/compliance' 
+  },
+  { 
+    icon: BarChart2, 
+    label: 'Analytics', 
+    route: '/analytics' 
+  },
+  { 
+    icon: Settings, 
+    label: 'Settings', 
+    route: '/settings' 
+  },
+  { 
+    icon: HelpCircle, 
+    label: 'Help', 
+    route: '/help' 
+  }
+];
 
 const Navigation = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [activeRoute, setActiveRoute] = useState('/dashboard');
 
   return (
-    <nav className="fixed w-full bg-white/5 backdrop-blur-md z-50 border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <span className="text-2xl font-bold text-primary">Procurity.AI</span>
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-white/80 hover:text-white transition-colors">Features</a>
-            <a href="#benefits" className="text-white/80 hover:text-white transition-colors">Benefits</a>
-            <a href="#about" className="text-white/80 hover:text-white transition-colors">About</a>
-            <Button variant="default">Request Demo</Button>
-          </div>
-
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-white/80 hover:text-white"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
+    <Card className="fixed left-0 top-0 bottom-0 w-64 bg-background/80 backdrop-blur-sm border-r border-white/10 p-4 flex flex-col">
+      <div className="mb-8 flex items-center justify-center">
+        <h1 className="text-2xl font-bold text-primary">ProcurityIQ</h1>
       </div>
 
-      {isOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white/5 backdrop-blur-md border-b border-white/10">
-            <a href="#features" className="block px-3 py-2 text-white/80 hover:text-white">Features</a>
-            <a href="#benefits" className="block px-3 py-2 text-white/80 hover:text-white">Benefits</a>
-            <a href="#about" className="block px-3 py-2 text-white/80 hover:text-white">About</a>
-            <Button variant="default" className="w-full mt-2">Request Demo</Button>
-          </div>
-        </div>
-      )}
-    </nav>
+      <nav className="flex-1 space-y-2">
+        {navigationItems.map((item) => (
+          <Button
+            key={item.route}
+            variant={activeRoute === item.route ? 'default' : 'ghost'}
+            className="w-full justify-start gap-3"
+            onClick={() => setActiveRoute(item.route)}
+          >
+            <item.icon className="h-5 w-5" />
+            {item.label}
+          </Button>
+        ))}
+      </nav>
+
+      <div className="mt-auto space-y-2">
+        <Button variant="outline" className="w-full">
+          User Profile
+        </Button>
+        <Button variant="destructive" className="w-full">
+          Logout
+        </Button>
+      </div>
+    </Card>
   );
 };
 
