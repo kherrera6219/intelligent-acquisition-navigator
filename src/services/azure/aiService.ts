@@ -22,14 +22,35 @@ interface AzureAIResponse {
   };
 }
 
-// Initialize the Azure OpenAI client
-const client = new OpenAIClient(
-  "https://knowledgedev2443059259.services.ai.azure.com/",
-  new AzureKeyCredential(import.meta.env.VITE_AZURE_OPENAI_API_KEY || '')
-);
+let client: OpenAIClient | null = null;
 
-export const getAICompletion = async (messages: Array<{ role: string; content: string }>) => {
+const initializeClient = (apiKey: string) => {
+  if (!apiKey) {
+    throw new Error('Azure OpenAI API key is required');
+  }
+  
   try {
+    client = new OpenAIClient(
+      "https://knowledgedev2443059259.services.ai.azure.com/",
+      new AzureKeyCredential(apiKey)
+    );
+    return client;
+  } catch (error) {
+    console.error('Failed to initialize Azure OpenAI client:', error);
+    throw error;
+  }
+};
+
+export const getAICompletion = async (messages: Array<{ role: string; content: string }>, apiKey: string) => {
+  try {
+    if (!client) {
+      initializeClient(apiKey);
+    }
+
+    if (!client) {
+      throw new Error('Azure OpenAI client not initialized');
+    }
+
     const deploymentId = 'gpt-4o';
     const result = await client.getChatCompletions(deploymentId, messages, {
       maxTokens: 4096,
@@ -41,7 +62,6 @@ export const getAICompletion = async (messages: Array<{ role: string; content: s
       throw new Error('No completion generated');
     }
 
-    // Convert the SDK response to match our expected format
     const response: AzureAIResponse = {
       choices: result.choices.map(choice => ({
         message: {
@@ -74,9 +94,16 @@ export const getAICompletion = async (messages: Array<{ role: string; content: s
   }
 };
 
-// Research-related AI completion function
-export const getResearchCompletion = async (query: string) => {
+export const getResearchCompletion = async (query: string, apiKey: string) => {
   try {
+    if (!client) {
+      initializeClient(apiKey);
+    }
+
+    if (!client) {
+      throw new Error('Azure OpenAI client not initialized');
+    }
+
     const systemMessage = {
       role: "system",
       content: `You are an AI assistant specialized in federal acquisition research. 
@@ -124,7 +151,7 @@ const extractFARCitations = (content: string): string[] => {
 
 // Helper function to calculate confidence score based on response metadata
 const calculateConfidenceScore = (result: any): number => {
-  const baseScore = 0.8; // Base confidence score
+  const baseScore = 0.8;
   const tokenRatio = (result.usage?.completionTokens || 0) / 4096;
   return Math.min(baseScore + (tokenRatio * 0.2), 1);
 };
