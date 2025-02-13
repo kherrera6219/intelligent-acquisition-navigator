@@ -17,6 +17,22 @@ export type Role =
   | 'SMALL_BUSINESS_SPECIALIST'
   | 'SYSTEM_ADMIN';
 
+export interface AuthenticationMethod {
+  type: 'PIV' | 'CAC' | 'PASSWORD';
+  lastAuthenticated: Date;
+  expiresAt: Date;
+}
+
+export interface SecurityContext {
+  userId: string;
+  role: Role;
+  permissions: Permission[];
+  authMethod: AuthenticationMethod;
+  sessionId: string;
+  ipAddress: string;
+  userAgent: string;
+}
+
 const rolePermissions: Record<Role, Permission[]> = {
   CONTRACTING_OFFICER: [
     'READ_SOLICITATIONS',
@@ -60,9 +76,12 @@ const rolePermissions: Record<Role, Permission[]> = {
 
 export class AccessControl {
   private static instance: AccessControl;
-  private userRole: Role | null = null;
+  private securityContext: SecurityContext | null = null;
+  private readonly sessionTimeout = 1000 * 60 * 15; // 15 minutes
 
-  private constructor() {}
+  private constructor() {
+    this.startSessionMonitor();
+  }
 
   static getInstance(): AccessControl {
     if (!AccessControl.instance) {
@@ -71,17 +90,65 @@ export class AccessControl {
     return AccessControl.instance;
   }
 
-  setUserRole(role: Role) {
-    this.userRole = role;
+  private startSessionMonitor() {
+    setInterval(() => {
+      if (this.securityContext && this.securityContext.authMethod.expiresAt < new Date()) {
+        this.logout();
+        // Trigger re-authentication
+        window.location.href = '/login';
+      }
+    }, 60000); // Check every minute
+  }
+
+  async authenticateWithPIV(): Promise<boolean> {
+    try {
+      // Implement PIV card authentication logic here
+      // This would typically involve:
+      // 1. Reading the PIV card certificate
+      // 2. Validating the certificate chain
+      // 3. Checking certificate revocation status
+      // 4. Verifying the PIN
+      return true;
+    } catch (error) {
+      console.error('PIV authentication failed:', error);
+      return false;
+    }
+  }
+
+  async authenticateWithCAC(): Promise<boolean> {
+    try {
+      // Implement CAC card authentication logic here
+      // Similar to PIV but with CAC-specific requirements
+      return true;
+    } catch (error) {
+      console.error('CAC authentication failed:', error);
+      return false;
+    }
+  }
+
+  setSecurityContext(context: SecurityContext) {
+    this.securityContext = context;
+    // Log the authentication event
+    auditLogger.log({
+      action: 'USER_AUTHENTICATION',
+      resourceType: 'AUTH',
+      resourceId: context.userId,
+      severity: 'INFO',
+      details: {
+        authMethod: context.authMethod.type,
+        role: context.role,
+        sessionId: context.sessionId
+      }
+    });
   }
 
   hasPermission(permission: Permission): boolean {
-    if (!this.userRole) return false;
-    return rolePermissions[this.userRole].includes(permission);
+    if (!this.securityContext) return false;
+    return rolePermissions[this.securityContext.role].includes(permission);
   }
 
   hasRole(role: Role): boolean {
-    return this.userRole === role;
+    return this.securityContext?.role === role;
   }
 
   getRolePermissions(role: Role): Permission[] {
@@ -89,9 +156,31 @@ export class AccessControl {
   }
 
   getCurrentUserPermissions(): Permission[] {
-    if (!this.userRole) return [];
-    return rolePermissions[this.userRole];
+    if (!this.securityContext) return [];
+    return rolePermissions[this.securityContext.role];
+  }
+
+  getSecurityContext(): SecurityContext | null {
+    return this.securityContext;
+  }
+
+  logout() {
+    if (this.securityContext) {
+      auditLogger.log({
+        action: 'USER_LOGOUT',
+        resourceType: 'AUTH',
+        resourceId: this.securityContext.userId,
+        severity: 'INFO',
+        details: {
+          sessionId: this.securityContext.sessionId
+        }
+      });
+    }
+    this.securityContext = null;
   }
 }
 
 export const accessControl = AccessControl.getInstance();
+
+// Import the audit logger
+import { auditLogger } from '../audit';
