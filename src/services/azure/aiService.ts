@@ -5,9 +5,15 @@ interface AzureAIResponse {
   choices: Array<{
     message: {
       content: string;
+      role: string;
     };
+    finish_reason: string;
+    index: number;
   }>;
+  created: number;
+  id: string;
   model: string;
+  object: string;
   usage: {
     prompt_tokens: number;
     completion_tokens: number;
