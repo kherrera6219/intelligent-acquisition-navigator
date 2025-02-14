@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 import { getAICompletion } from "@/services/azure/aiService";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,11 +98,11 @@ export class ReasoningEngine {
     return data.id;
   }
 
-  private async insertReasoningResult(result: Omit<ReasoningResult, 'id'>): Promise<string> {
+  private async insertReasoningResult(result: Omit<ReasoningResult, 'id'>): Promise<ReasoningResult> {
     const { data, error } = await supabase
       .from('reasoning_results')
       .insert([result])
-      .select('id')
+      .select()
       .single();
 
     if (error) {
@@ -111,7 +110,7 @@ export class ReasoningEngine {
       throw error;
     }
 
-    return data.id;
+    return data;
   }
 
   public async processReasoning(
@@ -154,8 +153,7 @@ export class ReasoningEngine {
       };
 
       // Store and return result
-      const resultId = await this.insertReasoningResult(result);
-      return { ...result, id: resultId };
+      return await this.insertReasoningResult(result);
 
     } catch (error) {
       console.error('Error in reasoning process:', error);
