@@ -150,23 +150,6 @@
   @apply max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-/* Spacing Modules */
-.spacing-module-sm {
-  @apply p-2;
-}
-
-.spacing-module-md {
-  @apply p-4;
-}
-
-.spacing-module-lg {
-  @apply p-6;
-}
-
-.spacing-module-xl {
-  @apply p-8;
-}
-
 /* Glass Card Modules */
 .glass-card {
   @apply bg-[#221F26]/40 backdrop-blur-lg border border-white/10 rounded-2xl 
