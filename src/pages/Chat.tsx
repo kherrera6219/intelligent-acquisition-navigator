@@ -32,6 +32,9 @@ const Chat = () => {
     })),
     {
       onSuccess: async (data) => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
         const assistantMessage: Message = {
           id: crypto.randomUUID(),
           role: "assistant",
@@ -47,7 +50,7 @@ const Chat = () => {
             conversation_id: conversationId,
             content: assistantMessage.content,
             role: assistantMessage.role,
-            user_id: supabase.auth.user()?.id,
+            user_id: user.id,
           });
 
           if (error) {
@@ -65,12 +68,15 @@ const Chat = () => {
 
   useEffect(() => {
     const initializeConversation = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       // Create a new conversation if none exists
       const { data: conversation, error } = await supabase
         .from('conversations')
         .insert({
           title: `Chat ${new Date().toLocaleDateString()}`,
-          user_id: supabase.auth.user()?.id,
+          user_id: user.id,
         })
         .select()
         .single();
@@ -90,6 +96,9 @@ const Chat = () => {
     e.preventDefault();
     if (!input.trim() || !conversationId) return;
 
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: "user",
@@ -105,7 +114,7 @@ const Chat = () => {
       conversation_id: conversationId,
       content: userMessage.content,
       role: userMessage.role,
-      user_id: supabase.auth.user()?.id,
+      user_id: user.id,
       metadata: {
         userRole: selectedRole,
         agencyRegulation: selectedAgency,

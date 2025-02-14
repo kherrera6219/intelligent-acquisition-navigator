@@ -20,9 +20,12 @@ export const FileUpload = ({ conversationId, onUploadComplete }: FileUploadProps
 
     setIsUploading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
       // Upload file to Supabase Storage
       const fileExt = file.name.split('.').pop();
-      const filePath = `${supabase.auth.user()?.id}/${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('user_uploads')
@@ -39,7 +42,7 @@ export const FileUpload = ({ conversationId, onUploadComplete }: FileUploadProps
           file_type: file.type,
           file_size: file.size,
           conversation_id: conversationId,
-          user_id: supabase.auth.user()?.id,
+          user_id: user.id,
         })
         .select()
         .single();
