@@ -774,6 +774,7 @@ export type Database = {
     }
     Enums: {
       document_type: "RFI" | "RFP" | "RFQ" | "SOW" | "PWS"
+      domain_type: "CORE" | "SPECIALIZED" | "SUPPORT"
       framework_component_type:
         | "PILLAR"
         | "LEVEL"
