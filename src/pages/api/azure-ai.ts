@@ -1,10 +1,10 @@
 
 import { Request, Response } from 'express';
-import { OpenAI } from '@azure/openai';
+import { OpenAIClient, AzureKeyCredential } from "@azure/openai";
 
-const client = new OpenAI(
+const client = new OpenAIClient(
   "https://knowledgedev2443059259.services.ai.azure.com/",
-  process.env.AZURE_OPENAI_API_KEY || ''
+  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY || '')
 );
 
 interface AIError extends Error {

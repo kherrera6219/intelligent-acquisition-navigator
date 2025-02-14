@@ -1,5 +1,5 @@
 
-import { OpenAI } from "@azure/openai";
+import { OpenAIClient, AzureKeyCredential } from "@azure/openai";
 import { toast } from "@/hooks/use-toast";
 
 interface AzureAIResponse {
@@ -22,7 +22,7 @@ interface AzureAIResponse {
   };
 }
 
-let client: OpenAI | null = null;
+let client: OpenAIClient | null = null;
 
 const initializeClient = (apiKey: string) => {
   if (!apiKey) {
@@ -30,9 +30,9 @@ const initializeClient = (apiKey: string) => {
   }
   
   try {
-    client = new OpenAI(
+    client = new OpenAIClient(
       "https://knowledgedev2443059259.services.ai.azure.com/",
-      apiKey
+      new AzureKeyCredential(apiKey)
     );
     return client;
   } catch (error) {
