@@ -13,7 +13,8 @@ import {
   Building2,
   Scale,
   ClipboardCheck,
-  AlertCircle
+  AlertCircle,
+  BookOpen
 } from 'lucide-react';
 
 export const navigationItems = [
@@ -23,6 +24,13 @@ export const navigationItems = [
     route: '/dashboard',
     permission: null,
     description: 'View your personalized dashboard'
+  },
+  { 
+    icon: BookOpen,
+    label: 'Knowledge Base',
+    route: '/knowledge-base',
+    permission: null,
+    description: 'Access the Multi-Domain Knowledge Framework'
   },
   { 
     icon: FileText, 
@@ -102,4 +110,3 @@ export const navigationItems = [
     description: 'View complete site structure'
   }
 ] as const;
-
