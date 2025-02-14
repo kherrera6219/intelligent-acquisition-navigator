@@ -51,10 +51,16 @@ export interface Context {
 export class ReasoningEngine {
   private complianceRules: Record<string, ComplianceRule>;
   private apiKey: string;
+  private currentState: WorkflowState;
+  private analysisHistory: any[];
+  private sessionId: string;
 
   constructor(complianceRules: Record<string, ComplianceRule>, apiKey: string) {
     this.complianceRules = complianceRules;
     this.apiKey = apiKey;
+    this.currentState = WorkflowState.QUERY_PARSING;
+    this.analysisHistory = [];
+    this.sessionId = `session_${new Date().toISOString()}`;
   }
 
   private async generateWithAI(prompt: string): Promise<string> {
@@ -358,5 +364,15 @@ Provide a clear and concise conclusion that incorporates the reasoning steps and
     if (response.toLowerCase().includes('fail')) return 'failed';
     if (response.toLowerCase().includes('warn')) return 'warning';
     return 'passed';
+  }
+
+  private addToHistory(action: string, data: Record<string, any>): void {
+    this.analysisHistory.push({
+      timestamp: new Date().toISOString(),
+      state: this.currentState,
+      action,
+      data,
+      session_id: this.sessionId
+    });
   }
 }
