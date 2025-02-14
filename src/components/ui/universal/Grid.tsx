@@ -1,35 +1,39 @@
 
-import { ReactNode } from "react";
-import { cn } from "@/lib/utils";
-
 interface GridProps {
-  children: ReactNode;
-  className?: string;
-  columns?: 1 | 2 | 3 | 4 | 5 | 6;
+  children: React.ReactNode;
+  columns?: number;
   gap?: "sm" | "md" | "lg" | "xl";
+  className?: string;
 }
 
-export const Grid = ({ 
-  children, 
-  className,
+const gapClasses = {
+  sm: "gap-2",
+  md: "gap-4",
+  lg: "gap-6",
+  xl: "gap-8",
+};
+
+const columnsClasses = {
+  1: "grid-cols-1",
+  2: "grid-cols-1 md:grid-cols-2",
+  3: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
+  5: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
+  6: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6",
+};
+
+export const Grid = ({
+  children,
   columns = 1,
-  gap = "md"
+  gap = "md",
+  className = "",
 }: GridProps) => {
   return (
-    <div className={cn(
-      "grid",
-      columns === 1 && "grid-cols-1",
-      columns === 2 && "grid-cols-1 md:grid-cols-2",
-      columns === 3 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
-      columns === 4 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
-      columns === 5 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
-      columns === 6 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6",
-      gap === "sm" && "gap-2",
-      gap === "md" && "gap-4",
-      gap === "lg" && "gap-6",
-      gap === "xl" && "gap-8",
-      className
-    )}>
+    <div
+      className={`grid ${columnsClasses[columns as keyof typeof columnsClasses]} ${
+        gapClasses[gap]
+      } ${className}`}
+    >
       {children}
     </div>
   );

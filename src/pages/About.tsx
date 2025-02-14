@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { Users, Target, Award } from "lucide-react";
+import { Users, Shield, BarChart } from "lucide-react";
 
 const About = () => {
   return (
@@ -21,7 +21,7 @@ const About = () => {
           <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/5">
             <div className="h-12 w-12 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
                            rounded-lg flex items-center justify-center mb-4">
-              <Target className="h-6 w-6 text-fuchsia-400" />
+              <Shield className="h-6 w-6 text-fuchsia-400" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">Our Mission</h3>
             <p className="text-gray-400">
@@ -33,7 +33,7 @@ const About = () => {
           <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/5">
             <div className="h-12 w-12 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
                            rounded-lg flex items-center justify-center mb-4">
-              <Award className="h-6 w-6 text-fuchsia-400" />
+              <BarChart className="h-6 w-6 text-fuchsia-400" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">Our Values</h3>
             <p className="text-gray-400">
