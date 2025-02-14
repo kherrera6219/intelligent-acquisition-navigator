@@ -1,8 +1,8 @@
 
 import { KnowledgeDomainList } from "@/components/knowledge/KnowledgeDomainList";
+import { AIAnalysisDashboard } from "@/components/knowledge/AIAnalysisDashboard";
 import { Card } from "@/components/ui/card";
 import { Brain, Database, Shield, Globe } from "lucide-react";
-import { sectionData } from "@/data/sectionData";
 
 const KnowledgeBase = () => {
   return (
@@ -65,6 +65,9 @@ const KnowledgeBase = () => {
           </ul>
         </div>
       </Card>
+
+      {/* AI Analysis Dashboard */}
+      <AIAnalysisDashboard />
 
       {/* Knowledge Domains List */}
       <KnowledgeDomainList />
