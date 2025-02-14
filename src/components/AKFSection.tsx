@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, LineChart, BarChart, Settings, Network, Zap, Maximize2, Minimize2 } from 'lucide-react';
 import { MetricsChart } from './MetricsChart';
