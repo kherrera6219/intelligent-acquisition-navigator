@@ -10,6 +10,7 @@ import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
 import SignUpForm from "./components/auth/SignUpForm";
 import UserProfile from "./components/auth/UserProfile";
 import PasswordReset from "./components/auth/PasswordReset";
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/signup" element={<SignUpForm />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/reset-password" element={<PasswordReset />} />

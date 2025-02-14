@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -7,10 +6,12 @@ import { GlassCard } from "@/components/ui/universal/GlassCard";
 import { GradientButton } from "@/components/ui/universal/GradientButton";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, BarChart2, FileText, Users } from "lucide-react";
+import CookieConsent from "@/components/CookieConsent";
 
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showPrivacyNotice, setShowPrivacyNotice] = useState(true);
 
   const handleDemoRequest = () => {
     toast({
@@ -21,6 +22,35 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      {/* Privacy Notice Banner */}
+      {showPrivacyNotice && (
+        <div className="bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border-b border-white/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div className="flex items-center justify-between flex-wrap">
+              <div className="flex-1 flex items-center">
+                <p className="text-sm text-gray-300">
+                  <span className="font-medium text-white">Privacy Update:</span>
+                  {" "}We've updated our privacy policy to better protect your data.
+                  {" "}
+                  <button
+                    onClick={() => navigate("/privacy")}
+                    className="text-white underline hover:text-gray-100"
+                  >
+                    Learn more
+                  </button>
+                </p>
+              </div>
+              <button
+                onClick={() => setShowPrivacyNotice(false)}
+                className="flex-shrink-0 ml-4 text-gray-400 hover:text-white"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
@@ -169,6 +199,9 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Cookie Consent */}
+      <CookieConsent />
     </div>
   );
 };
