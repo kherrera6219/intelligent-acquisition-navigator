@@ -9,6 +9,119 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      auth_methods: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          last_authenticated: string | null
+          metadata: Json | null
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          last_authenticated?: string | null
+          metadata?: Json | null
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          last_authenticated?: string | null
+          metadata?: Json | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      document_attachments: {
+        Row: {
+          content_type: string
+          file_path: string
+          id: string
+          name: string
+          size: number
+          solicitation_id: string
+          uploaded_at: string
+          uploaded_by: string
+          version: number
+        }
+        Insert: {
+          content_type: string
+          file_path: string
+          id?: string
+          name: string
+          size: number
+          solicitation_id: string
+          uploaded_at?: string
+          uploaded_by: string
+          version?: number
+        }
+        Update: {
+          content_type?: string
+          file_path?: string
+          id?: string
+          name?: string
+          size?: number
+          solicitation_id?: string
+          uploaded_at?: string
+          uploaded_by?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_attachments_solicitation_id_fkey"
+            columns: ["solicitation_id"]
+            isOneToOne: false
+            referencedRelation: "solicitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      far_citations: {
+        Row: {
+          applicability: string[]
+          id: string
+          last_updated: string
+          part: string
+          section: string
+          source_document: string | null
+          subpart: string
+          text: string
+          title: string
+        }
+        Insert: {
+          applicability: string[]
+          id?: string
+          last_updated?: string
+          part: string
+          section: string
+          source_document?: string | null
+          subpart: string
+          text: string
+          title: string
+        }
+        Update: {
+          applicability?: string[]
+          id?: string
+          last_updated?: string
+          part?: string
+          section?: string
+          source_document?: string | null
+          subpart?: string
+          text?: string
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -36,6 +149,182 @@ export type Database = {
         }
         Relationships: []
       }
+      roles: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      solicitation_citations: {
+        Row: {
+          citation_id: string
+          created_at: string
+          id: string
+          solicitation_id: string
+        }
+        Insert: {
+          citation_id: string
+          created_at?: string
+          id?: string
+          solicitation_id: string
+        }
+        Update: {
+          citation_id?: string
+          created_at?: string
+          id?: string
+          solicitation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "solicitation_citations_citation_id_fkey"
+            columns: ["citation_id"]
+            isOneToOne: false
+            referencedRelation: "far_citations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "solicitation_citations_solicitation_id_fkey"
+            columns: ["solicitation_id"]
+            isOneToOne: false
+            referencedRelation: "solicitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      solicitations: {
+        Row: {
+          created_at: string
+          created_by: string
+          current_reviewer: string | null
+          description: string | null
+          due_date: string | null
+          estimated_value: number | null
+          id: string
+          status: Database["public"]["Enums"]["solicitation_status"]
+          title: string
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          current_reviewer?: string | null
+          description?: string | null
+          due_date?: string | null
+          estimated_value?: number | null
+          id?: string
+          status?: Database["public"]["Enums"]["solicitation_status"]
+          title: string
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          current_reviewer?: string | null
+          description?: string | null
+          due_date?: string | null
+          estimated_value?: number | null
+          id?: string
+          status?: Database["public"]["Enums"]["solicitation_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["document_type"]
+          updated_at?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      version_history: {
+        Row: {
+          changed_at: string
+          changed_by: string
+          changes: Json
+          id: string
+          previous_version: string | null
+          solicitation_id: string
+          version: number
+        }
+        Insert: {
+          changed_at?: string
+          changed_by: string
+          changes: Json
+          id?: string
+          previous_version?: string | null
+          solicitation_id: string
+          version: number
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string
+          changes?: Json
+          id?: string
+          previous_version?: string | null
+          solicitation_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "version_history_previous_version_fkey"
+            columns: ["previous_version"]
+            isOneToOne: false
+            referencedRelation: "version_history"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "version_history_solicitation_id_fkey"
+            columns: ["solicitation_id"]
+            isOneToOne: false
+            referencedRelation: "solicitations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -44,7 +333,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      document_type: "RFI" | "RFP" | "RFQ" | "SOW" | "PWS"
+      solicitation_status: "DRAFT" | "IN_REVIEW" | "APPROVED" | "PUBLISHED"
     }
     CompositeTypes: {
       [_ in never]: never
