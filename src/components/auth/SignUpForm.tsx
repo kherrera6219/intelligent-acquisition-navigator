@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Mail, User, Building, Lock, Github, Facebook, Chrome, Windows } from "lucide-react";
+import { Shield, Mail, User, Building, Lock, Github, Facebook, Chrome, Microsoft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -27,7 +27,7 @@ const SignUpForm = () => {
     });
   };
 
-  const handleSocialLogin = async (provider: 'github' | 'google' | 'facebook' | 'microsoft') => {
+  const handleSocialLogin = async (provider: 'github' | 'google' | 'facebook' | 'azure') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -136,9 +136,9 @@ const SignUpForm = () => {
             type="button"
             variant="outline"
             className="w-full"
-            onClick={() => handleSocialLogin('microsoft')}
+            onClick={() => handleSocialLogin('azure')}
           >
-            <Windows className="mr-2 h-4 w-4" />
+            <Microsoft className="mr-2 h-4 w-4" />
             Microsoft
           </Button>
         </div>
