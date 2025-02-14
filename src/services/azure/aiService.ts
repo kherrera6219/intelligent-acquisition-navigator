@@ -1,5 +1,5 @@
 
-import { OpenAIClient, AzureKeyCredential } from "@azure/openai";
+import { AzureKeyCredential, OpenAIClient } from "@azure/openai";
 import { toast } from "@/hooks/use-toast";
 
 interface AzureAIResponse {

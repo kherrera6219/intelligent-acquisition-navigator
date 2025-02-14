@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { OpenAIClient, AzureKeyCredential } from "@azure/openai";
+import { AzureKeyCredential, OpenAIClient } from "@azure/openai";
 
 const client = new OpenAIClient(
   "https://knowledgedev2443059259.services.ai.azure.com/",
@@ -32,8 +32,6 @@ export default async function handler(req: Request, res: Response) {
     const { messages, isResearch } = req.body;
     const deploymentId = 'gpt-4o';
 
-    // Add rate limiting checks based on deployment settings
-    // Rate limits: 414,000 tokens/min, 2,484 requests/min
     const result = await client.getChatCompletions(deploymentId, messages, {
       maxTokens: 4096,
       temperature: isResearch ? 0.7 : 1,
