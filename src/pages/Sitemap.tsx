@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Home, FileText, Shield, BarChart2, Settings, HelpCircle, Mail, Info } from 'lucide-react';
+import { ArrowRight, Brain, Shield, Zap, BarChart } from 'lucide-react';
 
 const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
   <Card className="p-6 glass-card">
@@ -26,40 +26,20 @@ const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: 
 const Sitemap = () => {
   const sections = {
     main: [
-      { path: "/", label: "Home", icon: Home },
-      { path: "/features", label: "Features", icon: FileText },
-      { path: "/pricing", label: "Pricing", icon: BarChart2 },
-      { path: "/about", label: "About", icon: Info },
-      { path: "/contact", label: "Contact", icon: Mail },
+      { path: "/", label: "Home", icon: Brain },
+      { path: "/features", label: "Features", icon: Shield },
+      { path: "/pricing", label: "Pricing", icon: BarChart },
     ],
     dashboard: [
-      { path: "/dashboard", label: "Dashboard", icon: Home },
-      { path: "/proposals", label: "Proposals", icon: FileText },
-      { path: "/chat", label: "Chat Support", icon: HelpCircle },
-    ],
-    auth: [
-      { path: "/signup", label: "Sign Up", icon: Shield },
-      { path: "/profile", label: "User Profile", icon: Settings },
-      { path: "/reset-password", label: "Password Reset", icon: Shield },
+      { path: "/dashboard", label: "Dashboard", icon: Brain },
+      { path: "/proposals", label: "Proposals", icon: Shield },
+      { path: "/chat", label: "Chat Support", icon: Zap },
     ],
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Back Navigation */}
-        <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            className="gap-2"
-            onClick={() => window.history.back()}
-            aria-label="Go back to previous page"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
-        </div>
-
         {/* Page Title */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gradient mb-4">Application Map</h1>
@@ -72,7 +52,6 @@ const Sitemap = () => {
         <div className="space-y-8">
           <SitemapSection title="Main Navigation" links={sections.main} />
           <SitemapSection title="Dashboard & Tools" links={sections.dashboard} />
-          <SitemapSection title="Account Management" links={sections.auth} />
         </div>
 
         {/* Quick Actions */}
@@ -81,16 +60,8 @@ const Sitemap = () => {
             className="enterprise-gradient"
             size="lg"
           >
-            <Home className="mr-2 h-4 w-4" />
             Return to Home
-          </Button>
-          <Button 
-            variant="outline"
-            size="lg"
-            className="border-white/20"
-          >
-            <HelpCircle className="mr-2 h-4 w-4" />
-            Need Help?
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>

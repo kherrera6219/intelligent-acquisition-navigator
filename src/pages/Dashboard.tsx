@@ -6,10 +6,9 @@ import { Container } from "@/components/ui/universal/Container";
 import { Card } from "@/components/ui/universal/Card";
 import { 
   FileText, 
-  ShieldCheck, 
-  TrendingUp, 
-  Clock,
-  AlertCircle 
+  Shield, 
+  Zap, 
+  BarChart 
 } from 'lucide-react';
 
 const metrics = [
@@ -20,19 +19,19 @@ const metrics = [
     change: "+5 from last week"
   },
   {
-    icon: <ShieldCheck className="h-6 w-6 text-emerald-400" />,
+    icon: <Shield className="h-6 w-6 text-emerald-400" />,
     title: "Compliance Rate",
     value: "95%",
     change: "+2% improvement"
   },
   {
-    icon: <TrendingUp className="h-6 w-6 text-blue-400" />,
+    icon: <Zap className="h-6 w-6 text-blue-400" />,
     title: "Avg. Review Time",
     value: "12m 34s",
     change: "-3m from last week"
   },
   {
-    icon: <Clock className="h-6 w-6 text-amber-400" />,
+    icon: <BarChart className="h-6 w-6 text-amber-400" />,
     title: "Tasks Completed",
     value: "156",
     change: "+22 this week"

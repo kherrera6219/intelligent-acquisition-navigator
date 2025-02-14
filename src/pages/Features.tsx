@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Brain, Shield, Zap, BarChart2, Clock, Lock } from "lucide-react";
+import { Brain, Shield, Zap, BarChart } from "lucide-react";
 
 const features = [
   {
@@ -22,18 +22,8 @@ const features = [
   {
     title: "Advanced Analytics",
     description: "Make data-driven decisions with comprehensive analytics and reporting.",
-    icon: BarChart2,
-  },
-  {
-    title: "Time-Saving Automation",
-    description: "Automate repetitive tasks and focus on strategic decisions.",
-    icon: Clock,
-  },
-  {
-    title: "Enterprise Security",
-    description: "Bank-grade security and encryption for your sensitive data.",
-    icon: Lock,
-  },
+    icon: BarChart,
+  }
 ];
 
 const Features = () => {
