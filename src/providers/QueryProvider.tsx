@@ -15,7 +15,7 @@ export const QueryProvider = ({ children }: QueryProviderProps) => {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5, // 5 minutes
-        cacheTime: 1000 * 60 * 30, // 30 minutes
+        gcTime: 1000 * 60 * 30, // 30 minutes (formerly cacheTime)
         retry: 2,
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
@@ -26,7 +26,7 @@ export const QueryProvider = ({ children }: QueryProviderProps) => {
             errorTracker.trackError({
               message: error.message,
               severity: 'MEDIUM',
-              errorType: 'API',
+              errorType: 'SYSTEM', // Changed from 'API' to 'SYSTEM'
               status: 'NEW'
             });
 
@@ -56,7 +56,7 @@ export const QueryProvider = ({ children }: QueryProviderProps) => {
             errorTracker.trackError({
               message: error.message,
               severity: 'HIGH',
-              errorType: 'API',
+              errorType: 'SYSTEM', // Changed from 'API' to 'SYSTEM'
               status: 'NEW'
             });
 
