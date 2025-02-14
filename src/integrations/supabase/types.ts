@@ -42,6 +42,80 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          content: string
+          context_data: Json | null
+          conversation_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          parent_message_id: string | null
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          context_data?: Json | null
+          conversation_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          parent_message_id?: string | null
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          context_data?: Json | null
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          parent_message_id?: string | null
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_parent_message_id_fkey"
+            columns: ["parent_message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       document_attachments: {
         Row: {
           content_type: string
@@ -250,6 +324,56 @@ export type Database = {
           version?: number
         }
         Relationships: []
+      }
+      user_documents: {
+        Row: {
+          conversation_id: string | null
+          extracted_text: string | null
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id: string
+          metadata: Json | null
+          processed_status: string | null
+          uploaded_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          extracted_text?: string | null
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id?: string
+          metadata?: Json | null
+          processed_status?: string | null
+          uploaded_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          extracted_text?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          metadata?: Json | null
+          processed_status?: string | null
+          uploaded_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_documents_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
