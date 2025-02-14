@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Navigation from "@/components/Navigation";
 import { FileText, Search, Filter, Plus, Clock, CheckCircle, XCircle } from "lucide-react";
 
 type ProposalStatus = "pending" | "approved" | "rejected";
