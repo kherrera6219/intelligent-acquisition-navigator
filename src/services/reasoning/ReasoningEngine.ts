@@ -130,7 +130,6 @@ export class ReasoningEngine {
       throw error;
     }
 
-    // Convert Supabase response to match ReasoningResult interface
     return {
       conclusion: data.conclusion,
       confidence_score: data.confidence_score,
@@ -275,7 +274,6 @@ export class ReasoningEngine {
     const prompt = this.createConclusionPrompt(steps || [], checks || [], context);
     const response = await this.generateWithAI(prompt);
 
-    // In a real implementation, we would parse the AI response more carefully
     return {
       conclusion: response,
       confidence: 0.85 // Default confidence, could be extracted from AI response
