@@ -10,6 +10,7 @@ import { navigationItems } from '@/config/navigationItems';
 import { NavigationItem } from './navigation/NavigationItem';
 import { NavigationFooter } from './navigation/NavigationFooter';
 import { SystemStatus } from './navigation/SystemStatus';
+import { Separator } from '@/components/ui/separator';
 
 const Navigation = () => {
   const [activeRoute, setActiveRoute] = useState('/dashboard');
@@ -75,6 +76,11 @@ const Navigation = () => {
     }
   };
 
+  // Group navigation items by category
+  const primaryNavItems = navigationItems.slice(0, 4);
+  const complianceNavItems = navigationItems.slice(4, 8);
+  const systemNavItems = navigationItems.slice(8);
+
   return (
     <Card className="fixed left-0 top-0 bottom-0 w-64 bg-background/80 backdrop-blur-sm border-r border-white/10 p-4 flex flex-col">
       <div className="mb-8 flex items-center justify-center">
@@ -82,24 +88,70 @@ const Navigation = () => {
       </div>
 
       <nav 
-        className="flex-1 space-y-2" 
+        className="flex-1 space-y-6 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/10" 
         role="navigation" 
         aria-label="Main navigation"
       >
-        {navigationItems.map((item) => {
-          const isVisible = !item.permission || accessControl.hasPermission(item.permission);
-          
-          if (!isVisible) return null;
+        {/* Primary Navigation */}
+        <div className="space-y-2">
+          <h2 className="text-xs uppercase text-muted-foreground font-semibold px-2">
+            Core Functions
+          </h2>
+          {primaryNavItems.map((item) => {
+            const isVisible = !item.permission || accessControl.hasPermission(item.permission);
+            if (!isVisible) return null;
+            return (
+              <NavigationItem
+                key={item.route}
+                {...item}
+                isActive={activeRoute === item.route}
+                onClick={() => handleNavigation(item.route)}
+              />
+            );
+          })}
+        </div>
 
-          return (
-            <NavigationItem
-              key={item.route}
-              {...item}
-              isActive={activeRoute === item.route}
-              onClick={() => handleNavigation(item.route)}
-            />
-          );
-        })}
+        <Separator className="my-4" />
+
+        {/* Compliance & Review */}
+        <div className="space-y-2">
+          <h2 className="text-xs uppercase text-muted-foreground font-semibold px-2">
+            Compliance & Review
+          </h2>
+          {complianceNavItems.map((item) => {
+            const isVisible = !item.permission || accessControl.hasPermission(item.permission);
+            if (!isVisible) return null;
+            return (
+              <NavigationItem
+                key={item.route}
+                {...item}
+                isActive={activeRoute === item.route}
+                onClick={() => handleNavigation(item.route)}
+              />
+            );
+          })}
+        </div>
+
+        <Separator className="my-4" />
+
+        {/* System */}
+        <div className="space-y-2">
+          <h2 className="text-xs uppercase text-muted-foreground font-semibold px-2">
+            System
+          </h2>
+          {systemNavItems.map((item) => {
+            const isVisible = !item.permission || accessControl.hasPermission(item.permission);
+            if (!isVisible) return null;
+            return (
+              <NavigationItem
+                key={item.route}
+                {...item}
+                isActive={activeRoute === item.route}
+                onClick={() => handleNavigation(item.route)}
+              />
+            );
+          })}
+        </div>
       </nav>
 
       <SystemStatus 
