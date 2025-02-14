@@ -51,8 +51,7 @@ export const AzureAIChat = () => {
       toast({
         title: "API Key Required",
         description: "Please enter your Azure OpenAI API key to start chatting.",
-        variant: "destructive",
-        icon: <AlertCircle className="h-5 w-5" />,
+        variant: "destructive"
       });
       return;
     }
@@ -73,8 +72,7 @@ export const AzureAIChat = () => {
       toast({
         title: "Connection Error",
         description: "Unable to reach the AI service. Please check your internet connection and try again.",
-        variant: "destructive",
-        icon: <AlertCircle className="h-5 w-5" />,
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
