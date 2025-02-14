@@ -5,29 +5,46 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Mail, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const PasswordReset = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     try {
-      // TODO: Implement actual password reset logic here
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/update-password`,
+      });
+
+      if (error) throw error;
+
+      // Call our custom function to create a reset token
+      const { data, error: fnError } = await supabase
+        .rpc('create_password_reset_token', { user_email: email });
+
+      if (fnError) throw fnError;
+
       setIsSubmitted(true);
       toast({
         title: "Reset link sent",
         description: "Check your email for password reset instructions.",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to send reset link. Please try again.",
+        description: error.message || "Failed to send reset link. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,14 +81,16 @@ const PasswordReset = () => {
                 placeholder="Enter your email"
                 className="pl-10"
                 required
+                disabled={isLoading}
               />
             </div>
 
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+              disabled={isLoading}
             >
-              Send Reset Link
+              {isLoading ? "Sending..." : "Send Reset Link"}
             </Button>
           </form>
         ) : (

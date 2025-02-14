@@ -5,10 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Mail, User, Building, Lock } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const SignUpForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -36,18 +39,36 @@ const SignUpForm = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
-      // TODO: Implement actual signup logic here
-      toast({
-        title: "Account created",
-        description: "Your account has been created successfully.",
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.fullName,
+            organization: formData.organization,
+          }
+        }
       });
-    } catch (error) {
+
+      if (error) throw error;
+
+      if (data.user) {
+        toast({
+          title: "Account created",
+          description: "Please check your email to verify your account.",
+        });
+        navigate("/login");
+      }
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create account. Please try again.",
+        description: error.message || "Failed to create account. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,6 +94,7 @@ const SignUpForm = () => {
                 onChange={handleChange}
                 className="pl-10"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -86,6 +108,7 @@ const SignUpForm = () => {
                 onChange={handleChange}
                 className="pl-10"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -99,6 +122,7 @@ const SignUpForm = () => {
                 onChange={handleChange}
                 className="pl-10"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -112,6 +136,7 @@ const SignUpForm = () => {
                 onChange={handleChange}
                 className="pl-10"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -125,6 +150,7 @@ const SignUpForm = () => {
                 onChange={handleChange}
                 className="pl-10"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -132,8 +158,9 @@ const SignUpForm = () => {
           <Button
             type="submit"
             className="w-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+            disabled={isLoading}
           >
-            Create Secure Account
+            {isLoading ? "Creating Account..." : "Create Secure Account"}
           </Button>
 
           <div className="text-center space-y-2">
