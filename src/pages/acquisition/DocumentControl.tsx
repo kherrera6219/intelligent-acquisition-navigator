@@ -1,125 +1,182 @@
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Card } from "@/components/ui/card";
+import { useState } from "react";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Card } from "@/components/ui/universal/Card";
+import { Grid } from "@/components/ui/universal/Grid";
+import { Container } from "@/components/ui/universal/Container";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { 
-  FileText, 
   Search, 
   Filter, 
-  History,
+  FileText, 
+  Upload,
   Download,
-  ExternalLink,
-  Clock
-} from 'lucide-react';
-import { Input } from "@/components/ui/input";
-import type { SolicitationDocument, VersionHistory } from '@/types/acquisition';
-import Navigation from "@/components/Navigation";
+  Eye,
+  Clock,
+  CheckCircle,
+  AlertTriangle 
+} from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+
+interface Document {
+  id: string;
+  title: string;
+  type: string;
+  status: "draft" | "review" | "approved";
+  lastModified: string;
+  owner: string;
+}
+
+const mockDocuments: Document[] = [
+  {
+    id: "1",
+    title: "Federal Acquisition Regulation Update 2024",
+    type: "Policy",
+    status: "approved",
+    lastModified: "2024-02-15",
+    owner: "John Smith"
+  },
+  {
+    id: "2",
+    title: "IT Equipment Procurement Guidelines",
+    type: "Procedure",
+    status: "review",
+    lastModified: "2024-02-14",
+    owner: "Sarah Johnson"
+  },
+  {
+    id: "3",
+    title: "Vendor Evaluation Template",
+    type: "Template",
+    status: "draft",
+    lastModified: "2024-02-13",
+    owner: "Michael Brown"
+  }
+];
+
+const getStatusColor = (status: Document["status"]) => {
+  switch (status) {
+    case "draft":
+      return "bg-yellow-400/20 text-yellow-400";
+    case "review":
+      return "bg-blue-400/20 text-blue-400";
+    case "approved":
+      return "bg-green-400/20 text-green-400";
+  }
+};
+
+const getStatusIcon = (status: Document["status"]) => {
+  switch (status) {
+    case "draft":
+      return Clock;
+    case "review":
+      return AlertTriangle;
+    case "approved":
+      return CheckCircle;
+  }
+};
 
 const DocumentControl = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const { toast } = useToast();
 
-  const { data: documents, isLoading } = useQuery({
-    queryKey: ['documents'],
-    queryFn: async () => {
-      // This would be replaced with actual API call
-      return [] as SolicitationDocument[];
-    }
-  });
+  const handleUpload = () => {
+    toast({
+      title: "Upload Started",
+      description: "Your document is being processed...",
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      <div className="pl-64">
-        <main className="p-8">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gradient">
-                Document Control
-              </h1>
-              <p className="text-gray-400">
-                Version control and document management
-              </p>
-            </div>
-            <Button className="enterprise-gradient">
+    <Container>
+      <PageHeader
+        title="Document Control"
+        description="Manage and track procurement documentation"
+      />
+
+      <Card className="mb-8">
+        <div className="flex items-center justify-between p-6">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <Input
+              placeholder="Search documents..."
+              className="pl-10 bg-white/5 border-white/10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-4">
+            <Button variant="outline" className="border-white/10">
+              <Filter className="h-5 w-5 mr-2" />
+              Filters
+            </Button>
+            <Button
+              onClick={handleUpload}
+              className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
+                     hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+            >
+              <Upload className="h-5 w-5 mr-2" />
               Upload Document
             </Button>
           </div>
+        </div>
+      </Card>
 
-          <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/5 mb-8">
-            <div className="flex gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                <Input
-                  placeholder="Search documents..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Button variant="outline">
-                <Filter className="h-5 w-5 mr-2" />
-                Filters
-              </Button>
-            </div>
-          </Card>
-
-          <div className="space-y-4">
-            {isLoading ? (
-              <div className="animate-pulse space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <Card key={i} className="p-6 bg-black/40">
-                    <div className="h-6 bg-gray-700 rounded w-1/4 mb-2"></div>
-                    <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-                  </Card>
-                ))}
-              </div>
-            ) : documents?.map((document) => (
-              <Card 
-                key={document.id}
-                className="p-6 bg-black/40 backdrop-blur-sm border-white/5 hover:bg-white/5 transition-colors"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center">
-                      <FileText className="h-6 w-6 text-violet-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-white">
-                        {document.title}
-                      </h3>
-                      <div className="flex items-center gap-4 text-sm text-gray-400">
-                        <span>Version {document.version}</span>
-                        <span>•</span>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          <span>Updated {new Date(document.updatedAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
+      <Grid columns={1} gap="lg">
+        {mockDocuments.map((doc) => {
+          const StatusIcon = getStatusIcon(doc.status);
+          return (
+            <Card
+              key={doc.id}
+              className="hover:bg-white/5 transition-all duration-200"
+            >
+              <div className="flex items-center justify-between p-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-violet-400" />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <History className="h-4 w-4 mr-2" />
-                      History
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View
-                    </Button>
+                  <div>
+                    <h3 className="text-lg font-medium text-white">
+                      {doc.title}
+                    </h3>
+                    <div className="flex items-center gap-4 mt-1">
+                      <span className="text-sm text-gray-400">{doc.type}</span>
+                      <span className="text-gray-600">•</span>
+                      <span className="text-sm text-gray-400">
+                        Modified: {doc.lastModified}
+                      </span>
+                      <span className="text-gray-600">•</span>
+                      <span className="text-sm text-gray-400">
+                        Owner: {doc.owner}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </Card>
-            ))}
-          </div>
-        </main>
-      </div>
-    </div>
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`px-3 py-1 rounded-full flex items-center gap-2 ${getStatusColor(
+                      doc.status
+                    )}`}
+                  >
+                    <StatusIcon className="h-4 w-4" />
+                    <span className="text-sm capitalize">{doc.status}</span>
+                  </div>
+                  <Button variant="outline" className="border-white/10">
+                    <Eye className="h-4 w-4 mr-2" />
+                    View
+                  </Button>
+                  <Button variant="outline" className="border-white/10">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          )}
+        )}
+      </Grid>
+    </Container>
   );
 };
 

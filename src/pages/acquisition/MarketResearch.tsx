@@ -1,139 +1,186 @@
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Card } from "@/components/ui/card";
+import { useState } from "react";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Card } from "@/components/ui/universal/Card";
+import { Grid } from "@/components/ui/universal/Grid";
+import { Container } from "@/components/ui/universal/Container";
 import { Button } from "@/components/ui/button";
-import { 
-  Search, 
-  Filter, 
-  ChartBar, 
-  FileText, 
-  Download,
-  ExternalLink
-} from 'lucide-react';
 import { Input } from "@/components/ui/input";
-import type { MarketResearch } from '@/types/acquisition';
-import Navigation from "@/components/Navigation";
+import { Search, Filter, Building2, BarChart2, TrendingUp } from "lucide-react";
+import { MetricsChart } from "@/components/MetricsChart";
 
-const MarketResearchPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+const mockData = [
+  {
+    month: "Jan",
+    efficiency: 85,
+    compliance: 90,
+    risk: 15
+  },
+  {
+    month: "Feb",
+    efficiency: 88,
+    compliance: 92,
+    risk: 12
+  },
+  {
+    month: "Mar",
+    efficiency: 92,
+    compliance: 95,
+    risk: 8
+  }
+];
 
-  const { data: marketResearch, isLoading } = useQuery({
-    queryKey: ['marketResearch'],
-    queryFn: async () => {
-      // This would be replaced with actual API call
-      return [] as MarketResearch[];
-    }
-  });
+const mockVendors = [
+  {
+    id: "1",
+    name: "TechCorp Solutions",
+    category: "IT Services",
+    rating: 4.5,
+    contracts: 12,
+    performance: 92
+  },
+  {
+    id: "2",
+    name: "Global Office Supply",
+    category: "Office Supplies",
+    rating: 4.2,
+    contracts: 8,
+    performance: 88
+  },
+  {
+    id: "3",
+    name: "SecureNet Systems",
+    category: "Cybersecurity",
+    rating: 4.8,
+    contracts: 15,
+    performance: 95
+  }
+];
+
+const MarketResearch = () => {
+  const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      
-      <div className="pl-64">
-        <main className="p-8">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gradient">
-                Market Research
-              </h1>
-              <p className="text-gray-400">
-                Conduct and analyze market research
-              </p>
-            </div>
-            <Button className="enterprise-gradient">
-              New Research
-            </Button>
-          </div>
+    <Container>
+      <PageHeader
+        title="Market Research"
+        description="Analyze market trends and vendor performance"
+      />
 
-          <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/5 mb-8">
+      <Grid columns={3} gap="lg" className="mb-8">
+        <Card>
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center">
+              <Building2 className="h-6 w-6 text-violet-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-400">Active Vendors</h3>
+              <p className="text-2xl font-bold text-white">234</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card>
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 bg-fuchsia-500/20 rounded-lg flex items-center justify-center">
+              <BarChart2 className="h-6 w-6 text-fuchsia-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-400">
+                Avg Performance
+              </h3>
+              <p className="text-2xl font-bold text-white">91%</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card>
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 bg-pink-500/20 rounded-lg flex items-center justify-center">
+              <TrendingUp className="h-6 w-6 text-pink-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-400">Market Growth</h3>
+              <p className="text-2xl font-bold text-white">+12.5%</p>
+            </div>
+          </div>
+        </Card>
+      </Grid>
+
+      <Card className="mb-8">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Performance Trends
+          </h2>
+          <MetricsChart data={mockData} type="line" />
+        </div>
+      </Card>
+
+      <Card>
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-white">Top Vendors</h2>
             <div className="flex gap-4">
-              <div className="relative flex-1">
+              <div className="relative">
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                 <Input
-                  placeholder="Search market research..."
+                  placeholder="Search vendors..."
+                  className="pl-10 bg-white/5 border-white/10"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
                 />
               </div>
-              <Button variant="outline">
+              <Button variant="outline" className="border-white/10">
                 <Filter className="h-5 w-5 mr-2" />
                 Filters
               </Button>
             </div>
-          </Card>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {isLoading ? (
-              <>
-                {[1, 2, 3].map((i) => (
-                  <Card key={i} className="p-6 bg-black/40 animate-pulse">
-                    <div className="h-6 bg-gray-700 rounded w-3/4 mb-4"></div>
-                    <div className="space-y-2">
-                      <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-                      <div className="h-4 bg-gray-700 rounded w-2/3"></div>
-                    </div>
-                  </Card>
-                ))}
-              </>
-            ) : marketResearch?.map((research) => (
-              <Card 
-                key={research.id}
-                className="p-6 bg-black/40 backdrop-blur-sm border-white/5 hover:bg-white/5 transition-colors"
+          <div className="space-y-4">
+            {mockVendors.map((vendor) => (
+              <Card
+                key={vendor.id}
+                className="hover:bg-white/5 transition-all duration-200"
               >
-                <div className="flex flex-col h-full">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-medium text-white mb-2">
-                        {research.title}
-                      </h3>
-                      <p className="text-sm text-gray-400">
-                        Conducted on {new Date(research.conductedAt).toLocaleDateString()}
+                <div className="flex items-center justify-between p-4">
+                  <div>
+                    <h3 className="text-lg font-medium text-white">
+                      {vendor.name}
+                    </h3>
+                    <p className="text-sm text-gray-400">{vendor.category}</p>
+                  </div>
+                  <div className="flex items-center gap-8">
+                    <div className="text-center">
+                      <p className="text-sm text-gray-400">Rating</p>
+                      <p className="text-lg font-semibold text-white">
+                        {vendor.rating}
                       </p>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-sm ${
-                      research.status === 'COMPLETED' 
-                        ? 'bg-green-500/10 text-green-500'
-                        : research.status === 'IN_PROGRESS'
-                        ? 'bg-yellow-500/10 text-yellow-500'
-                        : 'bg-red-500/10 text-red-500'
-                    }`}>
-                      {research.status.replace('_', ' ')}
+                    <div className="text-center">
+                      <p className="text-sm text-gray-400">Contracts</p>
+                      <p className="text-lg font-semibold text-white">
+                        {vendor.contracts}
+                      </p>
                     </div>
-                  </div>
-
-                  <div className="flex-1">
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <ChartBar className="h-4 w-4" />
-                        <span>{research.findings.length} Findings</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <FileText className="h-4 w-4" />
-                        <span>{research.attachments.length} Documents</span>
-                      </div>
+                    <div className="text-center">
+                      <p className="text-sm text-gray-400">Performance</p>
+                      <p className="text-lg font-semibold text-white">
+                        {vendor.performance}%
+                      </p>
                     </div>
-                  </div>
-
-                  <div className="flex gap-2 mt-4">
-                    <Button variant="outline" className="flex-1">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      <Download className="h-4 w-4 mr-2" />
-                      Export
+                    <Button variant="outline" className="border-white/10">
+                      View Details
                     </Button>
                   </div>
                 </div>
               </Card>
             ))}
           </div>
-        </main>
-      </div>
-    </div>
+        </div>
+      </Card>
+    </Container>
   );
 };
 
-export default MarketResearchPage;
+export default MarketResearch;
