@@ -3,10 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { KnowledgeDomain } from "@/types/knowledge";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CreateDomainDialog } from "./CreateDomainDialog";
 
 export const KnowledgeDomainList = () => {
   const { toast } = useToast();
@@ -46,10 +45,7 @@ export const KnowledgeDomainList = () => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Knowledge Domains</h2>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Domain
-        </Button>
+        <CreateDomainDialog />
       </div>
 
       {domains?.map((domain) => (
