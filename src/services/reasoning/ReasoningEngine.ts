@@ -1,6 +1,8 @@
+
 import { toast } from "@/hooks/use-toast";
 import { getAICompletion } from "@/services/azure/aiService";
 import { supabase } from "@/integrations/supabase/client";
+import { Json } from "@/integrations/supabase/types";
 
 export interface ComplianceRule {
   id: string;
@@ -110,7 +112,17 @@ export class ReasoningEngine {
       throw error;
     }
 
-    return data;
+    // Convert Supabase response to match ReasoningResult interface
+    return {
+      conclusion: data.conclusion,
+      confidence_score: data.confidence_score,
+      reasoning_steps: data.reasoning_steps as string[],
+      compliance_checks: data.compliance_checks as string[],
+      supporting_evidence: (data.supporting_evidence as Json[] || []).map(item => 
+        typeof item === 'string' ? JSON.parse(item) : item
+      ),
+      metadata: data.metadata as Record<string, any> | undefined
+    };
   }
 
   public async processReasoning(
