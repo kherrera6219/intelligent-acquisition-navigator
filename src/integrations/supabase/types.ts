@@ -313,6 +313,51 @@ export type Database = {
           },
         ]
       }
+      framework_component_relationships: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          relationship_type: string
+          source_component_id: string
+          target_component_id: string
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          relationship_type: string
+          source_component_id: string
+          target_component_id: string
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          relationship_type?: string
+          source_component_id?: string
+          target_component_id?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "framework_component_relationships_source_component_id_fkey"
+            columns: ["source_component_id"]
+            isOneToOne: false
+            referencedRelation: "mathematical_framework_components"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "framework_component_relationships_target_component_id_fkey"
+            columns: ["target_component_id"]
+            isOneToOne: false
+            referencedRelation: "mathematical_framework_components"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_domains: {
         Row: {
           coordinates: string | null
@@ -356,6 +401,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mathematical_framework_components: {
+        Row: {
+          component_type: Database["public"]["Enums"]["framework_component_type"]
+          created_at: string
+          description: string | null
+          formula: string
+          id: string
+          metadata: Json | null
+          name: string
+          updated_at: string
+          variables: Json | null
+        }
+        Insert: {
+          component_type: Database["public"]["Enums"]["framework_component_type"]
+          created_at?: string
+          description?: string | null
+          formula: string
+          id?: string
+          metadata?: Json | null
+          name: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Update: {
+          component_type?: Database["public"]["Enums"]["framework_component_type"]
+          created_at?: string
+          description?: string | null
+          formula?: string
+          id?: string
+          metadata?: Json | null
+          name?: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -693,6 +774,18 @@ export type Database = {
     }
     Enums: {
       document_type: "RFI" | "RFP" | "RFQ" | "SOW" | "PWS"
+      framework_component_type:
+        | "PILLAR"
+        | "LEVEL"
+        | "BRANCH"
+        | "NODE"
+        | "RISK"
+        | "TRACKING"
+        | "RESOURCE"
+        | "COMPLIANCE"
+        | "PROCESS"
+        | "SECURITY"
+        | "INTEGRATION"
       solicitation_status: "DRAFT" | "IN_REVIEW" | "APPROVED" | "PUBLISHED"
       user_status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
     }
