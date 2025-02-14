@@ -26,6 +26,11 @@ let client: OpenAIClient | null = null;
 
 const initializeClient = (apiKey: string) => {
   if (!apiKey) {
+    toast({
+      title: "Missing API Key",
+      description: "Please provide a valid Azure OpenAI API key",
+      variant: "destructive"
+    });
     throw new Error('Azure OpenAI API key is required');
   }
   
@@ -37,6 +42,11 @@ const initializeClient = (apiKey: string) => {
     return client;
   } catch (error) {
     console.error('Failed to initialize Azure OpenAI client:', error);
+    toast({
+      title: "Initialization Error",
+      description: "Failed to initialize AI client. Please check your API key.",
+      variant: "destructive"
+    });
     throw error;
   }
 };
@@ -59,6 +69,11 @@ export const getAICompletion = async (messages: Array<{ role: string; content: s
     });
 
     if (!result || !result.choices || result.choices.length === 0) {
+      toast({
+        title: "No Response",
+        description: "The AI service did not generate a response. Please try again.",
+        variant: "destructive"
+      });
       throw new Error('No completion generated');
     }
 
@@ -84,10 +99,11 @@ export const getAICompletion = async (messages: Array<{ role: string; content: s
 
     return response;
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     toast({
-      title: "Error",
-      description: "Failed to process AI request. Please try again later.",
-      variant: "destructive",
+      title: "AI Service Error",
+      description: `Failed to process request: ${errorMessage}`,
+      variant: "destructive"
     });
     console.error('Azure OpenAI Error:', error);
     throw error;
@@ -125,6 +141,11 @@ export const getResearchCompletion = async (query: string, apiKey: string) => {
     );
 
     if (!result.choices[0]?.message?.content) {
+      toast({
+        title: "Research Error",
+        description: "No research results generated. Please try a different query.",
+        variant: "destructive"
+      });
       throw new Error('No research completion generated');
     }
 
@@ -134,10 +155,11 @@ export const getResearchCompletion = async (query: string, apiKey: string) => {
       confidence: calculateConfidenceScore(result)
     };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     toast({
       title: "Research Error",
-      description: "Failed to process research request. Please try again.",
-      variant: "destructive",
+      description: `Failed to process research request: ${errorMessage}`,
+      variant: "destructive"
     });
     throw error;
   }
