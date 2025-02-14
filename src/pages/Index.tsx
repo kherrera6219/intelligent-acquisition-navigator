@@ -8,7 +8,7 @@ import { CTASection } from "@/components/landing/CTASection";
 import CookieConsent from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, HelpCircle } from "lucide-react";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
@@ -101,31 +101,45 @@ const Index = () => {
 
         {/* Help Button */}
         <div className="fixed bottom-24 right-4 z-50">
-          <Tooltip content="Need help?">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
-              onClick={() => window.open('/contact', '_blank')}
-            >
-              <HelpCircle className="h-5 w-5" />
-            </Button>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+                  onClick={() => window.open('/contact', '_blank')}
+                >
+                  <HelpCircle className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Need help?</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* Back to Top Button */}
         {showBackToTop && (
           <div className="fixed bottom-8 right-4 z-50">
-            <Tooltip content="Back to top">
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
-                onClick={scrollToTop}
-              >
-                <ArrowUp className="h-5 w-5" />
-              </Button>
-            </Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+                    onClick={scrollToTop}
+                  >
+                    <ArrowUp className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Back to top</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         )}
 
