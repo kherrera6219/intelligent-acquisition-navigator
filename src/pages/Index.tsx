@@ -2,14 +2,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { GradientText } from "@/components/ui/universal/GradientText";
+import { GlassCard } from "@/components/ui/universal/GlassCard";
+import { GradientButton } from "@/components/ui/universal/GradientButton";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, BarChart2, FileText, Users } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const handleDemoRequest = () => {
     toast({
@@ -25,9 +26,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-8">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400">
-                Next-Generation
-              </span>
+              <GradientText>Next-Generation</GradientText>
               <br />
               <span className="text-white">
                 Acquisition Management
@@ -37,22 +36,19 @@ const Index = () => {
               Streamline your procurement process with AI-powered insights and compliance automation.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button
+              <GradientButton
                 onClick={() => navigate("/signup")}
-                className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
-                         hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
                 size="lg"
               >
                 Get Started
-              </Button>
-              <Button
+              </GradientButton>
+              <GradientButton
                 onClick={handleDemoRequest}
-                variant="outline"
-                className="border-white/10"
+                variant="secondary"
                 size="lg"
               >
                 Request Demo
-              </Button>
+              </GradientButton>
             </div>
           </div>
         </div>
@@ -71,53 +67,41 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/10 hover:bg-white/5 transition-all">
-              <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 text-violet-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Compliance Automation
-              </h3>
-              <p className="text-gray-400">
-                Automatically check FAR/DFARS compliance and maintain audit trails
-              </p>
-            </Card>
-
-            <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/10 hover:bg-white/5 transition-all">
-              <div className="h-12 w-12 bg-fuchsia-500/20 rounded-lg flex items-center justify-center mb-4">
-                <BarChart2 className="h-6 w-6 text-fuchsia-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Market Intelligence
-              </h3>
-              <p className="text-gray-400">
-                Real-time market analysis and vendor performance tracking
-              </p>
-            </Card>
-
-            <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/10 hover:bg-white/5 transition-all">
-              <div className="h-12 w-12 bg-pink-500/20 rounded-lg flex items-center justify-center mb-4">
-                <FileText className="h-6 w-6 text-pink-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Document Management
-              </h3>
-              <p className="text-gray-400">
-                Centralized repository with version control and collaboration tools
-              </p>
-            </Card>
-
-            <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/10 hover:bg-white/5 transition-all">
-              <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center mb-4">
-                <Users className="h-6 w-6 text-violet-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Team Collaboration
-              </h3>
-              <p className="text-gray-400">
-                Streamlined workflows with role-based access and approvals
-              </p>
-            </Card>
+            {[
+              {
+                icon: Shield,
+                title: "Compliance Automation",
+                description: "Automatically check FAR/DFARS compliance and maintain audit trails"
+              },
+              {
+                icon: BarChart2,
+                title: "Market Intelligence",
+                description: "Real-time market analysis and vendor performance tracking"
+              },
+              {
+                icon: FileText,
+                title: "Document Management",
+                description: "Centralized repository with version control and collaboration tools"
+              },
+              {
+                icon: Users,
+                title: "Team Collaboration",
+                description: "Streamlined workflows with role-based access and approvals"
+              }
+            ].map((feature, index) => (
+              <GlassCard key={index} clickable>
+                <div className="h-12 w-12 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
+                               rounded-lg flex items-center justify-center mb-4">
+                  <feature.icon className="h-6 w-6 text-fuchsia-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-400">
+                  {feature.description}
+                </p>
+              </GlassCard>
+            ))}
           </div>
         </div>
       </div>
@@ -136,7 +120,7 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="p-6 bg-black/40 backdrop-blur-sm border-white/10">
+              <GlassCard key={i}>
                 <p className="text-gray-400 mb-4">
                   "ProcurityIQ has revolutionized our acquisition process, saving us countless hours
                   while ensuring compliance at every step."
@@ -151,7 +135,7 @@ const Index = () => {
                     <p className="text-sm text-gray-400">Contracting Officer</p>
                   </div>
                 </div>
-              </Card>
+              </GlassCard>
             ))}
           </div>
         </div>
@@ -167,22 +151,19 @@ const Index = () => {
             Join the leading federal agencies already using ProcurityIQ to streamline their procurement.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button
+            <GradientButton
               onClick={() => navigate("/signup")}
-              className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
-                       hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
               size="lg"
             >
               Start Free Trial
-            </Button>
-            <Button
+            </GradientButton>
+            <GradientButton
               onClick={handleDemoRequest}
-              variant="outline"
-              className="border-white/10"
+              variant="secondary"
               size="lg"
             >
               Schedule Demo
-            </Button>
+            </GradientButton>
           </div>
         </div>
       </div>
