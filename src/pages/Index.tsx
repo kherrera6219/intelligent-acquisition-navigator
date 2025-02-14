@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -20,11 +21,51 @@ const Index = () => {
     });
   };
 
+  const features = [
+    {
+      icon: Shield,
+      title: "Compliance Automation",
+      description: "Automatically check FAR/DFARS compliance and maintain audit trails"
+    },
+    {
+      icon: BarChart2,
+      title: "Market Intelligence",
+      description: "Real-time market analysis and vendor performance tracking"
+    },
+    {
+      icon: FileText,
+      title: "Document Management",
+      description: "Centralized repository with version control and collaboration tools"
+    },
+    {
+      icon: Users,
+      title: "Team Collaboration",
+      description: "Streamlined workflows with role-based access and approvals"
+    }
+  ];
+
+  const testimonials = [
+    {
+      quote: "ProcurityIQ has revolutionized our acquisition process, saving us countless hours while ensuring compliance at every step.",
+      author: "Alice Brown",
+      role: "Contracting Officer"
+    },
+    {
+      quote: "The AI-powered insights have dramatically improved our market research efficiency and accuracy.",
+      author: "James Wilson",
+      role: "Program Manager"
+    },
+    {
+      quote: "Outstanding compliance tracking and documentation management capabilities.",
+      author: "Sarah Chen",
+      role: "Procurement Analyst"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      {/* Privacy Notice Banner */}
       {showPrivacyNotice && (
-        <div className="bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border-b border-white/10">
+        <div className="bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border-b border-white/10 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div className="flex items-center justify-between flex-wrap">
               <div className="flex-1 flex items-center">
@@ -34,7 +75,7 @@ const Index = () => {
                   {" "}
                   <button
                     onClick={() => navigate("/privacy")}
-                    className="text-white underline hover:text-gray-100"
+                    className="text-white underline hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
                   >
                     Learn more
                   </button>
@@ -42,7 +83,8 @@ const Index = () => {
               </div>
               <button
                 onClick={() => setShowPrivacyNotice(false)}
-                className="flex-shrink-0 ml-4 text-gray-400 hover:text-white"
+                className="flex-shrink-0 ml-4 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 p-1 rounded"
+                aria-label="Close privacy notice"
               >
                 ×
               </button>
@@ -52,10 +94,10 @@ const Index = () => {
       )}
 
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
+      <section className="relative overflow-hidden py-20 lg:py-32" aria-labelledby="hero-title">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-8">
+            <h1 id="hero-title" className="text-4xl md:text-6xl font-bold tracking-tight mb-8">
               <GradientText>Next-Generation</GradientText>
               <br />
               <span className="text-white">
@@ -70,6 +112,7 @@ const Index = () => {
                 onClick={() => navigate("/signup")}
                 size="lg"
                 gradientVariant="primary"
+                aria-label="Get started with ProcurityIQ"
               >
                 Get Started
               </GradientButton>
@@ -77,19 +120,20 @@ const Index = () => {
                 onClick={handleDemoRequest}
                 gradientVariant="secondary"
                 size="lg"
+                aria-label="Request a demo of ProcurityIQ"
               >
                 Request Demo
               </GradientButton>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Features Section */}
-      <div className="py-24 bg-black/40">
+      <section className="py-24 bg-black/40" aria-labelledby="features-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 id="features-title" className="text-3xl font-bold text-white mb-4">
               Transform Your Acquisition Process
             </h2>
             <p className="text-xl text-gray-400">
@@ -98,32 +142,11 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Shield,
-                title: "Compliance Automation",
-                description: "Automatically check FAR/DFARS compliance and maintain audit trails"
-              },
-              {
-                icon: BarChart2,
-                title: "Market Intelligence",
-                description: "Real-time market analysis and vendor performance tracking"
-              },
-              {
-                icon: FileText,
-                title: "Document Management",
-                description: "Centralized repository with version control and collaboration tools"
-              },
-              {
-                icon: Users,
-                title: "Team Collaboration",
-                description: "Streamlined workflows with role-based access and approvals"
-              }
-            ].map((feature, index) => (
+            {features.map((feature, index) => (
               <GlassCard key={index} clickable>
                 <div className="h-12 w-12 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
                                rounded-lg flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-fuchsia-400" />
+                  <feature.icon className="h-6 w-6 text-fuchsia-400" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">
                   {feature.title}
@@ -135,13 +158,13 @@ const Index = () => {
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Testimonials Section */}
-      <div className="py-24">
+      <section className="py-24" aria-labelledby="testimonials-title">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 id="testimonials-title" className="text-3xl font-bold text-white mb-4">
               Trusted by Federal Agencies
             </h2>
             <p className="text-xl text-gray-400">
@@ -150,32 +173,33 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
+            {testimonials.map((testimonial, i) => (
               <GlassCard key={i}>
                 <p className="text-gray-400 mb-4">
-                  "ProcurityIQ has revolutionized our acquisition process, saving us countless hours
-                  while ensuring compliance at every step."
+                  "{testimonial.quote}"
                 </p>
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
                                  rounded-full flex items-center justify-center">
-                    <span className="text-fuchsia-400 font-semibold">AB</span>
+                    <span className="text-fuchsia-400 font-semibold">
+                      {testimonial.author.split(' ').map(n => n[0]).join('')}
+                    </span>
                   </div>
                   <div>
-                    <p className="font-medium text-white">Alice Brown</p>
-                    <p className="text-sm text-gray-400">Contracting Officer</p>
+                    <p className="font-medium text-white">{testimonial.author}</p>
+                    <p className="text-sm text-gray-400">{testimonial.role}</p>
                   </div>
                 </div>
               </GlassCard>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* CTA Section */}
-      <div className="py-24 bg-black/40">
+      <section className="py-24 bg-black/40" aria-labelledby="cta-title">
         <div className="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <h2 id="cta-title" className="text-3xl font-bold text-white mb-4">
             Ready to Transform Your Acquisition Process?
           </h2>
           <p className="text-xl text-gray-400 mb-8">
@@ -186,6 +210,7 @@ const Index = () => {
               onClick={() => navigate("/signup")}
               size="lg"
               gradientVariant="primary"
+              aria-label="Start free trial of ProcurityIQ"
             >
               Start Free Trial
             </GradientButton>
@@ -193,14 +218,14 @@ const Index = () => {
               onClick={handleDemoRequest}
               gradientVariant="secondary"
               size="lg"
+              aria-label="Schedule a demo of ProcurityIQ"
             >
               Schedule Demo
             </GradientButton>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Cookie Consent */}
       <CookieConsent />
     </div>
   );
