@@ -1,110 +1,191 @@
 
-import { Suspense } from "react";
-import Navigation from "@/components/Navigation";
-import Hero from "@/components/Hero";
-import Features from "@/components/Features";
-import Benefits from "@/components/Benefits";
-import RequestDemo from "@/components/RequestDemo";
-import { ReasoningSection } from "@/components/sections/ReasoningSection";
-import { TechnologyStackSection } from "@/components/sections/TechnologyStackSection";
-import { Toaster } from "@/components/ui/toaster";
-import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-
-const LoadingSpinner = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <Card className="p-8 bg-black/40 backdrop-blur-sm border-white/5">
-      <div className="flex flex-col items-center gap-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p className="text-primary/60 animate-pulse">Loading ProcurityIQ...</p>
-      </div>
-    </Card>
-  </div>
-);
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Shield, BarChart2, FileText, Users } from "lucide-react";
 
 const Index = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  const handleDemoRequest = () => {
+    toast({
+      title: "Demo Request Received",
+      description: "Our team will contact you shortly to schedule a demo.",
+    });
+  };
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 relative"
-      role="main"
-      aria-label="Main content"
-    >
-      {/* Background Grid Pattern */}
-      <div className="absolute inset-0 bg-grid opacity-5" />
-
-      {/* Background Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-
-      {/* Skip link for accessibility */}
-      <a href="#main-content" className="skip-to-content">
-        Skip to main content
-      </a>
-
-      <Navigation />
-      
-      <main id="main-content" className="relative">
-        <Suspense fallback={<LoadingSpinner />}>
-          {/* Hero Section */}
-          <section className="relative">
-            <Hero />
-            
-            {/* Knowledge Graph Nodes */}
-            <div className="absolute inset-0 overflow-hidden">
-              {[...Array(11)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-2 h-2 bg-violet-400/30 rounded-full"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animation: `pulse ${2 + Math.random() * 2}s ease-in-out infinite`,
-                    animationDelay: `${Math.random() * 2}s`
-                  }}
-                />
-              ))}
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-28">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-8">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400">
+                Next-Generation
+              </span>
+              <br />
+              <span className="text-white">
+                Acquisition Management
+              </span>
+            </h1>
+            <p className="max-w-2xl mx-auto text-xl text-gray-400 mb-10">
+              Streamline your procurement process with AI-powered insights and compliance automation.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Button
+                onClick={() => navigate("/signup")}
+                className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
+                         hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+                size="lg"
+              >
+                Get Started
+              </Button>
+              <Button
+                onClick={handleDemoRequest}
+                variant="outline"
+                className="border-white/10"
+                size="lg"
+              >
+                Request Demo
+              </Button>
             </div>
-          </section>
+          </div>
+        </div>
+      </div>
 
-          {/* Core Sections */}
-          <div className="space-y-24">
-            <ReasoningSection />
-            <TechnologyStackSection />
-            <Features />
-            <Benefits />
-            <RequestDemo />
+      {/* Features Section */}
+      <div className="py-24 bg-black/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Transform Your Acquisition Process
+            </h2>
+            <p className="text-xl text-gray-400">
+              Powerful features designed for federal acquisition professionals
+            </p>
           </div>
 
-          {/* Fixed Action Button */}
-          <button 
-            onClick={() => toast({
-              title: "AI Assistant",
-              description: "How can I help you today?",
-            })}
-            className="fixed bottom-8 right-8 p-4 rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 text-white shadow-lg hover:shadow-xl transition-shadow duration-300 group"
-            aria-label="Open AI Assistant"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              className="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9.75 3.104c-.734.204-1.417.514-2.02.916m-3.73 3.73a8.95 8.95 0 00-.916 2.02M3.104 14.25a8.95 8.95 0 00.916 2.02m3.73 3.73a8.95 8.95 0 002.02.916m4.5-11.216c.734-.204 1.417-.514 2.02-.916m3.73 3.73a8.95 8.95 0 01.916-2.02m0 6c-.204.734-.514 1.417-.916 2.02m-3.73 3.73a8.95 8.95 0 01-2.02.916M6.75 7.364V3h-3v4.364l2.5-1.636zm0 13.272V16h-3v4.636l2.5-1.636zm13.5-13.272V3h-3v4.364l2.5-1.636zm0 13.272V16h-3v4.636l2.5-1.636z"
-              />
-            </svg>
-          </button>
-        </Suspense>
-      </main>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/10 hover:bg-white/5 transition-all">
+              <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="h-6 w-6 text-violet-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Compliance Automation
+              </h3>
+              <p className="text-gray-400">
+                Automatically check FAR/DFARS compliance and maintain audit trails
+              </p>
+            </Card>
 
-      {/* Toast notifications with a more enterprise feel */}
-      <Toaster />
+            <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/10 hover:bg-white/5 transition-all">
+              <div className="h-12 w-12 bg-fuchsia-500/20 rounded-lg flex items-center justify-center mb-4">
+                <BarChart2 className="h-6 w-6 text-fuchsia-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Market Intelligence
+              </h3>
+              <p className="text-gray-400">
+                Real-time market analysis and vendor performance tracking
+              </p>
+            </Card>
+
+            <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/10 hover:bg-white/5 transition-all">
+              <div className="h-12 w-12 bg-pink-500/20 rounded-lg flex items-center justify-center mb-4">
+                <FileText className="h-6 w-6 text-pink-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Document Management
+              </h3>
+              <p className="text-gray-400">
+                Centralized repository with version control and collaboration tools
+              </p>
+            </Card>
+
+            <Card className="p-6 bg-black/40 backdrop-blur-sm border-white/10 hover:bg-white/5 transition-all">
+              <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center mb-4">
+                <Users className="h-6 w-6 text-violet-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Team Collaboration
+              </h3>
+              <p className="text-gray-400">
+                Streamlined workflows with role-based access and approvals
+              </p>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials Section */}
+      <div className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Trusted by Federal Agencies
+            </h2>
+            <p className="text-xl text-gray-400">
+              See how ProcurityIQ is transforming federal acquisition
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="p-6 bg-black/40 backdrop-blur-sm border-white/10">
+                <p className="text-gray-400 mb-4">
+                  "ProcurityIQ has revolutionized our acquisition process, saving us countless hours
+                  while ensuring compliance at every step."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
+                                 rounded-full flex items-center justify-center">
+                    <span className="text-fuchsia-400 font-semibold">AB</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-white">Alice Brown</p>
+                    <p className="text-sm text-gray-400">Contracting Officer</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="py-24 bg-black/40">
+        <div className="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Ready to Transform Your Acquisition Process?
+          </h2>
+          <p className="text-xl text-gray-400 mb-8">
+            Join the leading federal agencies already using ProcurityIQ to streamline their procurement.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button
+              onClick={() => navigate("/signup")}
+              className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
+                       hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+              size="lg"
+            >
+              Start Free Trial
+            </Button>
+            <Button
+              onClick={handleDemoRequest}
+              variant="outline"
+              className="border-white/10"
+              size="lg"
+            >
+              Schedule Demo
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
