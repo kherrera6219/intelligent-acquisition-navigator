@@ -1,7 +1,8 @@
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import { GradientText } from "@/components/ui/universal/GradientText";
+import { GlassCard } from "@/components/ui/universal/GlassCard";
+import { GradientButton } from "@/components/ui/universal/GradientButton";
 
 const plans = [
   {
@@ -51,9 +52,8 @@ const Pricing = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent 
-                         bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 tracking-tight mb-4">
-            Simple, Transparent Pricing
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <GradientText>Simple, Transparent Pricing</GradientText>
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Choose the perfect plan for your team's needs. No hidden fees.
@@ -62,10 +62,10 @@ const Pricing = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {plans.map((plan, index) => (
-            <Card 
+            <GlassCard 
               key={index}
-              className={`p-8 bg-black/40 backdrop-blur-sm border-white/5 hover:bg-black/60 
-                         transition-all duration-300 ${plan.popular ? 'ring-2 ring-fuchsia-500' : ''}`}
+              highlight={plan.popular}
+              className="p-8"
             >
               {plan.popular && (
                 <div className="absolute top-0 right-8 -translate-y-1/2">
@@ -91,16 +91,13 @@ const Pricing = () => {
                   </li>
                 ))}
               </ul>
-              <Button 
-                className={`w-full ${
-                  plan.popular
-                    ? 'bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600'
-                    : 'bg-white/10 hover:bg-white/20 text-white'
-                }`}
+              <GradientButton 
+                className="w-full"
+                variant={plan.popular ? "primary" : "secondary"}
               >
                 Get Started
-              </Button>
-            </Card>
+              </GradientButton>
+            </GlassCard>
           ))}
         </div>
       </div>

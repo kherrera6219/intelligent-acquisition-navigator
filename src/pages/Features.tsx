@@ -1,6 +1,7 @@
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { GradientText } from "@/components/ui/universal/GradientText";
+import { GlassCard } from "@/components/ui/universal/GlassCard";
+import { GradientButton } from "@/components/ui/universal/GradientButton";
 import { Brain, Shield, Zap, BarChart } from "lucide-react";
 
 const features = [
@@ -31,9 +32,8 @@ const Features = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent 
-                         bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 tracking-tight mb-4">
-            Powerful Features for Modern Acquisition
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <GradientText>Powerful Features for Modern Acquisition</GradientText>
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             Our platform combines cutting-edge AI with deep acquisition expertise to deliver unmatched capabilities.
@@ -42,10 +42,9 @@ const Features = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <Card 
+            <GlassCard 
               key={index}
-              className="p-6 bg-black/40 backdrop-blur-sm border-white/5 hover:bg-black/60 
-                         transition-all duration-300 group"
+              clickable
             >
               <div className="h-12 w-12 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
                              rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 
@@ -54,18 +53,14 @@ const Features = () => {
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
               <p className="text-gray-400">{feature.description}</p>
-            </Card>
+            </GlassCard>
           ))}
         </div>
 
         <div className="mt-16 text-center">
-          <Button 
-            size="lg"
-            className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
-                       hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
-          >
+          <GradientButton size="lg">
             Get Started Now
-          </Button>
+          </GradientButton>
         </div>
       </div>
     </div>
