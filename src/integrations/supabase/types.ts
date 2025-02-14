@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_analysis_records: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          domain_id: string
+          id: string
+          metadata: Json | null
+          query_text: string
+          response_text: string
+          validated_at: string | null
+          validated_by: string | null
+        }
+        Insert: {
+          confidence_score: number
+          created_at?: string
+          domain_id: string
+          id?: string
+          metadata?: Json | null
+          query_text: string
+          response_text: string
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          domain_id?: string
+          id?: string
+          metadata?: Json | null
+          query_text?: string
+          response_text?: string
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_analysis_records_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_domains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -265,6 +309,50 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_domains: {
+        Row: {
+          coordinates: string | null
+          created_at: string
+          description: string | null
+          domain_type: string
+          id: string
+          metadata: Json | null
+          name: string
+          parent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          coordinates?: string | null
+          created_at?: string
+          description?: string | null
+          domain_type: string
+          id?: string
+          metadata?: Json | null
+          name: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          coordinates?: string | null
+          created_at?: string
+          description?: string | null
+          domain_type?: string
+          id?: string
+          metadata?: Json | null
+          name?: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_domains_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_domains"
             referencedColumns: ["id"]
           },
         ]
