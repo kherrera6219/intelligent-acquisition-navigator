@@ -29,10 +29,15 @@ const SignUpForm = () => {
 
   const handleSocialLogin = async (provider: 'github' | 'google' | 'facebook' | 'azure') => {
     try {
+      setIsLoading(true); // Add loading state for social login
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: `${window.location.origin}/dashboard`,
+          queryParams: provider === 'google' ? {
+            access_type: 'offline',
+            prompt: 'consent',
+          } : undefined,
         },
       });
 
@@ -43,11 +48,34 @@ const SignUpForm = () => {
         description: error.message || `Failed to sign in with ${provider}`,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Add basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Add password strength validation
+    if (formData.password.length < 8) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 8 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
     
     if (formData.password !== formData.confirmPassword) {
       toast({
@@ -61,13 +89,14 @@ const SignUpForm = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
+        email: formData.email.trim(), // Trim whitespace
         password: formData.password,
         options: {
           data: {
-            full_name: formData.fullName,
-            organization: formData.organization,
-          }
+            full_name: formData.fullName.trim(),
+            organization: formData.organization.trim(),
+          },
+          emailRedirectTo: `${window.location.origin}/dashboard`,
         }
       });
 
@@ -107,6 +136,7 @@ const SignUpForm = () => {
             variant="outline"
             className="w-full"
             onClick={() => handleSocialLogin('github')}
+            disabled={isLoading}
           >
             <Github className="mr-2 h-4 w-4" />
             GitHub
@@ -117,6 +147,7 @@ const SignUpForm = () => {
             variant="outline"
             className="w-full"
             onClick={() => handleSocialLogin('google')}
+            disabled={isLoading}
           >
             <Chrome className="mr-2 h-4 w-4" />
             Google
@@ -127,6 +158,7 @@ const SignUpForm = () => {
             variant="outline"
             className="w-full"
             onClick={() => handleSocialLogin('facebook')}
+            disabled={isLoading}
           >
             <Facebook className="mr-2 h-4 w-4" />
             Facebook
@@ -137,6 +169,7 @@ const SignUpForm = () => {
             variant="outline"
             className="w-full"
             onClick={() => handleSocialLogin('azure')}
+            disabled={isLoading}
           >
             <Monitor className="mr-2 h-4 w-4" />
             Microsoft
@@ -165,6 +198,7 @@ const SignUpForm = () => {
                 className="pl-10"
                 required
                 disabled={isLoading}
+                aria-label="Email address"
               />
             </div>
 
@@ -179,6 +213,7 @@ const SignUpForm = () => {
                 className="pl-10"
                 required
                 disabled={isLoading}
+                aria-label="Full name"
               />
             </div>
 
@@ -193,6 +228,7 @@ const SignUpForm = () => {
                 className="pl-10"
                 required
                 disabled={isLoading}
+                aria-label="Organization"
               />
             </div>
 
@@ -207,6 +243,8 @@ const SignUpForm = () => {
                 className="pl-10"
                 required
                 disabled={isLoading}
+                minLength={8}
+                aria-label="Password"
               />
             </div>
 
@@ -221,6 +259,8 @@ const SignUpForm = () => {
                 className="pl-10"
                 required
                 disabled={isLoading}
+                minLength={8}
+                aria-label="Confirm password"
               />
             </div>
           </div>
