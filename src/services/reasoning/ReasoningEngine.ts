@@ -48,6 +48,18 @@ export interface Context {
   [key: string]: any;
 }
 
+// Add the missing WorkflowState enum
+export enum WorkflowState {
+  QUERY_PARSING = 'QUERY_PARSING',
+  CONTEXTUALIZATION = 'CONTEXTUALIZATION',
+  EXPERTISE_MATCHING = 'EXPERTISE_MATCHING',
+  PROFESSIONAL_ANALYSIS = 'PROFESSIONAL_ANALYSIS',
+  COMPLIANCE_CHECK = 'COMPLIANCE_CHECK',
+  RESPONSE_GENERATION = 'RESPONSE_GENERATION',
+  COMPLETE = 'COMPLETE',
+  ERROR = 'ERROR'
+}
+
 export class ReasoningEngine {
   private complianceRules: Record<string, ComplianceRule>;
   private apiKey: string;
