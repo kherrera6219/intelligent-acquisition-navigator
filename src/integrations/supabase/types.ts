@@ -379,25 +379,43 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          email: string | null
+          email_verified: boolean | null
           full_name: string | null
           id: string
+          last_login: string | null
+          password_reset_expires: string | null
+          password_reset_token: string | null
           role: string | null
+          status: Database["public"]["Enums"]["user_status"] | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
+          email_verified?: boolean | null
           full_name?: string | null
           id: string
+          last_login?: string | null
+          password_reset_expires?: string | null
+          password_reset_token?: string | null
           role?: string | null
+          status?: Database["public"]["Enums"]["user_status"] | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
+          email_verified?: boolean | null
           full_name?: string | null
           id?: string
+          last_login?: string | null
+          password_reset_expires?: string | null
+          password_reset_token?: string | null
           role?: string | null
+          status?: Database["public"]["Enums"]["user_status"] | null
           updated_at?: string
         }
         Relationships: []
@@ -481,11 +499,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_password_reset_token: {
+        Args: {
+          user_email: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       document_type: "RFI" | "RFP" | "RFQ" | "SOW" | "PWS"
       solicitation_status: "DRAFT" | "IN_REVIEW" | "APPROVED" | "PUBLISHED"
+      user_status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
     }
     CompositeTypes: {
       [_ in never]: never
