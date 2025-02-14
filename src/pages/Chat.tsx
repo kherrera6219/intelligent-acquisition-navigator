@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useAzureAI } from "@/hooks/useAzureAI";
 import { CodeEnvironment } from "@/components/CodeEnvironment";
@@ -7,8 +7,11 @@ import { ChatToolbar } from "@/components/chat/ChatToolbar";
 import { ChatSelectors } from "@/components/chat/ChatSelectors";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
+import { FileUpload } from "@/components/chat/FileUpload";
 import { Message, AcquisitionRole, AgencyRegulation, DetailLevel } from "@/types/chat";
 import { ROLE_LABELS, AGENCY_LABELS } from "@/constants/chatOptions";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -17,6 +20,8 @@ const Chat = () => {
   const [selectedAgency, setSelectedAgency] = useState<AgencyRegulation>("DFARS");
   const [selectedDetailLevel, setSelectedDetailLevel] = useState<DetailLevel>("BRIEF");
   const [isEnvironmentOpen, setIsEnvironmentOpen] = useState(false);
+  const [conversationId, setConversationId] = useState<string>("");
+  const { toast } = useToast();
 
   const aiMutation = useAzureAI(
     messages.map(({ role, content }) => ({ 
@@ -26,21 +31,64 @@ const Chat = () => {
         : content 
     })),
     {
-      onSuccess: (data) => {
+      onSuccess: async (data) => {
         const assistantMessage: Message = {
           id: crypto.randomUUID(),
           role: "assistant",
           content: data.choices[0].message.content,
           timestamp: new Date(),
         };
+        
         setMessages((prev) => [...prev, assistantMessage]);
+
+        // Save message to database
+        if (conversationId) {
+          const { error } = await supabase.from('chat_messages').insert({
+            conversation_id: conversationId,
+            content: assistantMessage.content,
+            role: assistantMessage.role,
+            user_id: supabase.auth.user()?.id,
+          });
+
+          if (error) {
+            console.error('Error saving message:', error);
+            toast({
+              title: "Error saving message",
+              description: "Your message was displayed but couldn't be saved.",
+              variant: "destructive",
+            });
+          }
+        }
       },
     }
   );
 
+  useEffect(() => {
+    const initializeConversation = async () => {
+      // Create a new conversation if none exists
+      const { data: conversation, error } = await supabase
+        .from('conversations')
+        .insert({
+          title: `Chat ${new Date().toLocaleDateString()}`,
+          user_id: supabase.auth.user()?.id,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating conversation:', error);
+        return;
+      }
+
+      setConversationId(conversation.id);
+    };
+
+    initializeConversation();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !conversationId) return;
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -52,10 +100,32 @@ const Chat = () => {
       detailLevel: selectedDetailLevel,
     };
 
+    // Save message to database
+    const { error: dbError } = await supabase.from('chat_messages').insert({
+      conversation_id: conversationId,
+      content: userMessage.content,
+      role: userMessage.role,
+      user_id: supabase.auth.user()?.id,
+      metadata: {
+        userRole: selectedRole,
+        agencyRegulation: selectedAgency,
+        detailLevel: selectedDetailLevel,
+      },
+    });
+
+    if (dbError) {
+      console.error('Error saving message:', dbError);
+      toast({
+        title: "Error saving message",
+        description: "Your message couldn't be saved. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     
-    // Fix: Pass the updated messages array to mutate
     aiMutation.mutate([
       ...messages,
       {
@@ -63,18 +133,6 @@ const Chat = () => {
         content: `[As ${ROLE_LABELS[selectedRole]} under ${AGENCY_LABELS[selectedAgency]}, provide a ${selectedDetailLevel.toLowerCase()} response]: ${input.trim()}`
       }
     ]);
-  };
-
-  const handleDocumentCreation = () => {
-    console.log("Opening document creation canvas");
-  };
-
-  const handleCodeCreation = () => {
-    console.log("Opening code editor");
-  };
-
-  const handleRunEnvironment = () => {
-    setIsEnvironmentOpen(true);
   };
 
   return (
@@ -85,9 +143,9 @@ const Chat = () => {
             <div className="h-[600px] flex flex-col">
               <div className="p-4 border-b border-white/10">
                 <ChatToolbar
-                  onDocumentCreation={handleDocumentCreation}
-                  onCodeCreation={handleCodeCreation}
-                  onRunEnvironment={handleRunEnvironment}
+                  onDocumentCreation={() => {}}
+                  onCodeCreation={() => {}}
+                  onRunEnvironment={() => setIsEnvironmentOpen(true)}
                 />
                 <ChatSelectors
                   selectedRole={selectedRole}
@@ -97,6 +155,17 @@ const Chat = () => {
                   onAgencyChange={setSelectedAgency}
                   onDetailLevelChange={setSelectedDetailLevel}
                 />
+                {conversationId && (
+                  <FileUpload 
+                    conversationId={conversationId}
+                    onUploadComplete={(documentId) => {
+                      toast({
+                        title: "Document uploaded",
+                        description: "The document will be available for reference in this conversation.",
+                      });
+                    }}
+                  />
+                )}
               </div>
               <ChatMessages 
                 messages={messages} 
