@@ -58,7 +58,10 @@ const Features = () => {
         </div>
 
         <div className="mt-16 text-center">
-          <GradientButton size="lg">
+          <GradientButton 
+            size="lg"
+            gradientVariant="primary"
+          >
             Get Started Now
           </GradientButton>
         </div>

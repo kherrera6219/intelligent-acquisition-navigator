@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -103,7 +102,11 @@ const Contact = () => {
                     required
                   />
                 </div>
-                <GradientButton type="submit" className="w-full">
+                <GradientButton 
+                  type="submit" 
+                  className="w-full"
+                  gradientVariant="primary"
+                >
                   Send Message
                 </GradientButton>
               </form>

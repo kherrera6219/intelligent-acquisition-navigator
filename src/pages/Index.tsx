@@ -39,12 +39,13 @@ const Index = () => {
               <GradientButton
                 onClick={() => navigate("/signup")}
                 size="lg"
+                gradientVariant="primary"
               >
                 Get Started
               </GradientButton>
               <GradientButton
                 onClick={handleDemoRequest}
-                variant="secondary"
+                gradientVariant="secondary"
                 size="lg"
               >
                 Request Demo
@@ -154,12 +155,13 @@ const Index = () => {
             <GradientButton
               onClick={() => navigate("/signup")}
               size="lg"
+              gradientVariant="primary"
             >
               Start Free Trial
             </GradientButton>
             <GradientButton
               onClick={handleDemoRequest}
-              variant="secondary"
+              gradientVariant="secondary"
               size="lg"
             >
               Schedule Demo

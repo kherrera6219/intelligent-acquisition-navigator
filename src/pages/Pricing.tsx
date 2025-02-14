@@ -93,7 +93,7 @@ const Pricing = () => {
               </ul>
               <GradientButton 
                 className="w-full"
-                variant={plan.popular ? "primary" : "secondary"}
+                gradientVariant={plan.popular ? "primary" : "secondary"}
               >
                 Get Started
               </GradientButton>
