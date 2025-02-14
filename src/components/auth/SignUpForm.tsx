@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Mail, User, Building, Lock, Github, Facebook, Chrome, Microsoft } from "lucide-react";
+import { Shield, Mail, User, Building, Lock, Github, Facebook, Chrome, Monitor } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -138,7 +138,7 @@ const SignUpForm = () => {
             className="w-full"
             onClick={() => handleSocialLogin('azure')}
           >
-            <Microsoft className="mr-2 h-4 w-4" />
+            <Monitor className="mr-2 h-4 w-4" />
             Microsoft
           </Button>
         </div>
