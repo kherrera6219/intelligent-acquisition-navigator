@@ -24,14 +24,14 @@ import { PlusCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import type { KnowledgeDomainType } from "@/types/knowledge";
+import type { DomainType } from "@/types/knowledge";
 
 export const CreateDomainDialog = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [domainType, setDomainType] = useState<KnowledgeDomainType>("CORE");
+  const [domainType, setDomainType] = useState<DomainType>("CORE");
   const [coordinates, setCoordinates] = useState("");
   
   const { toast } = useToast();
@@ -116,7 +116,7 @@ export const CreateDomainDialog = () => {
               <Label htmlFor="type">Domain Type</Label>
               <Select
                 value={domainType}
-                onValueChange={(value: KnowledgeDomainType) => setDomainType(value)}
+                onValueChange={(value: DomainType) => setDomainType(value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select domain type" />

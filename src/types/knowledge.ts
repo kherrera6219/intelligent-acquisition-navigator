@@ -1,13 +1,12 @@
 
-export type KnowledgeDomainType = 'CORE' | 'SPECIALIZED' | 'SUPPORT';
+export type DomainType = 'CORE' | 'SPECIALIZED' | 'SUPPORT';
 
 export interface KnowledgeDomain {
   id: string;
   name: string;
-  domain_type: KnowledgeDomainType;
+  domain_type: DomainType;
   description?: string;
-  parent_id?: string;
-  coordinates?: string;
+  coordinates?: string; 
   created_at: string;
   updated_at: string;
   metadata?: Record<string, any>;
@@ -19,8 +18,17 @@ export interface AIAnalysisRecord {
   query_text: string;
   response_text: string;
   confidence_score: number;
-  metadata?: Record<string, any>;
   created_at: string;
-  validated_by?: string;
+  metadata?: Record<string, any>;
   validated_at?: string;
+  validated_by?: string;
+}
+
+export interface ComponentRelationship {
+  id: string;
+  source_component_id: string;
+  target_component_id: string;
+  relationship_type: string;
+  weight?: number;
+  metadata?: Record<string, any>;
 }
