@@ -168,6 +168,42 @@ export type Database = {
           },
         ]
       }
+      compliance_checks: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          description: string
+          evidence: Json
+          id: string
+          metadata: Json | null
+          rule_id: string
+          severity: number
+          status: Database["public"]["Enums"]["reasoning_status"]
+        }
+        Insert: {
+          confidence_score: number
+          created_at?: string
+          description: string
+          evidence?: Json
+          id?: string
+          metadata?: Json | null
+          rule_id: string
+          severity: number
+          status: Database["public"]["Enums"]["reasoning_status"]
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          description?: string
+          evidence?: Json
+          id?: string
+          metadata?: Json | null
+          rule_id?: string
+          severity?: number
+          status?: Database["public"]["Enums"]["reasoning_status"]
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
@@ -462,6 +498,78 @@ export type Database = {
           updated_at?: string | null
           username?: string | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      reasoning_results: {
+        Row: {
+          compliance_checks: string[]
+          conclusion: string
+          confidence_score: number
+          created_at: string
+          id: string
+          metadata: Json | null
+          reasoning_steps: string[]
+          supporting_evidence: Json
+        }
+        Insert: {
+          compliance_checks?: string[]
+          conclusion: string
+          confidence_score: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          reasoning_steps?: string[]
+          supporting_evidence?: Json
+        }
+        Update: {
+          compliance_checks?: string[]
+          conclusion?: string
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          reasoning_steps?: string[]
+          supporting_evidence?: Json
+        }
+        Relationships: []
+      }
+      reasoning_steps: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          description: string
+          id: string
+          inputs: Json
+          logic_applied: string
+          metadata: Json | null
+          output: string
+          step_id: string
+          supporting_evidence: Json
+        }
+        Insert: {
+          confidence_score: number
+          created_at?: string
+          description: string
+          id?: string
+          inputs?: Json
+          logic_applied: string
+          metadata?: Json | null
+          output: string
+          step_id: string
+          supporting_evidence?: Json
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          description?: string
+          id?: string
+          inputs?: Json
+          logic_applied?: string
+          metadata?: Json | null
+          output?: string
+          step_id?: string
+          supporting_evidence?: Json
         }
         Relationships: []
       }
@@ -787,6 +895,8 @@ export type Database = {
         | "PROCESS"
         | "SECURITY"
         | "INTEGRATION"
+      reasoning_status: "passed" | "failed" | "warning"
+      reasoning_type: "analytical" | "inductive" | "deductive" | "general"
       solicitation_status: "DRAFT" | "IN_REVIEW" | "APPROVED" | "PUBLISHED"
       user_status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
     }
