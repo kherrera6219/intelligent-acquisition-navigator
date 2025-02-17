@@ -91,7 +91,11 @@ export class ReasoningEngine {
   private async insertReasoningStep(step: Omit<ReasoningStep, 'id'>): Promise<string> {
     const { data, error } = await supabase
       .from('reasoning_steps')
-      .insert([step])
+      .insert([{
+        ...step,
+        inputs: step.inputs as Json,
+        supporting_evidence: step.supporting_evidence as Json
+      }])
       .select('id')
       .single();
 
@@ -106,7 +110,10 @@ export class ReasoningEngine {
   private async insertComplianceCheck(check: Omit<ComplianceCheck, 'id'>): Promise<string> {
     const { data, error } = await supabase
       .from('compliance_checks')
-      .insert([check])
+      .insert([{
+        ...check,
+        evidence: check.evidence as Json
+      }])
       .select('id')
       .single();
 
@@ -118,27 +125,66 @@ export class ReasoningEngine {
     return data.id;
   }
 
-  private async insertReasoningResult(result: Omit<ReasoningResult, 'id'>): Promise<ReasoningResult> {
-    const { data, error } = await supabase
+  private async insertReasoningResult(
+    result: Omit<ReasoningResult, 'id'>,
+    stepIds: string[],
+    checkIds: string[]
+  ): Promise<ReasoningResult> {
+    const { data: resultData, error: resultError } = await supabase
       .from('reasoning_results')
-      .insert([result])
+      .insert([{
+        conclusion: result.conclusion,
+        confidence_score: result.confidence_score,
+        supporting_evidence: result.supporting_evidence as Json,
+        metadata: result.metadata
+      }])
       .select()
       .single();
 
-    if (error) {
-      console.error('Error inserting reasoning result:', error);
-      throw error;
+    if (resultError) {
+      console.error('Error inserting reasoning result:', resultError);
+      throw resultError;
+    }
+
+    // Insert step relationships
+    const stepRelations = stepIds.map(stepId => ({
+      result_id: resultData.id,
+      step_id: stepId
+    }));
+
+    const { error: stepsError } = await supabase
+      .from('reasoning_result_steps')
+      .insert(stepRelations);
+
+    if (stepsError) {
+      console.error('Error inserting step relations:', stepsError);
+      throw stepsError;
+    }
+
+    // Insert check relationships
+    const checkRelations = checkIds.map(checkId => ({
+      result_id: resultData.id,
+      check_id: checkId
+    }));
+
+    const { error: checksError } = await supabase
+      .from('reasoning_result_checks')
+      .insert(checkRelations);
+
+    if (checksError) {
+      console.error('Error inserting check relations:', checksError);
+      throw checksError;
     }
 
     return {
-      conclusion: data.conclusion,
-      confidence_score: data.confidence_score,
-      reasoning_steps: data.reasoning_steps as string[],
-      compliance_checks: data.compliance_checks as string[],
-      supporting_evidence: (data.supporting_evidence as Json[] || []).map(item => 
+      conclusion: resultData.conclusion,
+      confidence_score: resultData.confidence_score,
+      reasoning_steps: stepIds,
+      compliance_checks: checkIds,
+      supporting_evidence: (resultData.supporting_evidence as Json[] || []).map(item => 
         typeof item === 'string' ? JSON.parse(item) : item
       ),
-      metadata: data.metadata as Record<string, any> | undefined
+      metadata: resultData.metadata as Record<string, any> | undefined
     };
   }
 
@@ -147,26 +193,22 @@ export class ReasoningEngine {
     context: Context
   ): Promise<ReasoningResult> {
     try {
-      // Execute reasoning steps
       const reasoningStepIds = await this.applyReasoningSteps(
         retrievalResults,
         context
       );
 
-      // Perform compliance checks
       const complianceCheckIds = await this.validateCompliance(
         reasoningStepIds,
         retrievalResults
       );
 
-      // Synthesize conclusion
       const { conclusion, confidence } = await this.synthesizeConclusion(
         reasoningStepIds,
         complianceCheckIds,
         context
       );
 
-      // Create final result
       const result: Omit<ReasoningResult, 'id'> = {
         conclusion,
         confidence_score: confidence,
@@ -181,8 +223,7 @@ export class ReasoningEngine {
         }
       };
 
-      // Store and return result
-      return await this.insertReasoningResult(result);
+      return await this.insertReasoningResult(result, reasoningStepIds, complianceCheckIds);
 
     } catch (error) {
       console.error('Error in reasoning process:', error);

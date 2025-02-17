@@ -501,6 +501,72 @@ export type Database = {
         }
         Relationships: []
       }
+      reasoning_result_checks: {
+        Row: {
+          check_id: string
+          created_at: string
+          result_id: string
+        }
+        Insert: {
+          check_id: string
+          created_at?: string
+          result_id: string
+        }
+        Update: {
+          check_id?: string
+          created_at?: string
+          result_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reasoning_result_checks_check_id_fkey"
+            columns: ["check_id"]
+            isOneToOne: false
+            referencedRelation: "compliance_checks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reasoning_result_checks_result_id_fkey"
+            columns: ["result_id"]
+            isOneToOne: false
+            referencedRelation: "reasoning_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reasoning_result_steps: {
+        Row: {
+          created_at: string
+          result_id: string
+          step_id: string
+        }
+        Insert: {
+          created_at?: string
+          result_id: string
+          step_id: string
+        }
+        Update: {
+          created_at?: string
+          result_id?: string
+          step_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reasoning_result_steps_result_id_fkey"
+            columns: ["result_id"]
+            isOneToOne: false
+            referencedRelation: "reasoning_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reasoning_result_steps_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "reasoning_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reasoning_results: {
         Row: {
           compliance_checks: string[]
