@@ -1,64 +1,20 @@
-
 import { toast } from "@/hooks/use-toast";
-import { getAICompletion } from "@/services/azure/aiService";
-import { supabase } from "@/integrations/supabase/client";
-import { Json } from "@/integrations/supabase/types";
-
-export interface ComplianceRule {
-  id: string;
-  description: string;
-  criteria: string;
-  severity: number;
-}
-
-export interface ComplianceCheck {
-  rule_id: string;
-  description: string;
-  status: 'passed' | 'failed' | 'warning';
-  severity: number;
-  evidence: Record<string, any>[];
-  confidence_score: number;
-  metadata?: Record<string, any>;
-}
-
-export interface ReasoningStep {
-  step_id: string;
-  description: string;
-  inputs: Record<string, any>[];
-  logic_applied: string;
-  output: string;
-  confidence_score: number;
-  supporting_evidence: Record<string, any>[];
-  metadata?: Record<string, any>;
-}
-
-export interface ReasoningResult {
-  conclusion: string;
-  confidence_score: number;
-  reasoning_steps: string[];
-  compliance_checks: string[];
-  supporting_evidence: Record<string, any>[];
-  metadata?: Record<string, any>;
-}
-
-export interface Context {
-  reasoning_type?: 'analytical' | 'inductive' | 'deductive' | 'general';
-  user_role?: string;
-  domain?: string;
-  [key: string]: any;
-}
-
-// Add the missing WorkflowState enum
-export enum WorkflowState {
-  QUERY_PARSING = 'QUERY_PARSING',
-  CONTEXTUALIZATION = 'CONTEXTUALIZATION',
-  EXPERTISE_MATCHING = 'EXPERTISE_MATCHING',
-  PROFESSIONAL_ANALYSIS = 'PROFESSIONAL_ANALYSIS',
-  COMPLIANCE_CHECK = 'COMPLIANCE_CHECK',
-  RESPONSE_GENERATION = 'RESPONSE_GENERATION',
-  COMPLETE = 'COMPLETE',
-  ERROR = 'ERROR'
-}
+import { 
+  ComplianceRule, 
+  ComplianceCheck, 
+  ReasoningStep, 
+  ReasoningResult, 
+  Context, 
+  WorkflowState 
+} from "@/types/reasoning";
+import { 
+  insertReasoningStep, 
+  insertComplianceCheck, 
+  insertReasoningResult,
+  getReasoningSteps,
+  getComplianceChecks
+} from "./reasoningDb";
+import { generateWithAI } from "./aiService";
 
 export class ReasoningEngine {
   private complianceRules: Record<string, ComplianceRule>;
@@ -73,119 +29,6 @@ export class ReasoningEngine {
     this.currentState = WorkflowState.QUERY_PARSING;
     this.analysisHistory = [];
     this.sessionId = `session_${new Date().toISOString()}`;
-  }
-
-  private async generateWithAI(prompt: string): Promise<string> {
-    try {
-      const response = await getAICompletion(
-        [{ role: "system", content: prompt }],
-        this.apiKey
-      );
-      return response.choices[0].message.content;
-    } catch (error) {
-      console.error('AI generation error:', error);
-      throw new Error('Failed to generate AI response');
-    }
-  }
-
-  private async insertReasoningStep(step: Omit<ReasoningStep, 'id'>): Promise<string> {
-    const { data, error } = await supabase
-      .from('reasoning_steps')
-      .insert([{
-        ...step,
-        inputs: step.inputs as Json,
-        supporting_evidence: step.supporting_evidence as Json
-      }])
-      .select('id')
-      .single();
-
-    if (error) {
-      console.error('Error inserting reasoning step:', error);
-      throw error;
-    }
-
-    return data.id;
-  }
-
-  private async insertComplianceCheck(check: Omit<ComplianceCheck, 'id'>): Promise<string> {
-    const { data, error } = await supabase
-      .from('compliance_checks')
-      .insert([{
-        ...check,
-        evidence: check.evidence as Json
-      }])
-      .select('id')
-      .single();
-
-    if (error) {
-      console.error('Error inserting compliance check:', error);
-      throw error;
-    }
-
-    return data.id;
-  }
-
-  private async insertReasoningResult(
-    result: Omit<ReasoningResult, 'id'>,
-    stepIds: string[],
-    checkIds: string[]
-  ): Promise<ReasoningResult> {
-    const { data: resultData, error: resultError } = await supabase
-      .from('reasoning_results')
-      .insert([{
-        conclusion: result.conclusion,
-        confidence_score: result.confidence_score,
-        supporting_evidence: result.supporting_evidence as Json,
-        metadata: result.metadata
-      }])
-      .select()
-      .single();
-
-    if (resultError) {
-      console.error('Error inserting reasoning result:', resultError);
-      throw resultError;
-    }
-
-    // Insert step relationships
-    const stepRelations = stepIds.map(stepId => ({
-      result_id: resultData.id,
-      step_id: stepId
-    }));
-
-    const { error: stepsError } = await supabase
-      .from('reasoning_result_steps')
-      .insert(stepRelations);
-
-    if (stepsError) {
-      console.error('Error inserting step relations:', stepsError);
-      throw stepsError;
-    }
-
-    // Insert check relationships
-    const checkRelations = checkIds.map(checkId => ({
-      result_id: resultData.id,
-      check_id: checkId
-    }));
-
-    const { error: checksError } = await supabase
-      .from('reasoning_result_checks')
-      .insert(checkRelations);
-
-    if (checksError) {
-      console.error('Error inserting check relations:', checksError);
-      throw checksError;
-    }
-
-    return {
-      conclusion: resultData.conclusion,
-      confidence_score: resultData.confidence_score,
-      reasoning_steps: stepIds,
-      compliance_checks: checkIds,
-      supporting_evidence: (resultData.supporting_evidence as Json[] || []).map(item => 
-        typeof item === 'string' ? JSON.parse(item) : item
-      ),
-      metadata: resultData.metadata as Record<string, any> | undefined
-    };
   }
 
   public async processReasoning(
@@ -223,7 +66,7 @@ export class ReasoningEngine {
         }
       };
 
-      return await this.insertReasoningResult(result, reasoningStepIds, complianceCheckIds);
+      return await insertReasoningResult(result, reasoningStepIds, complianceCheckIds);
 
     } catch (error) {
       console.error('Error in reasoning process:', error);
@@ -245,7 +88,7 @@ export class ReasoningEngine {
 
     for (const stepTemplate of template) {
       const prompt = this.createStepPrompt(stepTemplate, retrievalResults, context);
-      const response = await this.generateWithAI(prompt);
+      const response = await generateWithAI(prompt, this.apiKey);
       
       const step: Omit<ReasoningStep, 'id'> = {
         step_id: `step_${stepIds.length + 1}`,
@@ -261,7 +104,7 @@ export class ReasoningEngine {
         }
       };
 
-      const stepId = await this.insertReasoningStep(step);
+      const stepId = await insertReasoningStep(step);
       stepIds.push(stepId);
     }
 
@@ -276,7 +119,7 @@ export class ReasoningEngine {
 
     for (const [ruleId, rule] of Object.entries(this.complianceRules)) {
       const prompt = this.createCompliancePrompt(rule, retrievalResults);
-      const response = await this.generateWithAI(prompt);
+      const response = await generateWithAI(prompt, this.apiKey);
       
       const check: Omit<ComplianceCheck, 'id'> = {
         rule_id: ruleId,
@@ -290,7 +133,7 @@ export class ReasoningEngine {
         }
       };
 
-      const checkId = await this.insertComplianceCheck(check);
+      const checkId = await insertComplianceCheck(check);
       checkIds.push(checkId);
     }
 
@@ -302,18 +145,11 @@ export class ReasoningEngine {
     complianceCheckIds: string[],
     context: Context
   ): Promise<{ conclusion: string; confidence: number }> {
-    const { data: steps } = await supabase
-      .from('reasoning_steps')
-      .select('*')
-      .in('id', reasoningStepIds);
+    const steps = await getReasoningSteps(reasoningStepIds);
+    const checks = await getComplianceChecks(complianceCheckIds);
 
-    const { data: checks } = await supabase
-      .from('compliance_checks')
-      .select('*')
-      .in('id', complianceCheckIds);
-
-    const prompt = this.createConclusionPrompt(steps || [], checks || [], context);
-    const response = await this.generateWithAI(prompt);
+    const prompt = this.createConclusionPrompt(steps, checks, context);
+    const response = await generateWithAI(prompt, this.apiKey);
 
     return {
       conclusion: response,
