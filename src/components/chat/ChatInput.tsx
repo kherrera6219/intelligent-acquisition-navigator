@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
@@ -16,12 +17,26 @@ export const ChatInput = ({
   onInputChange,
   onSubmit,
 }: ChatInputProps) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    onSubmit(e);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
-    <form onSubmit={onSubmit} className="p-4 border-t border-white/10">
+    <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
       <div className="flex gap-2">
         <Input
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Type your message..."
           className="flex-1 bg-gray-800/50 border-gray-700 text-white"
           disabled={isLoading}

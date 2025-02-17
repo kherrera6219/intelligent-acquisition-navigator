@@ -24,12 +24,7 @@ const Chat = () => {
   const { toast } = useToast();
 
   const aiMutation = useAzureAI(
-    messages.map(({ role, content }) => ({ 
-      role, 
-      content: role === "user" 
-        ? `[As ${ROLE_LABELS[selectedRole]} under ${AGENCY_LABELS[selectedAgency]}, provide a ${selectedDetailLevel.toLowerCase()} response]: ${content}` 
-        : content 
-    })),
+    messages,
     {
       onSuccess: async (data) => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -44,7 +39,6 @@ const Chat = () => {
         
         setMessages((prev) => [...prev, assistantMessage]);
 
-        // Save message to database
         if (conversationId) {
           const { error } = await supabase.from('chat_messages').insert({
             conversation_id: conversationId,
@@ -71,7 +65,6 @@ const Chat = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Create a new conversation if none exists
       const { data: conversation, error } = await supabase
         .from('conversations')
         .insert({
@@ -135,13 +128,20 @@ const Chat = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     
-    aiMutation.mutate([
-      ...messages,
-      {
-        role: "user",
-        content: `[As ${ROLE_LABELS[selectedRole]} under ${AGENCY_LABELS[selectedAgency]}, provide a ${selectedDetailLevel.toLowerCase()} response]: ${input.trim()}`
-      }
-    ]);
+    // Prepare context for AI
+    const aiContext = `You are responding as a ${ROLE_LABELS[selectedRole]} working under ${AGENCY_LABELS[selectedAgency]}. 
+                      Provide a ${selectedDetailLevel.toLowerCase()} response.`;
+    
+    const aiMessages = [
+      { role: "system", content: aiContext },
+      ...messages.map(msg => ({ 
+        role: msg.role, 
+        content: msg.content 
+      })),
+      { role: "user", content: userMessage.content }
+    ];
+
+    aiMutation.mutate(aiMessages);
   };
 
   return (
