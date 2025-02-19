@@ -4,8 +4,8 @@ import { RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Analytics = lazy(() => import("@/pages/Analytics"));
+const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
 
 export const dashboardRoutes: RouteObject[] = [
   {
@@ -13,7 +13,7 @@ export const dashboardRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <Dashboard />
+          <DashboardPage />
         </MainLayout>
       </ProtectedRoute>
     )
@@ -23,7 +23,7 @@ export const dashboardRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <Analytics />
+          <AnalyticsPage />
         </MainLayout>
       </ProtectedRoute>
     )

@@ -2,13 +2,13 @@
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 
-const AuthPage = lazy(() => import("@/pages/auth/AuthPage"));
+const AuthenticationPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
 const PasswordReset = lazy(() => import("@/components/auth/PasswordReset"));
 
 export const authRoutes: RouteObject[] = [
   {
     path: "/auth",
-    element: <AuthPage />
+    element: <AuthenticationPage />
   },
   {
     path: "/auth/reset-password",

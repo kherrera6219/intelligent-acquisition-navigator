@@ -4,9 +4,9 @@ import { RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 
-const Settings = lazy(() => import("@/pages/Settings"));
-const Help = lazy(() => import("@/pages/Help"));
-const Sitemap = lazy(() => import("@/pages/Sitemap"));
+const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const HelpPage = lazy(() => import("@/pages/HelpPage"));
+const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
 
 export const settingsRoutes: RouteObject[] = [
   {
@@ -14,7 +14,7 @@ export const settingsRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <Settings />
+          <SettingsPage />
         </MainLayout>
       </ProtectedRoute>
     )
@@ -24,7 +24,7 @@ export const settingsRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <Help />
+          <HelpPage />
         </MainLayout>
       </ProtectedRoute>
     )
@@ -34,7 +34,7 @@ export const settingsRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <Sitemap />
+          <SitemapPage />
         </MainLayout>
       </ProtectedRoute>
     )
