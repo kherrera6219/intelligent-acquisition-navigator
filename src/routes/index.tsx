@@ -2,10 +2,7 @@
 import { Suspense } from "react";
 import { RouteObject } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
-import { authRoutes } from "./authRoutes";
-import { acquisitionRoutes } from "./acquisitionRoutes";
-import { dashboardRoutes } from "./dashboardRoutes";
-import { settingsRoutes } from "./settingsRoutes";
+import { lazy } from "react";
 
 // Loading component
 export const PageLoader = () => (
@@ -22,6 +19,22 @@ export const PageLoader = () => (
   </div>
 );
 
+// Lazy load routes
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Analytics = lazy(() => import("@/pages/Analytics"));
+const Chat = lazy(() => import("@/pages/Chat"));
+const Contact = lazy(() => import("@/pages/Contact"));
+const Features = lazy(() => import("@/pages/Features"));
+const Help = lazy(() => import("@/pages/Help"));
+const Index = lazy(() => import("@/pages/Index"));
+const KnowledgeBase = lazy(() => import("@/pages/KnowledgeBase"));
+const Pricing = lazy(() => import("@/pages/Pricing"));
+const Privacy = lazy(() => import("@/pages/Privacy"));
+const Proposals = lazy(() => import("@/pages/Proposals"));
+const Settings = lazy(() => import("@/pages/Settings"));
+const Sitemap = lazy(() => import("@/pages/Sitemap"));
+const TexasAcquisition = lazy(() => import("@/pages/TexasAcquisition"));
+
 // Wrap routes with Suspense
 const wrapRoutesWithSuspense = (routes: RouteObject[]): RouteObject[] => {
   return routes.map(route => ({
@@ -29,6 +42,12 @@ const wrapRoutesWithSuspense = (routes: RouteObject[]): RouteObject[] => {
     element: <Suspense fallback={<PageLoader />}>{route.element}</Suspense>
   }));
 };
+
+// Import route configurations
+import { authRoutes } from "./authRoutes";
+import { acquisitionRoutes } from "./acquisitionRoutes";
+import { dashboardRoutes } from "./dashboardRoutes";
+import { settingsRoutes } from "./settingsRoutes";
 
 // Combine all routes
 export const routes: RouteObject[] = [
