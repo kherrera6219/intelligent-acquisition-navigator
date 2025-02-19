@@ -11,10 +11,12 @@ export const useTexasConversation = () => {
 
   useEffect(() => {
     const initializeConversation = async () => {
+      const temporaryUserId = crypto.randomUUID(); // Generate a proper UUID
+
       const { data: newConversation, error: createError } = await supabase
         .from('texas_conversations')
         .insert({
-          user_id: 'dev-user',
+          user_id: temporaryUserId,
           title: `Texas Acquisition Chat - ${new Date().toLocaleDateString()}`
         })
         .select()
@@ -57,10 +59,13 @@ export const useTexasConversation = () => {
   }, [toast]);
 
   const addMessage = async (
-    baseMessage: Pick<TexasMessage, "role" | "content">, 
-    selectedAgency: TexasAgencyType, 
-    selectedRole: TexasRole,
-    responseLevel: ResponseLevel
+    message: {
+      role: "user" | "assistant";
+      content: string;
+      agencyType: TexasAgencyType;
+      userRole: TexasRole;
+      responseLevel: ResponseLevel;
+    }
   ) => {
     if (!conversationId) return false;
 
@@ -70,23 +75,23 @@ export const useTexasConversation = () => {
     // Create the complete TexasMessage object
     const newMessage: TexasMessage = {
       id,
-      role: baseMessage.role,
-      content: baseMessage.content,
+      role: message.role,
+      content: message.content,
       timestamp,
-      agencyType: selectedAgency,
-      userRole: selectedRole
+      agencyType: message.agencyType,
+      userRole: message.userRole
     };
 
     // Map to database schema
     const dbMessage = {
       id,
-      content: baseMessage.content,
-      role: baseMessage.role,
-      user_id: 'dev-user',
+      content: message.content,
+      role: message.role,
+      user_id: crypto.randomUUID(), // Generate a new UUID for user_id
       conversation_id: conversationId,
-      agency_type: selectedAgency,
-      user_role: selectedRole,
-      response_level: responseLevel,
+      agency_type: message.agencyType,
+      user_role: message.userRole,
+      response_level: message.responseLevel,
       created_at: timestamp.toISOString()
     };
 
