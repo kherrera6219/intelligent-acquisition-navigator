@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
+import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel, ValidationResult } from "@/types/texas-chat";
 
 export const texasChatMiddleware = {
   createConversation: async (userId: string, title: string) => {
@@ -55,23 +55,28 @@ export const texasChatMiddleware = {
     return data;
   },
 
-  getValidations: async (messageIds: string[]) => {
+  getValidations: async (messageIds: string[]): Promise<ValidationResult[]> => {
     const { data, error } = await supabase
       .from('texas_response_validations')
       .select('*')
       .in('message_id', messageIds);
 
     if (error) throw error;
-    return data;
+    return data || [];
   },
 
   validateResponse: async (messageId: string, params: {
     content: string;
     agencyType: TexasAgencyType;
     userRole: TexasRole;
-  }) => {
+  }): Promise<ValidationResult> => {
     // First, analyze the response using the compliance validation edge function
-    const { data: validationResults, error: validationError } = await supabase.functions.invoke(
+    const { data: validationResults, error: validationError } = await supabase.functions.invoke<{
+      status: ValidationResult['status'];
+      confidence: number;
+      data: any;
+      notes: string;
+    }>(
       'validate-texas-response',
       {
         body: {

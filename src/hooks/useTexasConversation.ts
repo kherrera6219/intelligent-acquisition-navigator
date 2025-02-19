@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
+import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel, ValidationResult } from "@/types/texas-chat";
 import { texasChatMiddleware } from "@/middleware/texasChat";
 
 export const useTexasConversation = () => {
@@ -9,7 +9,7 @@ export const useTexasConversation = () => {
   const [conversationId, setConversationId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [validations, setValidations] = useState<Record<string, {
-    status: 'pending' | 'valid' | 'invalid' | 'needs_review';
+    status: ValidationResult['status'];
     confidence: number;
     notes?: string;
   }>>({});
@@ -46,7 +46,7 @@ export const useTexasConversation = () => {
             formattedMessages.map(m => m.id)
           );
           
-          const validationMap = validationResults.reduce((acc, val) => ({
+          const validationMap = validationResults.reduce((acc, val: ValidationResult) => ({
             ...acc,
             [val.message_id]: {
               status: val.status,
@@ -129,7 +129,7 @@ export const useTexasConversation = () => {
           toast({
             title: "Response Validation",
             description: validation.validation_notes || "This response requires review for accuracy.",
-            variant: "warning",
+            variant: "destructive",
           });
         }
       }

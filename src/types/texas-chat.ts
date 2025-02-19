@@ -1,4 +1,3 @@
-
 import { AIChatMessage, Message } from "./chat";
 
 export type TexasAgencyType = 
@@ -50,3 +49,15 @@ export const RESPONSE_LEVEL_LABELS: Record<ResponseLevel, string> = {
   STANDARD: "Standard (1 page report)",
   COMPREHENSIVE: "Comprehensive (3 page report)"
 };
+
+export interface ValidationResult {
+  id: string;
+  message_id: string;
+  status: 'pending' | 'valid' | 'invalid' | 'needs_review';
+  confidence_score: number;
+  validation_data?: any;
+  validation_notes?: string;
+  created_at: string;
+  updated_at: string;
+  validated_by?: string;
+}

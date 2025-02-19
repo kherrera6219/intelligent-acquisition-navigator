@@ -868,6 +868,50 @@ export type Database = {
         }
         Relationships: []
       }
+      texas_response_validations: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          id: string
+          message_id: string
+          status: Database["public"]["Enums"]["validation_status"]
+          updated_at: string
+          validated_by: string | null
+          validation_data: Json | null
+          validation_notes: string | null
+        }
+        Insert: {
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          message_id: string
+          status?: Database["public"]["Enums"]["validation_status"]
+          updated_at?: string
+          validated_by?: string | null
+          validation_data?: Json | null
+          validation_notes?: string | null
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          id?: string
+          message_id?: string
+          status?: Database["public"]["Enums"]["validation_status"]
+          updated_at?: string
+          validated_by?: string | null
+          validation_data?: Json | null
+          validation_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "texas_response_validations_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "texas_chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_documents: {
         Row: {
           conversation_id: string | null
@@ -1106,6 +1150,7 @@ export type Database = {
         | "PROPOSAL_REVIEW_STAFF"
         | "PROTEST_APPEALS_OFFICER"
       user_status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
+      validation_status: "pending" | "valid" | "invalid" | "needs_review"
     }
     CompositeTypes: {
       [_ in never]: never
