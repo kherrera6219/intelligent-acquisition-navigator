@@ -1,0 +1,13 @@
+
+/* Container Modules */
+.container-module {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.container-module-sm {
+  @apply max-w-3xl mx-auto px-4 sm:px-6;
+}
+
+.container-module-lg {
+  @apply max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
+}

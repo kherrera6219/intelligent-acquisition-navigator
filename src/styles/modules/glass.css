@@ -1,0 +1,18 @@
+
+/* Glass Card Modules */
+.glass-card {
+  @apply bg-[#221F26]/40 backdrop-blur-lg border border-white/10 rounded-2xl 
+         transition-all duration-300 shadow-xl shadow-black/5;
+}
+
+.glass-card-hover {
+  @apply hover:bg-white/5;
+}
+
+/* Background & Grid Modules */
+.bg-grid {
+  background-size: 100px 100px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
