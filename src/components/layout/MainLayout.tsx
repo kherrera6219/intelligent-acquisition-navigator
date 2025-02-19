@@ -1,80 +1,47 @@
-
-import { ReactNode } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import Navigation from '@/components/Navigation';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
-import { navigationItems } from '@/config/navigationItems';
+import { LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 
-interface MainLayoutProps {
-  children: ReactNode;
-}
-
-export const MainLayout = ({ children }: MainLayoutProps) => {
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-  const isAuthPage = ['/login', '/signup', '/reset-password'].includes(location.pathname);
-
+export function MainLayout({ children }: { children: React.ReactNode }) {
+  const { signOut } = useAuth();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      {/* Skip link for accessibility */}
-      <a href="#main-content" className="skip-to-content">
-        Skip to main content
-      </a>
-
-      {!isAuthPage && <Navigation />}
-      
-      {!isAuthPage && !isHomePage && (
-        <div className="fixed top-0 left-64 right-0 h-16 bg-background/80 backdrop-blur-sm border-b border-white/10 px-8 flex items-center justify-between z-50">
-          <h1 className="text-xl font-semibold text-gradient">ProcurityIQ</h1>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2">
-                Navigate <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-gray-800/90 backdrop-blur-sm border-gray-700">
-              {navigationItems.map((item) => (
-                <DropdownMenuItem key={item.route} asChild className="text-gray-200 focus:bg-gray-700 focus:text-white">
-                  <Link to={item.route} className="flex items-center gap-2">
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.label}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+      <header className="border-b border-gray-800 bg-gray-900/50">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <nav className="flex gap-4">
+            <Link to="/" className="text-gray-400 hover:text-white">
+              Dashboard
+            </Link>
+            <Link to="/acquisition/document-control" className="text-gray-400 hover:text-white">
+              Document Control
+            </Link>
+            <Link to="/acquisition/market-research" className="text-gray-400 hover:text-white">
+              Market Research
+            </Link>
+            <Link to="/acquisition/solicitation-review" className="text-gray-400 hover:text-white">
+              Solicitation Review
+            </Link>
+            <Link to="/texas-acquisition" className="text-gray-400 hover:text-white">
+              Texas Acquisition
+            </Link>
+          </nav>
+          
+          <Button
+            variant="ghost"
+            className="text-gray-400 hover:text-white"
+            onClick={signOut}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
         </div>
-      )}
+      </header>
       
-      <AnimatePresence mode="wait">
-        <motion.main 
-          id="main-content" 
-          className={cn(
-            "transition-all duration-300",
-            !isAuthPage && !isHomePage && "ml-64 p-8 pt-24",
-            isAuthPage && "flex items-center justify-center min-h-screen"
-          )}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-        >
-          <ScrollArea className="h-full w-full">
-            {children}
-          </ScrollArea>
-        </motion.main>
-      </AnimatePresence>
+      <main className="container mx-auto px-4 py-8">
+        {children}
+      </main>
     </div>
   );
-};
-
-export default MainLayout;
+}

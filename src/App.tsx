@@ -1,63 +1,128 @@
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { QueryProvider } from "@/providers/QueryProvider";
-import { ErrorBoundary } from "@/lib/error/ErrorBoundary";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import AuthPage from "@/pages/auth/AuthPage";
 import { MainLayout } from "@/components/layout/MainLayout";
-import Index from "./pages/Index";
-import Features from "./pages/Features";
-import Pricing from "./pages/Pricing";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Privacy from "./pages/Privacy";
-import SignUpForm from "./components/auth/SignUpForm";
-import UserProfile from "./components/auth/UserProfile";
-import PasswordReset from "./components/auth/PasswordReset";
-import Dashboard from "./pages/Dashboard";
-import Proposals from "./pages/Proposals";
-import Chat from "./pages/Chat";
-import Sitemap from "./pages/Sitemap";
-import SolicitationReview from "./pages/acquisition/SolicitationReview";
-import MarketResearch from "./pages/acquisition/MarketResearch";
-import DocumentControl from "./pages/acquisition/DocumentControl";
-import KnowledgeBase from "./pages/KnowledgeBase";
-import TexasAcquisition from "./pages/acquisition/TexasAcquisition";
+import Dashboard from "@/pages/Dashboard";
+import DocumentControl from "@/pages/acquisition/DocumentControl";
+import MarketResearch from "@/pages/acquisition/MarketResearch";
+import SolicitationReview from "@/pages/acquisition/SolicitationReview";
+import TexasAcquisition from "@/pages/acquisition/TexasAcquisition";
+import Analytics from "@/pages/Analytics";
+import Settings from "@/pages/Settings";
+import Help from "@/pages/Help";
+import Sitemap from "@/pages/Sitemap";
 
-const App = () => (
-  <ErrorBoundary>
-    <QueryProvider>
-      <TooltipProvider>
-        <BrowserRouter>
-          <MainLayout>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/signup" element={<SignUpForm />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/reset-password" element={<PasswordReset />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/proposals" element={<Proposals />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/sitemap" element={<Sitemap />} />
-              <Route path="/knowledge-base" element={<KnowledgeBase />} />
-              <Route path="/acquisition/solicitation-review" element={<SolicitationReview />} />
-              <Route path="/acquisition/market-research" element={<MarketResearch />} />
-              <Route path="/acquisition/document-control" element={<DocumentControl />} />
-              <Route path="/texas-acquisition" element={<TexasAcquisition />} />
-            </Routes>
-          </MainLayout>
-          <Toaster />
-          <Sonner />
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryProvider>
-  </ErrorBoundary>
-);
+export default function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <Routes>
+          <Route path="/auth" element={<AuthPage />} />
+          
+          {/* Protected Routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Dashboard />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/acquisition/document-control"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <DocumentControl />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
 
-export default App;
+          <Route
+            path="/acquisition/market-research"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <MarketResearch />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/acquisition/solicitation-review"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <SolicitationReview />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/acquisition/texas-acquisition"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <TexasAcquisition />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Analytics />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Settings />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/help"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Help />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/sitemap"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Sitemap />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+        <Toaster />
+      </AuthProvider>
+    </Router>
+  );
+}
