@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   userRole?: string;
   isAuthorized: (requiredRole: string) => boolean;
@@ -17,6 +19,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
+  isAuthenticated: false,
+  login: async () => {},
+  signup: async () => {},
   signOut: async () => {},
   isAuthorized: () => false,
   resendVerificationEmail: async () => {},
@@ -24,8 +29,8 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
-const ACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
+const SESSION_TIMEOUT = 60 * 60 * 1000;
+const ACTIVITY_TIMEOUT = 30 * 60 * 1000;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -35,13 +40,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Track user activity
   useEffect(() => {
     const updateActivity = () => {
       setLastActivity(Date.now());
     };
 
-    // Add event listeners for user activity
     window.addEventListener('mousemove', updateActivity);
     window.addEventListener('keydown', updateActivity);
     window.addEventListener('click', updateActivity);
@@ -55,17 +58,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Check for session timeout
   useEffect(() => {
     const checkSession = async () => {
       const session = await supabase.auth.getSession();
       if (!session.data.session) return;
 
-      // Use session start time from access token creation
       const sessionStart = new Date(session.data.session.access_token).getTime();
       const now = Date.now();
 
-      // Check absolute session timeout
       if (now - sessionStart > SESSION_TIMEOUT) {
         await signOut();
         toast({
@@ -76,7 +76,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Check inactivity timeout
       if (now - lastActivity > ACTIVITY_TIMEOUT) {
         await signOut();
         toast({
@@ -88,12 +87,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    const interval = setInterval(checkSession, 60000); // Check every minute
+    const interval = setInterval(checkSession, 60000);
     return () => clearInterval(interval);
   }, [lastActivity, toast]);
 
   useEffect(() => {
-    // Check active sessions
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -102,7 +100,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -127,7 +124,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       setUserRole(data?.role);
 
-      // Log successful role fetch
       await logAuditEvent({
         action: 'FETCH_USER_ROLE',
         userId,
@@ -160,6 +156,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error logging audit event:', error);
     }
+  };
+
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    
+    if (error) throw error;
+  };
+
+  const signup = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    
+    if (error) throw error;
   };
 
   const signOut = async () => {
@@ -218,7 +232,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAuthorized = (requiredRole: string): boolean => {
     if (!user || !userRole) return false;
     
-    // Define role hierarchy
     const roleHierarchy = {
       'admin': 3,
       'manager': 2,
@@ -230,7 +243,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, signOut, userRole, isAuthorized, resendVerificationEmail }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        isLoading, 
+        isAuthenticated: !!user, 
+        login,
+        signup,
+        signOut, 
+        userRole, 
+        isAuthorized, 
+        resendVerificationEmail 
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
