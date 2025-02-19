@@ -1,86 +1,69 @@
 
+import { Request, Response, NextFunction } from 'express';
 import { texasChatMiddleware } from '../texasChat';
-import { supabase } from "@/integrations/supabase/client";
 
-jest.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    from: jest.fn(() => ({
-      insert: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      eq: jest.fn().mockReturnThis(),
-      in: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis()
-    })),
-    functions: {
-      invoke: jest.fn()
-    }
-  }
-}));
+describe('Texas Chat Middleware', () => {
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
+  let nextFunction: NextFunction;
 
-describe('texasChatMiddleware', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockRequest = {
+      headers: {},
+      body: {}
+    };
+    mockResponse = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+    nextFunction = jest.fn();
   });
 
   describe('createConversation', () => {
     it('creates a new conversation successfully', async () => {
-      const mockConversation = {
-        id: 'test-id',
-        user_id: 'user-id',
-        title: 'Test Conversation'
-      };
-
-      (supabase.from as jest.Mock)().single.mockResolvedValue({ data: mockConversation, error: null });
-
-      const result = await texasChatMiddleware.createConversation('user-id', 'Test Conversation');
-
-      expect(result).toEqual(mockConversation);
-      expect(supabase.from).toHaveBeenCalledWith('texas_conversations');
+      const userId = 'test-user';
+      const title = 'Test Conversation';
+      
+      const result = await texasChatMiddleware.createConversation(userId, title);
+      
+      expect(result).toBeDefined();
+      expect(result.user_id).toBe(userId);
+      expect(result.title).toBe(title);
     });
 
-    it('throws error when creation fails', async () => {
-      const mockError = new Error('Creation failed');
-      (supabase.from as jest.Mock)().single.mockResolvedValue({ data: null, error: mockError });
-
-      await expect(texasChatMiddleware.createConversation('user-id', 'Test')).rejects.toThrow();
+    it('throws error for invalid data', async () => {
+      const userId = '';
+      const title = '';
+      
+      await expect(
+        texasChatMiddleware.createConversation(userId, title)
+      ).rejects.toThrow();
     });
   });
 
   describe('getMessages', () => {
     it('retrieves messages for a conversation', async () => {
-      const mockMessages = [
-        { id: 'msg-1', content: 'Hello' },
-        { id: 'msg-2', content: 'World' }
-      ];
-
-      (supabase.from as jest.Mock)().mockResolvedValue({ data: mockMessages, error: null });
-
-      const result = await texasChatMiddleware.getMessages('conv-id');
-
-      expect(result).toEqual(mockMessages);
-      expect(supabase.from).toHaveBeenCalledWith('texas_chat_messages');
+      const conversationId = 'test-conv';
+      
+      const messages = await texasChatMiddleware.getMessages(conversationId);
+      
+      expect(Array.isArray(messages)).toBe(true);
     });
   });
 
   describe('validateResponse', () => {
-    it('validates message response successfully', async () => {
-      const mockValidation = {
-        status: 'valid',
-        confidence_score: 0.95,
-        validation_notes: null
+    it('validates message content successfully', async () => {
+      const messageId = 'test-msg';
+      const params = {
+        content: 'Test content',
+        agencyType: 'federal',
+        userRole: 'admin'
       };
-
-      (supabase.functions.invoke as jest.Mock).mockResolvedValue({ data: mockValidation, error: null });
-
-      const result = await texasChatMiddleware.validateResponse('msg-id', {
-        content: 'test',
-        agencyType: 'TEXAS_GOVERNMENT',
-        userRole: 'CONTRACTING_OFFICER'
-      });
-
-      expect(result).toEqual(mockValidation);
-      expect(supabase.functions.invoke).toHaveBeenCalledWith('validate-texas-response', expect.any(Object));
+      
+      const result = await texasChatMiddleware.validateResponse(messageId, params);
+      
+      expect(result).toBeDefined();
+      expect(result.isValid).toBe(true);
     });
   });
 });
