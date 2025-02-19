@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { PrivacyNotice } from "@/components/landing/PrivacyNotice";
 import { HeroSection } from "@/components/landing/HeroSection";
@@ -12,19 +11,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-const Index = () => {
+export const Index = () => {
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
 
   useEffect(() => {
-    // Add a small delay to ensure smooth animation on initial load
     const timer = setTimeout(() => {
       setIsLoaded(true);
     }, 100);
 
-    // Check if user has visited before
     const hasVisited = localStorage.getItem('hasVisitedBefore');
     if (hasVisited) {
       setIsFirstVisit(false);
@@ -32,7 +29,6 @@ const Index = () => {
       localStorage.setItem('hasVisitedBefore', 'true');
     }
 
-    // Handle scroll for back to top button
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 400);
     };
@@ -101,45 +97,31 @@ const Index = () => {
 
         {/* Help Button */}
         <div className="fixed bottom-24 right-4 z-50">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
-                  onClick={() => window.open('/contact', '_blank')}
-                >
-                  <HelpCircle className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Need help?</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip content="Need help? Click to contact support">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+              onClick={() => window.open('/contact', '_blank')}
+            >
+              <HelpCircle className="h-5 w-5" />
+            </Button>
+          </Tooltip>
         </div>
 
         {/* Back to Top Button */}
         {showBackToTop && (
           <div className="fixed bottom-8 right-4 z-50">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
-                    onClick={scrollToTop}
-                  >
-                    <ArrowUp className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Back to top</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip content="Scroll back to top">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+                onClick={scrollToTop}
+              >
+                <ArrowUp className="h-5 w-5" />
+              </Button>
+            </Tooltip>
           </div>
         )}
 
