@@ -1,36 +1,33 @@
 
-import { ReactNode } from 'react';
-import { Card } from '@/components/ui/universal/Card';
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
+import { Card } from "@/components/ui/universal/Card";
 
 interface DashboardCardProps {
-  icon?: ReactNode;
   title: string;
-  description?: string;
+  icon?: ReactNode;
   children: ReactNode;
   className?: string;
 }
 
 export const DashboardCard = ({
-  icon,
   title,
-  description,
+  icon,
   children,
-  className
+  className,
 }: DashboardCardProps) => {
   return (
-    <Card className={cn("spacing-module-lg", className)}>
-      <div className="flex-module-start flex-module-gap-md mb-4">
-        {icon && (
-          <div className="p-3 rounded-lg bg-violet-500/20">
-            {icon}
-          </div>
-        )}
-        <div>
-          <h3 className="text-lg font-semibold text-white">{title}</h3>
-          {description && (
-            <p className="text-sm text-gray-400">{description}</p>
+    <Card className={cn("relative overflow-hidden", className)}>
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          {icon && (
+            <div className="p-2 rounded-lg bg-white/5">
+              {icon}
+            </div>
           )}
+          <h3 className="text-sm font-medium text-gray-400">
+            {title}
+          </h3>
         </div>
       </div>
       {children}
