@@ -4,15 +4,17 @@ import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
-interface BreadcrumbProps {
-  className?: string;
-  items: Array<{
-    label: string;
-    href: string;
-  }>;
+export interface BreadcrumbItem {
+  label: string;
+  href: string;
 }
 
-export const Breadcrumb = ({ items, className }: BreadcrumbProps) => {
+export interface BreadcrumbProps {
+  className?: string;
+  items: BreadcrumbItem[];
+}
+
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
   return (
     <nav 
       aria-label="Breadcrumb"
@@ -21,13 +23,14 @@ export const Breadcrumb = ({ items, className }: BreadcrumbProps) => {
       <Link
         to="/"
         className="flex items-center hover:text-primary transition-colors"
+        aria-label="Home"
       >
         <Home className="h-4 w-4" />
         <span className="sr-only">Home</span>
       </Link>
       {items.map((item, index) => (
         <React.Fragment key={item.href}>
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
           <Link
             to={item.href}
             className={cn(

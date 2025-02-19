@@ -1,11 +1,13 @@
 
 import React from 'react';
-import SignUpForm from '@/components/auth/SignUpForm';
-import PasswordReset from '@/components/auth/PasswordReset';
+import { SignUpForm } from '@/components/auth/SignUpForm';
+import { PasswordReset } from '@/components/auth/PasswordReset';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
-export default function AuthPage() {
+interface AuthPageProps {}
+
+export const AuthPage: React.FC<AuthPageProps> = () => {
   // Initialize keyboard shortcuts
   useKeyboardShortcuts();
 
@@ -24,9 +26,13 @@ export default function AuthPage() {
             <p className="text-gray-400">Sign in to continue to your account</p>
           </div>
 
-          <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700 shadow-xl 
-                        backdrop-blur-sm space-y-6 
-                        sm:p-8 md:backdrop-blur-md">
+          <div 
+            className="bg-gray-800/50 p-6 rounded-lg border border-gray-700 shadow-xl 
+                      backdrop-blur-sm space-y-6 
+                      sm:p-8 md:backdrop-blur-md"
+            role="form"
+            aria-label="Authentication form"
+          >
             <SignUpForm />
             <div className="border-t border-gray-700 pt-6">
               <PasswordReset />
@@ -41,3 +47,5 @@ export default function AuthPage() {
     </div>
   );
 }
+
+export default AuthPage;

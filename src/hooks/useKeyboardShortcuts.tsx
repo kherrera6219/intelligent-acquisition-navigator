@@ -3,49 +3,71 @@ import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from './use-toast';
 
+interface KeyboardShortcut {
+  key: string;
+  action: () => void;
+  description: string;
+}
+
 export const useKeyboardShortcuts = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    // Only trigger if Ctrl/Cmd is pressed
-    if (!(event.ctrlKey || event.metaKey)) return;
-
-    switch (event.key) {
-      case 'h':
-        event.preventDefault();
+  const shortcuts: KeyboardShortcut[] = [
+    {
+      key: 'h',
+      action: () => {
         navigate('/');
         toast({
           title: "Navigation",
           description: "Navigated to Home",
         });
-        break;
-      case 'd':
-        event.preventDefault();
+      },
+      description: "Navigate to Home"
+    },
+    {
+      key: 'd',
+      action: () => {
         navigate('/dashboard');
         toast({
           title: "Navigation",
           description: "Navigated to Dashboard",
         });
-        break;
-      case 'k':
-        event.preventDefault();
-        // Toggle command palette or search
+      },
+      description: "Navigate to Dashboard"
+    },
+    {
+      key: 'k',
+      action: () => {
         toast({
           title: "Shortcut",
           description: "Command palette opened",
         });
-        break;
-      case '?':
-        event.preventDefault();
-        // Show keyboard shortcuts help
+      },
+      description: "Open command palette"
+    },
+    {
+      key: '?',
+      action: () => {
         toast({
           title: "Help",
           description: "Keyboard shortcuts: Ctrl/⌘ + H (Home), D (Dashboard), K (Search), ? (Help)",
         });
-        break;
+      },
+      description: "Show keyboard shortcuts help"
     }
-  }, [navigate, toast]);
+  ];
+
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
+    // Only trigger if Ctrl/Cmd is pressed
+    if (!(event.ctrlKey || event.metaKey)) return;
+
+    const shortcut = shortcuts.find(s => s.key === event.key);
+    if (shortcut) {
+      event.preventDefault();
+      shortcut.action();
+    }
+  }, [navigate, toast, shortcuts]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
