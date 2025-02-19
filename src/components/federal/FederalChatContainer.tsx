@@ -13,6 +13,9 @@ interface FederalChatContainerProps {
   input: string;
   onInputChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  onDocumentCreation: () => void;
+  onCodeCreation: () => void;
+  onRunEnvironment: () => void;
 }
 
 export const FederalChatContainer = ({
@@ -22,6 +25,9 @@ export const FederalChatContainer = ({
   input,
   onInputChange,
   onSubmit,
+  onDocumentCreation,
+  onCodeCreation,
+  onRunEnvironment,
 }: FederalChatContainerProps) => {
   return (
     <div className="container-module-lg py-8">
@@ -37,9 +43,9 @@ export const FederalChatContainer = ({
 
         <Card className="p-6 space-y-6">
           <ChatToolbar
-            onDocumentCreation={() => console.log('Document creation clicked')}
-            onCodeCreation={() => console.log('Code creation clicked')}
-            onRunEnvironment={() => console.log('Run environment clicked')}
+            onDocumentCreation={onDocumentCreation}
+            onCodeCreation={onCodeCreation}
+            onRunEnvironment={onRunEnvironment}
           />
           
           <div className="h-[600px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-4">

@@ -97,6 +97,27 @@ const FederalAcquisition = () => {
     aiMutation.mutate(aiMessages);
   };
 
+  const handleDocumentCreation = () => {
+    toast({
+      title: "Document Creation",
+      description: "Document creation tool opening...",
+    });
+  };
+
+  const handleCodeCreation = () => {
+    toast({
+      title: "Code Editor",
+      description: "Code editor opening...",
+    });
+  };
+
+  const handleRunEnvironment = () => {
+    toast({
+      title: "Environment",
+      description: "Running environment...",
+    });
+  };
+
   return (
     <FederalChatContainer
       conversationId={chatState.conversationId}
@@ -105,6 +126,9 @@ const FederalAcquisition = () => {
       input={input}
       onInputChange={setInput}
       onSubmit={handleSubmit}
+      onDocumentCreation={handleDocumentCreation}
+      onCodeCreation={handleCodeCreation}
+      onRunEnvironment={handleRunEnvironment}
     />
   );
 };
