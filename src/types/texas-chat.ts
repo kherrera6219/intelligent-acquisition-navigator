@@ -18,8 +18,8 @@ export type TexasRole =
   | "PROTEST_APPEALS_OFFICER";
 
 export interface TexasMessage extends Message {
-  agencyType?: TexasAgencyType;
-  userRole?: TexasRole;
+  agencyType: TexasAgencyType;
+  userRole: TexasRole;
 }
 
 export const TEXAS_AGENCY_LABELS: Record<TexasAgencyType, string> = {

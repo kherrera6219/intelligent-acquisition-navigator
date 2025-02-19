@@ -68,14 +68,15 @@ export const useTexasConversation = () => {
       if (messagesError) {
         console.error('Error loading messages:', messagesError);
       } else if (existingMessages) {
-        setMessages(existingMessages.map(msg => ({
+        const formattedMessages: TexasMessage[] = existingMessages.map(msg => ({
           id: msg.id,
           role: msg.role as "user" | "assistant",
           content: msg.content,
           timestamp: new Date(msg.created_at),
           agencyType: msg.agency_type,
           userRole: msg.user_role
-        })));
+        }));
+        setMessages(formattedMessages);
       }
     };
 
@@ -93,7 +94,9 @@ export const useTexasConversation = () => {
     const newMessage: TexasMessage = {
       id: crypto.randomUUID(),
       ...message,
-      timestamp: new Date()
+      timestamp: new Date(),
+      agencyType: selectedAgency,
+      userRole: selectedRole
     };
 
     const messageData = {
