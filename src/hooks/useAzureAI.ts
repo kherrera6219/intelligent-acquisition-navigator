@@ -1,11 +1,7 @@
 
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-
-interface AIChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
+import { AIChatMessage } from "@/types/chat";
 
 interface AIResponse {
   choices: Array<{
@@ -28,7 +24,7 @@ interface UseAzureAIOptions {
 }
 
 export const useAzureAI = (
-  messages: AIChatMessage[], 
+  messages: Message[], 
   options: UseAzureAIOptions = {}
 ): UseMutationResult<AIResponse, Error, AIChatMessage[], unknown> => {
   const { toast } = useToast();
