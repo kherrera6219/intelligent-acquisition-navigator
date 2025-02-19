@@ -32,30 +32,23 @@ const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcq
 const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
 
 // Function to wrap pages with layout and authentication checks
-const wrapWithLayout = (
-  Component: React.ComponentType,
-  requiresAuth: boolean = true,
-  requiredRole?: string
-) => {
-  const WrappedComponent = () => (
-    <PageErrorBoundary>
-      {requiresAuth ? (
-        <ProtectedRoute requiredRole={requiredRole}>
-          <MainLayout>
-            <Suspense fallback={<LoadingSpinner size="lg" />}>
-              <Component />
-            </Suspense>
-          </MainLayout>
-        </ProtectedRoute>
-      ) : (
-        <Suspense fallback={<PageLoader />}>
-          <Component />
-        </Suspense>
-      )}
-    </PageErrorBoundary>
-  );
-  return <WrappedComponent />;
-};
+const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = true, requiredRole?: string) => (
+  <PageErrorBoundary>
+    {requiresAuth ? (
+      <ProtectedRoute requiredRole={requiredRole}>
+        <MainLayout>
+          <Suspense fallback={<LoadingSpinner size="lg" />}>
+            <Component />
+          </Suspense>
+        </MainLayout>
+      </ProtectedRoute>
+    ) : (
+      <Suspense fallback={<PageLoader />}>
+        <Component />
+      </Suspense>
+    )}
+  </PageErrorBoundary>
+);
 
 // Define application routes with access control
 export const routes: RouteObject[] = [
@@ -65,12 +58,6 @@ export const routes: RouteObject[] = [
   { path: "/acquisition/market-research", element: wrapWithLayout(MarketResearchPage, true, "user") },
   { path: "/acquisition/solicitation-review", element: wrapWithLayout(SolicitationReviewPage, true, "manager") },
   { path: "/acquisition/texas-acquisition", element: wrapWithLayout(TexasAcquisitionPage, true, "user") },
-  { 
-    path: "/acquisition/federal", 
-    element: wrapWithLayout(FederalAcquisitionPage, true, "manager") 
-  },
-  { 
-    path: "/acquisition/federal-acquisition", 
-    element: wrapWithLayout(FederalAcquisitionPage, true, "manager") 
-  }
+  { path: "/acquisition/federal", element: wrapWithLayout(FederalAcquisitionPage, true, "manager") },
+  { path: "/acquisition/federal-acquisition", element: wrapWithLayout(FederalAcquisitionPage, true, "manager") }
 ];
