@@ -17,7 +17,7 @@ export const ChatMessages = ({ messages, isLoading, className }: ChatMessagesPro
         <div
           key={message.id || index}
           className={cn(
-            "flex gap-3 p-4 glass-card animate-fade-in transition-colors",
+            "flex gap-3 p-4 glass-card animate-fade-in transition-all duration-200 hover:translate-y-[-2px]",
             message.role === "user" 
               ? "ml-auto max-w-[80%] enterprise-gradient" 
               : "mr-auto max-w-[80%] bg-background/80"
@@ -63,12 +63,14 @@ export const ChatMessages = ({ messages, isLoading, className }: ChatMessagesPro
       )}
 
       {messages.length > 0 && (
-        <div className="flex justify-center">
-          <button className="flex items-center gap-2 px-3 py-1 text-sm text-muted-foreground hover:text-primary transition-colors">
-            <ArrowDown className="w-4 h-4" />
-            Scroll to bottom
-          </button>
-        </div>
+        <button 
+          className="flex items-center gap-2 px-3 py-1 text-sm text-muted-foreground hover:text-primary 
+                    transition-colors mx-auto hover:scale-105 active:scale-95"
+          onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
+        >
+          <ArrowDown className="w-4 h-4" />
+          Scroll to bottom
+        </button>
       )}
     </div>
   );
