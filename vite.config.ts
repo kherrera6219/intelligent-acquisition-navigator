@@ -4,7 +4,6 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -21,15 +20,20 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['@azure/openai'],
+    exclude: ['express-rate-limit']
   },
   build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
-      external: ['crypto', 'net', 'buffer'],
+      external: ['crypto', 'net', 'buffer', 'express-rate-limit'],
       output: {
         globals: {
-          crypto: 'crypto',
-          net: 'net',
-          buffer: 'buffer'
+          crypto: 'globalThis.crypto',
+          net: 'globalThis.net',
+          buffer: 'globalThis.buffer',
+          'express-rate-limit': 'expressRateLimit'
         }
       }
     }
