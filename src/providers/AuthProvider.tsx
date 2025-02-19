@@ -89,6 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await supabase.from('audit_logs').insert({
         user_id: event.userId,
         action: event.action,
+        resource_type: 'auth', // Added required resource_type field
         details: event.details
       });
     } catch (error) {
