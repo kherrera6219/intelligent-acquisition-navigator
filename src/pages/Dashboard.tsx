@@ -6,9 +6,10 @@ import { Container } from "@/components/ui/universal/Container";
 import { Card } from "@/components/ui/universal/Card";
 import { MetricsChart } from "@/components/MetricsChart";
 import { useMetrics } from "@/hooks/useMetrics";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 
 const Dashboard = () => {
-  const { metrics, chartData } = useMetrics();
+  const { metrics, chartData, isLoading, error } = useMetrics();
 
   return (
     <Container>
@@ -50,4 +51,12 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+const DashboardWithErrorBoundary = () => {
+  return (
+    <ErrorBoundary>
+      <Dashboard />
+    </ErrorBoundary>
+  );
+};
+
+export default DashboardWithErrorBoundary;
