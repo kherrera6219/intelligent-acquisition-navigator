@@ -34,6 +34,7 @@ const Proposals = lazy(() => import("@/pages/Proposals"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const Sitemap = lazy(() => import("@/pages/Sitemap"));
 const TexasAcquisition = lazy(() => import("@/pages/TexasAcquisition"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
 // Wrap routes with Suspense
 const wrapRoutesWithSuspense = (routes: RouteObject[]): RouteObject[] => {
@@ -54,5 +55,9 @@ export const routes: RouteObject[] = [
   ...wrapRoutesWithSuspense(authRoutes),
   ...wrapRoutesWithSuspense(acquisitionRoutes),
   ...wrapRoutesWithSuspense(dashboardRoutes),
-  ...wrapRoutesWithSuspense(settingsRoutes)
+  ...wrapRoutesWithSuspense(settingsRoutes),
+  {
+    path: "*",
+    element: <NotFound />
+  }
 ];
