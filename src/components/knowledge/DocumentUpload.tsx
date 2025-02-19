@@ -61,36 +61,131 @@ export const DocumentUpload = () => {
     }
   };
 
+  const handleYamlUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.yaml') && !file.name.endsWith('.yml')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload only YAML files (.yaml or .yml)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("You must be logged in to upload knowledge graphs");
+      }
+
+      // Upload file to storage
+      const fileExt = file.name.split('.').pop();
+      const filePath = `knowledge_graphs/${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('knowledge_docs')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Create document record
+      const { error: dbError } = await supabase
+        .from('user_documents')
+        .insert({
+          file_name: file.name,
+          file_path: filePath,
+          file_type: file.type,
+          file_size: file.size,
+          user_id: user.id,
+          processed_status: 'pending',
+          metadata: { type: 'knowledge_graph' }
+        });
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: "Knowledge graph uploaded successfully",
+        description: "The YAML file will be processed and integrated into the system.",
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Upload failed",
+        description: "There was an error uploading your knowledge graph. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
-    <div className="mb-6">
-      <input
-        type="file"
-        id="file-upload"
-        className="hidden"
-        onChange={handleFileUpload}
-        accept=".pdf,.doc,.docx,.txt"
-        disabled={isUploading}
-      />
-      <label
-        htmlFor="file-upload"
-        className="inline-flex items-center"
-      >
-        <Button 
-          variant="outline" 
+    <div className="mb-6 flex flex-col gap-4">
+      <div>
+        <input
+          type="file"
+          id="file-upload"
+          className="hidden"
+          onChange={handleFileUpload}
+          accept=".pdf,.doc,.docx,.txt"
           disabled={isUploading}
-          className="gap-2"
+        />
+        <label
+          htmlFor="file-upload"
+          className="inline-flex items-center"
         >
-          {isUploading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Upload className="h-4 w-4" />
-          )}
-          Upload Document
-        </Button>
-      </label>
-      <p className="text-sm text-muted-foreground mt-2">
-        Upload documents to expand the knowledge graph. Supported formats: PDF, DOC, DOCX, TXT
-      </p>
+          <Button 
+            variant="outline" 
+            disabled={isUploading}
+            className="gap-2"
+          >
+            {isUploading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Upload className="h-4 w-4" />
+            )}
+            Upload Document
+          </Button>
+        </label>
+        <p className="text-sm text-muted-foreground mt-2">
+          Upload documents to expand the knowledge graph. Supported formats: PDF, DOC, DOCX, TXT
+        </p>
+      </div>
+
+      <div>
+        <input
+          type="file"
+          id="yaml-upload"
+          className="hidden"
+          onChange={handleYamlUpload}
+          accept=".yaml,.yml"
+          disabled={isUploading}
+        />
+        <label
+          htmlFor="yaml-upload"
+          className="inline-flex items-center"
+        >
+          <Button 
+            variant="outline" 
+            disabled={isUploading}
+            className="gap-2"
+          >
+            {isUploading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Upload className="h-4 w-4" />
+            )}
+            Upload Knowledge Graph
+          </Button>
+        </label>
+        <p className="text-sm text-muted-foreground mt-2">
+          Upload YAML files to import knowledge graph definitions. Supported formats: YAML, YML
+        </p>
+      </div>
     </div>
   );
 };
