@@ -84,7 +84,7 @@ export const useTexasConversation = () => {
   }, [toast]);
 
   const addMessage = async (
-    message: Omit<TexasMessage, "id" | "timestamp" | "agencyType" | "userRole">, 
+    baseMessage: Omit<TexasMessage, "id" | "timestamp" | "agencyType" | "userRole">, 
     selectedAgency: TexasAgencyType, 
     selectedRole: TexasRole
   ) => {
@@ -93,15 +93,15 @@ export const useTexasConversation = () => {
 
     const newMessage: TexasMessage = {
       id: crypto.randomUUID(),
-      ...message,
+      ...baseMessage,
       timestamp: new Date(),
       agencyType: selectedAgency,
       userRole: selectedRole
     };
 
     const messageData = {
-      content: message.content,
-      role: message.role,
+      content: baseMessage.content,
+      role: baseMessage.role,
       user_id: user.id,
       conversation_id: conversationId,
       agency_type: selectedAgency,
