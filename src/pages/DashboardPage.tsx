@@ -1,13 +1,13 @@
 
 import { PageHeader } from "@/components/layout/PageHeader";
-import { DashboardCard } from "@/components/layout/DashboardCard";
 import { Grid } from "@/components/ui/universal/Grid";
 import { Container } from "@/components/ui/universal/Container";
 import { Card } from "@/components/ui/universal/Card";
 import { MetricsChart } from "@/components/MetricsChart";
-import { useMetrics } from "@/hooks/useMetrics";
+import { useMetrics } from "@/application/hooks/useMetrics";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MetricCard } from "@/presentation/components/metrics/MetricCard";
 
 const Dashboard = () => {
   const { metrics, chartData, isLoading, error } = useMetrics();
@@ -39,17 +39,11 @@ const Dashboard = () => {
           </>
         ) : (
           metrics.map((metric, index) => (
-            <DashboardCard
+            <MetricCard
               key={index}
-              icon={metric.icon}
-              title={metric.title}
+              metric={metric}
               className="hover:bg-white/5 active:bg-white/10 transition-colors p-4 sm:p-5 md:p-6 touch-pan-y"
-            >
-              <div className="mt-3 sm:mt-4">
-                <p className="text-xl sm:text-2xl font-bold text-white">{metric.value}</p>
-                <p className="text-xs sm:text-sm text-gray-400">{metric.change}</p>
-              </div>
-            </DashboardCard>
+            />
           ))
         )}
       </Grid>
