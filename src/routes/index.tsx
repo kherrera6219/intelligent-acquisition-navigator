@@ -8,18 +8,16 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card } from "@/components/ui/universal/Card";
 import { Container } from "@/components/ui/universal/Container";
 
-// Global loading component with minimal UI
+// Simple loading spinner for lazy-loaded components
 export const PageLoader = () => (
-  <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-    <Container className="py-8">
-      <Card className="w-full bg-black/40 backdrop-blur-sm border-white/10 p-6 shadow-xl flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-400">Loading...</p>
-        </div>
-      </Card>
-    </Container>
-  </div>
+  <Container className="py-8">
+    <Card className="w-full p-6 shadow-xl flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <LoadingSpinner size="lg" />
+        <p className="mt-4 text-gray-400">Loading...</p>
+      </div>
+    </Card>
+  </Container>
 );
 
 // Lazy-loaded pages
@@ -50,66 +48,34 @@ const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = 
 export const routes: RouteObject[] = [
   {
     path: "/",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        {wrapWithLayout(DashboardPage)}
-      </Suspense>
-    )
+    element: wrapWithLayout(DashboardPage)
   },
   {
     path: "/auth",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        {wrapWithLayout(AuthPage, false)}
-      </Suspense>
-    )
+    element: wrapWithLayout(AuthPage, false)
   },
   {
     path: "/acquisition/document-control",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        {wrapWithLayout(DocumentControlPage, true, "user")}
-      </Suspense>
-    )
+    element: wrapWithLayout(DocumentControlPage, true, "user")
   },
   {
     path: "/acquisition/market-research",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        {wrapWithLayout(MarketResearchPage, true, "user")}
-      </Suspense>
-    )
+    element: wrapWithLayout(MarketResearchPage, true, "user")
   },
   {
     path: "/acquisition/solicitation-review",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        {wrapWithLayout(SolicitationReviewPage, true, "manager")}
-      </Suspense>
-    )
+    element: wrapWithLayout(SolicitationReviewPage, true, "manager")
   },
   {
     path: "/acquisition/texas-acquisition",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        {wrapWithLayout(TexasAcquisitionPage, true, "user")}
-      </Suspense>
-    )
+    element: wrapWithLayout(TexasAcquisitionPage, true, "user")
   },
   {
     path: "/acquisition/federal",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        {wrapWithLayout(FederalAcquisitionPage, true, "manager")}
-      </Suspense>
-    )
+    element: wrapWithLayout(FederalAcquisitionPage, true, "manager")
   },
   {
     path: "/acquisition/federal-acquisition",
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        {wrapWithLayout(FederalAcquisitionPage, true, "manager")}
-      </Suspense>
-    )
+    element: wrapWithLayout(FederalAcquisitionPage, true, "manager")
   }
 ];
