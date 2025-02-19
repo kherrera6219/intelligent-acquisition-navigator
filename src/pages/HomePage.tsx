@@ -8,10 +8,10 @@ import { CTASection } from "@/components/landing/CTASection";
 import CookieConsent from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, HelpCircle } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export const Index = () => {
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(true);
@@ -106,47 +106,33 @@ export const Index = () => {
 
         {/* Help Button */}
         <div className="fixed bottom-24 right-4 z-50">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
-                  onClick={() => window.open('/contact', '_blank')}
-                  aria-label="Get help"
-                >
-                  <HelpCircle className="h-5 w-5" aria-hidden="true" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                Need help? Click to contact support
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip content="Need help? Click to contact support">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+              onClick={() => window.open('/contact', '_blank')}
+              aria-label="Get help"
+            >
+              <HelpCircle className="h-5 w-5" aria-hidden="true" />
+            </Button>
+          </Tooltip>
         </div>
 
         {/* Back to Top Button */}
         {showBackToTop && (
           <div className="fixed bottom-8 right-4 z-50">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
-                    onClick={scrollToTop}
-                    aria-label="Scroll back to top"
-                  >
-                    <ArrowUp className="h-5 w-5" aria-hidden="true" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Scroll back to top
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip content="Scroll back to top">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+                onClick={scrollToTop}
+                aria-label="Scroll back to top"
+              >
+                <ArrowUp className="h-5 w-5" aria-hidden="true" />
+              </Button>
+            </Tooltip>
           </div>
         )}
 
