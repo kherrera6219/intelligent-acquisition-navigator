@@ -17,6 +17,11 @@ export type TexasRole =
   | "PROPOSAL_REVIEW_STAFF"
   | "PROTEST_APPEALS_OFFICER";
 
+export type ResponseLevel =
+  | "BRIEF"
+  | "STANDARD"
+  | "COMPREHENSIVE";
+
 export interface TexasMessage extends Message {
   agencyType: TexasAgencyType;
   userRole: TexasRole;
@@ -38,4 +43,10 @@ export const TEXAS_ROLE_LABELS: Record<TexasRole, string> = {
   SMALL_BUSINESS_LIAISON: "Small Business Liaison / Socioeconomic Compliance Officer",
   PROPOSAL_REVIEW_STAFF: "Proposal Review Support Staff",
   PROTEST_APPEALS_OFFICER: "Protest and Appeals Officer"
+};
+
+export const RESPONSE_LEVEL_LABELS: Record<ResponseLevel, string> = {
+  BRIEF: "Brief (3-6 lines)",
+  STANDARD: "Standard (1 page report)",
+  COMPREHENSIVE: "Comprehensive (3 page report)"
 };

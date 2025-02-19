@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useAzureAI } from "@/hooks/useAzureAI";
-import { TexasAgencyType, TexasRole, TexasMessage } from "@/types/texas-chat";
+import { TexasAgencyType, TexasRole, TexasMessage, ResponseLevel } from "@/types/texas-chat";
 import { AIChatMessage } from "@/types/chat";
 import { useTexasConversation } from "@/hooks/useTexasConversation";
 import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
@@ -12,6 +12,7 @@ const TexasAcquisition = () => {
   const [input, setInput] = useState("");
   const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
   const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACTING_OFFICER");
+  const [selectedResponseLevel, setSelectedResponseLevel] = useState<ResponseLevel>("STANDARD");
   const { messages, conversationId, addMessage } = useTexasConversation();
   const { toast } = useToast();
 
@@ -66,6 +67,7 @@ const TexasAcquisition = () => {
     
     const aiContext = `You are a procurement expert for the ${selectedAgency.replace('_', ' ').toLowerCase()} sector, 
                       specifically assisting a ${selectedRole.replace('_', ' ').toLowerCase()}. 
+                      Please provide a ${selectedResponseLevel.toLowerCase()} response that is appropriate for a ${RESPONSE_LEVEL_LABELS[selectedResponseLevel].toLowerCase()}.
                       Provide guidance specific to Texas state regulations and requirements.`;
     
     const aiMessages: AIChatMessage[] = [
@@ -98,10 +100,12 @@ const TexasAcquisition = () => {
       input={input}
       selectedAgency={selectedAgency}
       selectedRole={selectedRole}
+      selectedResponseLevel={selectedResponseLevel}
       onInputChange={setInput}
       onSubmit={handleSubmit}
       onAgencyChange={setSelectedAgency}
       onRoleChange={setSelectedRole}
+      onResponseLevelChange={setSelectedResponseLevel}
     />
   );
 };

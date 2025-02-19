@@ -4,7 +4,7 @@ import { TexasChatSelectors } from "./TexasChatSelectors";
 import { FileUpload } from "@/components/chat/FileUpload";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
-import { TexasAgencyType, TexasRole, TexasMessage } from "@/types/texas-chat";
+import { TexasAgencyType, TexasRole, TexasMessage, ResponseLevel } from "@/types/texas-chat";
 import { useToast } from "@/hooks/use-toast";
 
 interface TexasChatContainerProps {
@@ -14,10 +14,12 @@ interface TexasChatContainerProps {
   input: string;
   selectedAgency: TexasAgencyType;
   selectedRole: TexasRole;
+  selectedResponseLevel: ResponseLevel;
   onInputChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onAgencyChange: (value: TexasAgencyType) => void;
   onRoleChange: (value: TexasRole) => void;
+  onResponseLevelChange: (value: ResponseLevel) => void;
 }
 
 export const TexasChatContainer = ({
@@ -27,10 +29,12 @@ export const TexasChatContainer = ({
   input,
   selectedAgency,
   selectedRole,
+  selectedResponseLevel,
   onInputChange,
   onSubmit,
   onAgencyChange,
-  onRoleChange
+  onRoleChange,
+  onResponseLevelChange
 }: TexasChatContainerProps) => {
   const { toast } = useToast();
 
@@ -50,8 +54,10 @@ export const TexasChatContainer = ({
               <TexasChatSelectors
                 selectedAgency={selectedAgency}
                 selectedRole={selectedRole}
+                selectedResponseLevel={selectedResponseLevel}
                 onAgencyChange={onAgencyChange}
                 onRoleChange={onRoleChange}
+                onResponseLevelChange={onResponseLevelChange}
               />
               <FileUpload 
                 conversationId={conversationId}
