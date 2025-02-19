@@ -5,17 +5,31 @@ interface ContainerProps {
   children: React.ReactNode;
   className?: string;
   as?: keyof JSX.IntrinsicElements;
+  size?: "sm" | "md" | "lg" | "xl" | "full";
+  padding?: boolean;
 }
+
+const sizeClasses = {
+  sm: "max-w-3xl",
+  md: "max-w-5xl",
+  lg: "max-w-7xl",
+  xl: "max-w-[1400px]",
+  full: "max-w-none",
+} as const;
 
 export const Container = ({
   children,
   className,
   as: Component = "div",
+  size = "lg",
+  padding = true,
 }: ContainerProps) => {
   return (
     <Component
       className={cn(
-        "w-full mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl",
+        "w-full mx-auto",
+        padding && "px-4 sm:px-6 lg:px-8",
+        sizeClasses[size],
         className
       )}
     >
