@@ -34,15 +34,19 @@ const TexasAcquisition = () => {
         
         setMessages((prev) => [...prev, assistantMessage]);
 
-        const { error } = await supabase.from('chat_messages').insert({
+        // Match the database schema for the insert operation
+        const messageData = {
           content: assistantMessage.content,
           role: assistantMessage.role,
           user_id: user.id,
           conversation_id: conversationId,
+          context_data: null,
           metadata: {
             agencyType: selectedAgency
           }
-        });
+        };
+
+        const { error } = await supabase.from('chat_messages').insert(messageData);
 
         if (error) {
           console.error('Error saving message:', error);
@@ -85,15 +89,19 @@ const TexasAcquisition = () => {
       agencyType: selectedAgency,
     };
 
-    const { error: dbError } = await supabase.from('chat_messages').insert({
+    // Match the database schema for the insert operation
+    const messageData = {
       content: userMessage.content,
       role: userMessage.role,
       user_id: user.id,
       conversation_id: conversationId,
+      context_data: null,
       metadata: {
         agencyType: selectedAgency
       }
-    });
+    };
+
+    const { error: dbError } = await supabase.from('chat_messages').insert(messageData);
 
     if (dbError) {
       console.error('Error saving message:', dbError);
