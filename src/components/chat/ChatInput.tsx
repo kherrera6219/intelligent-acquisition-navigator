@@ -19,8 +19,13 @@ export const ChatInput = ({
   onSubmit,
   className
 }: ChatInputProps) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(e);
+  };
+
   return (
-    <form onSubmit={onSubmit} className={cn("space-y-4", className)}>
+    <form onSubmit={handleSubmit} className={cn("space-y-4", className)}>
       <div className="relative">
         <Textarea
           value={input}
