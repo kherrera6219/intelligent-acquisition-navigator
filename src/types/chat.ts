@@ -1,4 +1,3 @@
-
 export type AcquisitionRole = 
   | "CONTRACT_SPECIALIST"
   | "CONTRACTING_OFFICER"
@@ -47,4 +46,9 @@ export interface Message {
   userRole?: string;
   agencyRegulation?: string;
   detailLevel?: string;
+}
+
+export interface AIChatMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
 }

@@ -8,7 +8,7 @@ import { ChatSelectors } from "@/components/chat/ChatSelectors";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { FileUpload } from "@/components/chat/FileUpload";
-import { Message, AcquisitionRole, AgencyRegulation, DetailLevel } from "@/types/chat";
+import { Message, AcquisitionRole, AgencyRegulation, DetailLevel, AIChatMessage } from "@/types/chat";
 import { ROLE_LABELS, AGENCY_LABELS } from "@/constants/chatOptions";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -102,7 +102,6 @@ const Chat = () => {
       detailLevel: selectedDetailLevel,
     };
 
-    // Save message to database
     const { error: dbError } = await supabase.from('chat_messages').insert({
       conversation_id: conversationId,
       content: userMessage.content,
@@ -128,14 +127,13 @@ const Chat = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     
-    // Prepare context for AI
     const aiContext = `You are responding as a ${ROLE_LABELS[selectedRole]} working under ${AGENCY_LABELS[selectedAgency]}. 
                       Provide a ${selectedDetailLevel.toLowerCase()} response.`;
     
-    const aiMessages = [
+    const aiMessages: AIChatMessage[] = [
       { role: "system", content: aiContext },
       ...messages.map(msg => ({ 
-        role: msg.role, 
+        role: msg.role as "user" | "assistant", 
         content: msg.content 
       })),
       { role: "user", content: userMessage.content }

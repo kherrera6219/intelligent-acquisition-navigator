@@ -1,4 +1,3 @@
-
 import { Json } from "@/integrations/supabase/types";
 
 export interface ComplianceRule {
@@ -6,6 +5,7 @@ export interface ComplianceRule {
   description: string;
   severity: number;
   validation_logic: string;
+  criteria?: string; // Added criteria as optional property
 }
 
 export interface ComplianceCheck {
