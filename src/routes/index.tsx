@@ -20,21 +20,21 @@ export const PageLoader = () => (
 );
 
 // Lazy load routes
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Analytics = lazy(() => import("@/pages/Analytics"));
-const Chat = lazy(() => import("@/pages/Chat"));
-const Contact = lazy(() => import("@/pages/Contact"));
-const Features = lazy(() => import("@/pages/Features"));
-const Help = lazy(() => import("@/pages/Help"));
-const Index = lazy(() => import("@/pages/Index"));
-const KnowledgeBase = lazy(() => import("@/pages/KnowledgeBase"));
-const Pricing = lazy(() => import("@/pages/Pricing"));
-const Privacy = lazy(() => import("@/pages/Privacy"));
-const Proposals = lazy(() => import("@/pages/Proposals"));
-const Settings = lazy(() => import("@/pages/Settings"));
-const Sitemap = lazy(() => import("@/pages/Sitemap"));
-const TexasAcquisition = lazy(() => import("@/pages/TexasAcquisition"));
-const NotFound = lazy(() => import("@/pages/NotFound"));
+const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
+const ChatPage = lazy(() => import("@/pages/ChatPage"));
+const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
+const HelpPage = lazy(() => import("@/pages/HelpPage"));
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
+const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
+const ProposalsPage = lazy(() => import("@/pages/ProposalsPage"));
+const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
+const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 // Wrap routes with Suspense
 const wrapRoutesWithSuspense = (routes: RouteObject[]): RouteObject[] => {
@@ -58,6 +58,6 @@ export const routes: RouteObject[] = [
   ...wrapRoutesWithSuspense(settingsRoutes),
   {
     path: "*",
-    element: <NotFound />
+    element: <NotFoundPage />
   }
 ];

@@ -4,11 +4,10 @@ import { RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 
-const DocumentControl = lazy(() => import("@/pages/acquisition/DocumentControl"));
-const MarketResearch = lazy(() => import("@/pages/acquisition/MarketResearch"));
-const SolicitationReview = lazy(() => import("@/pages/acquisition/SolicitationReview"));
-const TexasAcquisition = lazy(() => import("@/pages/acquisition/TexasAcquisition"));
-const FederalAcquisition = lazy(() => import("@/pages/acquisition/FederalAcquisition"));
+const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
+const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
+const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage"));
+const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage"));
 
 export const acquisitionRoutes: RouteObject[] = [
   {
@@ -16,7 +15,7 @@ export const acquisitionRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <DocumentControl />
+          <DocumentControlPage />
         </MainLayout>
       </ProtectedRoute>
     )
@@ -26,7 +25,7 @@ export const acquisitionRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <MarketResearch />
+          <MarketResearchPage />
         </MainLayout>
       </ProtectedRoute>
     )
@@ -36,27 +35,17 @@ export const acquisitionRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <SolicitationReview />
+          <SolicitationReviewPage />
         </MainLayout>
       </ProtectedRoute>
     )
   },
   {
-    path: "/acquisition/texas-acquisition",
+    path: "/acquisition/federal",
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <TexasAcquisition />
-        </MainLayout>
-      </ProtectedRoute>
-    )
-  },
-  {
-    path: "/acquisition/federal-acquisition",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <FederalAcquisition />
+          <FederalAcquisitionPage />
         </MainLayout>
       </ProtectedRoute>
     )
