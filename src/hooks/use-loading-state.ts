@@ -1,71 +1,52 @@
 
-import { useState, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { errorTracker } from '@/lib/security/errorTracking';
-import { auditLogger } from '@/lib/audit';
+import { useState, useCallback } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 interface UseLoadingStateOptions {
-  onError?: (error: Error) => void;
-  toastError?: boolean;
+  showErrorToast?: boolean;
+  errorMessage?: string;
 }
 
 export function useLoadingState(options: UseLoadingStateOptions = {}) {
+  const { 
+    showErrorToast = true, 
+    errorMessage = "An error occurred" 
+  } = options;
+  
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const [error, setError] = useState<Error | null>(null);
 
-  const handleAsync = useCallback(async <T>(
-    promise: Promise<T>,
-    successMessage?: string
-  ): Promise<T | undefined> => {
-    setIsLoading(true);
+  const wrap = useCallback(
+    async <T>(promise: Promise<T>): Promise<T | undefined> => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const result = await promise;
-      
-      if (successMessage) {
-        toast({
-          title: "Success",
-          description: successMessage
-        });
+      try {
+        const result = await promise;
+        return result;
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error("An error occurred");
+        setError(error);
+        
+        if (showErrorToast) {
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        }
+        
+        return undefined;
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [showErrorToast, errorMessage]
+  );
 
-      return result;
-    } catch (error) {
-      const err = error as Error;
-      
-      // Track error
-      errorTracker.trackError({
-        message: err.message,
-        severity: 'MEDIUM',
-        errorType: 'APPLICATION',
-        status: 'NEW'
-      });
-
-      // Log to audit system
-      auditLogger.log({
-        action: 'OPERATION_FAILED',
-        resourceType: 'APPLICATION',
-        resourceId: 'async_operation',
-        severity: 'WARNING',
-        details: { error: err.message }
-      }).catch(console.error);
-
-      // Handle error
-      if (options.onError) {
-        options.onError(err);
-      }
-
-      if (options.toastError !== false) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: err.message || "An unexpected error occurred"
-        });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast, options]);
-
-  return { isLoading, handleAsync };
+  return {
+    isLoading,
+    error,
+    wrap,
+  };
 }

@@ -1,29 +1,38 @@
 
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
-export const useQueryWithCache = <T>(
+interface QueryConfig<T> extends Omit<UseQueryOptions<T, Error>, 'queryKey' | 'queryFn'> {
+  showErrorToast?: boolean;
+  errorMessage?: string;
+}
+
+export function useQueryWithCache<T>(
   queryKey: string[],
-  fetchFn: () => Promise<T>,
-  options: Omit<UseQueryOptions<T>, 'queryKey' | 'queryFn'> = {}
-) => {
-  const { toast } = useToast();
+  queryFn: () => Promise<T>,
+  config: QueryConfig<T> = {}
+) {
+  const { 
+    showErrorToast = true, 
+    errorMessage = "Failed to fetch data", 
+    ...queryConfig 
+  } = config;
 
   return useQuery({
     queryKey,
-    queryFn: fetchFn,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 30 * 60 * 1000, // 30 minutes (replacing deprecated cacheTime)
-    retry: 2,
+    queryFn,
     meta: {
-      onError: (error: Error) => {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
+      onError: () => {
+        if (showErrorToast) {
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        }
+      }
     },
-    ...options,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    ...queryConfig,
   });
-};
+}
