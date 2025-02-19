@@ -18,12 +18,10 @@ const TexasAcquisition = () => {
 
   const aiMutation = useAzureAI(messages, {
     onSuccess: async (data) => {
-      const assistantMessage: Omit<TexasMessage, "id" | "timestamp" | "agencyType" | "userRole"> = {
+      const success = await addMessage({
         role: "assistant",
         content: data.choices[0].message.content
-      };
-      
-      const success = await addMessage(assistantMessage, selectedAgency, selectedRole, selectedResponseLevel);
+      }, selectedAgency, selectedRole, selectedResponseLevel);
       
       if (!success) {
         toast({
@@ -47,12 +45,10 @@ const TexasAcquisition = () => {
     e.preventDefault();
     if (!input.trim() || aiMutation.isPending || !conversationId) return;
 
-    const userMessage: Omit<TexasMessage, "id" | "timestamp" | "agencyType" | "userRole"> = {
+    const success = await addMessage({
       role: "user",
       content: input.trim()
-    };
-
-    const success = await addMessage(userMessage, selectedAgency, selectedRole, selectedResponseLevel);
+    }, selectedAgency, selectedRole, selectedResponseLevel);
     
     if (!success) {
       toast({
@@ -76,7 +72,7 @@ const TexasAcquisition = () => {
         role: msg.role as "user" | "assistant", 
         content: msg.content 
       })),
-      { role: "user", content: userMessage.content }
+      { role: "user", content: input.trim() }
     ];
 
     aiMutation.mutate(aiMessages);

@@ -59,7 +59,7 @@ export const useTexasConversation = () => {
   }, [toast]);
 
   const addMessage = async (
-    baseMessage: Omit<TexasMessage, "id" | "timestamp" | "agencyType" | "userRole">, 
+    baseMessage: Pick<TexasMessage, "role" | "content">, 
     selectedAgency: TexasAgencyType, 
     selectedRole: TexasRole,
     responseLevel: ResponseLevel
