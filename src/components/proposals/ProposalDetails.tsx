@@ -35,10 +35,10 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({
 
       <section className="mb-6">
         <h3 className="text-xl font-bold mb-2">Evaluations</h3>
-        {proposal.evaluations.map(eval => (
-          <div key={eval.id} className="mb-2">
-            <p>{eval.comment}</p>
-            <span>Rating: {eval.rating}</span>
+        {proposal.evaluations.map(evaluation => (
+          <div key={evaluation.id} className="mb-2">
+            <p>{evaluation.comment}</p>
+            <span>Rating: {evaluation.rating}</span>
           </div>
         ))}
         <Button onClick={() => {}} className="mt-2">Add Evaluation</Button>
