@@ -21,5 +21,17 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['@azure/openai'],
+  },
+  build: {
+    rollupOptions: {
+      external: ['crypto', 'net', 'buffer'],
+      output: {
+        globals: {
+          crypto: 'crypto',
+          net: 'net',
+          buffer: 'buffer'
+        }
+      }
+    }
   }
 }));
