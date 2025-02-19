@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, BarChart, Home, FileText, Map, FileCheck, Users, Building2, Scale, ClipboardCheck, BookOpen, Flag, HelpCircle, Settings } from 'lucide-react';
+import { ArrowRight, Shield, BarChart, Home, FileText, Map, FileCheck, Users, Building2, Scale, ClipboardCheck, BookOpen, Flag, HelpCircle, Settings, MessageSquare } from 'lucide-react';
 
 const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
   <Card className="p-6 glass-card">
@@ -27,25 +27,30 @@ const Sitemap = () => {
   const sections = {
     main: [
       { path: "/", label: "Home", icon: Home },
+      { path: "/features", label: "Features", icon: BookOpen },
+      { path: "/pricing", label: "Pricing", icon: Scale },
       { path: "/about", label: "About", icon: BookOpen },
-      { path: "/contact", label: "Contact", icon: Users }
+      { path: "/contact", label: "Contact", icon: Users },
+      { path: "/privacy", label: "Privacy", icon: Shield }
+    ],
+    auth: [
+      { path: "/signup", label: "Sign Up", icon: Users },
+      { path: "/profile", label: "User Profile", icon: Users },
+      { path: "/reset-password", label: "Reset Password", icon: Shield }
+    ],
+    core: [
+      { path: "/dashboard", label: "Dashboard", icon: Home },
+      { path: "/proposals", label: "Proposals", icon: FileText },
+      { path: "/chat", label: "Chat", icon: MessageSquare },
+      { path: "/knowledge-base", label: "Knowledge Base", icon: BookOpen }
     ],
     acquisition: [
-      { path: "/solicitation-review", label: "Solicitation Review", icon: FileText },
-      { path: "/source-selection", label: "Source Selection", icon: FileCheck },
-      { path: "/contract-management", label: "Contract Management", icon: Building2 },
-      { path: "/market-research", label: "Market Research", icon: Map },
-      { path: "/document-control", label: "Document Control", icon: FileText },
+      { path: "/acquisition/solicitation-review", label: "Solicitation Review", icon: FileText },
+      { path: "/acquisition/market-research", label: "Market Research", icon: Map },
+      { path: "/acquisition/document-control", label: "Document Control", icon: FileText },
       { path: "/texas-acquisition", label: "Texas Acquisition", icon: Flag }
     ],
-    compliance: [
-      { path: "/compliance", label: "Compliance", icon: Shield },
-      { path: "/legal-review", label: "Legal Review", icon: Scale },
-      { path: "/small-business", label: "Small Business", icon: Users },
-      { path: "/quality-assurance", label: "Quality Assurance", icon: ClipboardCheck }
-    ],
     system: [
-      { path: "/dashboard", label: "Dashboard", icon: Home },
       { path: "/analytics", label: "Analytics", icon: BarChart },
       { path: "/settings", label: "Settings", icon: Settings },
       { path: "/help", label: "Help", icon: HelpCircle },
@@ -67,8 +72,9 @@ const Sitemap = () => {
         {/* Sitemap Sections */}
         <div className="space-y-8">
           <SitemapSection title="Main Navigation" links={sections.main} />
+          <SitemapSection title="Authentication" links={sections.auth} />
+          <SitemapSection title="Core Features" links={sections.core} />
           <SitemapSection title="Acquisition Management" links={sections.acquisition} />
-          <SitemapSection title="Compliance & Quality" links={sections.compliance} />
           <SitemapSection title="System & Support" links={sections.system} />
         </div>
 
