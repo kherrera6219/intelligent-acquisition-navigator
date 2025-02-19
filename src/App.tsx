@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import AuthPage from "@/pages/auth/AuthPage";
+import PasswordReset from "@/components/auth/PasswordReset";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Dashboard from "@/pages/Dashboard";
 import DocumentControl from "@/pages/acquisition/DocumentControl";
@@ -24,6 +25,7 @@ export default function App() {
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/auth/reset-password" element={<PasswordReset />} />
             
             {/* Protected Routes */}
             <Route
