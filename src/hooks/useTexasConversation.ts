@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { TexasMessage, TexasAgencyType, TexasRole } from "@/types/texas-chat";
+import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
 
 export const useTexasConversation = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
@@ -86,7 +86,8 @@ export const useTexasConversation = () => {
   const addMessage = async (
     baseMessage: Omit<TexasMessage, "id" | "timestamp" | "agencyType" | "userRole">, 
     selectedAgency: TexasAgencyType, 
-    selectedRole: TexasRole
+    selectedRole: TexasRole,
+    responseLevel: ResponseLevel
   ) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || !conversationId) return false;
@@ -107,7 +108,8 @@ export const useTexasConversation = () => {
         user_id: user.id,
         conversation_id: conversationId,
         agency_type: selectedAgency,
-        user_role: selectedRole
+        user_role: selectedRole,
+        response_level: responseLevel
       });
 
     if (error) {

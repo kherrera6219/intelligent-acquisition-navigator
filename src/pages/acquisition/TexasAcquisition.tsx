@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useAzureAI } from "@/hooks/useAzureAI";
-import { TexasAgencyType, TexasRole, TexasMessage, ResponseLevel } from "@/types/texas-chat";
+import { TexasAgencyType, TexasRole, TexasMessage, ResponseLevel, RESPONSE_LEVEL_LABELS } from "@/types/texas-chat";
 import { AIChatMessage } from "@/types/chat";
 import { useTexasConversation } from "@/hooks/useTexasConversation";
 import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
@@ -23,7 +23,7 @@ const TexasAcquisition = () => {
         content: data.choices[0].message.content
       };
       
-      const success = await addMessage(assistantMessage, selectedAgency, selectedRole);
+      const success = await addMessage(assistantMessage, selectedAgency, selectedRole, selectedResponseLevel);
       
       if (!success) {
         toast({
@@ -52,7 +52,7 @@ const TexasAcquisition = () => {
       content: input.trim()
     };
 
-    const success = await addMessage(userMessage, selectedAgency, selectedRole);
+    const success = await addMessage(userMessage, selectedAgency, selectedRole, selectedResponseLevel);
     
     if (!success) {
       toast({
