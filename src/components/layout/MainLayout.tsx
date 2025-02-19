@@ -6,10 +6,6 @@ import { Container } from "@/components/ui/universal/Container";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
-
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider>
