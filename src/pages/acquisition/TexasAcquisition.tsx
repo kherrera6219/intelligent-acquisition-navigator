@@ -11,6 +11,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { FileUpload } from "@/components/chat/FileUpload";
 
+interface ChatMessageData {
+  content: string;
+  role: string;
+  user_id: string;
+  conversation_id: string;
+  context_data: null;
+  metadata: {
+    agencyType: TexasAgencyType;
+    userRole: TexasRole;
+  };
+}
+
 const TexasAcquisition = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
   const [input, setInput] = useState("");
@@ -33,7 +45,7 @@ const TexasAcquisition = () => {
       
       setMessages((prev) => [...prev, assistantMessage]);
 
-      const messageData = {
+      const messageData: ChatMessageData = {
         content: assistantMessage.content,
         role: assistantMessage.role,
         user_id: user.id,
@@ -96,7 +108,7 @@ const TexasAcquisition = () => {
       userRole: selectedRole
     };
 
-    const messageData = {
+    const messageData: ChatMessageData = {
       content: userMessage.content,
       role: userMessage.role,
       user_id: user.id,
