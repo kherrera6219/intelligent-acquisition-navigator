@@ -37,7 +37,7 @@ const TexasAcquisition = () => {
           content: assistantMessage.content,
           role: assistantMessage.role,
           user_id: user.id,
-          conversation_id: conversationId,
+          conversation_id: conversationId, // Make sure to include conversation_id
           metadata: {
             agencyType: selectedAgency
           }
@@ -81,7 +81,7 @@ const TexasAcquisition = () => {
       content: userMessage.content,
       role: userMessage.role,
       user_id: user.id,
-      conversation_id: conversationId,
+      conversation_id: conversationId, // Make sure to include conversation_id
       metadata: {
         agencyType: selectedAgency
       }
