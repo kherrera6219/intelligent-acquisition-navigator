@@ -82,19 +82,9 @@ const TexasAcquisition = () => {
     aiMutation.mutate(aiMessages);
   };
 
-  if (!conversationId) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-        <Card className="p-8 bg-black/40 backdrop-blur-sm border-white/10">
-          <p className="text-white">Initializing chat...</p>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <TexasChatContainer
-      conversationId={conversationId}
+      conversationId={conversationId || ""}
       messages={messages}
       isLoading={aiMutation.isPending}
       input={input}

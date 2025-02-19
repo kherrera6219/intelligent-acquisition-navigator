@@ -11,58 +11,33 @@ export const useTexasConversation = () => {
 
   useEffect(() => {
     const initializeConversation = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      // For development, create a default conversation without auth
+      const { data: newConversation, error: createError } = await supabase
+        .from('texas_conversations')
+        .insert({
+          user_id: 'dev-user',
+          title: `Texas Acquisition Chat - ${new Date().toLocaleDateString()}`
+        })
+        .select()
+        .single();
+
+      if (createError) {
+        console.error('Error creating conversation:', createError);
         toast({
-          title: "Authentication required",
-          description: "Please sign in to use the chat feature.",
+          title: "Error",
+          description: "Failed to initialize chat. Please try again.",
           variant: "destructive",
         });
         return;
       }
 
-      // Create a new conversation or load existing one
-      const { data: existingConversations, error: fetchError } = await supabase
-        .from('texas_conversations')
-        .select()
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .limit(1)
-        .single();
-
-      let conversation;
-      if (fetchError) {
-        // Create new conversation if none exists
-        const { data: newConversation, error: createError } = await supabase
-          .from('texas_conversations')
-          .insert({
-            user_id: user.id,
-            title: `Texas Acquisition Chat - ${new Date().toLocaleDateString()}`
-          })
-          .select()
-          .single();
-
-        if (createError) {
-          console.error('Error creating conversation:', createError);
-          toast({
-            title: "Error",
-            description: "Failed to initialize chat. Please try again.",
-            variant: "destructive",
-          });
-          return;
-        }
-        conversation = newConversation;
-      } else {
-        conversation = existingConversations;
-      }
-
-      setConversationId(conversation.id);
+      setConversationId(newConversation.id);
 
       // Load existing messages
       const { data: existingMessages, error: messagesError } = await supabase
         .from('texas_chat_messages')
         .select('*')
-        .eq('conversation_id', conversation.id)
+        .eq('conversation_id', newConversation.id)
         .order('created_at', { ascending: true });
 
       if (messagesError) {
@@ -89,8 +64,7 @@ export const useTexasConversation = () => {
     selectedRole: TexasRole,
     responseLevel: ResponseLevel
   ) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !conversationId) return false;
+    if (!conversationId) return false;
 
     const newMessage: TexasMessage = {
       id: crypto.randomUUID(),
@@ -105,7 +79,7 @@ export const useTexasConversation = () => {
       .insert({
         content: baseMessage.content,
         role: baseMessage.role,
-        user_id: user.id,
+        user_id: 'dev-user', // Use development user ID
         conversation_id: conversationId,
         agency_type: selectedAgency,
         user_role: selectedRole,
