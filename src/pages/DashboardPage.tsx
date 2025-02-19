@@ -1,97 +1,106 @@
 
-import { PageHeader } from "@/components/layout/PageHeader";
-import { Grid } from "@/components/ui/universal/Grid";
-import { Container } from "@/components/ui/universal/Container";
-import { Card } from "@/components/ui/universal/Card";
-import { MetricsChart } from "@/components/MetricsChart";
-import { useMetrics } from "@/application/hooks/useMetrics";
-import { ErrorBoundary } from "@/components/error/ErrorBoundary";
-import { Skeleton } from "@/components/ui/skeleton";
-import { MetricCard } from "@/presentation/components/metrics/MetricCard";
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { MetricsChart } from '@/components/MetricsChart';
+import { useToast } from '@/hooks/use-toast';
 
-const Dashboard = () => {
-  const { metrics, chartData, isLoading, error } = useMetrics();
+const DashboardPage = () => {
+  const [filterValue, setFilterValue] = useState('');
+  const { toast } = useToast();
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['dashboard'],
+    queryFn: async () => {
+      // Temporary mock data
+      return {
+        totalProposals: 150,
+        activeProjects: 45,
+        pendingReviews: 12,
+        metrics: [],
+        activities: []
+      };
+    }
+  });
+
+  const handleRefresh = async () => {
+    await refetch();
+    toast({
+      title: "Success",
+      description: "Data refreshed"
+    });
+  };
+
+  if (isLoading) {
+    return <Progress />;
+  }
+
+  if (error) {
+    return <div className="text-red-500">Error loading dashboard data</div>;
+  }
 
   return (
-    <Container>
-      <PageHeader
-        title="Dashboard"
-        description="Welcome to your acquisition workflow management system"
-        className="mb-4 sm:mb-6 md:mb-8"
-      />
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      
+      <div className="flex justify-between mb-6">
+        <Input
+          type="text"
+          placeholder="Filter..."
+          value={filterValue}
+          onChange={(e) => setFilterValue(e.target.value)}
+          className="max-w-sm"
+        />
+        <div className="space-x-2">
+          <Button onClick={() => {}}>Date Range</Button>
+          <Button onClick={handleRefresh}>Refresh</Button>
+        </div>
+      </div>
 
-      {/* Metric cards - 1 column on mobile, 2 on tablet, 4 on desktop */}
-      <Grid columns={4} gap="lg" className="mb-4 sm:mb-6 md:mb-8">
-        {isLoading ? (
-          <>
-            {[1, 2, 3, 4].map((index) => (
-              <Card key={index} className="p-4 sm:p-5 md:p-6">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <Skeleton className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg" />
-                  <Skeleton className="h-3 sm:h-4 w-20 sm:w-24" />
-                </div>
-                <div className="mt-3 sm:mt-4 space-y-1 sm:space-y-2">
-                  <Skeleton className="h-6 sm:h-8 w-16 sm:w-20" />
-                  <Skeleton className="h-3 sm:h-4 w-24 sm:w-32" />
-                </div>
-              </Card>
-            ))}
-          </>
-        ) : (
-          metrics.map((metric, index) => (
-            <MetricCard
-              key={index}
-              metric={metric}
-              className="hover:bg-white/5 active:bg-white/10 transition-colors p-4 sm:p-5 md:p-6 touch-pan-y"
-            />
-          ))
-        )}
-      </Grid>
-
-      {/* Charts section - 1 column on mobile, 2 on tablet and up */}
-      <Grid 
-        columns={2} 
-        gap="lg" 
-        className="flex-col md:flex-row space-y-4 md:space-y-0"
-      >
-        <Card className="p-4 sm:p-5 md:p-6 touch-pan-y">
-          <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
-            Task Queue
-          </h2>
-          {isLoading ? (
-            <Skeleton className="h-40 sm:h-48 w-full rounded-lg" />
-          ) : (
-            <div className="flex items-center justify-center h-40 sm:h-48 bg-white/5 rounded-lg">
-              <p className="text-sm sm:text-base text-gray-400">
-                Task queue visualization coming soon
-              </p>
-            </div>
-          )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card className="p-4">
+          <h3 className="font-semibold">Total Proposals</h3>
+          <p className="text-2xl">{data?.totalProposals}</p>
         </Card>
-
-        <Card className="p-4 sm:p-5 md:p-6 touch-pan-y">
-          <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
-            Performance Metrics
-          </h2>
-          {isLoading ? (
-            <Skeleton className="h-[200px] sm:h-[264px] w-full rounded-lg" />
-          ) : (
-            <div className="h-[200px] sm:h-[264px]">
-              <MetricsChart data={chartData} type="line" />
-            </div>
-          )}
+        <Card className="p-4">
+          <h3 className="font-semibold">Active Projects</h3>
+          <p className="text-2xl">{data?.activeProjects}</p>
         </Card>
-      </Grid>
-    </Container>
+        <Card className="p-4">
+          <h3 className="font-semibold">Pending Reviews</h3>
+          <p className="text-2xl">{data?.pendingReviews}</p>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-4">
+          <h3 className="font-semibold mb-4">Metrics Overview</h3>
+          <div data-testid="metrics-chart">
+            <MetricsChart data={data?.metrics || []} />
+          </div>
+        </Card>
+        
+        <Card className="p-4">
+          <h3 className="font-semibold mb-4">Recent Activity</h3>
+          <div data-testid="activity-chart">
+            <MetricsChart data={data?.activities || []} />
+          </div>
+        </Card>
+      </div>
+
+      <div className="mt-6" data-testid="notifications-panel">
+        <Card className="p-4">
+          <h3 className="font-semibold mb-4">Notifications</h3>
+          <div className="space-y-2">
+            {/* Notifications will be populated here */}
+          </div>
+        </Card>
+      </div>
+    </div>
   );
 };
 
-const DashboardWithErrorBoundary = () => {
-  return (
-    <ErrorBoundary>
-      <Dashboard />
-    </ErrorBoundary>
-  );
-};
-
-export default DashboardWithErrorBoundary;
+export default DashboardPage;
