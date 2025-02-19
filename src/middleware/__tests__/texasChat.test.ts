@@ -1,6 +1,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { texasChatMiddleware } from '../texasChat';
+import { TexasAgencyType, TexasRole } from "@/types/texas-chat";
 
 describe('Texas Chat Middleware', () => {
   let mockRequest: Partial<Request>;
@@ -56,14 +57,15 @@ describe('Texas Chat Middleware', () => {
       const messageId = 'test-msg';
       const params = {
         content: 'Test content',
-        agencyType: 'federal',
-        userRole: 'admin'
+        agencyType: 'TEXAS_GOVERNMENT' as TexasAgencyType,
+        userRole: 'CONTRACTING_OFFICER' as TexasRole
       };
       
       const result = await texasChatMiddleware.validateResponse(messageId, params);
       
       expect(result).toBeDefined();
-      expect(result.isValid).toBe(true);
+      expect(result.status).toBe('valid');
+      expect(result.confidence_score).toBeGreaterThan(0);
     });
   });
 });

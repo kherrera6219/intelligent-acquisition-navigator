@@ -14,21 +14,38 @@ const renderWithRouter = (component: React.ReactElement) => {
 
 describe('HomePage', () => {
   beforeEach(() => {
-    // Mock localStorage
+    // Mock localStorage with all required Storage interface properties
     const localStorageMock = {
       getItem: jest.fn(),
       setItem: jest.fn(),
-      clear: jest.fn()
+      clear: jest.fn(),
+      length: 0,
+      key: jest.fn(),
+      removeItem: jest.fn()
     };
-    global.localStorage = localStorageMock;
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      writable: true
+    });
     
-    // Mock IntersectionObserver
-    global.IntersectionObserver = class IntersectionObserver {
-      constructor() {}
-      observe() { return null; }
-      disconnect() { return null; }
-      unobserve() { return null; }
-    };
+    // Mock IntersectionObserver with all required properties
+    class MockIntersectionObserver implements IntersectionObserver {
+      readonly root: Element | null = null;
+      readonly rootMargin: string = '';
+      readonly thresholds: ReadonlyArray<number> = [];
+      
+      constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {}
+      
+      disconnect(): void {}
+      observe(): void {}
+      unobserve(): void {}
+      takeRecords(): IntersectionObserverEntry[] { return []; }
+    }
+    
+    Object.defineProperty(window, 'IntersectionObserver', {
+      value: MockIntersectionObserver,
+      writable: true
+    });
   });
 
   it('renders loading spinner initially', () => {
