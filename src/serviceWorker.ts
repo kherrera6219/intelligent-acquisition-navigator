@@ -1,4 +1,6 @@
 
+declare const self: ServiceWorkerGlobalScope;
+
 const CACHE_NAME = 'app-cache-v1';
 const DYNAMIC_CACHE = 'dynamic-cache-v1';
 
@@ -11,7 +13,7 @@ const STATIC_ASSETS = [
 ];
 
 // Install event - cache static assets
-self.addEventListener('install', (event: ExtendableEvent) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(STATIC_ASSETS);
@@ -20,7 +22,7 @@ self.addEventListener('install', (event: ExtendableEvent) => {
 });
 
 // Activate event - clean up old caches
-self.addEventListener('activate', (event: ExtendableEvent) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -33,7 +35,7 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
 });
 
 // Fetch event - serve from cache, fallback to network
-self.addEventListener('fetch', (event: FetchEvent) => {
+self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then(response => {
       // Return cached response if found
