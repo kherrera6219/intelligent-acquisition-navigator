@@ -1,3 +1,4 @@
+
 import { useAuth } from "@/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
@@ -23,8 +24,11 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
             <Link to="/acquisition/solicitation-review" className="text-gray-400 hover:text-white">
               Solicitation Review
             </Link>
-            <Link to="/texas-acquisition" className="text-gray-400 hover:text-white">
+            <Link to="/acquisition/texas-acquisition" className="text-gray-400 hover:text-white">
               Texas Acquisition
+            </Link>
+            <Link to="/acquisition/federal-acquisition" className="text-gray-400 hover:text-white">
+              Federal Acquisition
             </Link>
           </nav>
           

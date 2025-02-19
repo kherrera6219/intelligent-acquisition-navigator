@@ -10,6 +10,7 @@ import DocumentControl from "@/pages/acquisition/DocumentControl";
 import MarketResearch from "@/pages/acquisition/MarketResearch";
 import SolicitationReview from "@/pages/acquisition/SolicitationReview";
 import TexasAcquisition from "@/pages/acquisition/TexasAcquisition";
+import FederalAcquisition from "@/pages/acquisition/FederalAcquisition";
 import Analytics from "@/pages/Analytics";
 import Settings from "@/pages/Settings";
 import Help from "@/pages/Help";
@@ -73,6 +74,17 @@ export default function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <TexasAcquisition />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/acquisition/federal-acquisition"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <FederalAcquisition />
                 </MainLayout>
               </ProtectedRoute>
             }
