@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { useAzureAI } from "@/hooks/useAzureAI";
 import { ChatMessages } from "@/components/chat/ChatMessages";
@@ -16,11 +16,10 @@ interface ChatMessageData {
   role: string;
   user_id: string;
   conversation_id: string;
-  context_data: null;
-  metadata: {
-    agencyType: TexasAgencyType;
-    userRole: TexasRole;
-  };
+  agency_type: TexasAgencyType;
+  user_role: TexasRole;
+  context_data?: any;
+  metadata?: any;
 }
 
 const TexasAcquisition = () => {
@@ -29,7 +28,64 @@ const TexasAcquisition = () => {
   const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
   const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACT_OFFICER");
   const { toast } = useToast();
-  const [conversationId] = useState(crypto.randomUUID());
+  const [conversationId, setConversationId] = useState<string>("");
+
+  useEffect(() => {
+    const initializeConversation = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to use the chat feature.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data: conversation, error } = await supabase
+        .from('texas_conversations')
+        .insert({
+          user_id: user.id,
+          title: `Texas Acquisition Chat - ${new Date().toLocaleDateString()}`
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating conversation:', error);
+        toast({
+          title: "Error",
+          description: "Failed to initialize chat. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setConversationId(conversation.id);
+
+      // Load existing messages for this conversation
+      const { data: existingMessages, error: messagesError } = await supabase
+        .from('texas_chat_messages')
+        .select('*')
+        .eq('conversation_id', conversation.id)
+        .order('created_at', { ascending: true });
+
+      if (messagesError) {
+        console.error('Error loading messages:', messagesError);
+      } else if (existingMessages) {
+        setMessages(existingMessages.map(msg => ({
+          id: msg.id,
+          role: msg.role as "user" | "assistant",
+          content: msg.content,
+          timestamp: new Date(msg.created_at),
+          agencyType: msg.agency_type,
+          userRole: msg.user_role
+        })));
+      }
+    };
+
+    initializeConversation();
+  }, [toast]);
 
   const aiMutation = useAzureAI(messages, {
     onSuccess: async (data) => {
@@ -50,14 +106,13 @@ const TexasAcquisition = () => {
         role: assistantMessage.role,
         user_id: user.id,
         conversation_id: conversationId,
-        context_data: null,
-        metadata: {
-          agencyType: selectedAgency,
-          userRole: selectedRole
-        }
+        agency_type: selectedAgency,
+        user_role: selectedRole
       };
 
-      const { error } = await supabase.from('chat_messages').insert(messageData);
+      const { error } = await supabase
+        .from('texas_chat_messages')
+        .insert(messageData);
 
       if (error) {
         console.error('Error saving message:', error);
@@ -87,7 +142,7 @@ const TexasAcquisition = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || aiMutation.isPending) return;
+    if (!input.trim() || aiMutation.isPending || !conversationId) return;
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -113,14 +168,13 @@ const TexasAcquisition = () => {
       role: userMessage.role,
       user_id: user.id,
       conversation_id: conversationId,
-      context_data: null,
-      metadata: {
-        agencyType: selectedAgency,
-        userRole: selectedRole
-      }
+      agency_type: selectedAgency,
+      user_role: selectedRole
     };
 
-    const { error: dbError } = await supabase.from('chat_messages').insert(messageData);
+    const { error: dbError } = await supabase
+      .from('texas_chat_messages')
+      .insert(messageData);
 
     if (dbError) {
       console.error('Error saving message:', dbError);
@@ -150,6 +204,16 @@ const TexasAcquisition = () => {
 
     aiMutation.mutate(aiMessages);
   };
+
+  if (!conversationId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+        <Card className="p-8 bg-black/40 backdrop-blur-sm border-white/10">
+          <p className="text-white">Initializing chat...</p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
