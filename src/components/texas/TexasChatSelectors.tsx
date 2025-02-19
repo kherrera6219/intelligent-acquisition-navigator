@@ -3,23 +3,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Building, UserCircle, FileText } from "lucide-react";
 import { TexasAgencyType, TexasRole, ResponseLevel, TEXAS_AGENCY_LABELS, TEXAS_ROLE_LABELS, RESPONSE_LEVEL_LABELS } from "@/types/texas-chat";
 
-interface TexasChatSelectorsProps {
+interface TexasSelectorsProps {
   selectedAgency: TexasAgencyType;
   selectedRole: TexasRole;
-  selectedResponseLevel: ResponseLevel;
+  selectedDetailLevel: ResponseLevel;
   onAgencyChange: (value: TexasAgencyType) => void;
   onRoleChange: (value: TexasRole) => void;
-  onResponseLevelChange: (value: ResponseLevel) => void;
+  onDetailLevelChange: (value: ResponseLevel) => void;
 }
 
-export const TexasChatSelectors = ({
+export const ChatSelectors = ({
   selectedAgency,
   selectedRole,
-  selectedResponseLevel,
+  selectedDetailLevel,
   onAgencyChange,
   onRoleChange,
-  onResponseLevelChange,
-}: TexasChatSelectorsProps) => {
+  onDetailLevelChange,
+}: TexasSelectorsProps) => {
   return (
     <div className="flex items-center gap-4 flex-wrap">
       <div className="flex items-center gap-4">
@@ -62,7 +62,7 @@ export const TexasChatSelectors = ({
       </div>
       <div className="flex items-center gap-4">
         <FileText className="w-5 h-5 text-violet-400" />
-        <Select value={selectedResponseLevel} onValueChange={onResponseLevelChange}>
+        <Select value={selectedDetailLevel} onValueChange={onDetailLevelChange}>
           <SelectTrigger className="w-[250px] bg-gray-800/50 border-gray-700 text-white">
             <SelectValue placeholder="Select response level" />
           </SelectTrigger>
