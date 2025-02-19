@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, Shield, Zap, BarChart } from 'lucide-react';
+import { ArrowRight, Brain, Shield, Zap, BarChart, Home, FileText, Map, FileCheck, Users, Book, Building2, Scale, ClipboardCheck, AlertCircle, BookOpen, Flag, HelpCircle, Settings } from 'lucide-react';
 
 const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
   <Card className="p-6 glass-card">
@@ -26,15 +26,28 @@ const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: 
 const Sitemap = () => {
   const sections = {
     main: [
-      { path: "/", label: "Home", icon: Brain },
-      { path: "/features", label: "Features", icon: Shield },
-      { path: "/pricing", label: "Pricing", icon: BarChart },
+      { path: "/", label: "Home", icon: Home },
+      { path: "/dashboard", label: "Dashboard", icon: Home },
+      { path: "/knowledge-base", label: "Knowledge Base", icon: BookOpen }
     ],
-    dashboard: [
-      { path: "/dashboard", label: "Dashboard", icon: Brain },
-      { path: "/proposals", label: "Proposals", icon: Shield },
-      { path: "/chat", label: "Chat Support", icon: Zap },
+    acquisition: [
+      { path: "/solicitation-review", label: "Solicitation Review", icon: FileText },
+      { path: "/source-selection", label: "Source Selection", icon: FileCheck },
+      { path: "/contract-management", label: "Contract Management", icon: Building2 },
+      { path: "/texas-acquisition", label: "Texas Acquisition", icon: Flag }
     ],
+    compliance: [
+      { path: "/compliance", label: "Compliance", icon: Shield },
+      { path: "/legal-review", label: "Legal Review", icon: Scale },
+      { path: "/small-business", label: "Small Business", icon: Users },
+      { path: "/quality-assurance", label: "Quality Assurance", icon: ClipboardCheck }
+    ],
+    system: [
+      { path: "/analytics", label: "Analytics", icon: BarChart },
+      { path: "/settings", label: "Settings", icon: Settings },
+      { path: "/help", label: "Help", icon: HelpCircle },
+      { path: "/sitemap", label: "Sitemap", icon: Map }
+    ]
   };
 
   return (
@@ -51,7 +64,9 @@ const Sitemap = () => {
         {/* Sitemap Sections */}
         <div className="space-y-8">
           <SitemapSection title="Main Navigation" links={sections.main} />
-          <SitemapSection title="Dashboard & Tools" links={sections.dashboard} />
+          <SitemapSection title="Acquisition Management" links={sections.acquisition} />
+          <SitemapSection title="Compliance & Quality" links={sections.compliance} />
+          <SitemapSection title="System & Support" links={sections.system} />
         </div>
 
         {/* Quick Actions */}
@@ -59,9 +74,12 @@ const Sitemap = () => {
           <Button 
             className="enterprise-gradient"
             size="lg"
+            asChild
           >
-            Return to Home
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <Link to="/">
+              Return to Home
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
         </div>
       </div>
