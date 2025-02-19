@@ -1,8 +1,11 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { SESSION_TIMEOUT, ACTIVITY_TIMEOUT, setupActivityTracking } from "@/utils/sessionUtils";
+import { login, signup, signOut, fetchUserRole, resendVerificationEmail, getRoleHierarchy } from "@/services/authService";
 
 interface AuthContextType {
   user: User | null;
@@ -29,9 +32,6 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-const SESSION_TIMEOUT = 60 * 60 * 1000;
-const ACTIVITY_TIMEOUT = 30 * 60 * 1000;
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<string>();
@@ -41,21 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const updateActivity = () => {
-      setLastActivity(Date.now());
-    };
-
-    window.addEventListener('mousemove', updateActivity);
-    window.addEventListener('keydown', updateActivity);
-    window.addEventListener('click', updateActivity);
-    window.addEventListener('touchstart', updateActivity);
-
-    return () => {
-      window.removeEventListener('mousemove', updateActivity);
-      window.removeEventListener('keydown', updateActivity);
-      window.removeEventListener('click', updateActivity);
-      window.removeEventListener('touchstart', updateActivity);
-    };
+    const cleanup = setupActivityTracking(() => setLastActivity(Date.now()));
+    return cleanup;
   }, []);
 
   useEffect(() => {
@@ -66,24 +53,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const sessionStart = new Date(session.data.session.access_token).getTime();
       const now = Date.now();
 
-      if (now - sessionStart > SESSION_TIMEOUT) {
-        await signOut();
+      if (now - sessionStart > SESSION_TIMEOUT || now - lastActivity > ACTIVITY_TIMEOUT) {
+        await handleSignOut();
         toast({
           title: "Session Expired",
           description: "Your session has expired. Please sign in again.",
           variant: "destructive",
         });
-        return;
-      }
-
-      if (now - lastActivity > ACTIVITY_TIMEOUT) {
-        await signOut();
-        toast({
-          title: "Session Expired",
-          description: "Your session has expired due to inactivity. Please sign in again.",
-          variant: "destructive",
-        });
-        return;
       }
     };
 
@@ -95,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchUserRole(session.user.id);
+        handleFetchUserRole(session.user.id);
       }
       setIsLoading(false);
     });
@@ -105,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchUserRole(session.user.id);
+        await handleFetchUserRole(session.user.id);
       }
       setIsLoading(false);
     });
@@ -113,22 +89,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserRole = async (userId: string) => {
+  const handleFetchUserRole = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .single();
-
-      if (error) throw error;
-      setUserRole(data?.role);
-
-      await logAuditEvent({
-        action: 'FETCH_USER_ROLE',
-        userId,
-        details: { role: data?.role }
-      });
+      const role = await fetchUserRole(userId);
+      setUserRole(role);
     } catch (error: any) {
       console.error('Error fetching user role:', error);
       toast({
@@ -139,54 +103,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logAuditEvent = async (event: {
-    action: string;
-    userId: string;
-    details?: Record<string, any>;
-  }) => {
-    try {
-      await supabase.from('audit_logs').insert({
-        user_id: event.userId,
-        action: event.action,
-        resource_type: 'auth',
-        details: event.details,
-        ip_address: window.sessionStorage.getItem('user_ip') || null,
-        user_agent: navigator.userAgent
-      });
-    } catch (error) {
-      console.error('Error logging audit event:', error);
-    }
+  const handleLogin = async (email: string, password: string) => {
+    await login(email, password);
   };
 
-  const login = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (error) throw error;
+  const handleSignup = async (email: string, password: string) => {
+    await signup(email, password);
   };
 
-  const signup = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    
-    if (error) throw error;
-  };
-
-  const signOut = async () => {
+  const handleSignOut = async () => {
     try {
       if (user) {
-        await logAuditEvent({
-          action: 'USER_LOGOUT',
-          userId: user.id,
-          details: { trigger: 'user_action' }
-        });
+        await signOut(user.id);
       }
-      
-      await supabase.auth.signOut();
       navigate("/auth");
       toast({
         title: "Signed out successfully",
@@ -201,24 +130,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resendVerificationEmail = async () => {
+  const handleResendVerificationEmail = async () => {
     try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: user?.email,
-      });
-
-      if (error) throw error;
-
+      await resendVerificationEmail(user?.email, user?.id);
       toast({
         title: "Verification email sent",
         description: "Please check your inbox for the verification link.",
-      });
-
-      await logAuditEvent({
-        action: 'RESEND_VERIFICATION_EMAIL',
-        userId: user?.id || 'unknown',
-        details: { email: user?.email }
       });
     } catch (error: any) {
       toast({
@@ -231,15 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isAuthorized = (requiredRole: string): boolean => {
     if (!user || !userRole) return false;
-    
-    const roleHierarchy = {
-      'admin': 3,
-      'manager': 2,
-      'user': 1
-    };
-
-    return roleHierarchy[userRole as keyof typeof roleHierarchy] >= 
-           roleHierarchy[requiredRole as keyof typeof roleHierarchy];
+    return getRoleHierarchy(userRole, requiredRole);
   };
 
   return (
@@ -248,12 +157,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user, 
         isLoading, 
         isAuthenticated: !!user, 
-        login,
-        signup,
-        signOut, 
+        login: handleLogin,
+        signup: handleSignup,
+        signOut: handleSignOut, 
         userRole, 
         isAuthorized, 
-        resendVerificationEmail 
+        resendVerificationEmail: handleResendVerificationEmail 
       }}
     >
       {children}
