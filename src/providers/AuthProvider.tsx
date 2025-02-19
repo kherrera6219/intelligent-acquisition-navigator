@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,19 +95,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       console.error('Error fetching user role:', error);
       toast({
-        title: "Error",
-        description: "Failed to fetch user role",
+        title: "Error Fetching Role",
+        description: error.message || "Failed to fetch user role",
         variant: "destructive",
       });
     }
   };
 
   const handleLogin = async (email: string, password: string) => {
-    await login(email, password);
+    try {
+      await login(email, password);
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast({
+        title: "Login Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error; // Re-throw to handle in the UI
+    }
   };
 
   const handleSignup = async (email: string, password: string) => {
-    await signup(email, password);
+    try {
+      await signup(email, password);
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      toast({
+        title: "Signup Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error; // Re-throw to handle in the UI
+    }
   };
 
   const handleSignOut = async () => {
@@ -118,12 +137,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       navigate("/auth");
       toast({
-        title: "Signed out successfully",
-        description: "You have been signed out of your account.",
+        title: "Signed Out",
+        description: "You have been signed out successfully.",
       });
     } catch (error: any) {
+      console.error('Sign out error:', error);
       toast({
-        title: "Error signing out",
+        title: "Error Signing Out",
         description: error.message,
         variant: "destructive",
       });
@@ -134,21 +154,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await resendVerificationEmail(user?.email, user?.id);
       toast({
-        title: "Verification email sent",
-        description: "Please check your inbox for the verification link.",
+        title: "Email Sent",
+        description: "Verification email has been sent. Please check your inbox.",
       });
     } catch (error: any) {
+      console.error('Verification email error:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to resend verification email",
+        description: error.message,
         variant: "destructive",
       });
     }
   };
 
   const isAuthorized = (requiredRole: string): boolean => {
-    if (!user || !userRole) return false;
-    return getRoleHierarchy(userRole, requiredRole);
+    try {
+      if (!user || !userRole) return false;
+      return getRoleHierarchy(userRole, requiredRole);
+    } catch (error: any) {
+      console.error('Authorization error:', error);
+      toast({
+        title: "Authorization Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      return false;
+    }
   };
 
   return (
