@@ -1,17 +1,33 @@
 
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/providers/AuthProvider";
+import { useToast } from "@/hooks/use-toast";
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth();
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiredRole?: string;
+}
+
+export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
+  const { user, isLoading, isAuthorized } = useAuth();
   const location = useLocation();
+  const { toast } = useToast();
 
   if (isLoading) {
-    return <div>Loading...</div>; // You can replace this with a proper loading spinner
+    return <div>Loading...</div>;
   }
 
   if (!user) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  if (requiredRole && !isAuthorized(requiredRole)) {
+    toast({
+      title: "Access Denied",
+      description: "You don't have permission to access this resource.",
+      variant: "destructive",
+    });
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
