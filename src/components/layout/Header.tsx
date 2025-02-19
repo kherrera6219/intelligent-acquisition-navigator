@@ -1,9 +1,10 @@
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/universal/Container";
 import { useAuth } from "@/providers/AuthProvider";
+import { cn } from "@/lib/utils";
 
 interface NavItem {
   href: string;
@@ -22,6 +23,7 @@ const navItems: NavItem[] = [
 
 export const Header = () => {
   const { signOut, userRole } = useAuth();
+  const location = useLocation();
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-800 bg-black/40 backdrop-blur-sm">
@@ -40,7 +42,10 @@ export const Header = () => {
                     <Link 
                       key={item.href}
                       to={item.href} 
-                      className="text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full"
+                      className={cn(
+                        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full",
+                        location.pathname === item.href && "text-white bg-white/5"
+                      )}
                     >
                       {item.label}
                     </Link>
@@ -49,7 +54,10 @@ export const Header = () => {
                   <Link 
                     key={item.href}
                     to={item.href} 
-                    className="text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full"
+                    className={cn(
+                      "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full",
+                      location.pathname === item.href && "text-white bg-white/5"
+                    )}
                   >
                     {item.label}
                   </Link>
