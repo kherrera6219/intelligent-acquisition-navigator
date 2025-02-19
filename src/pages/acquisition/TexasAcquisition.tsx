@@ -9,6 +9,7 @@ import { TexasAgencyType, TexasMessage } from "@/types/texas-chat";
 import { Message, AIChatMessage } from "@/types/chat";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { FileUpload } from "@/components/chat/FileUpload";
 
 const TexasAcquisition = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
@@ -37,7 +38,7 @@ const TexasAcquisition = () => {
           content: assistantMessage.content,
           role: assistantMessage.role,
           user_id: user.id,
-          conversation_id: conversationId, // Make sure to include conversation_id
+          conversation_id: conversationId,
           metadata: {
             agencyType: selectedAgency
           }
@@ -54,6 +55,13 @@ const TexasAcquisition = () => {
       },
     }
   );
+
+  const handleUploadComplete = (documentId: string) => {
+    toast({
+      title: "Document uploaded",
+      description: "Your document has been successfully uploaded and will be processed.",
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +89,7 @@ const TexasAcquisition = () => {
       content: userMessage.content,
       role: userMessage.role,
       user_id: user.id,
-      conversation_id: conversationId, // Make sure to include conversation_id
+      conversation_id: conversationId,
       metadata: {
         agencyType: selectedAgency
       }
@@ -120,10 +128,16 @@ const TexasAcquisition = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="bg-black/40 backdrop-blur-sm border-white/10">
           <div className="h-[600px] flex flex-col">
-            <TexasChatSelectors
-              selectedAgency={selectedAgency}
-              onAgencyChange={setSelectedAgency}
-            />
+            <div className="flex items-center justify-between p-4 border-b border-white/10">
+              <TexasChatSelectors
+                selectedAgency={selectedAgency}
+                onAgencyChange={setSelectedAgency}
+              />
+              <FileUpload 
+                conversationId={conversationId}
+                onUploadComplete={handleUploadComplete}
+              />
+            </div>
             <ChatMessages 
               messages={messages} 
               isLoading={aiMutation.isPending} 
