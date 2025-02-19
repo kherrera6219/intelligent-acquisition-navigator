@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { cn } from "@/lib/utils";
 
 interface ContainerProps {
@@ -17,23 +18,21 @@ const sizeClasses = {
   full: "max-w-none",
 } as const;
 
-export const Container = ({
+export const Container: React.FC<ContainerProps> = ({
   children,
   className,
   as: Component = "div",
   size = "lg",
   padding = true,
-}: ContainerProps) => {
-  return (
-    <Component
-      className={cn(
-        "w-full mx-auto",
-        padding && "px-4 sm:px-6 lg:px-8",
-        sizeClasses[size],
-        className
-      )}
-    >
-      {children}
-    </Component>
-  );
-};
+}) => (
+  <Component
+    className={cn(
+      "w-full mx-auto",
+      padding && "px-4 sm:px-6 lg:px-8",
+      sizeClasses[size],
+      className
+    )}
+  >
+    {children}
+  </Component>
+);

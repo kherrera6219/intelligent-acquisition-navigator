@@ -13,15 +13,15 @@ interface LoadingStateProps {
 const sizeMap = {
   sm: "h-4 w-4",
   md: "h-8 w-8",
-  lg: "h-12 w-12"
-};
+  lg: "h-12 w-12",
+} as const;
 
-export const LoadingState = ({
+export const LoadingState: React.FC<LoadingStateProps> = ({
   className,
   message = "Loading...",
   size = "md",
-  variant = "full"
-}: LoadingStateProps) => {
+  variant = "full",
+}) => {
   const content = (
     <>
       <Loader2 className={cn("animate-spin", sizeMap[size])} />
@@ -30,15 +30,21 @@ export const LoadingState = ({
   );
 
   if (variant === "inline") {
-    return <span className={cn("inline-flex items-center gap-2", className)}>{content}</span>;
+    return (
+      <span className={cn("inline-flex items-center gap-2", className)}>
+        {content}
+      </span>
+    );
   }
 
   if (variant === "overlay") {
     return (
-      <div className={cn(
-        "absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50",
-        className
-      )}>
+      <div
+        className={cn(
+          "absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50",
+          className
+        )}
+      >
         <div className="flex flex-col items-center">{content}</div>
       </div>
     );

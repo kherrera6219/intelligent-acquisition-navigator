@@ -1,9 +1,9 @@
 
+import React from 'react';
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
 
 interface GridProps {
-  children: ReactNode;
+  children: React.ReactNode;
   columns?: 1 | 2 | 3 | 4 | 6;
   gap?: "sm" | "md" | "lg";
   className?: string;
@@ -23,22 +23,20 @@ const columnClasses = {
   6: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6",
 } as const;
 
-export const Grid = ({
+export const Grid: React.FC<GridProps> = ({
   children,
   columns = 1,
   gap = "md",
   className,
-}: GridProps) => {
-  return (
-    <div
-      className={cn(
-        "grid w-full",
-        columnClasses[columns],
-        gapClasses[gap],
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+}) => (
+  <div
+    className={cn(
+      "grid w-full",
+      columnClasses[columns],
+      gapClasses[gap],
+      className
+    )}
+  >
+    {children}
+  </div>
+);

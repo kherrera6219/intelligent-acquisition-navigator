@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   AlertDialog,
@@ -28,17 +29,17 @@ const icons = {
   success: CheckCircle,
   error: AlertCircle,
   warning: AlertTriangle,
-  info: Info
-};
+  info: Info,
+} as const;
 
 const colors = {
   success: "text-green-500",
   error: "text-red-500",
   warning: "text-yellow-500",
-  info: "text-blue-500"
-};
+  info: "text-blue-500",
+} as const;
 
-export const FeedbackDialog = ({
+export const FeedbackDialog: React.FC<FeedbackDialogProps> = ({
   open,
   onOpenChange,
   title,
@@ -47,8 +48,8 @@ export const FeedbackDialog = ({
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
   onConfirm,
-  onCancel
-}: FeedbackDialogProps) => {
+  onCancel,
+}) => {
   const Icon = icons[type];
 
   return (
@@ -59,20 +60,14 @@ export const FeedbackDialog = ({
             <Icon className={cn("h-5 w-5", colors[type])} />
             {title}
           </AlertDialogTitle>
-          <AlertDialogDescription>
-            {description}
-          </AlertDialogDescription>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           {onCancel && (
-            <AlertDialogCancel onClick={onCancel}>
-              {cancelLabel}
-            </AlertDialogCancel>
+            <AlertDialogCancel onClick={onCancel}>{cancelLabel}</AlertDialogCancel>
           )}
           {onConfirm && (
-            <AlertDialogAction onClick={onConfirm}>
-              {confirmLabel}
-            </AlertDialogAction>
+            <AlertDialogAction onClick={onConfirm}>{confirmLabel}</AlertDialogAction>
           )}
         </AlertDialogFooter>
       </AlertDialogContent>
