@@ -5,11 +5,12 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Shield } from "lucide-react";
+import { Shield, Loader2 } from "lucide-react";
 
 const SignUpForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -18,21 +19,33 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
+    setIsLoading(true);
+
+    try {
+      if (formData.password !== formData.confirmPassword) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Passwords do not match",
+        });
+        return;
+      }
+
+      // Handle sign up logic here
+      toast({
+        title: "Account created",
+        description: "Welcome to ProcurityIQ!",
+      });
+      navigate("/dashboard");
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Passwords do not match",
+        description: error.message || "Failed to create account",
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    // Handle sign up logic here
-    toast({
-      title: "Account created",
-      description: "Welcome to ProcurityIQ!",
-    });
-    navigate("/dashboard");
   };
 
   return (
@@ -58,6 +71,7 @@ const SignUpForm = () => {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="bg-white/5 border-white/10 text-white"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -71,6 +85,7 @@ const SignUpForm = () => {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="bg-white/5 border-white/10 text-white"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -84,6 +99,7 @@ const SignUpForm = () => {
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               className="bg-white/5 border-white/10 text-white"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -91,8 +107,16 @@ const SignUpForm = () => {
             type="submit"
             className="w-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
                      hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+            disabled={isLoading}
           >
-            Create Account
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating Account...
+              </>
+            ) : (
+              "Create Account"
+            )}
           </Button>
 
           <p className="text-center text-sm text-gray-400">
@@ -101,6 +125,7 @@ const SignUpForm = () => {
               type="button"
               onClick={() => navigate("/login")}
               className="text-fuchsia-400 hover:text-fuchsia-300"
+              disabled={isLoading}
             >
               Sign in
             </button>
