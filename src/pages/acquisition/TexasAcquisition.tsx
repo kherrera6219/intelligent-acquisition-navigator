@@ -17,9 +17,9 @@ const TexasAcquisition = () => {
 
   const aiMutation = useAzureAI(messages, {
     onSuccess: async (data) => {
-      const assistantMessage: TexasMessage = {
+      const assistantMessage: Omit<TexasMessage, "id" | "timestamp"> = {
         role: "assistant",
-        content: data.choices[0].message.content,
+        content: data.choices[0].message.content
       };
       
       const success = await addMessage(assistantMessage, selectedAgency, selectedRole);
@@ -46,9 +46,9 @@ const TexasAcquisition = () => {
     e.preventDefault();
     if (!input.trim() || aiMutation.isPending || !conversationId) return;
 
-    const userMessage: TexasMessage = {
+    const userMessage: Omit<TexasMessage, "id" | "timestamp"> = {
       role: "user",
-      content: input.trim(),
+      content: input.trim()
     };
 
     const success = await addMessage(userMessage, selectedAgency, selectedRole);

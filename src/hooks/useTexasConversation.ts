@@ -90,6 +90,12 @@ export const useTexasConversation = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || !conversationId) return false;
 
+    const newMessage: TexasMessage = {
+      id: crypto.randomUUID(),
+      ...message,
+      timestamp: new Date()
+    };
+
     const messageData = {
       content: message.content,
       role: message.role,
@@ -107,12 +113,6 @@ export const useTexasConversation = () => {
       console.error('Error saving message:', error);
       return false;
     }
-
-    const newMessage: TexasMessage = {
-      id: crypto.randomUUID(),
-      ...message,
-      timestamp: new Date()
-    };
 
     setMessages(prev => [...prev, newMessage]);
     return true;
