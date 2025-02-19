@@ -1,33 +1,160 @@
 
 # Components Documentation
 
-This directory contains all React components used in the application. Components are organized into the following categories:
+This document provides detailed documentation for all React components in the application.
 
-## Directory Structure
+## Core Components
 
-- `/landing`: Landing page components
-- `/ui`: Reusable UI components
-- `/auth`: Authentication-related components
-- `/layout`: Layout components
-- `/error`: Error handling components
+### AuthForm
+**Purpose**: Handles user authentication (login/signup)
+**Props**:
+```typescript
+{
+  mode: 'login' | 'signup';
+  onSubmit: (data: AuthFormData) => Promise<void>;
+  loading?: boolean;
+}
+```
+**Usage Example**:
+```tsx
+<AuthForm 
+  mode="login" 
+  onSubmit={handleLogin} 
+  loading={isLoading} 
+/>
+```
 
-## Component Guidelines
+### DashboardPage
+**Purpose**: Main dashboard view displaying metrics and activities
+**Props**: None
+**Key Features**:
+- Real-time metrics display
+- Data filtering
+- Refresh functionality
+- Date range selection
 
-1. All components should:
-   - Be TypeScript-based
-   - Include proper prop types
-   - Have ARIA attributes where applicable
-   - Include proper documentation
-   - Follow the project's naming conventions
+### ProposalsPage
+**Purpose**: Displays and manages proposals
+**Props**: None
+**Key Features**:
+- Proposal listing
+- Search functionality
+- Sorting and filtering
+- Pagination
 
-2. File Structure:
-   - One component per file
-   - Name should match component name
-   - Include related types in the same file
-   - Export as default when main component
+### TexasChatContainer
+**Purpose**: Container for Texas-specific chat functionality
+**Props**:
+```typescript
+{
+  initialMessages?: TexasMessage[];
+  onSendMessage: (message: string) => Promise<void>;
+  agencyType: TexasAgencyType;
+  userRole: TexasRole;
+}
+```
 
-3. Best Practices:
-   - Use functional components
-   - Implement proper error boundaries
-   - Include loading states
-   - Follow accessibility guidelines
+## UI Components
+
+### Button
+**Purpose**: Reusable button component
+**Props**:
+```typescript
+{
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  children: React.ReactNode;
+  disabled?: boolean;
+  loading?: boolean;
+  onClick?: () => void;
+}
+```
+
+### Card
+**Purpose**: Container component for content sections
+**Props**:
+```typescript
+{
+  children: React.ReactNode;
+  className?: string;
+}
+```
+
+### Input
+**Purpose**: Form input component
+**Props**:
+```typescript
+{
+  type?: string;
+  placeholder?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  required?: boolean;
+}
+```
+
+### Toast
+**Purpose**: Notification system
+**Usage**:
+```typescript
+const { toast } = useToast();
+
+toast({
+  title: "Success",
+  description: "Operation completed successfully"
+});
+```
+
+## Layout Components
+
+### MainLayout
+**Purpose**: Main application layout wrapper
+**Props**:
+```typescript
+{
+  children: React.ReactNode;
+}
+```
+**Features**:
+- Navigation header
+- Sidebar menu
+- Content area
+- Responsive design
+
+### PageHeader
+**Purpose**: Consistent header for all pages
+**Props**:
+```typescript
+{
+  title: string;
+  description?: string;
+  actions?: React.ReactNode;
+}
+```
+
+## Best Practices
+
+1. Component Usage
+- Keep components small and focused
+- Use TypeScript for type safety
+- Follow React hooks rules
+- Implement proper error boundaries
+
+2. State Management
+- Use React Query for server state
+- Local state with useState/useReducer
+- Context for global state
+- Proper loading states
+
+3. Performance
+- Implement proper memoization
+- Lazy load components when needed
+- Optimize re-renders
+- Use proper key props in lists
+
+4. Accessibility
+- Proper ARIA labels
+- Keyboard navigation
+- Color contrast
+- Screen reader support
