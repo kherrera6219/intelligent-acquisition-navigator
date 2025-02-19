@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from "@/providers/AuthProvider";
 import { Container } from "@/components/ui/universal/Container";
 import { Card } from "@/components/ui/universal/Card";
@@ -11,54 +11,114 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Settings as SettingsIcon, UserCog, Bell, Shield, Palette, Database } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
   const { user, userRole, isAuthorized } = useAuth();
+  const { toast } = useToast();
+  const [bio, setBio] = useState('');
+  const [theme, setTheme] = useState('dark');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      // Here you would typically make an API call to save the settings
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+      
+      toast({
+        title: "Settings saved",
+        description: "Your preferences have been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error saving settings",
+        description: "There was a problem saving your preferences. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const settingSections = [
     {
       title: "Profile Settings",
       icon: UserCog,
       content: "Manage your profile information and preferences.",
-      minRole: "user"
+      minRole: "user",
+      onClick: () => {
+        toast({
+          title: "Profile Settings",
+          description: "This section is coming soon.",
+        });
+      }
     },
     {
       title: "Notification Preferences",
       icon: Bell,
       content: "Configure how and when you receive notifications.",
-      minRole: "user"
+      minRole: "user",
+      onClick: () => {
+        toast({
+          title: "Notification Settings",
+          description: "This section is coming soon.",
+        });
+      }
     },
     {
       title: "Security Settings",
       icon: Shield,
       content: "Update your security preferences and authentication settings.",
-      minRole: "user"
+      minRole: "user",
+      onClick: () => {
+        toast({
+          title: "Security Settings",
+          description: "This section is coming soon.",
+        });
+      }
     },
     {
       title: "Display Options",
       icon: Palette,
       content: "Customize the appearance and layout of your dashboard.",
-      minRole: "user"
+      minRole: "user",
+      onClick: () => {
+        toast({
+          title: "Display Settings",
+          description: "This section is coming soon.",
+        });
+      }
     }
   ];
 
-  // Additional sections for higher roles
   const adminSections = [
     {
       title: "System Configuration",
       icon: SettingsIcon,
       content: "Manage system-wide settings and configurations.",
-      minRole: "admin"
+      minRole: "admin",
+      onClick: () => {
+        toast({
+          title: "System Configuration",
+          description: "This section is coming soon.",
+        });
+      }
     },
     {
       title: "Database Management",
       icon: Database,
       content: "Configure database settings and manage data.",
-      minRole: "admin"
+      minRole: "admin",
+      onClick: () => {
+        toast({
+          title: "Database Management",
+          description: "This section is coming soon.",
+        });
+      }
     }
   ];
 
-  // Combine sections based on user role
   const allSections = [
     ...settingSections,
     ...(isAuthorized('admin') ? adminSections : [])
@@ -77,6 +137,7 @@ export default function SettingsPage() {
           <Card 
             key={index} 
             className="p-4 sm:p-5 md:p-6 hover:bg-white/5 transition-colors cursor-pointer"
+            onClick={section.onClick}
           >
             <div className="flex items-start space-x-4">
               <section.icon className="w-6 h-6 text-primary shrink-0" />
@@ -121,7 +182,7 @@ export default function SettingsPage() {
 
           <div className="space-y-2">
             <Label htmlFor="theme">Theme Preference</Label>
-            <Select defaultValue="dark">
+            <Select value={theme} onValueChange={setTheme}>
               <SelectTrigger id="theme">
                 <SelectValue placeholder="Select theme" />
               </SelectTrigger>
@@ -139,12 +200,17 @@ export default function SettingsPage() {
               id="bio" 
               placeholder="Tell us about yourself..."
               className="h-32"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
             />
           </div>
 
           <div className="pt-4">
-            <Button>
-              Save Changes
+            <Button 
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </div>
