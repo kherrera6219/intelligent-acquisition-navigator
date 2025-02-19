@@ -800,6 +800,7 @@ export type Database = {
           created_at: string
           id: string
           metadata: Json | null
+          response_level: string | null
           role: string
           user_id: string
           user_role: Database["public"]["Enums"]["texas_role"]
@@ -812,6 +813,7 @@ export type Database = {
           created_at?: string
           id?: string
           metadata?: Json | null
+          response_level?: string | null
           role: string
           user_id: string
           user_role: Database["public"]["Enums"]["texas_role"]
@@ -824,6 +826,7 @@ export type Database = {
           created_at?: string
           id?: string
           metadata?: Json | null
+          response_level?: string | null
           role?: string
           user_id?: string
           user_role?: Database["public"]["Enums"]["texas_role"]
