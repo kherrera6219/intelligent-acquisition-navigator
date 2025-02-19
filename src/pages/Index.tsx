@@ -7,7 +7,7 @@ import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 import { CTASection } from "@/components/landing/CTASection";
 import CookieConsent from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, HelpCircle } from "lucide-react";
+import { ArrowUp, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
