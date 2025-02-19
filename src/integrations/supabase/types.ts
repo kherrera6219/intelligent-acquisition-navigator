@@ -791,6 +791,80 @@ export type Database = {
         }
         Relationships: []
       }
+      texas_chat_messages: {
+        Row: {
+          agency_type: Database["public"]["Enums"]["texas_agency_type"]
+          content: string
+          context_data: Json | null
+          conversation_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          role: string
+          user_id: string
+          user_role: Database["public"]["Enums"]["texas_role"]
+        }
+        Insert: {
+          agency_type: Database["public"]["Enums"]["texas_agency_type"]
+          content: string
+          context_data?: Json | null
+          conversation_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          role: string
+          user_id: string
+          user_role: Database["public"]["Enums"]["texas_role"]
+        }
+        Update: {
+          agency_type?: Database["public"]["Enums"]["texas_agency_type"]
+          content?: string
+          context_data?: Json | null
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          role?: string
+          user_id?: string
+          user_role?: Database["public"]["Enums"]["texas_role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "texas_chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "texas_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      texas_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_documents: {
         Row: {
           conversation_id: string | null
@@ -1014,6 +1088,15 @@ export type Database = {
       reasoning_status: "passed" | "failed" | "warning"
       reasoning_type: "analytical" | "inductive" | "deductive" | "general"
       solicitation_status: "DRAFT" | "IN_REVIEW" | "APPROVED" | "PUBLISHED"
+      texas_agency_type:
+        | "TEXAS_GOVERNMENT"
+        | "TEXAS_EDUCATION"
+        | "TEXAS_HEALTHCARE"
+      texas_role:
+        | "CONTRACT_OFFICER"
+        | "PROGRAM_MANAGER"
+        | "CONTRACT_SPECIALIST"
+        | "CONTRACT_ANALYST"
       user_status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
     }
     CompositeTypes: {

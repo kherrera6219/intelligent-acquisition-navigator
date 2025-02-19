@@ -42,28 +42,44 @@ const TexasAcquisition = () => {
         return;
       }
 
-      const { data: conversation, error } = await supabase
+      // Create a new conversation or load existing one
+      const { data: existingConversations, error: fetchError } = await supabase
         .from('texas_conversations')
-        .insert({
-          user_id: user.id,
-          title: `Texas Acquisition Chat - ${new Date().toLocaleDateString()}`
-        })
         .select()
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .limit(1)
         .single();
 
-      if (error) {
-        console.error('Error creating conversation:', error);
-        toast({
-          title: "Error",
-          description: "Failed to initialize chat. Please try again.",
-          variant: "destructive",
-        });
-        return;
+      let conversation;
+      if (fetchError) {
+        // Create new conversation if none exists
+        const { data: newConversation, error: createError } = await supabase
+          .from('texas_conversations')
+          .insert({
+            user_id: user.id,
+            title: `Texas Acquisition Chat - ${new Date().toLocaleDateString()}`
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating conversation:', createError);
+          toast({
+            title: "Error",
+            description: "Failed to initialize chat. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+        conversation = newConversation;
+      } else {
+        conversation = existingConversations;
       }
 
       setConversationId(conversation.id);
 
-      // Load existing messages for this conversation
+      // Load existing messages
       const { data: existingMessages, error: messagesError } = await supabase
         .from('texas_chat_messages')
         .select('*')
