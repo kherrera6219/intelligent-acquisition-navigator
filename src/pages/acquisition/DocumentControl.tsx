@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/universal/Card";
 import { Grid } from "@/components/ui/universal/Grid";
@@ -193,7 +194,7 @@ const DocumentControl = () => {
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
