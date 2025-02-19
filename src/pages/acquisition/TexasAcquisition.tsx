@@ -5,7 +5,7 @@ import { useAzureAI } from "@/hooks/useAzureAI";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { TexasChatSelectors } from "@/components/texas/TexasChatSelectors";
-import { TexasAgencyType, TexasMessage } from "@/types/texas-chat";
+import { TexasAgencyType, TexasRole, TexasMessage } from "@/types/texas-chat";
 import { Message, AIChatMessage } from "@/types/chat";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,8 +15,9 @@ const TexasAcquisition = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
   const [input, setInput] = useState("");
   const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
+  const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACT_OFFICER");
   const { toast } = useToast();
-  const [conversationId] = useState(crypto.randomUUID()); // Generate a stable conversation ID
+  const [conversationId] = useState(crypto.randomUUID());
 
   const aiMutation = useAzureAI(
     messages,
@@ -34,7 +35,6 @@ const TexasAcquisition = () => {
         
         setMessages((prev) => [...prev, assistantMessage]);
 
-        // Match the database schema for the insert operation
         const messageData = {
           content: assistantMessage.content,
           role: assistantMessage.role,
@@ -42,7 +42,8 @@ const TexasAcquisition = () => {
           conversation_id: conversationId,
           context_data: null,
           metadata: {
-            agencyType: selectedAgency
+            agencyType: selectedAgency,
+            userRole: selectedRole
           }
         };
 
@@ -87,9 +88,9 @@ const TexasAcquisition = () => {
       content: input.trim(),
       timestamp: new Date(),
       agencyType: selectedAgency,
+      userRole: selectedRole
     };
 
-    // Match the database schema for the insert operation
     const messageData = {
       content: userMessage.content,
       role: userMessage.role,
@@ -97,7 +98,8 @@ const TexasAcquisition = () => {
       conversation_id: conversationId,
       context_data: null,
       metadata: {
-        agencyType: selectedAgency
+        agencyType: selectedAgency,
+        userRole: selectedRole
       }
     };
 
@@ -116,7 +118,8 @@ const TexasAcquisition = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     
-    const aiContext = `You are a procurement expert for the ${selectedAgency.replace('_', ' ').toLowerCase()} sector. 
+    const aiContext = `You are a procurement expert for the ${selectedAgency.replace('_', ' ').toLowerCase()} sector, 
+                      specifically assisting a ${selectedRole.replace('_', ' ').toLowerCase()}. 
                       Provide guidance specific to Texas state regulations and requirements.`;
     
     const aiMessages: AIChatMessage[] = [
@@ -139,7 +142,9 @@ const TexasAcquisition = () => {
             <div className="flex items-center justify-between p-4 border-b border-white/10">
               <TexasChatSelectors
                 selectedAgency={selectedAgency}
+                selectedRole={selectedRole}
                 onAgencyChange={setSelectedAgency}
+                onRoleChange={setSelectedRole}
               />
               <FileUpload 
                 conversationId={conversationId}
