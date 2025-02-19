@@ -73,8 +73,8 @@ export const useTexasConversation = () => {
           role: msg.role as "user" | "assistant",
           content: msg.content,
           timestamp: new Date(msg.created_at),
-          agencyType: msg.agency_type as TexasAgencyType,
-          userRole: msg.user_role as TexasRole
+          agencyType: msg.agency_type,
+          userRole: msg.user_role
         }));
         setMessages(formattedMessages);
       }
@@ -99,18 +99,16 @@ export const useTexasConversation = () => {
       userRole: selectedRole
     };
 
-    const messageData = {
-      content: baseMessage.content,
-      role: baseMessage.role,
-      user_id: user.id,
-      conversation_id: conversationId,
-      agency_type: selectedAgency,
-      user_role: selectedRole
-    };
-
     const { error } = await supabase
       .from('texas_chat_messages')
-      .insert(messageData);
+      .insert({
+        content: baseMessage.content,
+        role: baseMessage.role,
+        user_id: user.id,
+        conversation_id: conversationId,
+        agency_type: selectedAgency,
+        user_role: selectedRole
+      });
 
     if (error) {
       console.error('Error saving message:', error);

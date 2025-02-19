@@ -4,12 +4,12 @@ import { TexasChatSelectors } from "./TexasChatSelectors";
 import { FileUpload } from "@/components/chat/FileUpload";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
-import { TexasAgencyType, TexasRole } from "@/types/texas-chat";
+import { TexasAgencyType, TexasRole, TexasMessage } from "@/types/texas-chat";
 import { useToast } from "@/hooks/use-toast";
 
 interface TexasChatContainerProps {
   conversationId: string;
-  messages: any[];
+  messages: TexasMessage[];
   isLoading: boolean;
   input: string;
   selectedAgency: TexasAgencyType;
