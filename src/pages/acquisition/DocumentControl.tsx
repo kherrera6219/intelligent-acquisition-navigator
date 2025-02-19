@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/universal/Card";
@@ -19,7 +18,9 @@ import {
   Loader2 
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
+import { LoadingState } from "@/components/ui/universal/LoadingState";
+import { FeedbackDialog } from "@/components/ui/universal/FeedbackDialog";
 
 interface Document {
   id: string;
@@ -81,30 +82,7 @@ const getStatusIcon = (status: Document["status"]) => {
 
 const DocumentList = ({ documents, isLoading }: { documents: Document[], isLoading: boolean }) => {
   if (isLoading) {
-    return (
-      <Grid columns={1} gap="lg">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="animate-pulse">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 sm:p-6">
-              <div className="flex items-start sm:items-center gap-4 w-full sm:w-auto">
-                <div className="h-12 w-12 bg-white/5 rounded-lg"></div>
-                <div className="flex-1 space-y-3">
-                  <div className="h-4 bg-white/5 rounded w-3/4"></div>
-                  <div className="h-3 bg-white/5 rounded w-1/2"></div>
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                <div className="h-8 bg-white/5 rounded-full w-24"></div>
-                <div className="flex gap-3 sm:ml-4">
-                  <div className="h-10 bg-white/5 rounded w-24"></div>
-                  <div className="h-10 bg-white/5 rounded w-24"></div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </Grid>
-    );
+    return <LoadingState message="Loading documents..." />;
   }
 
   if (!documents.length) {
@@ -185,9 +163,11 @@ const DocumentList = ({ documents, isLoading }: { documents: Document[], isLoadi
 const DocumentControl = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
   const { toast } = useToast();
 
   const handleUpload = () => {
+    setShowUploadDialog(false);
     toast({
       title: "Upload Started",
       description: "Your document is being processed...",
@@ -203,7 +183,7 @@ const DocumentControl = () => {
   }, []);
 
   return (
-    <ErrorBoundary>
+    <PageErrorBoundary>
       <Container>
         <PageHeader
           title="Document Control"
@@ -219,25 +199,28 @@ const DocumentControl = () => {
                 className="pl-10 bg-white/5 border-white/10 w-full"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search documents"
               />
             </div>
             <div className="flex gap-3 w-full sm:w-auto">
               <Button 
                 variant="outline" 
                 className="border-white/10 flex-1 sm:flex-none"
+                aria-label="Open filters"
               >
                 <Filter className="h-5 w-5 mr-2" />
                 Filters
               </Button>
               <Button
-                onClick={handleUpload}
+                onClick={() => setShowUploadDialog(true)}
                 className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
                        hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600
                        flex-1 sm:flex-none"
                 disabled={isLoading}
+                aria-label="Upload document"
               >
                 {isLoading ? (
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  <LoadingState variant="inline" size="sm" message="" />
                 ) : (
                   <Upload className="h-5 w-5 mr-2" />
                 )}
@@ -251,8 +234,18 @@ const DocumentControl = () => {
           documents={mockDocuments} 
           isLoading={isLoading} 
         />
+
+        <FeedbackDialog
+          open={showUploadDialog}
+          onOpenChange={setShowUploadDialog}
+          title="Upload Document"
+          description="Are you sure you want to upload this document? This action cannot be undone."
+          type="info"
+          confirmLabel="Upload"
+          onConfirm={handleUpload}
+        />
       </Container>
-    </ErrorBoundary>
+    </PageErrorBoundary>
   );
 };
 
