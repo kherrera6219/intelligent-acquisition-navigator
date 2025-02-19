@@ -516,6 +516,48 @@ export type Database = {
         }
         Relationships: []
       }
+      metrics: {
+        Row: {
+          avg_review_time: number
+          avg_review_time_change: number
+          compliance_rate: number
+          compliance_rate_change: number
+          created_at: string
+          id: string
+          pending_reviews: number
+          pending_reviews_change: number
+          tasks_completed: number
+          tasks_completed_change: number
+          updated_at: string
+        }
+        Insert: {
+          avg_review_time?: number
+          avg_review_time_change?: number
+          compliance_rate?: number
+          compliance_rate_change?: number
+          created_at?: string
+          id?: string
+          pending_reviews?: number
+          pending_reviews_change?: number
+          tasks_completed?: number
+          tasks_completed_change?: number
+          updated_at?: string
+        }
+        Update: {
+          avg_review_time?: number
+          avg_review_time_change?: number
+          compliance_rate?: number
+          compliance_rate_change?: number
+          created_at?: string
+          id?: string
+          pending_reviews?: number
+          pending_reviews_change?: number
+          tasks_completed?: number
+          tasks_completed_change?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
