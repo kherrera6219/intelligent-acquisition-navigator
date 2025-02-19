@@ -79,7 +79,7 @@ export const useTexasConversation = () => {
       .insert({
         content: baseMessage.content,
         role: baseMessage.role,
-        user_id: 'dev-user', // Use development user ID
+        user_id: 'dev-user',
         conversation_id: conversationId,
         agency_type: selectedAgency,
         user_role: selectedRole,
