@@ -6,9 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
-import { Mail, Lock, AlertCircle } from "lucide-react";
+import { Mail, Lock, AlertCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/providers/AuthProvider";
+
+interface FormErrors {
+  email?: string;
+  password?: string;
+}
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
@@ -16,6 +21,7 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [showVerificationBanner, setShowVerificationBanner] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, resendVerificationEmail } = useAuth();
@@ -30,8 +36,34 @@ export default function AuthPage() {
     }
   }, [user, navigate]);
 
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    // Email validation
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (isSignUp && password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -86,6 +118,18 @@ export default function AuthPage() {
     }
   };
 
+  const handleInputChange = (field: 'email' | 'password', value: string) => {
+    if (field === 'email') {
+      setEmail(value);
+    } else {
+      setPassword(value);
+    }
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4">
       {showVerificationBanner && (
@@ -121,30 +165,50 @@ export default function AuthPage() {
         </div>
 
         <form onSubmit={handleAuth} className="space-y-6">
-          <div className="relative">
-            <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="pl-10"
-              required
-              disabled={isLoading}
-            />
+          <div className="space-y-1">
+            <div className="relative">
+              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="Enter your email"
+                className={`pl-10 ${errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                required
+                disabled={isLoading}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+              />
+            </div>
+            {errors.email && (
+              <p className="text-sm text-red-500 flex items-center gap-1" id="email-error">
+                <X className="h-4 w-4" />
+                {errors.email}
+              </p>
+            )}
           </div>
 
-          <div className="relative">
-            <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className="pl-10"
-              required
-              disabled={isLoading}
-            />
+          <div className="space-y-1">
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                placeholder="Enter your password"
+                className={`pl-10 ${errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                required
+                disabled={isLoading}
+                aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? "password-error" : undefined}
+              />
+            </div>
+            {errors.password && (
+              <p className="text-sm text-red-500 flex items-center gap-1" id="password-error">
+                <X className="h-4 w-4" />
+                {errors.password}
+              </p>
+            )}
           </div>
 
           {!isSignUp && (
@@ -174,7 +238,10 @@ export default function AuthPage() {
         <div className="mt-6 text-center text-sm text-gray-400">
           {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
           <button
-            onClick={() => setIsSignUp(!isSignUp)}
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setErrors({});
+            }}
             className="text-white hover:underline"
           >
             {isSignUp ? "Sign In" : "Sign Up"}
