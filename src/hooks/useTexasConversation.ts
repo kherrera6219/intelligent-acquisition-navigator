@@ -74,7 +74,7 @@ export const useTexasConversation = () => {
           content: msg.content,
           timestamp: new Date(msg.created_at),
           agencyType: msg.agency_type,
-          userRole: msg.user_role
+          userRole: msg.user_role as TexasRole
         }));
         setMessages(formattedMessages);
       }
@@ -84,7 +84,7 @@ export const useTexasConversation = () => {
   }, [toast]);
 
   const addMessage = async (
-    message: Omit<TexasMessage, "id" | "timestamp">, 
+    message: Omit<TexasMessage, "id" | "timestamp" | "agencyType" | "userRole">, 
     selectedAgency: TexasAgencyType, 
     selectedRole: TexasRole
   ) => {

@@ -802,7 +802,6 @@ export type Database = {
           metadata: Json | null
           role: string
           user_id: string
-          user_role: Database["public"]["Enums"]["texas_role"]
         }
         Insert: {
           agency_type: Database["public"]["Enums"]["texas_agency_type"]
@@ -814,7 +813,6 @@ export type Database = {
           metadata?: Json | null
           role: string
           user_id: string
-          user_role: Database["public"]["Enums"]["texas_role"]
         }
         Update: {
           agency_type?: Database["public"]["Enums"]["texas_agency_type"]
@@ -826,7 +824,6 @@ export type Database = {
           metadata?: Json | null
           role?: string
           user_id?: string
-          user_role?: Database["public"]["Enums"]["texas_role"]
         }
         Relationships: [
           {
@@ -1093,10 +1090,15 @@ export type Database = {
         | "TEXAS_EDUCATION"
         | "TEXAS_HEALTHCARE"
       texas_role:
-        | "CONTRACT_OFFICER"
-        | "PROGRAM_MANAGER"
-        | "CONTRACT_SPECIALIST"
-        | "CONTRACT_ANALYST"
+        | "CONTRACTING_OFFICER"
+        | "SOURCE_SELECTION_AUTHORITY"
+        | "TECHNICAL_EVALUATION_PANEL"
+        | "COST_PRICE_ANALYST"
+        | "LEGAL_COMPLIANCE_ADVISOR"
+        | "PAST_PERFORMANCE_EVALUATOR"
+        | "SMALL_BUSINESS_LIAISON"
+        | "PROPOSAL_REVIEW_STAFF"
+        | "PROTEST_APPEALS_OFFICER"
       user_status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
     }
     CompositeTypes: {
