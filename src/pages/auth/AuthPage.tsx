@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { SignUpForm } from '@/components/auth/SignUpForm';
-import { PasswordReset } from '@/components/auth/PasswordReset';
+import SignUpForm from '@/components/auth/SignUpForm';
+import PasswordReset from '@/components/auth/PasswordReset';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
