@@ -17,10 +17,10 @@ export const ChatMessages = ({ messages, isLoading, className }: ChatMessagesPro
         <div
           key={message.id || index}
           className={cn(
-            "flex gap-3 p-4 rounded-lg animate-fade-in transition-colors",
+            "flex gap-3 p-4 glass-card animate-fade-in transition-colors",
             message.role === "user" 
-              ? "bg-gray-800/50 ml-auto max-w-[80%]" 
-              : "bg-gray-900/50 mr-auto max-w-[80%]"
+              ? "ml-auto max-w-[80%] enterprise-gradient" 
+              : "mr-auto max-w-[80%] bg-background/80"
           )}
         >
           {message.role === "user" ? (
@@ -37,11 +37,14 @@ export const ChatMessages = ({ messages, isLoading, className }: ChatMessagesPro
           <div className="flex-1 space-y-2">
             <p className={cn(
               "text-sm font-medium",
-              message.role === "user" ? "text-violet-200" : "text-emerald-200"
+              message.role === "user" ? "text-white" : "text-primary"
             )}>
               {message.role === "user" ? "You" : "Assistant"}
             </p>
-            <div className="text-gray-200 text-sm leading-relaxed">
+            <div className={cn(
+              "text-sm leading-relaxed",
+              message.role === "user" ? "text-white" : "text-foreground"
+            )}>
               {message.content}
             </div>
           </div>
@@ -49,19 +52,19 @@ export const ChatMessages = ({ messages, isLoading, className }: ChatMessagesPro
       ))}
       
       {isLoading && (
-        <div className="flex gap-3 p-4 rounded-lg bg-gray-900/50 mr-auto max-w-[80%] animate-pulse">
+        <div className="flex gap-3 p-4 glass-card mr-auto max-w-[80%] animate-pulse">
           <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500/20" />
           <div className="flex-1 space-y-2">
-            <Skeleton className="h-4 w-24 bg-gray-700" />
-            <Skeleton className="h-4 w-full bg-gray-700" />
-            <Skeleton className="h-4 w-2/3 bg-gray-700" />
+            <Skeleton className="h-4 w-24 bg-muted" />
+            <Skeleton className="h-4 w-full bg-muted" />
+            <Skeleton className="h-4 w-2/3 bg-muted" />
           </div>
         </div>
       )}
 
       {messages.length > 0 && (
         <div className="flex justify-center">
-          <button className="flex items-center gap-2 px-3 py-1 text-sm text-gray-400 hover:text-white transition-colors">
+          <button className="flex items-center gap-2 px-3 py-1 text-sm text-muted-foreground hover:text-primary transition-colors">
             <ArrowDown className="w-4 h-4" />
             Scroll to bottom
           </button>

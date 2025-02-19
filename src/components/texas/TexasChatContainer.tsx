@@ -1,12 +1,11 @@
 
-import { Card } from "@/components/ui/card";
-import { TexasChatSelectors } from "./TexasChatSelectors";
-import { FileUpload } from "@/components/chat/FileUpload";
-import { ChatMessages } from "@/components/chat/ChatMessages";
+import { TexasAgencyType, TexasMessage, TexasRole, ResponseLevel } from "@/types/texas-chat";
 import { ChatInput } from "@/components/chat/ChatInput";
-import { TexasAgencyType, TexasRole, TexasMessage, ResponseLevel } from "@/types/texas-chat";
-import { useToast } from "@/hooks/use-toast";
-import { MessageSquare } from "lucide-react";
+import { ChatMessages } from "@/components/chat/ChatMessages";
+import { ChatToolbar } from "@/components/chat/ChatToolbar";
+import { ChatSelectors } from "@/components/texas/TexasChatSelectors";
+import { GradientText } from "@/components/ui/universal/GradientText";
+import { Card } from "@/components/ui/universal/Card";
 
 interface TexasChatContainerProps {
   conversationId: string;
@@ -35,62 +34,51 @@ export const TexasChatContainer = ({
   onSubmit,
   onAgencyChange,
   onRoleChange,
-  onResponseLevelChange
+  onResponseLevelChange,
 }: TexasChatContainerProps) => {
-  const { toast } = useToast();
-
-  const handleUploadComplete = (documentId: string) => {
-    toast({
-      title: "Document uploaded",
-      description: "Your document has been successfully uploaded and will be processed.",
-    });
-  };
-
   return (
-    <Card className="bg-black/40 backdrop-blur-sm border-white/10 animate-fade-up">
-      <div className="h-[calc(100vh-8rem)] flex flex-col">
-        {/* Header Section */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-violet-400" />
-            <h2 className="text-lg font-semibold text-white">Texas Acquisition Chat</h2>
-          </div>
-          <div className="flex items-center gap-4">
-            <TexasChatSelectors
-              selectedAgency={selectedAgency}
-              selectedRole={selectedRole}
-              selectedResponseLevel={selectedResponseLevel}
-              onAgencyChange={onAgencyChange}
-              onRoleChange={onRoleChange}
-              onResponseLevelChange={onResponseLevelChange}
-            />
-            <FileUpload 
-              conversationId={conversationId}
-              onUploadComplete={handleUploadComplete}
-            />
-          </div>
+    <div className="container-module-lg py-8">
+      <div className="flex flex-col gap-8">
+        <div className="text-center">
+          <GradientText className="text-3xl font-bold">
+            Texas Acquisition Chat Assistant
+          </GradientText>
+          <p className="text-muted-foreground mt-2">
+            Get expert guidance on Texas state procurement regulations and requirements
+          </p>
         </div>
 
-        {/* Messages Section */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-          <ChatMessages 
-            messages={messages} 
-            isLoading={isLoading}
-            className="animate-fade-in"
+        <Card className="p-6 space-y-6">
+          <ChatSelectors
+            selectedRole={selectedRole}
+            selectedAgency={selectedAgency}
+            selectedDetailLevel={selectedResponseLevel}
+            onRoleChange={onRoleChange}
+            onAgencyChange={onAgencyChange}
+            onDetailLevelChange={onResponseLevelChange}
           />
-        </div>
-
-        {/* Input Section */}
-        <div className="p-4 border-t border-white/10 bg-black/20">
+          
+          <ChatToolbar
+            onDocumentCreation={() => console.log('Document creation clicked')}
+            onCodeCreation={() => console.log('Code creation clicked')}
+            onRunEnvironment={() => console.log('Run environment clicked')}
+          />
+          
+          <div className="h-[600px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-4">
+            <ChatMessages
+              messages={messages}
+              isLoading={isLoading}
+            />
+          </div>
+          
           <ChatInput
             input={input}
             isLoading={isLoading}
             onInputChange={onInputChange}
             onSubmit={onSubmit}
-            className="animate-fade-up"
           />
-        </div>
+        </Card>
       </div>
-    </Card>
+    </div>
   );
 };

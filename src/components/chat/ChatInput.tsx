@@ -26,17 +26,17 @@ export const ChatInput = ({
 
   return (
     <form onSubmit={handleSubmit} className={cn("space-y-4", className)}>
-      <div className="relative">
+      <div className="relative glass-card p-4">
         <Textarea
           value={input}
           onChange={(e) => onInputChange(e.target.value)}
           placeholder="Type your message..."
-          className="min-h-[100px] w-full resize-none rounded-lg bg-gray-800/50 border-gray-700 text-white placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500"
+          className="min-h-[100px] w-full resize-none rounded-lg bg-background/80 border-border text-foreground placeholder-muted-foreground focus:border-primary focus:ring-primary transition-colors"
         />
         <Button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="absolute bottom-4 right-4 bg-violet-600 hover:bg-violet-700 text-white"
+          className="absolute bottom-6 right-6 enterprise-gradient text-white hover:opacity-90 transition-opacity"
           size="sm"
         >
           <ArrowUp className="w-4 h-4" />
