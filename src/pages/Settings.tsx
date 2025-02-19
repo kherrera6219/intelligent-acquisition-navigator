@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from "@/providers/AuthProvider";
+import { useTheme } from "@/providers/ThemeProvider";
 import { Container } from "@/components/ui/universal/Container";
 import { Card } from "@/components/ui/universal/Card";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -15,9 +16,9 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
   const { user, userRole, isAuthorized } = useAuth();
+  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const [bio, setBio] = useState('');
-  const [theme, setTheme] = useState('dark');
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
@@ -39,6 +40,14 @@ export default function SettingsPage() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme as "light" | "dark" | "system");
+    toast({
+      title: "Theme updated",
+      description: `Theme has been changed to ${newTheme} mode.`,
+    });
   };
 
   const settingSections = [
@@ -182,7 +191,7 @@ export default function SettingsPage() {
 
           <div className="space-y-2">
             <Label htmlFor="theme">Theme Preference</Label>
-            <Select value={theme} onValueChange={setTheme}>
+            <Select value={theme} onValueChange={handleThemeChange}>
               <SelectTrigger id="theme">
                 <SelectValue placeholder="Select theme" />
               </SelectTrigger>
