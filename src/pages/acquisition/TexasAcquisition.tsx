@@ -19,47 +19,52 @@ const TexasAcquisition = () => {
   const { toast } = useToast();
   const [conversationId] = useState(crypto.randomUUID());
 
-  const aiMutation = useAzureAI(
-    messages,
-    {
-      onSuccess: async (data) => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+  const aiMutation = useAzureAI(messages, {
+    onSuccess: async (data) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-        const assistantMessage: TexasMessage = {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: data.choices[0].message.content,
-          timestamp: new Date(),
-        };
-        
-        setMessages((prev) => [...prev, assistantMessage]);
+      const assistantMessage: TexasMessage = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: data.choices[0].message.content,
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, assistantMessage]);
 
-        const messageData = {
-          content: assistantMessage.content,
-          role: assistantMessage.role,
-          user_id: user.id,
-          conversation_id: conversationId,
-          context_data: null,
-          metadata: {
-            agencyType: selectedAgency,
-            userRole: selectedRole
-          }
-        };
-
-        const { error } = await supabase.from('chat_messages').insert(messageData);
-
-        if (error) {
-          console.error('Error saving message:', error);
-          toast({
-            title: "Error saving message",
-            description: "Your message was displayed but couldn't be saved.",
-            variant: "destructive",
-          });
+      const messageData = {
+        content: assistantMessage.content,
+        role: assistantMessage.role,
+        user_id: user.id,
+        conversation_id: conversationId,
+        context_data: null,
+        metadata: {
+          agencyType: selectedAgency,
+          userRole: selectedRole
         }
-      },
+      };
+
+      const { error } = await supabase.from('chat_messages').insert(messageData);
+
+      if (error) {
+        console.error('Error saving message:', error);
+        toast({
+          title: "Error saving message",
+          description: "Your message was displayed but couldn't be saved.",
+          variant: "destructive",
+        });
+      }
+    },
+    onError: (error) => {
+      console.error('AI Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to get AI response. Please try again.",
+        variant: "destructive",
+      });
     }
-  );
+  });
 
   const handleUploadComplete = (documentId: string) => {
     toast({
