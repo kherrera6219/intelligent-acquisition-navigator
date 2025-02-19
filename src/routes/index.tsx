@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card } from "@/components/ui/universal/Card";
 import { Container } from "@/components/ui/universal/Container";
 
-// Loading component
+// Global loading component with minimal UI
 export const PageLoader = () => (
   <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
     <Container className="py-8">
@@ -37,27 +37,79 @@ const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = 
     {requiresAuth ? (
       <ProtectedRoute requiredRole={requiredRole}>
         <MainLayout>
-          <Suspense fallback={<LoadingSpinner size="lg" />}>
-            <Component />
-          </Suspense>
+          <Component />
         </MainLayout>
       </ProtectedRoute>
     ) : (
-      <Suspense fallback={<PageLoader />}>
-        <Component />
-      </Suspense>
+      <Component />
     )}
   </PageErrorBoundary>
 );
 
 // Define application routes with access control
 export const routes: RouteObject[] = [
-  { path: "/", element: wrapWithLayout(DashboardPage) },
-  { path: "/auth", element: wrapWithLayout(AuthPage, false) },
-  { path: "/acquisition/document-control", element: wrapWithLayout(DocumentControlPage, true, "user") },
-  { path: "/acquisition/market-research", element: wrapWithLayout(MarketResearchPage, true, "user") },
-  { path: "/acquisition/solicitation-review", element: wrapWithLayout(SolicitationReviewPage, true, "manager") },
-  { path: "/acquisition/texas-acquisition", element: wrapWithLayout(TexasAcquisitionPage, true, "user") },
-  { path: "/acquisition/federal", element: wrapWithLayout(FederalAcquisitionPage, true, "manager") },
-  { path: "/acquisition/federal-acquisition", element: wrapWithLayout(FederalAcquisitionPage, true, "manager") }
+  {
+    path: "/",
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        {wrapWithLayout(DashboardPage)}
+      </Suspense>
+    )
+  },
+  {
+    path: "/auth",
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        {wrapWithLayout(AuthPage, false)}
+      </Suspense>
+    )
+  },
+  {
+    path: "/acquisition/document-control",
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        {wrapWithLayout(DocumentControlPage, true, "user")}
+      </Suspense>
+    )
+  },
+  {
+    path: "/acquisition/market-research",
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        {wrapWithLayout(MarketResearchPage, true, "user")}
+      </Suspense>
+    )
+  },
+  {
+    path: "/acquisition/solicitation-review",
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        {wrapWithLayout(SolicitationReviewPage, true, "manager")}
+      </Suspense>
+    )
+  },
+  {
+    path: "/acquisition/texas-acquisition",
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        {wrapWithLayout(TexasAcquisitionPage, true, "user")}
+      </Suspense>
+    )
+  },
+  {
+    path: "/acquisition/federal",
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        {wrapWithLayout(FederalAcquisitionPage, true, "manager")}
+      </Suspense>
+    )
+  },
+  {
+    path: "/acquisition/federal-acquisition",
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        {wrapWithLayout(FederalAcquisitionPage, true, "manager")}
+      </Suspense>
+    )
+  }
 ];
