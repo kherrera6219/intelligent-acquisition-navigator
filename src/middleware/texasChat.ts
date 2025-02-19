@@ -56,10 +56,11 @@ export const texasChatMiddleware = {
   },
 
   getValidations: async (messageIds: string[]): Promise<ValidationResult[]> => {
-    const { data, error } = await supabase
+    // Temporary type assertion until Supabase types are updated
+    const { data, error } = await (supabase
       .from('texas_response_validations')
       .select('*')
-      .in('message_id', messageIds);
+      .in('message_id', messageIds) as any);
 
     if (error) throw error;
     return data || [];
@@ -91,7 +92,8 @@ export const texasChatMiddleware = {
     if (validationError) throw validationError;
 
     // Store validation results
-    const { data, error } = await supabase
+    // Temporary type assertion until Supabase types are updated
+    const { data, error } = await (supabase
       .from('texas_response_validations')
       .insert({
         message_id: messageId,
@@ -101,7 +103,7 @@ export const texasChatMiddleware = {
         validation_notes: validationResults.notes
       })
       .select()
-      .single();
+      .single() as any);
 
     if (error) throw error;
     return data;
