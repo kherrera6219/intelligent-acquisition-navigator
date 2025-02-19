@@ -1,24 +1,25 @@
 
 import { Suspense } from "react";
 import { RouteObject } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
 import { lazy } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Card } from "@/components/ui/universal/Card";
+import { Container } from "@/components/ui/universal/Container";
 
 // Loading component
 export const PageLoader = () => (
-  <div className="w-full h-screen flex items-center justify-center">
-    <div className="space-y-4 w-full max-w-3xl px-4">
-      <Skeleton className="h-12 w-[250px]" />
-      <Skeleton className="h-4 w-[300px]" />
-      <div className="space-y-2">
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    </div>
+  <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <Container className="py-8">
+      <Card className="w-full bg-black/40 backdrop-blur-sm border-white/10 p-6 shadow-xl flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-400">Loading...</p>
+        </div>
+      </Card>
+    </Container>
   </div>
 );
 
@@ -35,17 +36,19 @@ const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
 const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = true, requiredRole?: string) => {
   const WrappedComponent = () => (
     <PageErrorBoundary>
-      <Suspense fallback={<PageLoader />}>
-        {requiresAuth ? (
-          <ProtectedRoute requiredRole={requiredRole}>
-            <MainLayout>
+      {requiresAuth ? (
+        <ProtectedRoute requiredRole={requiredRole}>
+          <MainLayout>
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
               <Component />
-            </MainLayout>
-          </ProtectedRoute>
-        ) : (
+            </Suspense>
+          </MainLayout>
+        </ProtectedRoute>
+      ) : (
+        <Suspense fallback={<PageLoader />}>
           <Component />
-        )}
-      </Suspense>
+        </Suspense>
+      )}
     </PageErrorBoundary>
   );
   return <WrappedComponent />;
