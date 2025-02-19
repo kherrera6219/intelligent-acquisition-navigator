@@ -3,6 +3,9 @@ import { Suspense } from "react";
 import { RouteObject } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { lazy } from "react";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 
 // Loading component
 export const PageLoader = () => (
@@ -19,45 +22,63 @@ export const PageLoader = () => (
   </div>
 );
 
-// Lazy load routes
+// Lazy load pages
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
-const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
-const ChatPage = lazy(() => import("@/pages/ChatPage"));
-const ContactPage = lazy(() => import("@/pages/ContactPage"));
-const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
-const HelpPage = lazy(() => import("@/pages/HelpPage"));
-const HomePage = lazy(() => import("@/pages/HomePage"));
-const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
-const PricingPage = lazy(() => import("@/pages/PricingPage"));
-const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
-const ProposalsPage = lazy(() => import("@/pages/ProposalsPage"));
-const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
-const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
+const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
+const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
+const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage"));
 const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage"));
-const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage"));
+const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
 
-// Wrap routes with Suspense
-const wrapRoutesWithSuspense = (routes: RouteObject[]): RouteObject[] => {
-  return routes.map(route => ({
-    ...route,
-    element: <Suspense fallback={<PageLoader />}>{route.element}</Suspense>
-  }));
+// Wrap components with error boundary and layout
+const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = true, requiredRole?: string) => {
+  const WrappedComponent = () => (
+    <PageErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        {requiresAuth ? (
+          <ProtectedRoute requiredRole={requiredRole}>
+            <MainLayout>
+              <Component />
+            </MainLayout>
+          </ProtectedRoute>
+        ) : (
+          <Component />
+        )}
+      </Suspense>
+    </PageErrorBoundary>
+  );
+  return <WrappedComponent />;
 };
 
-// Import route configurations
-import { authRoutes } from "./authRoutes";
-import { acquisitionRoutes } from "./acquisitionRoutes";
-import { dashboardRoutes } from "./dashboardRoutes";
-import { settingsRoutes } from "./settingsRoutes";
-
-// Combine all routes
+// Define routes
 export const routes: RouteObject[] = [
-  ...wrapRoutesWithSuspense(authRoutes),
-  ...wrapRoutesWithSuspense(acquisitionRoutes),
-  ...wrapRoutesWithSuspense(dashboardRoutes),
-  ...wrapRoutesWithSuspense(settingsRoutes),
   {
-    path: "*",
-    element: <NotFoundPage />
+    path: "/",
+    element: wrapWithLayout(DashboardPage)
+  },
+  {
+    path: "/auth",
+    element: wrapWithLayout(AuthPage, false)
+  },
+  {
+    path: "/acquisition/document-control",
+    element: wrapWithLayout(DocumentControlPage, true, "user")
+  },
+  {
+    path: "/acquisition/market-research",
+    element: wrapWithLayout(MarketResearchPage, true, "user")
+  },
+  {
+    path: "/acquisition/solicitation-review",
+    element: wrapWithLayout(SolicitationReviewPage, true, "manager")
+  },
+  {
+    path: "/acquisition/texas-acquisition",
+    element: wrapWithLayout(TexasAcquisitionPage, true, "user")
+  },
+  {
+    path: "/acquisition/federal-acquisition",
+    element: wrapWithLayout(FederalAcquisitionPage, true, "manager")
   }
 ];
