@@ -108,7 +108,7 @@ const MarketResearch = () => {
       </Grid>
 
       <Card className="mb-8">
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-white mb-4">
             Performance Trends
           </h2>
@@ -117,20 +117,20 @@ const MarketResearch = () => {
       </Card>
 
       <Card>
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
+        <div className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <h2 className="text-xl font-semibold text-white">Top Vendors</h2>
-            <div className="flex gap-4">
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <div className="relative flex-1 sm:flex-none">
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                 <Input
                   placeholder="Search vendors..."
-                  className="pl-10 bg-white/5 border-white/10"
+                  className="pl-10 bg-white/5 border-white/10 w-full"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <Button variant="outline" className="border-white/10">
+              <Button variant="outline" className="border-white/10 w-full sm:w-auto">
                 <Filter className="h-5 w-5 mr-2" />
                 Filters
               </Button>
@@ -143,33 +143,35 @@ const MarketResearch = () => {
                 key={vendor.id}
                 className="hover:bg-white/5 transition-all duration-200"
               >
-                <div className="flex items-center justify-between p-4">
-                  <div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4">
+                  <div className="mb-4 sm:mb-0">
                     <h3 className="text-lg font-medium text-white">
                       {vendor.name}
                     </h3>
                     <p className="text-sm text-gray-400">{vendor.category}</p>
                   </div>
-                  <div className="flex items-center gap-8">
-                    <div className="text-center">
-                      <p className="text-sm text-gray-400">Rating</p>
-                      <p className="text-lg font-semibold text-white">
-                        {vendor.rating}
-                      </p>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 w-full sm:w-auto">
+                    <div className="grid grid-cols-3 sm:flex gap-4 sm:gap-8 w-full sm:w-auto">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-400">Rating</p>
+                        <p className="text-lg font-semibold text-white">
+                          {vendor.rating}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-gray-400">Contracts</p>
+                        <p className="text-lg font-semibold text-white">
+                          {vendor.contracts}
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-gray-400">Performance</p>
+                        <p className="text-lg font-semibold text-white">
+                          {vendor.performance}%
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-400">Contracts</p>
-                      <p className="text-lg font-semibold text-white">
-                        {vendor.contracts}
-                      </p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-400">Performance</p>
-                      <p className="text-lg font-semibold text-white">
-                        {vendor.performance}%
-                      </p>
-                    </div>
-                    <Button variant="outline" className="border-white/10">
+                    <Button variant="outline" className="border-white/10 w-full sm:w-auto">
                       View Details
                     </Button>
                   </div>
