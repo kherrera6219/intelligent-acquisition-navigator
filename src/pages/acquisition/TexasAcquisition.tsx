@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { useAzureAI } from "@/hooks/useAzureAI";
 import { TexasAgencyType, TexasRole, TexasMessage, ResponseLevel, RESPONSE_LEVEL_LABELS } from "@/types/texas-chat";
 import { AIChatMessage } from "@/types/chat";

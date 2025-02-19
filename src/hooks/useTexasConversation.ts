@@ -11,7 +11,6 @@ export const useTexasConversation = () => {
 
   useEffect(() => {
     const initializeConversation = async () => {
-      // For development, create a default conversation without auth
       const { data: newConversation, error: createError } = await supabase
         .from('texas_conversations')
         .insert({
@@ -33,7 +32,6 @@ export const useTexasConversation = () => {
 
       setConversationId(newConversation.id);
 
-      // Load existing messages
       const { data: existingMessages, error: messagesError } = await supabase
         .from('texas_chat_messages')
         .select('*')
@@ -69,6 +67,7 @@ export const useTexasConversation = () => {
     const timestamp = new Date();
     const id = crypto.randomUUID();
 
+    // Create the complete TexasMessage object
     const newMessage: TexasMessage = {
       id,
       role: baseMessage.role,
@@ -78,19 +77,22 @@ export const useTexasConversation = () => {
       userRole: selectedRole
     };
 
+    // Map to database schema
+    const dbMessage = {
+      id,
+      content: baseMessage.content,
+      role: baseMessage.role,
+      user_id: 'dev-user',
+      conversation_id: conversationId,
+      agency_type: selectedAgency,
+      user_role: selectedRole,
+      response_level: responseLevel,
+      created_at: timestamp.toISOString()
+    };
+
     const { error } = await supabase
       .from('texas_chat_messages')
-      .insert({
-        id,
-        content: baseMessage.content,
-        role: baseMessage.role,
-        user_id: 'dev-user',
-        conversation_id: conversationId,
-        agency_type: selectedAgency,
-        user_role: selectedRole,
-        response_level: responseLevel,
-        created_at: timestamp.toISOString()
-      });
+      .insert(dbMessage);
 
     if (error) {
       console.error('Error saving message:', error);
