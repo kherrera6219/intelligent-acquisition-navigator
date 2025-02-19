@@ -68,7 +68,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                       <Link 
                         key={item.href}
                         to={item.href} 
-                        className="text-gray-400 hover:text-white whitespace-nowrap"
+                        className="text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full"
                       >
                         {item.label}
                       </Link>
@@ -77,7 +77,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                     <Link 
                       key={item.href}
                       to={item.href} 
-                      className="text-gray-400 hover:text-white whitespace-nowrap"
+                      className="text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full"
                     >
                       {item.label}
                     </Link>
@@ -88,13 +88,13 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             
             <div className="flex items-center gap-4">
               {userRole && (
-                <span className="text-sm text-gray-400">
-                  Role: {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
+                <span className="text-sm text-gray-400 bg-white/5 px-3 py-1 rounded-full">
+                  {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
                 </span>
               )}
               <Button
                 variant="ghost"
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white transition-colors duration-200 hover:bg-white/5"
                 onClick={signOut}
               >
                 <LogOut className="h-4 w-4 mr-2" />
@@ -107,7 +107,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       
       <main className="flex-1">
         <Container className="py-8">
-          <Card>
+          <Card className="w-full bg-black/40 backdrop-blur-sm border-white/10 p-6 shadow-xl">
             {children}
           </Card>
         </Container>
@@ -117,13 +117,13 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white/90">Quick Links</h3>
               <ul className="space-y-2">
                 {footerLinks.map((link) => (
                   <li key={link.href}>
                     <Link 
                       to={link.href}
-                      className="text-gray-400 hover:text-white"
+                      className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
                     >
                       {link.label}
                     </Link>
@@ -133,20 +133,29 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-4">Resources</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white/90">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/help" className="text-gray-400 hover:text-white">
+                  <Link 
+                    to="/help" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  >
                     Documentation
                   </Link>
                 </li>
                 <li>
-                  <Link to="/help" className="text-gray-400 hover:text-white">
+                  <Link 
+                    to="/help" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  >
                     FAQs
                   </Link>
                 </li>
                 <li>
-                  <Link to="/help" className="text-gray-400 hover:text-white">
+                  <Link 
+                    to="/help" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  >
                     Support
                   </Link>
                 </li>
@@ -154,15 +163,21 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-4">Legal</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white/90">Legal</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/privacy" className="text-gray-400 hover:text-white">
+                  <Link 
+                    to="/privacy" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  >
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link to="/terms" className="text-gray-400 hover:text-white">
+                  <Link 
+                    to="/terms" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  >
                     Terms of Service
                   </Link>
                 </li>
@@ -170,10 +185,13 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-4">Contact</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white/90">Contact</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="mailto:support@example.com" className="text-gray-400 hover:text-white">
+                  <a 
+                    href="mailto:support@example.com" 
+                    className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  >
                     support@example.com
                   </a>
                 </li>
