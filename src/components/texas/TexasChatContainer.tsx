@@ -3,7 +3,7 @@ import { TexasAgencyType, TexasMessage, TexasRole, ResponseLevel } from "@/types
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatToolbar } from "@/components/chat/ChatToolbar";
-import { ChatSelectors } from "@/components/texas/TexasChatSelectors";
+import { TexasChatSelectors } from "@/components/texas/TexasChatSelectors"; // Updated import
 import { GradientText } from "@/components/ui/universal/GradientText";
 import { Card } from "@/components/ui/universal/Card";
 
@@ -49,7 +49,7 @@ export const TexasChatContainer = ({
         </div>
 
         <Card className="p-6 space-y-6">
-          <ChatSelectors
+          <TexasChatSelectors
             selectedRole={selectedRole}
             selectedAgency={selectedAgency}
             selectedDetailLevel={selectedResponseLevel}

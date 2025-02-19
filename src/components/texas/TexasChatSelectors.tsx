@@ -12,7 +12,8 @@ interface TexasSelectorsProps {
   onDetailLevelChange: (value: ResponseLevel) => void;
 }
 
-export const ChatSelectors = ({
+// Changed to named export matching the import
+export const TexasChatSelectors = ({
   selectedAgency,
   selectedRole,
   selectedDetailLevel,
