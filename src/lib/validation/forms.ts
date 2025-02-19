@@ -82,14 +82,14 @@ export const validateForm = async <T>(
   }
 };
 
-export const validateField = <T>(
-  schema: z.ZodSchema<T>,
+export const validateField = <T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
   fieldName: keyof T,
   value: unknown
 ): string | null => {
   try {
-    const fieldSchema = (schema as z.ZodObject<any>).pick({ [fieldName]: true });
-    fieldSchema.parse({ [fieldName]: value });
+    const field = schema.shape[fieldName];
+    field.parse(value);
     return null;
   } catch (error) {
     if (error instanceof z.ZodError) {
