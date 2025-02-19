@@ -10,9 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings, UserCog, Bell, Shield, Palette, Database } from "lucide-react";
+import { Settings as SettingsIcon, UserCog, Bell, Shield, Palette, Database } from "lucide-react";
 
-export default function Settings() {
+export default function SettingsPage() {
   const { user, userRole, isAuthorized } = useAuth();
 
   const settingSections = [
@@ -46,7 +46,7 @@ export default function Settings() {
   const adminSections = [
     {
       title: "System Configuration",
-      icon: Settings,
+      icon: SettingsIcon,
       content: "Manage system-wide settings and configurations.",
       minRole: "admin"
     },
