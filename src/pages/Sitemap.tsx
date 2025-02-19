@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, Shield, Zap, BarChart, Home, FileText, Map, FileCheck, Users, Book, Building2, Scale, ClipboardCheck, AlertCircle, BookOpen, Flag, HelpCircle, Settings } from 'lucide-react';
+import { ArrowRight, Shield, BarChart, Home, FileText, Map, FileCheck, Users, Building2, Scale, ClipboardCheck, BookOpen, Flag, HelpCircle, Settings } from 'lucide-react';
 
 const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
   <Card className="p-6 glass-card">
@@ -27,13 +27,15 @@ const Sitemap = () => {
   const sections = {
     main: [
       { path: "/", label: "Home", icon: Home },
-      { path: "/dashboard", label: "Dashboard", icon: Home },
-      { path: "/knowledge-base", label: "Knowledge Base", icon: BookOpen }
+      { path: "/about", label: "About", icon: BookOpen },
+      { path: "/contact", label: "Contact", icon: Users }
     ],
     acquisition: [
       { path: "/solicitation-review", label: "Solicitation Review", icon: FileText },
       { path: "/source-selection", label: "Source Selection", icon: FileCheck },
       { path: "/contract-management", label: "Contract Management", icon: Building2 },
+      { path: "/market-research", label: "Market Research", icon: Map },
+      { path: "/document-control", label: "Document Control", icon: FileText },
       { path: "/texas-acquisition", label: "Texas Acquisition", icon: Flag }
     ],
     compliance: [
@@ -43,6 +45,7 @@ const Sitemap = () => {
       { path: "/quality-assurance", label: "Quality Assurance", icon: ClipboardCheck }
     ],
     system: [
+      { path: "/dashboard", label: "Dashboard", icon: Home },
       { path: "/analytics", label: "Analytics", icon: BarChart },
       { path: "/settings", label: "Settings", icon: Settings },
       { path: "/help", label: "Help", icon: HelpCircle },
