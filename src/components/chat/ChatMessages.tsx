@@ -1,62 +1,72 @@
 
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2 } from "lucide-react";
 import { Message } from "@/types/chat";
-import { ROLE_LABELS, AGENCY_LABELS, DETAIL_LEVELS } from "@/constants/chatOptions";
+import { cn } from "@/lib/utils";
+import { UserRound, ArrowDown } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChatMessagesProps {
   messages: Message[];
   isLoading: boolean;
+  className?: string;
 }
 
-export const ChatMessages = ({ messages, isLoading }: ChatMessagesProps) => {
+export const ChatMessages = ({ messages, isLoading, className }: ChatMessagesProps) => {
   return (
-    <ScrollArea className="flex-1 p-4">
-      <div className="space-y-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${
-              message.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`max-w-[80%] p-4 rounded-lg ${
-                message.role === "user"
-                  ? "bg-violet-500/20 text-white"
-                  : "bg-gray-800/50 text-gray-100"
-              }`}
-            >
-              {message.role === "user" && message.userRole && (
-                <div className="text-xs text-violet-400 mb-1">
-                  {ROLE_LABELS[message.userRole]}
-                  {message.agencyRegulation && (
-                    <span className="ml-2">
-                      • {AGENCY_LABELS[message.agencyRegulation]}
-                    </span>
-                  )}
-                  {message.detailLevel && (
-                    <span className="ml-2">
-                      • {DETAIL_LEVELS[message.detailLevel as keyof typeof DETAIL_LEVELS]}
-                    </span>
-                  )}
-                </div>
-              )}
-              <p className="text-sm">{message.content}</p>
-              <span className="text-xs text-gray-400 mt-2 block">
-                {message.timestamp.toLocaleTimeString()}
-              </span>
+    <div className={cn("space-y-4", className)}>
+      {messages.map((message, index) => (
+        <div
+          key={message.id || index}
+          className={cn(
+            "flex gap-3 p-4 rounded-lg animate-fade-in transition-colors",
+            message.role === "user" 
+              ? "bg-gray-800/50 ml-auto max-w-[80%]" 
+              : "bg-gray-900/50 mr-auto max-w-[80%]"
+          )}
+        >
+          {message.role === "user" ? (
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center">
+              <UserRound className="w-5 h-5 text-violet-400" />
+            </div>
+          ) : (
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+              <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          )}
+          <div className="flex-1 space-y-2">
+            <p className={cn(
+              "text-sm font-medium",
+              message.role === "user" ? "text-violet-200" : "text-emerald-200"
+            )}>
+              {message.role === "user" ? "You" : "Assistant"}
+            </p>
+            <div className="text-gray-200 text-sm leading-relaxed">
+              {message.content}
             </div>
           </div>
-        ))}
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-800/50 p-4 rounded-lg">
-              <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
-            </div>
+        </div>
+      ))}
+      
+      {isLoading && (
+        <div className="flex gap-3 p-4 rounded-lg bg-gray-900/50 mr-auto max-w-[80%] animate-pulse">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500/20" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-24 bg-gray-700" />
+            <Skeleton className="h-4 w-full bg-gray-700" />
+            <Skeleton className="h-4 w-2/3 bg-gray-700" />
           </div>
-        )}
-      </div>
-    </ScrollArea>
+        </div>
+      )}
+
+      {messages.length > 0 && (
+        <div className="flex justify-center">
+          <button className="flex items-center gap-2 px-3 py-1 text-sm text-gray-400 hover:text-white transition-colors">
+            <ArrowDown className="w-4 h-4" />
+            Scroll to bottom
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
