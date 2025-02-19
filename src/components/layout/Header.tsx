@@ -1,6 +1,7 @@
 
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Settings, LogOut } from "lucide-react";
+import { Settings, LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/universal/Container";
 import { useAuth } from "@/providers/AuthProvider";
@@ -24,6 +25,11 @@ const navItems: NavItem[] = [
 export const Header = () => {
   const { signOut, userRole } = useAuth();
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-800 bg-black/40 backdrop-blur-sm">
@@ -35,7 +41,8 @@ export const Header = () => {
               <span className="sr-only">Settings</span>
             </Link>
             
-            <nav className="flex gap-6 overflow-x-auto pb-2 scrollbar-none">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex gap-6 overflow-x-auto pb-2 scrollbar-none">
               {navItems.map((item) => (
                 item.minRole ? (
                   userRole && ['admin', 'manager'].includes(userRole) ? (
@@ -64,6 +71,19 @@ export const Header = () => {
                 )
               ))}
             </nav>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden text-gray-400 hover:text-white"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
           </div>
           
           <div className="flex items-center gap-4">
@@ -78,10 +98,47 @@ export const Header = () => {
               onClick={signOut}
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
+              <span className="hidden sm:inline">Sign Out</span>
             </Button>
           </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <nav className="md:hidden py-4 border-t border-gray-800">
+            <div className="flex flex-col gap-2">
+              {navItems.map((item) => (
+                item.minRole ? (
+                  userRole && ['admin', 'manager'].includes(userRole) ? (
+                    <Link 
+                      key={item.href}
+                      to={item.href} 
+                      className={cn(
+                        "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg",
+                        location.pathname === item.href && "text-white bg-white/5"
+                      )}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  ) : null
+                ) : (
+                  <Link 
+                    key={item.href}
+                    to={item.href} 
+                    className={cn(
+                      "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg",
+                      location.pathname === item.href && "text-white bg-white/5"
+                    )}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              ))}
+            </div>
+          </nav>
+        )}
       </Container>
     </header>
   );
