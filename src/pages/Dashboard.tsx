@@ -4,6 +4,7 @@ import { DashboardCard } from "@/components/layout/DashboardCard";
 import { Grid } from "@/components/ui/universal/Grid";
 import { Container } from "@/components/ui/universal/Container";
 import { Card } from "@/components/ui/universal/Card";
+import { MetricsChart } from "@/components/MetricsChart";
 import { 
   FileText, 
   Shield, 
@@ -35,6 +36,45 @@ const metrics = [
     title: "Tasks Completed",
     value: "156",
     change: "+22 this week"
+  }
+];
+
+const chartData = [
+  {
+    month: 'Jan',
+    efficiency: 65,
+    compliance: 85,
+    risk: 35
+  },
+  {
+    month: 'Feb',
+    efficiency: 75,
+    compliance: 88,
+    risk: 32
+  },
+  {
+    month: 'Mar',
+    efficiency: 85,
+    compliance: 92,
+    risk: 28
+  },
+  {
+    month: 'Apr',
+    efficiency: 82,
+    compliance: 90,
+    risk: 30
+  },
+  {
+    month: 'May',
+    efficiency: 88,
+    compliance: 95,
+    risk: 25
+  },
+  {
+    month: 'Jun',
+    efficiency: 90,
+    compliance: 94,
+    risk: 24
   }
 ];
 
@@ -72,9 +112,7 @@ const Dashboard = () => {
 
         <Card className="spacing-module-lg">
           <h2 className="text-xl font-semibold text-white mb-4">Performance Metrics</h2>
-          <div className="flex items-center justify-center h-48 bg-white/5 rounded-lg">
-            <p className="text-gray-400">Performance metrics visualization coming soon</p>
-          </div>
+          <MetricsChart data={chartData} type="line" />
         </Card>
       </Grid>
     </Container>
