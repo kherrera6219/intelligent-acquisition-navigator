@@ -1,5 +1,6 @@
 
 import { AIChatMessage, Message } from "./chat";
+import { Json } from "@/integrations/supabase/types";
 
 export type TexasAgencyType = 
   | "TEXAS_GOVERNMENT"
@@ -56,9 +57,9 @@ export interface ValidationResult {
   message_id: string;
   status: 'pending' | 'valid' | 'invalid' | 'needs_review';
   confidence_score: number;
-  validation_data?: any;
-  validation_notes?: string;
+  validation_data?: Json | null;
+  validation_notes?: string | null;
   created_at: string;
   updated_at: string;
-  validated_by?: string;
+  validated_by?: string | null;
 }
