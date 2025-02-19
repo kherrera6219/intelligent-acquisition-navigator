@@ -39,37 +39,88 @@ export default function AuthPage() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // Email validation
+    // Enhanced email validation with regex and sanitization
     if (!email) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Please enter a valid email address";
+    } else {
+      // Trim whitespace
+      const sanitizedEmail = email.trim().toLowerCase();
+      
+      // Comprehensive email regex
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(sanitizedEmail)) {
+        newErrors.email = "Please enter a valid email address";
+      }
+      
+      // Check length
+      if (sanitizedEmail.length > 254) {
+        newErrors.email = "Email address is too long";
+      }
     }
 
-    // Password validation
+    // Enhanced password validation
     if (!password) {
       newErrors.password = "Password is required";
-    } else if (isSignUp && password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (isSignUp) {
+      // For sign up, enforce stronger password requirements
+      if (password.length < 8) {
+        newErrors.password = "Password must be at least 8 characters";
+      } else if (!/[A-Z]/.test(password)) {
+        newErrors.password = "Password must contain at least one uppercase letter";
+      } else if (!/[a-z]/.test(password)) {
+        newErrors.password = "Password must contain at least one lowercase letter";
+      } else if (!/[0-9]/.test(password)) {
+        newErrors.password = "Password must contain at least one number";
+      } else if (!/[!@#$%^&*]/.test(password)) {
+        newErrors.password = "Password must contain at least one special character (!@#$%^&*)";
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // Rate limiting implementation
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [lastAttemptTime, setLastAttemptTime] = useState(Date.now());
+  const MAX_ATTEMPTS = 5;
+  const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check rate limiting
+    const now = Date.now();
+    if (attemptCount >= MAX_ATTEMPTS) {
+      if (now - lastAttemptTime < LOCKOUT_DURATION) {
+        const remainingTime = Math.ceil((LOCKOUT_DURATION - (now - lastAttemptTime)) / 60000);
+        toast({
+          title: "Too many attempts",
+          description: `Please try again in ${remainingTime} minutes`,
+          variant: "destructive",
+        });
+        return;
+      } else {
+        // Reset attempts after lockout period
+        setAttemptCount(0);
+      }
+    }
+
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
+    setAttemptCount(prev => prev + 1);
+    setLastAttemptTime(now);
 
     try {
+      // Sanitize email input
+      const sanitizedEmail = email.trim().toLowerCase();
+      
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: sanitizedEmail,
           password,
         });
         if (error) throw error;
@@ -81,11 +132,14 @@ export default function AuthPage() {
         });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: sanitizedEmail,
           password,
         });
         if (error) throw error;
 
+        // Reset attempt count on successful login
+        setAttemptCount(0);
+        
         toast({
           title: "Welcome back!",
           description: "You've successfully signed in.",

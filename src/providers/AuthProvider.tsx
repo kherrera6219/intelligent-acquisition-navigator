@@ -24,12 +24,72 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
+const ACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
+  const [lastActivity, setLastActivity] = useState<number>(Date.now());
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Track user activity
+  useEffect(() => {
+    const updateActivity = () => {
+      setLastActivity(Date.now());
+    };
+
+    // Add event listeners for user activity
+    window.addEventListener('mousemove', updateActivity);
+    window.addEventListener('keydown', updateActivity);
+    window.addEventListener('click', updateActivity);
+    window.addEventListener('touchstart', updateActivity);
+
+    return () => {
+      window.removeEventListener('mousemove', updateActivity);
+      window.removeEventListener('keydown', updateActivity);
+      window.removeEventListener('click', updateActivity);
+      window.removeEventListener('touchstart', updateActivity);
+    };
+  }, []);
+
+  // Check for session timeout
+  useEffect(() => {
+    const checkSession = async () => {
+      const session = await supabase.auth.getSession();
+      if (!session.data.session) return;
+
+      const sessionStart = new Date(session.data.session.created_at).getTime();
+      const now = Date.now();
+
+      // Check absolute session timeout
+      if (now - sessionStart > SESSION_TIMEOUT) {
+        await signOut();
+        toast({
+          title: "Session Expired",
+          description: "Your session has expired. Please sign in again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check inactivity timeout
+      if (now - lastActivity > ACTIVITY_TIMEOUT) {
+        await signOut();
+        toast({
+          title: "Session Expired",
+          description: "Your session has expired due to inactivity. Please sign in again.",
+          variant: "destructive",
+        });
+        return;
+      }
+    };
+
+    const interval = setInterval(checkSession, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, [lastActivity, toast]);
 
   useEffect(() => {
     // Check active sessions
@@ -92,7 +152,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user_id: event.userId,
         action: event.action,
         resource_type: 'auth',
-        details: event.details
+        details: event.details,
+        ip_address: window.sessionStorage.getItem('user_ip') || null,
+        user_agent: navigator.userAgent
       });
     } catch (error) {
       console.error('Error logging audit event:', error);
@@ -104,7 +166,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (user) {
         await logAuditEvent({
           action: 'USER_LOGOUT',
-          userId: user.id
+          userId: user.id,
+          details: { trigger: 'user_action' }
         });
       }
       
