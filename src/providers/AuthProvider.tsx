@@ -11,6 +11,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   userRole?: string;
   isAuthorized: (requiredRole: string) => boolean;
+  resendVerificationEmail: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   signOut: async () => {},
   isAuthorized: () => false,
+  resendVerificationEmail: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -89,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await supabase.from('audit_logs').insert({
         user_id: event.userId,
         action: event.action,
-        resource_type: 'auth', // Added required resource_type field
+        resource_type: 'auth',
         details: event.details
       });
     } catch (error) {
@@ -121,6 +123,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resendVerificationEmail = async () => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: user?.email,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Verification email sent",
+        description: "Please check your inbox for the verification link.",
+      });
+
+      await logAuditEvent({
+        action: 'RESEND_VERIFICATION_EMAIL',
+        userId: user?.id || 'unknown',
+        details: { email: user?.email }
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to resend verification email",
+        variant: "destructive",
+      });
+    }
+  };
+
   const isAuthorized = (requiredRole: string): boolean => {
     if (!user || !userRole) return false;
     
@@ -136,7 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, signOut, userRole, isAuthorized }}>
+    <AuthContext.Provider value={{ user, isLoading, signOut, userRole, isAuthorized, resendVerificationEmail }}>
       {children}
     </AuthContext.Provider>
   );
