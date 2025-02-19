@@ -41,4 +41,72 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold tracking-tight;
   }
+
+  /* Mobile-first responsive design */
+  @media (max-width: 640px) {
+    .container {
+      @apply px-4;
+    }
+
+    h1 {
+      @apply text-2xl;
+    }
+
+    h2 {
+      @apply text-xl;
+    }
+
+    .glass-card {
+      @apply p-4;
+    }
+  }
+
+  /* Tablet and up */
+  @media (min-width: 641px) {
+    .container {
+      @apply px-6;
+    }
+
+    h1 {
+      @apply text-3xl;
+    }
+
+    h2 {
+      @apply text-2xl;
+    }
+
+    .glass-card {
+      @apply p-6;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 1024px) {
+    .container {
+      @apply px-8;
+    }
+
+    h1 {
+      @apply text-4xl;
+    }
+
+    h2 {
+      @apply text-3xl;
+    }
+
+    .glass-card {
+      @apply p-8;
+    }
+  }
+
+  /* Touch device optimizations */
+  @media (hover: none) {
+    button, a {
+      @apply active:scale-95 transition-transform;
+    }
+
+    .hover-scale {
+      @apply active:scale-95;
+    }
+  }
 }
