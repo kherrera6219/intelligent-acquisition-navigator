@@ -95,26 +95,30 @@ const DocumentControl = () => {
         description="Manage and track procurement documentation"
       />
 
-      <Card className="mb-8">
-        <div className="flex items-center justify-between p-6">
-          <div className="relative flex-1 max-w-sm">
+      <Card className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-6">
+          <div className="relative w-full sm:w-auto sm:flex-1 max-w-sm">
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             <Input
               placeholder="Search documents..."
-              className="pl-10 bg-white/5 border-white/10"
+              className="pl-10 bg-white/5 border-white/10 w-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="flex gap-4">
-            <Button variant="outline" className="border-white/10">
+          <div className="flex gap-3 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              className="border-white/10 flex-1 sm:flex-none"
+            >
               <Filter className="h-5 w-5 mr-2" />
               Filters
             </Button>
             <Button
               onClick={handleUpload}
               className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
-                     hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+                     hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600
+                     flex-1 sm:flex-none"
             >
               <Upload className="h-5 w-5 mr-2" />
               Upload Document
@@ -131,45 +135,53 @@ const DocumentControl = () => {
               key={doc.id}
               className="hover:bg-white/5 transition-all duration-200"
             >
-              <div className="flex items-center justify-between p-6">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 sm:p-6">
+                <div className="flex items-start sm:items-center gap-4 w-full sm:w-auto">
+                  <div className="h-12 w-12 bg-violet-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                     <FileText className="h-6 w-6 text-violet-400" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-lg font-medium text-white">
                       {doc.title}
                     </h3>
-                    <div className="flex items-center gap-4 mt-1">
+                    <div className="flex flex-wrap gap-2 sm:gap-4 mt-1">
                       <span className="text-sm text-gray-400">{doc.type}</span>
-                      <span className="text-gray-600">•</span>
+                      <span className="hidden sm:inline text-gray-600">•</span>
                       <span className="text-sm text-gray-400">
                         Modified: {doc.lastModified}
                       </span>
-                      <span className="text-gray-600">•</span>
+                      <span className="hidden sm:inline text-gray-600">•</span>
                       <span className="text-sm text-gray-400">
                         Owner: {doc.owner}
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                   <div
-                    className={`px-3 py-1 rounded-full flex items-center gap-2 ${getStatusColor(
+                    className={`px-3 py-1 rounded-full flex items-center gap-2 justify-center sm:justify-start ${getStatusColor(
                       doc.status
                     )}`}
                   >
                     <StatusIcon className="h-4 w-4" />
                     <span className="text-sm capitalize">{doc.status}</span>
                   </div>
-                  <Button variant="outline" className="border-white/10">
-                    <Eye className="h-4 w-4 mr-2" />
-                    View
-                  </Button>
-                  <Button variant="outline" className="border-white/10">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
+                  <div className="flex gap-3 sm:ml-4">
+                    <Button 
+                      variant="outline" 
+                      className="border-white/10 flex-1 sm:flex-none"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="border-white/10 flex-1 sm:flex-none"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
+                  </div>
                 </div>
               </div>
             </Card>
