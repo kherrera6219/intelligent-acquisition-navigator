@@ -66,10 +66,14 @@ export const useTexasConversation = () => {
   ) => {
     if (!conversationId) return false;
 
+    const timestamp = new Date();
+    const id = crypto.randomUUID();
+
     const newMessage: TexasMessage = {
-      id: crypto.randomUUID(),
-      ...baseMessage,
-      timestamp: new Date(),
+      id,
+      role: baseMessage.role,
+      content: baseMessage.content,
+      timestamp,
       agencyType: selectedAgency,
       userRole: selectedRole
     };
@@ -77,13 +81,15 @@ export const useTexasConversation = () => {
     const { error } = await supabase
       .from('texas_chat_messages')
       .insert({
+        id,
         content: baseMessage.content,
         role: baseMessage.role,
         user_id: 'dev-user',
         conversation_id: conversationId,
         agency_type: selectedAgency,
         user_role: selectedRole,
-        response_level: responseLevel
+        response_level: responseLevel,
+        created_at: timestamp.toISOString()
       });
 
     if (error) {

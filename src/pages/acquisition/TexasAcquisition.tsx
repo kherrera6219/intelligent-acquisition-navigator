@@ -18,10 +18,15 @@ const TexasAcquisition = () => {
 
   const aiMutation = useAzureAI(messages, {
     onSuccess: async (data) => {
-      const success = await addMessage({
-        role: "assistant",
-        content: data.choices[0].message.content
-      }, selectedAgency, selectedRole, selectedResponseLevel);
+      const success = await addMessage(
+        {
+          role: "assistant",
+          content: data.choices[0].message.content,
+        },
+        selectedAgency,
+        selectedRole,
+        selectedResponseLevel
+      );
       
       if (!success) {
         toast({
@@ -45,10 +50,15 @@ const TexasAcquisition = () => {
     e.preventDefault();
     if (!input.trim() || aiMutation.isPending || !conversationId) return;
 
-    const success = await addMessage({
-      role: "user",
-      content: input.trim()
-    }, selectedAgency, selectedRole, selectedResponseLevel);
+    const success = await addMessage(
+      {
+        role: "user",
+        content: input.trim(),
+      },
+      selectedAgency,
+      selectedRole,
+      selectedResponseLevel
+    );
     
     if (!success) {
       toast({
@@ -59,6 +69,7 @@ const TexasAcquisition = () => {
       return;
     }
 
+    const currentInput = input;
     setInput("");
     
     const aiContext = `You are a procurement expert for the ${selectedAgency.replace('_', ' ').toLowerCase()} sector, 
@@ -72,7 +83,7 @@ const TexasAcquisition = () => {
         role: msg.role as "user" | "assistant", 
         content: msg.content 
       })),
-      { role: "user", content: input.trim() }
+      { role: "user", content: currentInput.trim() }
     ];
 
     aiMutation.mutate(aiMessages);
