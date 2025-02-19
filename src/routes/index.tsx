@@ -22,7 +22,7 @@ export const PageLoader = () => (
   </div>
 );
 
-// Lazy load pages
+// Lazy-loaded pages
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
 const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
@@ -31,8 +31,12 @@ const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage"));
 const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage"));
 const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
 
-// Wrap components with error boundary and layout
-const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = true, requiredRole?: string) => {
+// Function to wrap pages with layout and authentication checks
+const wrapWithLayout = (
+  Component: React.ComponentType,
+  requiresAuth: boolean = true,
+  requiredRole?: string
+) => {
   const WrappedComponent = () => (
     <PageErrorBoundary>
       {requiresAuth ? (
@@ -53,34 +57,20 @@ const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = 
   return <WrappedComponent />;
 };
 
-// Define routes
+// Define application routes with access control
 export const routes: RouteObject[] = [
-  {
-    path: "/",
-    element: wrapWithLayout(DashboardPage)
+  { path: "/", element: wrapWithLayout(DashboardPage) },
+  { path: "/auth", element: wrapWithLayout(AuthPage, false) },
+  { path: "/acquisition/document-control", element: wrapWithLayout(DocumentControlPage, true, "user") },
+  { path: "/acquisition/market-research", element: wrapWithLayout(MarketResearchPage, true, "user") },
+  { path: "/acquisition/solicitation-review", element: wrapWithLayout(SolicitationReviewPage, true, "manager") },
+  { path: "/acquisition/texas-acquisition", element: wrapWithLayout(TexasAcquisitionPage, true, "user") },
+  { 
+    path: "/acquisition/federal", 
+    element: wrapWithLayout(FederalAcquisitionPage, true, "manager") 
   },
-  {
-    path: "/auth",
-    element: wrapWithLayout(AuthPage, false)
-  },
-  {
-    path: "/acquisition/document-control",
-    element: wrapWithLayout(DocumentControlPage, true, "user")
-  },
-  {
-    path: "/acquisition/market-research",
-    element: wrapWithLayout(MarketResearchPage, true, "user")
-  },
-  {
-    path: "/acquisition/solicitation-review",
-    element: wrapWithLayout(SolicitationReviewPage, true, "manager")
-  },
-  {
-    path: "/acquisition/texas-acquisition",
-    element: wrapWithLayout(TexasAcquisitionPage, true, "user")
-  },
-  {
-    path: "/acquisition/federal-acquisition",
-    element: wrapWithLayout(FederalAcquisitionPage, true, "manager")
+  { 
+    path: "/acquisition/federal-acquisition", 
+    element: wrapWithLayout(FederalAcquisitionPage, true, "manager") 
   }
 ];
