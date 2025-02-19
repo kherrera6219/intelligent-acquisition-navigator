@@ -11,6 +11,7 @@ import { ArrowUp, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 
 export const Index = () => {
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(true);
@@ -47,7 +48,7 @@ export const Index = () => {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900" role="progressbar" aria-valuetext="Loading homepage...">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -55,7 +56,10 @@ export const Index = () => {
 
   return (
     <ScrollArea className="min-h-screen">
-      <div className={`min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div 
+        className={`min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        role="main"
+      >
         {showPrivacyNotice && (
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
         )}
@@ -69,6 +73,7 @@ export const Index = () => {
               backgroundSize: 'cover',
               animation: 'pulse 4s ease-in-out infinite'
             }}
+            aria-hidden="true"
           />
           
           {/* Content */}
@@ -80,7 +85,10 @@ export const Index = () => {
           </div>
 
           {/* Animated Knowledge Graph Nodes */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div 
+            className="absolute inset-0 overflow-hidden pointer-events-none" 
+            aria-hidden="true"
+          >
             {[...Array(11)].map((_, i) => (
               <div
                 key={i}
@@ -98,37 +106,57 @@ export const Index = () => {
 
         {/* Help Button */}
         <div className="fixed bottom-24 right-4 z-50">
-          <Tooltip content="Need help? Click to contact support">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
-              onClick={() => window.open('/contact', '_blank')}
-            >
-              <HelpCircle className="h-5 w-5" />
-            </Button>
-          </Tooltip>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+                  onClick={() => window.open('/contact', '_blank')}
+                  aria-label="Get help"
+                >
+                  <HelpCircle className="h-5 w-5" aria-hidden="true" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Need help? Click to contact support
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* Back to Top Button */}
         {showBackToTop && (
           <div className="fixed bottom-8 right-4 z-50">
-            <Tooltip content="Scroll back to top">
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
-                onClick={scrollToTop}
-              >
-                <ArrowUp className="h-5 w-5" />
-              </Button>
-            </Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+                    onClick={scrollToTop}
+                    aria-label="Scroll back to top"
+                  >
+                    <ArrowUp className="h-5 w-5" aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Scroll back to top
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         )}
 
         {/* First Visit Guide */}
         {isFirstVisit && (
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 p-4 bg-primary/10 backdrop-blur-sm rounded-lg border border-white/10 text-white text-sm animate-fade-in">
+          <div 
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 p-4 bg-primary/10 backdrop-blur-sm rounded-lg border border-white/10 text-white text-sm animate-fade-in"
+            role="status"
+            aria-live="polite"
+          >
             Press '?' for keyboard shortcuts
           </div>
         )}
@@ -139,4 +167,11 @@ export const Index = () => {
   );
 };
 
-export default Index;
+// Wrap the component with error boundary
+const HomePage = () => (
+  <PageErrorBoundary>
+    <Index />
+  </PageErrorBoundary>
+);
+
+export default HomePage;
