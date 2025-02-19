@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   AlertDialog,
@@ -11,6 +10,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { CheckCircle, AlertTriangle, Info, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface FeedbackDialogProps {
   open: boolean;

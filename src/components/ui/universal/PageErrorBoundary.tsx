@@ -9,13 +9,7 @@ interface PageErrorBoundaryProps {
 
 export const PageErrorBoundary = ({ children }: PageErrorBoundaryProps) => {
   return (
-    <ErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onReset={() => {
-        // Reset the error boundary state
-        window.location.reload();
-      }}
-    >
+    <ErrorBoundary>
       {children}
     </ErrorBoundary>
   );
