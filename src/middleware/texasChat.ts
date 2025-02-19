@@ -53,5 +53,52 @@ export const texasChatMiddleware = {
 
     if (error) throw error;
     return data;
+  },
+
+  getValidations: async (messageIds: string[]) => {
+    const { data, error } = await supabase
+      .from('texas_response_validations')
+      .select('*')
+      .in('message_id', messageIds);
+
+    if (error) throw error;
+    return data;
+  },
+
+  validateResponse: async (messageId: string, params: {
+    content: string;
+    agencyType: TexasAgencyType;
+    userRole: TexasRole;
+  }) => {
+    // First, analyze the response using the compliance validation edge function
+    const { data: validationResults, error: validationError } = await supabase.functions.invoke(
+      'validate-texas-response',
+      {
+        body: {
+          messageId,
+          content: params.content,
+          agencyType: params.agencyType,
+          userRole: params.userRole
+        }
+      }
+    );
+
+    if (validationError) throw validationError;
+
+    // Store validation results
+    const { data, error } = await supabase
+      .from('texas_response_validations')
+      .insert({
+        message_id: messageId,
+        status: validationResults.status,
+        confidence_score: validationResults.confidence,
+        validation_data: validationResults.data,
+        validation_notes: validationResults.notes
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 };

@@ -8,6 +8,11 @@ export const useTexasConversation = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
   const [conversationId, setConversationId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [validations, setValidations] = useState<Record<string, {
+    status: 'pending' | 'valid' | 'invalid' | 'needs_review';
+    confidence: number;
+    notes?: string;
+  }>>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -35,6 +40,22 @@ export const useTexasConversation = () => {
             userRole: msg.user_role
           }));
           setMessages(formattedMessages);
+
+          // Load existing validations
+          const validationResults = await texasChatMiddleware.getValidations(
+            formattedMessages.map(m => m.id)
+          );
+          
+          const validationMap = validationResults.reduce((acc, val) => ({
+            ...acc,
+            [val.message_id]: {
+              status: val.status,
+              confidence: val.confidence_score,
+              notes: val.validation_notes
+            }
+          }), {});
+          
+          setValidations(validationMap);
         }
       } catch (error) {
         console.error('Error initializing conversation:', error);
@@ -85,6 +106,34 @@ export const useTexasConversation = () => {
       };
 
       setMessages(prev => [...prev, newMessage]);
+
+      // If it's an AI response, trigger validation
+      if (message.role === "assistant") {
+        const validation = await texasChatMiddleware.validateResponse(dbMessage.id, {
+          content: message.content,
+          agencyType: message.agencyType,
+          userRole: message.userRole
+        });
+
+        setValidations(prev => ({
+          ...prev,
+          [dbMessage.id]: {
+            status: validation.status,
+            confidence: validation.confidence_score,
+            notes: validation.validation_notes
+          }
+        }));
+
+        // Show validation feedback if needed
+        if (validation.status === 'needs_review' || validation.status === 'invalid') {
+          toast({
+            title: "Response Validation",
+            description: validation.validation_notes || "This response requires review for accuracy.",
+            variant: "warning",
+          });
+        }
+      }
+
       return true;
     } catch (error) {
       console.error('Error saving message:', error);
@@ -96,6 +145,7 @@ export const useTexasConversation = () => {
     messages,
     conversationId,
     addMessage,
-    isLoading
+    isLoading,
+    validations
   };
 };
