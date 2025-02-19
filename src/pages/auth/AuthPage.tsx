@@ -15,13 +15,18 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showVerificationBanner, setShowVerificationBanner] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, resendVerificationEmail } = useAuth();
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      if (!user.email_confirmed_at) {
+        setShowVerificationBanner(true);
+      } else {
+        navigate("/");
+      }
     }
   }, [user, navigate]);
 
@@ -37,6 +42,7 @@ export default function AuthPage() {
         });
         if (error) throw error;
 
+        setShowVerificationBanner(true);
         toast({
           title: "Check your email",
           description: "We've sent you a verification link to complete your registration.",
@@ -64,8 +70,44 @@ export default function AuthPage() {
     }
   };
 
+  const handleResendVerification = async () => {
+    try {
+      await resendVerificationEmail();
+      toast({
+        title: "Verification email sent",
+        description: "Please check your inbox for the verification link.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4">
+      {showVerificationBanner && (
+        <div className="fixed top-0 left-0 right-0 bg-blue-500/10 backdrop-blur-sm p-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-blue-400" />
+              <p className="text-blue-400">
+                Please verify your email address to access your account.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleResendVerification}
+              className="border-blue-400 text-blue-400 hover:bg-blue-400/10"
+            >
+              Resend verification email
+            </Button>
+          </div>
+        </div>
+      )}
+
       <Card className="w-full max-w-md p-8 bg-black/40 backdrop-blur-sm border-white/5">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400">
