@@ -21,6 +21,15 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
+  if (!user.email_confirmed_at) {
+    toast({
+      title: "Email verification required",
+      description: "Please verify your email address to access this resource.",
+      variant: "destructive",
+    });
+    return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
   if (requiredRole && !isAuthorized(requiredRole)) {
     toast({
       title: "Access Denied",
