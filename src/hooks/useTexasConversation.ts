@@ -48,8 +48,8 @@ export const useTexasConversation = () => {
             role: msg.role as "user" | "assistant",
             content: msg.content,
             timestamp: new Date(msg.created_at),
-            agencyType: msg.agency_type,
-            userRole: msg.user_role
+            agencyType: msg.agency_type as TexasAgencyType,
+            userRole: msg.user_role as TexasRole
           }));
           setMessages(formattedMessages);
 
@@ -58,16 +58,18 @@ export const useTexasConversation = () => {
             formattedMessages.map(m => m.id)
           );
           
-          const validationMap = validationResults.reduce((acc, val: ValidationResult) => ({
-            ...acc,
-            [val.message_id]: {
-              status: val.status,
-              confidence: val.confidence_score,
-              notes: val.validation_notes
-            }
-          }), {});
-          
-          setValidations(validationMap);
+          if (validationResults) {
+            const validationMap = validationResults.reduce((acc, val) => ({
+              ...acc,
+              [val.message_id]: {
+                status: val.status,
+                confidence: val.confidence_score,
+                notes: val.validation_notes
+              }
+            }), {});
+            
+            setValidations(validationMap);
+          }
         }
       } catch (error) {
         console.error('Error initializing conversation:', error);

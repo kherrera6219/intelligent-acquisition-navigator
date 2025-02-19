@@ -21,7 +21,7 @@ const middlewareHandlers = [
 // API functions
 const createConversation = async (userId: string, title: string) => {
   const { data, error } = await supabase
-    .from('conversations')
+    .from('texas_conversations')
     .insert({
       user_id: userId,
       title: title
@@ -35,7 +35,7 @@ const createConversation = async (userId: string, title: string) => {
 
 const getMessages = async (conversationId: string) => {
   const { data, error } = await supabase
-    .from('messages')
+    .from('texas_chat_messages')
     .select('*')
     .eq('conversation_id', conversationId)
     .order('created_at', { ascending: true });
@@ -46,7 +46,7 @@ const getMessages = async (conversationId: string) => {
 
 const getValidations = async (messageIds: string[]) => {
   const { data, error } = await supabase
-    .from('validations')
+    .from('texas_response_validations')
     .select('*')
     .in('message_id', messageIds);
 
@@ -64,7 +64,7 @@ const sendMessage = async (params: {
   responseLevel: ResponseLevel;
 }) => {
   const { data, error } = await supabase
-    .from('messages')
+    .from('texas_chat_messages')
     .insert({
       conversation_id: params.conversationId,
       user_id: params.userId,
