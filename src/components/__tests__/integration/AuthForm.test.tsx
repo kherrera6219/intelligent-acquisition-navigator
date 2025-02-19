@@ -16,7 +16,7 @@ describe('AuthForm Integration Tests', () => {
   const renderAuthForm = () => {
     return render(
       <AuthProvider>
-        <AuthForm />
+        <AuthForm mode="signin" />
       </AuthProvider>
     );
   };
