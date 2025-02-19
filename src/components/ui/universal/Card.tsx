@@ -6,6 +6,7 @@ interface CardProps {
   className?: string;
   interactive?: boolean;
   hoverable?: boolean;
+  onClick?: () => void; // Add onClick handler to the interface
 }
 
 export const Card = ({ 
@@ -13,6 +14,7 @@ export const Card = ({
   className,
   interactive = false,
   hoverable = false,
+  onClick, // Add onClick to destructured props
 }: CardProps) => {
   return (
     <div
@@ -23,6 +25,7 @@ export const Card = ({
         hoverable && "hover:bg-white/5 hover:border-white/20",
         className
       )}
+      onClick={onClick} // Add onClick to the div element
     >
       {children}
     </div>
