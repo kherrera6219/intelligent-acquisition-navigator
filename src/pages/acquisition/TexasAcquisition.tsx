@@ -26,7 +26,7 @@ const TexasAcquisition = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
   const [input, setInput] = useState("");
   const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
-  const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACT_OFFICER");
+  const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACTING_OFFICER");
   const { toast } = useToast();
   const [conversationId, setConversationId] = useState<string>("");
 

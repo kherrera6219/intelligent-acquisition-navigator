@@ -7,10 +7,15 @@ export type TexasAgencyType =
   | "TEXAS_HEALTHCARE";
 
 export type TexasRole =
-  | "CONTRACT_OFFICER"
-  | "PROGRAM_MANAGER"
-  | "CONTRACT_SPECIALIST"
-  | "CONTRACT_ANALYST";
+  | "CONTRACTING_OFFICER"
+  | "SOURCE_SELECTION_AUTHORITY"
+  | "TECHNICAL_EVALUATION_PANEL"
+  | "COST_PRICE_ANALYST"
+  | "LEGAL_COMPLIANCE_ADVISOR"
+  | "PAST_PERFORMANCE_EVALUATOR"
+  | "SMALL_BUSINESS_LIAISON"
+  | "PROPOSAL_REVIEW_STAFF"
+  | "PROTEST_APPEALS_OFFICER";
 
 export interface TexasMessage extends Message {
   agencyType?: TexasAgencyType;
@@ -24,8 +29,13 @@ export const TEXAS_AGENCY_LABELS: Record<TexasAgencyType, string> = {
 };
 
 export const TEXAS_ROLE_LABELS: Record<TexasRole, string> = {
-  CONTRACT_OFFICER: "Contracting Officer",
-  PROGRAM_MANAGER: "Program Manager",
-  CONTRACT_SPECIALIST: "Contract Specialist",
-  CONTRACT_ANALYST: "Contract Analyst"
+  CONTRACTING_OFFICER: "Contracting Officer (CO) / Procurement Officer",
+  SOURCE_SELECTION_AUTHORITY: "Source Selection Authority (SSA)",
+  TECHNICAL_EVALUATION_PANEL: "Technical Evaluation Panel (TEP) / SSEB",
+  COST_PRICE_ANALYST: "Cost/Price Analyst",
+  LEGAL_COMPLIANCE_ADVISOR: "Legal/Compliance Advisor",
+  PAST_PERFORMANCE_EVALUATOR: "Past Performance Evaluator",
+  SMALL_BUSINESS_LIAISON: "Small Business Liaison / Socioeconomic Compliance Officer",
+  PROPOSAL_REVIEW_STAFF: "Proposal Review Support Staff",
+  PROTEST_APPEALS_OFFICER: "Protest and Appeals Officer"
 };
