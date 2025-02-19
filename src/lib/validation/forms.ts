@@ -88,7 +88,8 @@ export const validateField = <T>(
   value: unknown
 ): string | null => {
   try {
-    schema.shape[fieldName].parse(value);
+    const fieldSchema = (schema as z.ZodObject<any>).pick({ [fieldName]: true });
+    fieldSchema.parse({ [fieldName]: value });
     return null;
   } catch (error) {
     if (error instanceof z.ZodError) {
