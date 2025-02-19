@@ -1,4 +1,5 @@
 
+import '@testing-library/jest-dom';
 import { analyzePythonCode } from '../../code-analysis';
 
 describe('Code Analysis Integration Tests', () => {

@@ -1,5 +1,6 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { CodeConversion } from '../../CodeConversion';
 
 // Mock useToast hook
@@ -15,7 +16,7 @@ describe('CodeConversion Integration Tests', () => {
   });
 
   it('converts code and displays result', async () => {
-    render(<CodeConversion />);
+    render(<CodeConversion isOpen={true} onClose={() => {}} />);
     
     const codeInput = screen.getByRole('textbox');
     const convertButton = screen.getByRole('button', { name: /convert/i });
@@ -31,7 +32,7 @@ describe('CodeConversion Integration Tests', () => {
   });
 
   it('handles invalid code input', async () => {
-    render(<CodeConversion />);
+    render(<CodeConversion isOpen={true} onClose={() => {}} />);
     
     const codeInput = screen.getByRole('textbox');
     const convertButton = screen.getByRole('button', { name: /convert/i });

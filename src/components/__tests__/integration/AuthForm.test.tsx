@@ -1,6 +1,7 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { AuthForm } from '../../auth/AuthForm';
+import '@testing-library/jest-dom';
+import AuthForm from '../../auth/AuthForm'; // Changed to default import
 import { AuthProvider } from '@/providers/AuthProvider';
 import { userSchema } from '@/lib/validation/forms';
 
