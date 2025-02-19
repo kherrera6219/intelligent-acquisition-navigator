@@ -2,7 +2,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TexasChatContainer } from '../../texas/TexasChatContainer';
-import { TexasAgencyType, TexasRole, ResponseLevel } from '@/types/texas-chat';
+import { TexasAgencyType, TexasRole, ResponseLevel, TexasMessage } from '@/types/texas-chat';
 import '@testing-library/jest-dom';
 
 describe('TexasChatContainer', () => {
@@ -67,9 +67,23 @@ describe('TexasChatContainer', () => {
   });
 
   it('shows messages in chat area', () => {
-    const messages = [
-      { id: '1', content: 'Test question', role: 'user' },
-      { id: '2', content: 'Test response', role: 'assistant' }
+    const messages: TexasMessage[] = [
+      { 
+        id: '1', 
+        content: 'Test question', 
+        role: 'user',
+        timestamp: new Date(),
+        agencyType: 'TEXAS_GOVERNMENT',
+        userRole: 'CONTRACTING_OFFICER'
+      },
+      { 
+        id: '2', 
+        content: 'Test response', 
+        role: 'assistant',
+        timestamp: new Date(),
+        agencyType: 'TEXAS_GOVERNMENT',
+        userRole: 'CONTRACTING_OFFICER'
+      }
     ];
     
     render(<TexasChatContainer {...defaultProps} messages={messages} />);

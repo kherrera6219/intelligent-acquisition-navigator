@@ -3,12 +3,23 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ChatMessages } from '../../chat/ChatMessages';
 import { ChatInput } from '../../chat/ChatInput';
+import { Message } from '@/types/chat';
 import '@testing-library/jest-dom';
 
 describe('Chat Components Integration', () => {
-  const mockMessages = [
-    { id: '1', content: 'Test message 1', role: 'user' },
-    { id: '2', content: 'Test response 1', role: 'assistant' }
+  const mockMessages: Message[] = [
+    { 
+      id: '1', 
+      content: 'Test message 1', 
+      role: 'user',
+      timestamp: new Date()
+    },
+    { 
+      id: '2', 
+      content: 'Test response 1', 
+      role: 'assistant',
+      timestamp: new Date()
+    }
   ];
 
   describe('ChatMessages', () => {
