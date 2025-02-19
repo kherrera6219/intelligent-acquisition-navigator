@@ -12,7 +12,7 @@ const TexasAcquisition = () => {
   const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
   const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACTING_OFFICER");
   const [selectedResponseLevel, setSelectedResponseLevel] = useState<ResponseLevel>("STANDARD");
-  const { messages, conversationId, addMessage } = useTexasConversation();
+  const { messages, conversationId, addMessage, isLoading: isInitializing } = useTexasConversation();
   const { toast } = useToast();
 
   const aiMutation = useAzureAI(messages, {
@@ -88,7 +88,7 @@ const TexasAcquisition = () => {
     <TexasChatContainer
       conversationId={conversationId || ""}
       messages={messages}
-      isLoading={aiMutation.isPending}
+      isLoading={isInitializing || aiMutation.isPending}
       input={input}
       selectedAgency={selectedAgency}
       selectedRole={selectedRole}
