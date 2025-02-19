@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel, ValidationResult } from "@/types/texas-chat";
 import { texasChatMiddleware } from "@/middleware/texasChat";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useTexasConversation = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
@@ -19,10 +20,21 @@ export const useTexasConversation = () => {
     const initializeConversation = async () => {
       try {
         setIsLoading(true);
-        const temporaryUserId = crypto.randomUUID();
         
+        // Get current authenticated user
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          toast({
+            title: "Authentication Required",
+            description: "Please sign in to use the chat feature.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const conversation = await texasChatMiddleware.createConversation(
-          temporaryUserId,
+          user.id,
           `Texas Acquisition Chat - ${new Date().toLocaleDateString()}`
         );
 
@@ -84,11 +96,21 @@ export const useTexasConversation = () => {
     if (!conversationId) return false;
 
     try {
-      const temporaryUserId = crypto.randomUUID();
+      // Get current authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to send messages.",
+          variant: "destructive",
+        });
+        return false;
+      }
       
       const dbMessage = await texasChatMiddleware.sendMessage({
         conversationId,
-        userId: temporaryUserId,
+        userId: user.id,
         content: message.content,
         role: message.role,
         agencyType: message.agencyType,
@@ -137,6 +159,11 @@ export const useTexasConversation = () => {
       return true;
     } catch (error) {
       console.error('Error saving message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
       return false;
     }
   };

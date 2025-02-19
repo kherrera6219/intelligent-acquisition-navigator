@@ -4,6 +4,17 @@ import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel, ValidationResu
 
 export const texasChatMiddleware = {
   createConversation: async (userId: string, title: string) => {
+    // First verify user profile exists
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select()
+      .eq('id', userId)
+      .single();
+
+    if (profileError) {
+      throw new Error('User profile not found');
+    }
+
     const { data, error } = await supabase
       .from('texas_conversations')
       .insert({
@@ -37,6 +48,17 @@ export const texasChatMiddleware = {
     userRole: TexasRole;
     responseLevel: ResponseLevel;
   }) => {
+    // First verify user profile exists
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select()
+      .eq('id', params.userId)
+      .single();
+
+    if (profileError) {
+      throw new Error('User profile not found');
+    }
+
     const { data, error } = await supabase
       .from('texas_chat_messages')
       .insert({
