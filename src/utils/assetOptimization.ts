@@ -22,8 +22,11 @@ export const lazyLoadImages = () => {
       }
     });
   } else {
-    // Fallback for browsers that don't support lazy loading
-    import('intersection-observer').then(() => {
+    // For browsers that don't support native lazy loading
+    const loadIntersectionObserver = async () => {
+      // Dynamic import of intersection-observer
+      await import('intersection-observer');
+      
       const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting && entry.target instanceof HTMLImageElement) {
@@ -36,6 +39,8 @@ export const lazyLoadImages = () => {
       document.querySelectorAll('img[loading="lazy"]').forEach(img => {
         observer.observe(img);
       });
-    });
+    };
+
+    loadIntersectionObserver().catch(console.error);
   }
 };
