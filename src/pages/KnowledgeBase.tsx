@@ -1,6 +1,7 @@
 
 import { KnowledgeDomainList } from "@/components/knowledge/KnowledgeDomainList";
 import { AIAnalysisDashboard } from "@/components/knowledge/AIAnalysisDashboard";
+import { DocumentUpload } from "@/components/knowledge/DocumentUpload";
 import { Card } from "@/components/ui/card";
 import { Brain, Database, Shield, Globe } from "lucide-react";
 
@@ -49,6 +50,12 @@ const KnowledgeBase = () => {
           </p>
         </Card>
       </div>
+
+      {/* Document Upload Section */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Document Processing</h3>
+        <DocumentUpload />
+      </Card>
 
       {/* System Formula */}
       <Card className="p-6">
