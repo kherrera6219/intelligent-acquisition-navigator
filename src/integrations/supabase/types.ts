@@ -802,6 +802,7 @@ export type Database = {
           metadata: Json | null
           role: string
           user_id: string
+          user_role: Database["public"]["Enums"]["texas_role"]
         }
         Insert: {
           agency_type: Database["public"]["Enums"]["texas_agency_type"]
@@ -813,6 +814,7 @@ export type Database = {
           metadata?: Json | null
           role: string
           user_id: string
+          user_role: Database["public"]["Enums"]["texas_role"]
         }
         Update: {
           agency_type?: Database["public"]["Enums"]["texas_agency_type"]
@@ -824,6 +826,7 @@ export type Database = {
           metadata?: Json | null
           role?: string
           user_id?: string
+          user_role?: Database["public"]["Enums"]["texas_role"]
         }
         Relationships: [
           {

@@ -73,7 +73,7 @@ export const useTexasConversation = () => {
           role: msg.role as "user" | "assistant",
           content: msg.content,
           timestamp: new Date(msg.created_at),
-          agencyType: msg.agency_type,
+          agencyType: msg.agency_type as TexasAgencyType,
           userRole: msg.user_role as TexasRole
         }));
         setMessages(formattedMessages);
