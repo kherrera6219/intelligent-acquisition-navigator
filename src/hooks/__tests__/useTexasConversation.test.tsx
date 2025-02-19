@@ -74,8 +74,8 @@ describe('useTexasConversation', () => {
     const mockMessage = {
       role: 'user' as const,
       content: 'test message',
-      agencyType: 'STATE' as const,
-      userRole: 'PROCUREMENT_OFFICER' as const,
+      agencyType: 'TEXAS_GOVERNMENT' as const,
+      userRole: 'CONTRACTING_OFFICER' as const,
       responseLevel: 'STANDARD' as const
     };
 

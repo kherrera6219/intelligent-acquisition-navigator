@@ -75,8 +75,8 @@ describe('texasChatMiddleware', () => {
 
       const result = await texasChatMiddleware.validateResponse('msg-id', {
         content: 'test',
-        agencyType: 'STATE',
-        userRole: 'PROCUREMENT_OFFICER'
+        agencyType: 'TEXAS_GOVERNMENT',
+        userRole: 'CONTRACTING_OFFICER'
       });
 
       expect(result).toEqual(mockValidation);
