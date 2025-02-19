@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +22,7 @@ import SolicitationReview from "./pages/acquisition/SolicitationReview";
 import MarketResearch from "./pages/acquisition/MarketResearch";
 import DocumentControl from "./pages/acquisition/DocumentControl";
 import KnowledgeBase from "./pages/KnowledgeBase";
+import TexasAcquisition from "./pages/acquisition/TexasAcquisition";
 
 const App = () => (
   <ErrorBoundary>
@@ -48,6 +48,7 @@ const App = () => (
               <Route path="/acquisition/solicitation-review" element={<SolicitationReview />} />
               <Route path="/acquisition/market-research" element={<MarketResearch />} />
               <Route path="/acquisition/document-control" element={<DocumentControl />} />
+              <Route path="/texas-acquisition" element={<TexasAcquisition />} />
             </Routes>
           </MainLayout>
           <Toaster />

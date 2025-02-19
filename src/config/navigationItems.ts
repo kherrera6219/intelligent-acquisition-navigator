@@ -1,4 +1,3 @@
-
 import { 
   Home, 
   FileText, 
@@ -14,7 +13,8 @@ import {
   Scale,
   ClipboardCheck,
   AlertCircle,
-  BookOpen
+  BookOpen,
+  Flag
 } from 'lucide-react';
 
 export const navigationItems = [
@@ -108,5 +108,12 @@ export const navigationItems = [
     route: '/sitemap',
     permission: null,
     description: 'View complete site structure'
+  },
+  { 
+    icon: Flag, 
+    label: 'Texas Acquisition', 
+    route: '/texas-acquisition',
+    permission: null,
+    description: 'Texas-specific procurement guidance'
   }
 ] as const;
