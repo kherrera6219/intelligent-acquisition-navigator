@@ -61,7 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const session = await supabase.auth.getSession();
       if (!session.data.session) return;
 
-      const sessionStart = new Date(session.data.session.created_at).getTime();
+      // Use session start time from access token creation
+      const sessionStart = new Date(session.data.session.access_token).getTime();
       const now = Date.now();
 
       // Check absolute session timeout
