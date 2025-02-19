@@ -1,10 +1,13 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel, ValidationResult } from "@/types/texas-chat";
 import { texasChatMiddleware } from "@/middleware/texasChat";
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * Hook for managing Texas conversations
+ * @returns Object containing conversation state and methods
+ */
 export const useTexasConversation = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
   const [conversationId, setConversationId] = useState<string>("");
@@ -86,6 +89,11 @@ export const useTexasConversation = () => {
     initializeConversation();
   }, [toast]);
 
+  /**
+   * Adds a new message to the conversation
+   * @param message - Message object to add
+   * @returns Promise<boolean> indicating success
+   */
   const addMessage = async (
     message: {
       role: "user" | "assistant";
