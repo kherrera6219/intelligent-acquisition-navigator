@@ -3,14 +3,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Mail, ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 const PasswordReset = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -52,7 +51,7 @@ const PasswordReset = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4">
       <Card className="w-full max-w-md p-8 bg-black/40 backdrop-blur-sm border-white/5">
         <Link 
-          to="/login" 
+          to="/auth" 
           className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-6"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
