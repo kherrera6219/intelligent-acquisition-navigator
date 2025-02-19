@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, Loader2, FileText } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -15,6 +15,12 @@ export const DocumentUpload = () => {
 
     setIsUploading(true);
     try {
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("You must be logged in to upload documents");
+      }
+
       // Upload file to storage
       const fileExt = file.name.split('.').pop();
       const filePath = `${crypto.randomUUID()}.${fileExt}`;
@@ -26,12 +32,16 @@ export const DocumentUpload = () => {
       if (uploadError) throw uploadError;
 
       // Create document record
-      const { error: dbError } = await supabase.from('knowledge_documents').insert({
-        file_name: file.name,
-        file_path: filePath,
-        file_type: file.type,
-        file_size: file.size,
-      });
+      const { error: dbError } = await supabase
+        .from('user_documents')
+        .insert({
+          file_name: file.name,
+          file_path: filePath,
+          file_type: file.type,
+          file_size: file.size,
+          user_id: user.id,
+          processed_status: 'pending'
+        });
 
       if (dbError) throw dbError;
 

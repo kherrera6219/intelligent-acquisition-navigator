@@ -394,6 +394,56 @@ export type Database = {
           },
         ]
       }
+      knowledge_documents: {
+        Row: {
+          content_text: string | null
+          created_at: string
+          created_by: string
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id: string
+          knowledge_domain_id: string | null
+          metadata: Json | null
+          status: string | null
+        }
+        Insert: {
+          content_text?: string | null
+          created_at?: string
+          created_by: string
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id?: string
+          knowledge_domain_id?: string | null
+          metadata?: Json | null
+          status?: string | null
+        }
+        Update: {
+          content_text?: string | null
+          created_at?: string
+          created_by?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          knowledge_domain_id?: string | null
+          metadata?: Json | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_documents_knowledge_domain_id_fkey"
+            columns: ["knowledge_domain_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_domains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_domains: {
         Row: {
           coordinates: string | null

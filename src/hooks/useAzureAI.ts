@@ -1,7 +1,7 @@
 
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { AIChatMessage } from "@/types/chat";
+import { AIChatMessage, Message } from "@/types/chat";
 
 interface AIResponse {
   choices: Array<{
