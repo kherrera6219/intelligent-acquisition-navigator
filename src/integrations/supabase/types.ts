@@ -81,15 +81,7 @@ export type Database = {
           resource_type?: string
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "audit_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       auth_methods: {
         Row: {
@@ -1011,30 +1003,22 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          role_id: string
+          role: Database["public"]["Enums"]["user_role"]
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          role_id: string
+          role?: Database["public"]["Enums"]["user_role"]
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          role_id?: string
+          role?: Database["public"]["Enums"]["user_role"]
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_role_id_fkey"
-            columns: ["role_id"]
-            isOneToOne: false
-            referencedRelation: "roles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       users: {
         Row: {
@@ -1149,6 +1133,7 @@ export type Database = {
         | "SMALL_BUSINESS_LIAISON"
         | "PROPOSAL_REVIEW_STAFF"
         | "PROTEST_APPEALS_OFFICER"
+      user_role: "admin" | "manager" | "user"
       user_status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
       validation_status: "pending" | "valid" | "invalid" | "needs_review"
     }
