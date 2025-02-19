@@ -58,7 +58,8 @@ describe('Texas Chat Middleware', () => {
       const params = {
         content: 'Test content',
         agencyType: 'TEXAS_GOVERNMENT' as TexasAgencyType,
-        userRole: 'CONTRACTING_OFFICER' as TexasRole
+        userRole: 'CONTRACTING_OFFICER' as TexasRole,
+        responseLevel: 'STANDARD'
       };
       
       const result = await texasChatMiddleware.validateResponse(messageId, params);
