@@ -31,11 +31,13 @@
 
   * {
     @apply border-border selection:bg-white/10 selection:text-white;
+    -webkit-tap-highlight-color: transparent;
   }
   
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', sans-serif;
+    overscroll-behavior-y: none;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -108,5 +110,15 @@
     .hover-scale {
       @apply active:scale-95;
     }
+
+    .tap-highlight-transparent {
+      -webkit-tap-highlight-color: transparent;
+    }
+  }
+}
+
+@layer utilities {
+  .touch-pan-y {
+    touch-action: pan-y;
   }
 }

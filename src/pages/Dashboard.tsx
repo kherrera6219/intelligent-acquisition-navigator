@@ -43,7 +43,7 @@ const Dashboard = () => {
               key={index}
               icon={metric.icon}
               title={metric.title}
-              className="hover:bg-white/5 transition-colors p-4 sm:p-5 md:p-6"
+              className="hover:bg-white/5 active:bg-white/10 transition-colors p-4 sm:p-5 md:p-6 touch-pan-y"
             >
               <div className="mt-3 sm:mt-4">
                 <p className="text-xl sm:text-2xl font-bold text-white">{metric.value}</p>
@@ -60,7 +60,7 @@ const Dashboard = () => {
         gap="lg" 
         className="flex-col md:flex-row space-y-4 md:space-y-0"
       >
-        <Card className="p-4 sm:p-5 md:p-6">
+        <Card className="p-4 sm:p-5 md:p-6 touch-pan-y">
           <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
             Task Queue
           </h2>
@@ -75,7 +75,7 @@ const Dashboard = () => {
           )}
         </Card>
 
-        <Card className="p-4 sm:p-5 md:p-6">
+        <Card className="p-4 sm:p-5 md:p-6 touch-pan-y">
           <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
             Performance Metrics
           </h2>

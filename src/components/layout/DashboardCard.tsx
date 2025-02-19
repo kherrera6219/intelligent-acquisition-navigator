@@ -25,8 +25,8 @@ export const DashboardCard = ({
   return (
     <Card 
       className={cn(
-        "relative overflow-hidden transition-all duration-200",
-        onClick && "cursor-pointer hover:bg-white/5",
+        "relative overflow-hidden transition-all duration-200 select-none tap-highlight-transparent",
+        onClick && "cursor-pointer active:scale-95",
         className
       )}
       onClick={onClick}
