@@ -1,12 +1,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm as useReactHookForm } from "react-hook-form";
+import { useForm as useReactHookForm, type DefaultValues } from "react-hook-form";
 import type { z } from "zod";
 import { toast } from "@/components/ui/use-toast";
 
 interface UseFormProps<T extends z.ZodType> {
   schema: T;
-  defaultValues?: Partial<z.infer<T>>;
+  defaultValues?: DefaultValues<z.infer<T>>; // Changed type to match react-hook-form expectations
   onSubmit: (data: z.infer<T>) => Promise<void> | void;
   showSuccessToast?: boolean;
   successMessage?: string;
@@ -21,7 +21,7 @@ export function useForm<T extends z.ZodType>({
 }: UseFormProps<T>) {
   const form = useReactHookForm<z.infer<T>>({
     resolver: zodResolver(schema),
-    defaultValues,
+    defaultValues: defaultValues as DefaultValues<z.infer<T>>, // Explicitly type the defaultValues
   });
 
   const handleSubmit = async (data: z.infer<T>) => {
