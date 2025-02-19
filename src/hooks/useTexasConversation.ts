@@ -11,7 +11,7 @@ export const useTexasConversation = () => {
   const [validations, setValidations] = useState<Record<string, {
     status: ValidationResult['status'];
     confidence: number;
-    notes?: string;
+    notes?: string | null;
   }>>({});
   const { toast } = useToast();
 
