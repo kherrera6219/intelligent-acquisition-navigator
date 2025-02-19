@@ -1,7 +1,6 @@
 
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { RouteObject } from "react-router-dom";
-import { lazy } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
