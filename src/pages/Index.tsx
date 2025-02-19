@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { PrivacyNotice } from "@/components/landing/PrivacyNotice";
 import { HeroSection } from "@/components/landing/HeroSection";
