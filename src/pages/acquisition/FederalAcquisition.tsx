@@ -5,25 +5,40 @@ import { Message, AIChatMessage } from "@/types/chat";
 import { FederalChatContainer } from "@/components/federal/FederalChatContainer";
 import { useToast } from "@/hooks/use-toast";
 
+interface ChatState {
+  messages: Message[];
+  conversationId: string;
+  addMessage: (message: Omit<Message, "id" | "timestamp">) => Promise<boolean>;
+  isLoading: boolean;
+}
+
 const FederalAcquisition = () => {
   const [input, setInput] = useState("");
-  const { messages, conversationId, addMessage, isLoading: isInitializing } = useState<{
-    messages: Message[];
-    conversationId: string;
-    addMessage: (message: Omit<Message, "id" | "timestamp">) => Promise<boolean>;
-    isLoading: boolean;
-  }>({
+  const [chatState, setChatState] = useState<ChatState>({
     messages: [],
     conversationId: "federal-" + Date.now(),
-    addMessage: async () => true,
+    addMessage: async (message) => {
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        timestamp: new Date(),
+        ...message
+      };
+      
+      setChatState(prev => ({
+        ...prev,
+        messages: [...prev.messages, newMessage]
+      }));
+      
+      return true;
+    },
     isLoading: false
   });
   
   const { toast } = useToast();
 
-  const aiMutation = useAzureAI(messages, {
+  const aiMutation = useAzureAI(chatState.messages, {
     onSuccess: async (data) => {
-      const success = await addMessage({
+      const success = await chatState.addMessage({
         role: "assistant",
         content: data.choices[0].message.content
       });
@@ -48,9 +63,9 @@ const FederalAcquisition = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || aiMutation.isPending || !conversationId) return;
+    if (!input.trim() || aiMutation.isPending || !chatState.conversationId) return;
 
-    const success = await addMessage({
+    const success = await chatState.addMessage({
       role: "user",
       content: input.trim()
     });
@@ -72,7 +87,7 @@ const FederalAcquisition = () => {
     
     const aiMessages: AIChatMessage[] = [
       { role: "system", content: aiContext },
-      ...messages.map(msg => ({ 
+      ...chatState.messages.map(msg => ({ 
         role: msg.role as "user" | "assistant", 
         content: msg.content 
       })),
@@ -84,9 +99,9 @@ const FederalAcquisition = () => {
 
   return (
     <FederalChatContainer
-      conversationId={conversationId}
-      messages={messages}
-      isLoading={isInitializing || aiMutation.isPending}
+      conversationId={chatState.conversationId}
+      messages={chatState.messages}
+      isLoading={chatState.isLoading || aiMutation.isPending}
       input={input}
       onInputChange={setInput}
       onSubmit={handleSubmit}
