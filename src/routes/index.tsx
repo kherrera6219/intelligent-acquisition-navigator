@@ -20,29 +20,33 @@ export const PageLoader = () => (
   </Container>
 );
 
-// Lazy-loaded pages
-const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
-const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
-const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
-const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage"));
-const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage"));
-const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage"));
-const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
+// Lazy-loaded pages with proper chunk names
+const DashboardPage = lazy(() => import("@/pages/DashboardPage" /* webpackChunkName: "dashboard" */));
+const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage" /* webpackChunkName: "document-control" */));
+const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage" /* webpackChunkName: "market-research" */));
+const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage" /* webpackChunkName: "solicitation-review" */));
+const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage" /* webpackChunkName: "texas-acquisition" */));
+const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage" /* webpackChunkName: "federal-acquisition" */));
+const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage" /* webpackChunkName: "auth" */));
+
+const LazyComponent = ({ Component }: { Component: React.ComponentType }) => (
+  <Suspense fallback={<PageLoader />}>
+    <Component />
+  </Suspense>
+);
 
 // Function to wrap pages with layout and authentication checks
 const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = true, requiredRole?: string) => (
   <PageErrorBoundary>
-    <Suspense fallback={<PageLoader />}>
-      {requiresAuth ? (
-        <ProtectedRoute requiredRole={requiredRole}>
-          <MainLayout>
-            <Component />
-          </MainLayout>
-        </ProtectedRoute>
-      ) : (
-        <Component />
-      )}
-    </Suspense>
+    {requiresAuth ? (
+      <ProtectedRoute requiredRole={requiredRole}>
+        <MainLayout>
+          <LazyComponent Component={Component} />
+        </MainLayout>
+      </ProtectedRoute>
+    ) : (
+      <LazyComponent Component={Component} />
+    )}
   </PageErrorBoundary>
 );
 
