@@ -32,15 +32,17 @@ const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
 // Function to wrap pages with layout and authentication checks
 const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = true, requiredRole?: string) => (
   <PageErrorBoundary>
-    {requiresAuth ? (
-      <ProtectedRoute requiredRole={requiredRole}>
-        <MainLayout>
-          <Component />
-        </MainLayout>
-      </ProtectedRoute>
-    ) : (
-      <Component />
-    )}
+    <Suspense fallback={<PageLoader />}>
+      {requiresAuth ? (
+        <ProtectedRoute requiredRole={requiredRole}>
+          <MainLayout>
+            <Component />
+          </MainLayout>
+        </ProtectedRoute>
+      ) : (
+        <Component />
+      )}
+    </Suspense>
   </PageErrorBoundary>
 );
 
