@@ -10,11 +10,13 @@ interface LazyComponentProps {
   Component: ComponentType;
 }
 
-// Enhanced LazyComponent with error boundary
+// Enhanced LazyComponent with error boundary and suspense
 export const LazyComponent: React.FC<LazyComponentProps> = ({ Component }) => {
   return (
     <PageErrorBoundary>
-      <Component />
+      <Suspense fallback={<PageLoader />}>
+        <Component />
+      </Suspense>
     </PageErrorBoundary>
   );
 };
@@ -26,7 +28,7 @@ export const wrapWithLayout = (
   requiredRole?: string
 ): JSX.Element => {
   const element = (
-    <Suspense fallback={<PageLoader />}>
+    <PageErrorBoundary>
       {requiresAuth ? (
         <ProtectedRoute requiredRole={requiredRole}>
           <MainLayout>
@@ -34,9 +36,11 @@ export const wrapWithLayout = (
           </MainLayout>
         </ProtectedRoute>
       ) : (
-        <LazyComponent Component={Component} />
+        <MainLayout>
+          <LazyComponent Component={Component} />
+        </MainLayout>
       )}
-    </Suspense>
+    </PageErrorBoundary>
   );
   
   return element;
