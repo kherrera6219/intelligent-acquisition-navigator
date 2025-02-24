@@ -1,5 +1,5 @@
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Container } from "@/components/ui/universal/Container";
 import { Card } from "@/components/ui/universal/Card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -16,12 +16,16 @@ export const AuthPage = () => {
   const mode = searchParams.get('mode') || 'login';
   const redirectTo = searchParams.get('redirectTo') || '/dashboard';
 
-  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      toast({
+        title: "Already authenticated",
+        description: "Redirecting you to the dashboard",
+      });
+    }
+  }, [isAuthenticated, toast]);
+
   if (isAuthenticated) {
-    toast({
-      title: "Already authenticated",
-      description: "Redirecting you to the dashboard",
-    });
     return <Navigate to={redirectTo} replace />;
   }
 
