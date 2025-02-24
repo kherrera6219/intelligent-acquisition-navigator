@@ -7,26 +7,34 @@ import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { PageLoader } from "./PageLoader";
 
 // Enhanced LazyComponent with error boundary
-export const LazyComponent = ({ Component }: { Component: ComponentType }) => (
-  <PageErrorBoundary>
-    <Component />
-  </PageErrorBoundary>
-);
+export const LazyComponent = ({ Component }: { Component: ComponentType }) => {
+  return (
+    <PageErrorBoundary>
+      <Component />
+    </PageErrorBoundary>
+  );
+}
 
 // Function to wrap pages with layout and authentication checks
-export const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = true, requiredRole?: string) => (
-  <Suspense fallback={<PageLoader />}>
-    {requiresAuth ? (
-      <ProtectedRoute requiredRole={requiredRole}>
-        <MainLayout>
-          <LazyComponent Component={Component} />
-        </MainLayout>
-      </ProtectedRoute>
-    ) : (
-      <LazyComponent Component={Component} />
-    )}
-  </Suspense>
-);
+export const wrapWithLayout = (
+  Component: React.ComponentType, 
+  requiresAuth: boolean = true, 
+  requiredRole?: string
+) => {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      {requiresAuth ? (
+        <ProtectedRoute requiredRole={requiredRole}>
+          <MainLayout>
+            <LazyComponent Component={Component} />
+          </MainLayout>
+        </ProtectedRoute>
+      ) : (
+        <LazyComponent Component={Component} />
+      )}
+    </Suspense>
+  );
+}
 
 export type RouteDefinition = RouteObject & {
   requiresAuth?: boolean;
