@@ -9,12 +9,12 @@ import { Footer } from "./Footer";
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider>
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <div className="min-h-screen flex flex-col bg-black/5">
         <Header />
         
         <main className="flex-1">
           <Container className="py-8">
-            <Card className="w-full bg-black/40 backdrop-blur-sm border-white/10 p-6 shadow-xl">
+            <Card className="w-full bg-white shadow-xl">
               {children}
             </Card>
           </Container>

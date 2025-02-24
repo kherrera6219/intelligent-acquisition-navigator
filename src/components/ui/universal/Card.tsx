@@ -19,10 +19,10 @@ export const Card: React.FC<CardProps> = ({
 }) => (
   <div
     className={cn(
-      "rounded-lg border border-white/10 bg-black/40 backdrop-blur-sm p-6",
+      "rounded-lg border border-gray-200 bg-white p-6",
       "transition-all duration-200",
       interactive && "cursor-pointer",
-      hoverable && "hover:bg-white/5 hover:border-white/20",
+      hoverable && "hover:bg-gray-50 hover:border-gray-300",
       className
     )}
     onClick={onClick}
