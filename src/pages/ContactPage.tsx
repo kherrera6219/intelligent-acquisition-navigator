@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,9 +7,11 @@ import { useToast } from "@/hooks/use-toast";
 import { GradientText } from "@/components/ui/universal/GradientText";
 import { GlassCard } from "@/components/ui/universal/GlassCard";
 import { GradientButton } from "@/components/ui/universal/GradientButton";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,13 +19,33 @@ const Contact = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setIsSubmitting(true);
+
+    try {
+      const response = await supabase.functions.invoke('handle-contact', {
+        body: formData
+      });
+
+      if (response.error) throw response.error;
+
+      toast({
+        title: "Message sent successfully",
+        description: "We'll get back to you as soon as possible.",
+      });
+      
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error: any) {
+      console.error('Error submitting form:', error);
+      toast({
+        title: "Error sending message",
+        description: "Please try again later or contact us directly via email.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -106,6 +129,8 @@ const Contact = () => {
                   type="submit" 
                   className="w-full"
                   gradientVariant="primary"
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
                 >
                   Send Message
                 </GradientButton>
