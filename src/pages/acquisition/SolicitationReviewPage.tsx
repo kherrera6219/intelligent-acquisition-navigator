@@ -1,4 +1,5 @@
 
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/universal/Card";
 import { Grid } from "@/components/ui/universal/Grid";
@@ -7,49 +8,68 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, Clock, FileText } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-const mockSolicitations = [
-  {
-    id: "1",
-    title: "IT Services Support",
-    status: "pending",
-    riskLevel: "low",
-    dueDate: "2024-03-15",
-    department: "Information Technology",
-  },
-  {
-    id: "2",
-    title: "Office Equipment Procurement",
-    status: "review",
-    riskLevel: "medium", 
-    dueDate: "2024-03-20",
-    department: "Facilities",
-  },
-  {
-    id: "3", 
-    title: "Security Services Contract",
-    status: "pending",
-    riskLevel: "high",
-    dueDate: "2024-03-25",
-    department: "Security",
-  },
-];
-
-const getRiskBadgeColor = (risk: string) => {
-  switch (risk) {
-    case "low":
-      return "bg-green-400/20 text-green-400";
-    case "medium":
-      return "bg-yellow-400/20 text-yellow-400";
-    case "high":
-      return "bg-red-400/20 text-red-400";
-    default:
-      return "bg-gray-400/20 text-gray-400";
-  }
-};
+interface Solicitation {
+  id: string;
+  title: string;
+  status: string;
+  risk_level: string;
+  due_date: string;
+  department: string;
+}
 
 const SolicitationReview = () => {
   const { toast } = useToast();
+  const [solicitations, setSolicitations] = useState<Solicitation[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSolicitations();
+  }, []);
+
+  const fetchSolicitations = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('solicitations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching solicitations:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load solicitations",
+          variant: "destructive"
+        });
+      } else {
+        setSolicitations(data || []);
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getRiskBadgeColor = (risk: string) => {
+    switch (risk) {
+      case "low":
+        return "bg-green-400/20 text-green-400";
+      case "medium":
+        return "bg-yellow-400/20 text-yellow-400";
+      case "high":
+        return "bg-red-400/20 text-red-400";
+      default:
+        return "bg-gray-400/20 text-gray-400";
+    }
+  };
 
   const handleReviewClick = (id: string) => {
     toast({
@@ -57,6 +77,17 @@ const SolicitationReview = () => {
       description: "Opening solicitation review workspace...",
     });
   };
+
+  if (loading) {
+    return (
+      <Container>
+        <PageHeader
+          title="Loading Solicitations"
+          description="Please wait while we fetch the data..."
+        />
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -82,7 +113,7 @@ const SolicitationReview = () => {
       </Card>
 
       <Grid columns={1} gap="lg">
-        {mockSolicitations.map((solicitation) => (
+        {solicitations.map((solicitation) => (
           <Card
             key={solicitation.id}
             className="hover:bg-white/5 transition-all duration-200"
@@ -103,10 +134,10 @@ const SolicitationReview = () => {
                     <span className="hidden sm:inline text-gray-600">•</span>
                     <div
                       className={`px-2 py-0.5 rounded-full text-xs ${getRiskBadgeColor(
-                        solicitation.riskLevel
+                        solicitation.risk_level
                       )}`}
                     >
-                      {solicitation.riskLevel.toUpperCase()} RISK
+                      {solicitation.risk_level.toUpperCase()} RISK
                     </div>
                   </div>
                 </div>
@@ -114,7 +145,7 @@ const SolicitationReview = () => {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                 <div className="flex items-center gap-2 text-gray-400 justify-center sm:justify-start">
                   <Clock className="h-4 w-4" />
-                  <span className="text-sm">Due {solicitation.dueDate}</span>
+                  <span className="text-sm">Due {solicitation.due_date}</span>
                 </div>
                 <Button
                   onClick={() => handleReviewClick(solicitation.id)}
