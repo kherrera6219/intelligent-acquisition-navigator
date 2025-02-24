@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MessageSquare, Phone } from "lucide-react";
@@ -10,6 +9,7 @@ import { GradientButton } from "@/components/ui/universal/GradientButton";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -23,7 +23,7 @@ const Contact = () => {
   });
 
   // Simulate loading for demonstration
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -219,4 +219,3 @@ const Contact = () => {
 };
 
 export default Contact;
-
