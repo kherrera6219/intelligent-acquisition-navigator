@@ -11,7 +11,7 @@ interface LazyComponentProps {
 }
 
 // Enhanced LazyComponent with error boundary
-export const LazyComponent = ({ Component }: LazyComponentProps) => {
+export const LazyComponent: React.FC<LazyComponentProps> = ({ Component }) => {
   return (
     <PageErrorBoundary>
       <Component />
