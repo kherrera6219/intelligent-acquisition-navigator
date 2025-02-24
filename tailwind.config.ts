@@ -109,6 +109,9 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
       },
+      gridTemplateColumns: {
+        'auto-fit': 'repeat(auto-fit, minmax(250px, 1fr))',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
