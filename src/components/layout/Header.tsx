@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, FileSearch, FileCheck, Database } from "lucide-react";
+import { Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, FileSearch, FileCheck, Database, BookOpen, Scale, MessageSquare, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/universal/Container";
 import { useAuth } from "@/providers/AuthProvider";
@@ -15,13 +15,24 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: "/", label: "Dashboard", icon: Home },
+  // Core Features
+  { href: "/dashboard", label: "Dashboard", icon: Home },
+  { href: "/proposals", label: "Proposals", minRole: "user", icon: FileText },
+  
+  // Acquisition Management
   { href: "/acquisition/document-control", label: "Document Control", minRole: "user", icon: FileText },
   { href: "/acquisition/market-research", label: "Market Research", minRole: "user", icon: FileSearch },
   { href: "/acquisition/solicitation-review", label: "Solicitation Review", minRole: "manager", icon: FileCheck },
   { href: "/acquisition/texas-acquisition", label: "Texas Acquisition", minRole: "user", icon: Building2 },
   { href: "/acquisition/federal-acquisition", label: "Federal Acquisition", minRole: "manager", icon: Database },
-  { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 }
+  
+  // Analytics & Reports
+  { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 },
+  
+  // Support & Resources
+  { href: "/features", label: "Features", icon: BookOpen },
+  { href: "/pricing", label: "Pricing", icon: Scale },
+  { href: "/help", label: "Help", icon: HelpCircle }
 ];
 
 export const Header = () => {
