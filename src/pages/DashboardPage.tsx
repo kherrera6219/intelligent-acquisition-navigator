@@ -9,12 +9,19 @@ import { MetricsChart } from '@/components/MetricsChart';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
+interface MetricData {
+  month: string;
+  efficiency: number;
+  compliance: number;
+  risk: number;
+}
+
 interface DashboardData {
   totalProposals: number;
   activeProjects: number;
   pendingReviews: number;
-  metrics: Array<Record<string, any>>;
-  activities: Array<Record<string, any>>;
+  metrics: MetricData[];
+  activities: MetricData[];
 }
 
 const DashboardPage = () => {
@@ -24,13 +31,19 @@ const DashboardPage = () => {
   const { data, isLoading, error, refetch } = useQuery<DashboardData>({
     queryKey: ['dashboard'],
     queryFn: async () => {
-      // Temporary mock data
+      // Temporary mock data with proper types
+      const mockMetrics: MetricData[] = [
+        { month: 'Jan', efficiency: 85, compliance: 90, risk: 20 },
+        { month: 'Feb', efficiency: 88, compliance: 92, risk: 18 },
+        { month: 'Mar', efficiency: 87, compliance: 91, risk: 22 }
+      ];
+      
       return {
         totalProposals: 150,
         activeProjects: 45,
         pendingReviews: 12,
-        metrics: [],
-        activities: []
+        metrics: mockMetrics,
+        activities: mockMetrics // Using same mock data for activities
       };
     }
   });
