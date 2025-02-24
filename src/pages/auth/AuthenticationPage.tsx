@@ -1,6 +1,6 @@
 
 import { useSearchParams } from 'react-router-dom';
-import { AuthForm } from '@/components/auth/AuthForm';
+import AuthForm from '@/components/auth/AuthForm';
 import { Card } from '@/components/ui/card';
 
 const AuthenticationPage = () => {
