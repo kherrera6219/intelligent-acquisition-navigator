@@ -5,6 +5,7 @@ import App from './App';
 import './styles/global.css';
 import './styles/application.css';
 
+// Clean mount without any external service initialization
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />

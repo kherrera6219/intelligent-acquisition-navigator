@@ -1,0 +1,9 @@
+
+{
+  "permissions": {
+    "camera": ["self"],
+    "microphone": ["self"],
+    "geolocation": ["self"],
+    "fullscreen": ["self"]
+  }
+}
