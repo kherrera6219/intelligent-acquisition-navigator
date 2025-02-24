@@ -1208,7 +1208,7 @@ export type Database = {
         | "SMALL_BUSINESS_LIAISON"
         | "PROPOSAL_REVIEW_STAFF"
         | "PROTEST_APPEALS_OFFICER"
-      user_role: "admin" | "manager" | "user"
+      user_role: "user" | "super_user" | "admin"
       user_status: "ACTIVE" | "INACTIVE" | "SUSPENDED"
       validation_status: "pending" | "valid" | "invalid" | "needs_review"
     }
