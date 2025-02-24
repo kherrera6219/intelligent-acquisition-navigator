@@ -13,13 +13,14 @@ import {
   ProposalsPage,
   HomePage,
   HelpPage,
-  FeaturesPage, // Changed from KnowledgeBasePage
+  FeaturesPage,
   PricingPage,
   AboutPage,
   ContactPage,
   PrivacyPage,
   SettingsPage,
-  SitemapPage
+  SitemapPage,
+  NotFoundPage // Add this import
 } from "./lazyComponents";
 
 export const routes: RouteObject[] = [
@@ -97,5 +98,11 @@ export const routes: RouteObject[] = [
   {
     path: "/acquisition/federal-acquisition",
     element: wrapWithLayout(FederalAcquisitionPage, true, "manager")
+  },
+  
+  // Catch-all route for 404
+  {
+    path: "*",
+    element: wrapWithLayout(NotFoundPage, false)
   }
 ];

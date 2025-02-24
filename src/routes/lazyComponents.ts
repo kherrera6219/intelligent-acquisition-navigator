@@ -27,7 +27,7 @@ export const PrivacyPage = lazy(() =>
   }))
 );
 
-export const FeaturesPage = lazy(() => // Changed from KnowledgeBasePage
+export const FeaturesPage = lazy(() => 
   import("@/pages/FeaturesPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading features page")
   }))
@@ -111,3 +111,10 @@ export const SettingsPage = lazy(() =>
     default: () => React.createElement("div", null, "Error loading settings")
   }))
 );
+
+export const NotFoundPage = lazy(() => 
+  import("@/pages/NotFoundPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading 404 page")
+  }))
+);
+
