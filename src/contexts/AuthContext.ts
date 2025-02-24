@@ -1,4 +1,5 @@
 
+import { createContext } from 'react';
 import { User } from "@supabase/supabase-js";
 
 export interface AuthContextType {
@@ -13,4 +14,14 @@ export interface AuthContextType {
   resendVerificationEmail: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isLoading: true,
+  isAuthenticated: false,
+  login: async () => {},
+  signup: async () => {},
+  signOut: async () => {},
+  userRole: null,
+  isAuthorized: () => false,
+  resendVerificationEmail: async () => {}
+});

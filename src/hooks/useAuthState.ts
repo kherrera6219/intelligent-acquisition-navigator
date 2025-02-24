@@ -11,29 +11,45 @@ export function useAuthState() {
 
   useEffect(() => {
     // Get initial session
-    const { data: { session } } = supabase.auth.getSession();
-    setUser(session?.user ?? null);
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const getInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
-      setIsLoading(false);
-
       if (session?.user) {
-        // Fetch user role from profiles table
-        supabase
+        const { data, error } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', session.user.id)
-          .single()
-          .then(({ data, error }) => {
-            if (error) {
-              console.error('Error fetching user role:', error);
-              setUserRole(null);
-            } else {
-              setUserRole(data?.role ?? null);
-            }
-          });
+          .single();
+          
+        if (error) {
+          console.error('Error fetching user role:', error);
+          setUserRole(null);
+        } else {
+          setUserRole(data?.role ?? null);
+        }
+      }
+      setIsLoading(false);
+    };
+
+    getInitialSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+          
+        if (error) {
+          console.error('Error fetching user role:', error);
+          setUserRole(null);
+        } else {
+          setUserRole(data?.role ?? null);
+        }
       } else {
         setUserRole(null);
       }
