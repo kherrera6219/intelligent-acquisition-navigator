@@ -9,25 +9,74 @@ import {
   TexasAcquisitionPage,
   FederalAcquisitionPage,
   AuthPage,
-  AnalyticsPage
+  AnalyticsPage,
+  ProposalsPage,
+  HomePage,
+  HelpPage,
+  KnowledgeBasePage,
+  PricingPage,
+  AboutPage,
+  ContactPage,
+  PrivacyPage,
+  SettingsPage,
+  SitemapPage
 } from "./lazyComponents";
 
 export const routes: RouteObject[] = [
+  // Public Routes (external)
   {
     path: "/",
-    element: wrapWithLayout(DashboardPage)
+    element: wrapWithLayout(HomePage, false)
   },
   {
-    path: "/dashboard",
-    element: wrapWithLayout(DashboardPage)
+    path: "/about",
+    element: wrapWithLayout(AboutPage, false)
+  },
+  {
+    path: "/contact",
+    element: wrapWithLayout(ContactPage, false)
+  },
+  {
+    path: "/privacy",
+    element: wrapWithLayout(PrivacyPage, false)
+  },
+  {
+    path: "/features",
+    element: wrapWithLayout(KnowledgeBasePage, false)
+  },
+  {
+    path: "/pricing",
+    element: wrapWithLayout(PricingPage, false)
   },
   {
     path: "/auth",
     element: wrapWithLayout(AuthPage, false)
   },
   {
+    path: "/help",
+    element: wrapWithLayout(HelpPage, false)
+  },
+  {
+    path: "/sitemap",
+    element: wrapWithLayout(SitemapPage, false)
+  },
+
+  // Protected Routes (internal)
+  {
+    path: "/dashboard",
+    element: wrapWithLayout(DashboardPage)
+  },
+  {
     path: "/analytics",
     element: wrapWithLayout(AnalyticsPage, true, "user")
+  },
+  {
+    path: "/proposals",
+    element: wrapWithLayout(ProposalsPage, true, "user")
+  },
+  {
+    path: "/settings",
+    element: wrapWithLayout(SettingsPage, true, "user")
   },
   {
     path: "/acquisition/document-control",

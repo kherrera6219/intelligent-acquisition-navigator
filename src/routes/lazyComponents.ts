@@ -2,7 +2,56 @@
 import { lazy } from "react";
 import React from "react";
 
-// Lazy-loaded pages with comprehensive error handling
+// Public Pages
+export const HomePage = lazy(() => 
+  import("@/pages/HomePage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading home page")
+  }))
+);
+
+export const AboutPage = lazy(() => 
+  import("@/pages/About").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading about page")
+  }))
+);
+
+export const ContactPage = lazy(() => 
+  import("@/pages/ContactPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading contact page")
+  }))
+);
+
+export const PrivacyPage = lazy(() => 
+  import("@/pages/PrivacyPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading privacy page")
+  }))
+);
+
+export const KnowledgeBasePage = lazy(() => 
+  import("@/pages/KnowledgeBasePage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading features page")
+  }))
+);
+
+export const PricingPage = lazy(() => 
+  import("@/pages/PricingPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading pricing page")
+  }))
+);
+
+export const HelpPage = lazy(() => 
+  import("@/pages/HelpPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading help page")
+  }))
+);
+
+export const SitemapPage = lazy(() => 
+  import("@/pages/SitemapPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading sitemap")
+  }))
+);
+
+// Protected Pages
 export const DashboardPage = lazy(() => 
   import("@/pages/DashboardPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading dashboard")
@@ -48,5 +97,17 @@ export const AuthPage = lazy(() =>
 export const AnalyticsPage = lazy(() => 
   import("@/pages/AnalyticsPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading analytics")
+  }))
+);
+
+export const ProposalsPage = lazy(() => 
+  import("@/pages/ProposalsPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading proposals")
+  }))
+);
+
+export const SettingsPage = lazy(() => 
+  import("@/pages/SettingsPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading settings")
   }))
 );
