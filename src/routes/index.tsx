@@ -8,7 +8,6 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card } from "@/components/ui/universal/Card";
 import { Container } from "@/components/ui/universal/Container";
 
-// Simple loading spinner for lazy-loaded components
 export const PageLoader = () => (
   <Container className="py-8">
     <Card className="w-full p-6 flex items-center justify-center min-h-[400px]">
@@ -54,10 +53,13 @@ const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = 
   </PageErrorBoundary>
 );
 
-// Define application routes with access control
 export const routes: RouteObject[] = [
   {
     path: "/",
+    element: wrapWithLayout(DashboardPage)
+  },
+  {
+    path: "/dashboard", // Adding this for compatibility with existing links
     element: wrapWithLayout(DashboardPage)
   },
   {
@@ -83,10 +85,6 @@ export const routes: RouteObject[] = [
   {
     path: "/acquisition/texas-acquisition",
     element: wrapWithLayout(TexasAcquisitionPage, true, "user")
-  },
-  {
-    path: "/acquisition/federal",
-    element: wrapWithLayout(FederalAcquisitionPage, true, "manager")
   },
   {
     path: "/acquisition/federal-acquisition",

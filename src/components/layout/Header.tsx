@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Settings, LogOut, Menu, X } from "lucide-react";
+import { Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, FileSearch, FileCheck, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/universal/Container";
 import { useAuth } from "@/providers/AuthProvider";
@@ -11,15 +11,17 @@ interface NavItem {
   href: string;
   label: string;
   minRole?: string;
+  icon: React.ElementType;
 }
 
 const navItems: NavItem[] = [
-  { href: "/", label: "Dashboard" },
-  { href: "/acquisition/document-control", label: "Document Control", minRole: "user" },
-  { href: "/acquisition/market-research", label: "Market Research", minRole: "user" },
-  { href: "/acquisition/solicitation-review", label: "Solicitation Review", minRole: "manager" },
-  { href: "/acquisition/texas-acquisition", label: "Texas Acquisition", minRole: "user" },
-  { href: "/acquisition/federal-acquisition", label: "Federal Acquisition", minRole: "manager" }
+  { href: "/", label: "Dashboard", icon: Home },
+  { href: "/acquisition/document-control", label: "Document Control", minRole: "user", icon: FileText },
+  { href: "/acquisition/market-research", label: "Market Research", minRole: "user", icon: FileSearch },
+  { href: "/acquisition/solicitation-review", label: "Solicitation Review", minRole: "manager", icon: FileCheck },
+  { href: "/acquisition/texas-acquisition", label: "Texas Acquisition", minRole: "user", icon: Building2 },
+  { href: "/acquisition/federal-acquisition", label: "Federal Acquisition", minRole: "manager", icon: Database },
+  { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 }
 ];
 
 export const Header = () => {
@@ -50,10 +52,11 @@ export const Header = () => {
                       key={item.href}
                       to={item.href} 
                       className={cn(
-                        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full",
+                        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
                         location.pathname === item.href && "text-white bg-white/5"
                       )}
                     >
+                      <item.icon className="h-4 w-4" />
                       {item.label}
                     </Link>
                   ) : null
@@ -62,10 +65,11 @@ export const Header = () => {
                     key={item.href}
                     to={item.href} 
                     className={cn(
-                      "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full",
+                      "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
                       location.pathname === item.href && "text-white bg-white/5"
                     )}
                   >
+                    <item.icon className="h-4 w-4" />
                     {item.label}
                   </Link>
                 )
@@ -114,11 +118,12 @@ export const Header = () => {
                       key={item.href}
                       to={item.href} 
                       className={cn(
-                        "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg",
+                        "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
                         location.pathname === item.href && "text-white bg-white/5"
                       )}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
+                      <item.icon className="h-4 w-4" />
                       {item.label}
                     </Link>
                   ) : null
@@ -127,11 +132,12 @@ export const Header = () => {
                     key={item.href}
                     to={item.href} 
                     className={cn(
-                      "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg",
+                      "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
                       location.pathname === item.href && "text-white bg-white/5"
                     )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    <item.icon className="h-4 w-4" />
                     {item.label}
                   </Link>
                 )
