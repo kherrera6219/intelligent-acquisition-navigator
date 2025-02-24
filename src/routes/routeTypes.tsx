@@ -42,8 +42,11 @@ export const wrapWithLayout = (
   return element;
 };
 
-// Route definition type with additional properties
-export interface RouteDefinition extends RouteObject {
+// Route definition type that extends Pick<RouteObject> to fix TypeScript error
+export interface RouteDefinition {
+  path?: string;
+  element?: React.ReactNode;
+  children?: RouteDefinition[];
   requiresAuth?: boolean;
   requiredRole?: string;
 }
