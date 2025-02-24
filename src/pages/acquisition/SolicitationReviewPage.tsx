@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/universal/Card";
 import { Grid } from "@/components/ui/universal/Grid";
@@ -18,6 +17,123 @@ interface Solicitation {
   due_date: string;
   department: string;
 }
+
+const KnowledgeGraphBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Node {
+      x: number;
+      y: number;
+      radius: number;
+      vx: number;
+      vy: number;
+      color: string;
+      connections: Node[];
+
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.radius = Math.random() * 2 + 1;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.color = `hsla(${Math.random() * 60 + 240}, 50%, 50%, 0.3)`;
+        this.connections = [];
+      }
+
+      draw() {
+        if (!ctx) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+
+        this.connections.forEach(node => {
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(node.x, node.y);
+          ctx.strokeStyle = `hsla(${Math.random() * 60 + 240}, 50%, 50%, 0.1)`;
+          ctx.stroke();
+        });
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        this.vx += (Math.random() - 0.5) * 0.1;
+        this.vy += (Math.random() - 0.5) * 0.1;
+
+        this.vx = Math.max(Math.min(this.vx, 1), -1);
+        this.vy = Math.max(Math.min(this.vy, 1), -1);
+      }
+    }
+
+    const nodes: Node[] = Array(50).fill(null).map(() => new Node());
+
+    nodes.forEach(node => {
+      const connectionCount = Math.floor(Math.random() * 3) + 1;
+      for (let i = 0; i < connectionCount; i++) {
+        const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
+        if (randomNode !== node && !node.connections.includes(randomNode)) {
+          node.connections.push(randomNode);
+        }
+      }
+    });
+
+    const animate = () => {
+      if (!ctx) return;
+      
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      nodes.forEach(node => {
+        node.update();
+        node.draw();
+      });
+
+      if (Math.random() < 0.01) {
+        const nodeA = nodes[Math.floor(Math.random() * nodes.length)];
+        const nodeB = nodes[Math.floor(Math.random() * nodes.length)];
+        if (nodeA !== nodeB && !nodeA.connections.includes(nodeB)) {
+          nodeA.connections.push(nodeB);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 -z-10 bg-[#221F26] opacity-50"
+      style={{ mixBlendMode: 'screen' }}
+    />
+  );
+};
 
 const SolicitationReview = () => {
   const { toast } = useToast();
@@ -81,6 +197,7 @@ const SolicitationReview = () => {
   if (loading) {
     return (
       <Container>
+        <KnowledgeGraphBackground />
         <PageHeader
           title="Loading Solicitations"
           description="Please wait while we fetch the data..."
@@ -91,6 +208,7 @@ const SolicitationReview = () => {
 
   return (
     <Container>
+      <KnowledgeGraphBackground />
       <PageHeader
         title="Solicitation Review"
         description="Review and approve procurement solicitations"
