@@ -28,6 +28,7 @@ const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/Solicitati
 const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage" /* webpackChunkName: "texas-acquisition" */));
 const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage" /* webpackChunkName: "federal-acquisition" */));
 const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage" /* webpackChunkName: "auth" */));
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage" /* webpackChunkName: "analytics" */));
 
 const LazyComponent = ({ Component }: { Component: React.ComponentType }) => (
   <Suspense fallback={<PageLoader />}>
@@ -59,6 +60,10 @@ export const routes: RouteObject[] = [
   {
     path: "/auth",
     element: wrapWithLayout(AuthPage, false)
+  },
+  {
+    path: "/analytics",
+    element: wrapWithLayout(AnalyticsPage, true, "user")
   },
   {
     path: "/acquisition/document-control",
