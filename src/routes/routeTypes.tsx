@@ -27,11 +27,13 @@ export const wrapWithLayout = (
   requiresAuth: boolean = true,
   requiredRole?: string
 ): JSX.Element => {
+  // Move error boundary to the outermost layer to catch all errors
   const element = (
     <PageErrorBoundary>
       {requiresAuth ? (
         <ProtectedRoute requiredRole={requiredRole}>
           <MainLayout>
+            {/* LazyComponent handles both loading and component rendering */}
             <LazyComponent Component={Component} />
           </MainLayout>
         </ProtectedRoute>
