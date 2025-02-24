@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { SESSION_TIMEOUT } from '@/constants/auth';
+import { SESSION_TIMEOUT } from '../constants/auth';
 import { supabase } from '@/integrations/supabase/client';
 
 export function useSessionManagement(handleSignOut: () => Promise<void>, lastActivity: number) {
