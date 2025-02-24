@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { setupActivityTracking } from "@/utils/sessionUtils";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useAuthState } from "@/hooks/useAuthState";
@@ -38,10 +38,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useAuth = () => {
-  const context = React.useContext(AuthContext);
-  if (context === undefined) {
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
