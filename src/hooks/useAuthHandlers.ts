@@ -1,90 +1,115 @@
 
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { login, signup, signOut, resendVerificationEmail, getRoleHierarchy } from "@/services/authService";
+import { useState } from "react";
+import { User } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
-export const useAuthHandlers = (user: any, userRole: string | undefined) => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
+export function useAuthHandlers(user: User | null, userRole: string | null) {
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleLogin = async (email: string, password: string) => {
     try {
-      await login(email, password);
-    } catch (error: any) {
+      setIsProcessing(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully logged in."
+      });
+    } catch (error) {
       console.error('Login error:', error);
       toast({
-        title: "Login Failed",
-        description: error.message,
-        variant: "destructive",
+        title: "Login failed",
+        description: "Please check your credentials and try again.",
+        variant: "destructive"
       });
-      throw error;
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handleSignup = async (email: string, password: string) => {
     try {
-      await signup(email, password);
-    } catch (error: any) {
+      setIsProcessing(true);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`
+        }
+      });
+
+      if (error) throw error;
+      toast({
+        title: "Welcome!",
+        description: "Please check your email to verify your account."
+      });
+    } catch (error) {
       console.error('Signup error:', error);
       toast({
-        title: "Signup Failed",
-        description: error.message,
-        variant: "destructive",
+        title: "Signup failed",
+        description: "An error occurred during signup. Please try again.",
+        variant: "destructive"
       });
-      throw error;
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handleSignOut = async () => {
     try {
-      if (user) {
-        await signOut(user.id);
-      }
-      navigate("/auth");
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       toast({
-        title: "Signed Out",
-        description: "You have been signed out successfully.",
+        title: "Signed out",
+        description: "You have been successfully signed out."
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('Sign out error:', error);
       toast({
-        title: "Error Signing Out",
-        description: error.message,
-        variant: "destructive",
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive"
       });
     }
   };
 
   const handleResendVerificationEmail = async () => {
+    if (!user?.email) return;
+    
     try {
-      await resendVerificationEmail(user?.email, user?.id);
-      toast({
-        title: "Email Sent",
-        description: "Verification email has been sent. Please check your inbox.",
+      setIsProcessing(true);
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: user.email
       });
-    } catch (error: any) {
-      console.error('Verification email error:', error);
+
+      if (error) throw error;
+      toast({
+        title: "Email sent",
+        description: "Verification email has been resent."
+      });
+    } catch (error) {
+      console.error('Resend verification error:', error);
       toast({
         title: "Error",
-        description: error.message,
-        variant: "destructive",
+        description: "Failed to resend verification email. Please try again.",
+        variant: "destructive"
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
-  const isAuthorized = (requiredRole: string): boolean => {
-    try {
-      if (!user || !userRole) return false;
-      return getRoleHierarchy(userRole, requiredRole);
-    } catch (error: any) {
-      console.error('Authorization error:', error);
-      toast({
-        title: "Authorization Error",
-        description: error.message,
-        variant: "destructive",
-      });
-      return false;
-    }
+  const isAuthorized = (requiredRole?: string): boolean => {
+    if (!user) return false;
+    if (!requiredRole) return true;
+    if (userRole === 'admin') return true;
+    return userRole === requiredRole;
   };
 
   return {
@@ -93,5 +118,6 @@ export const useAuthHandlers = (user: any, userRole: string | undefined) => {
     handleSignOut,
     handleResendVerificationEmail,
     isAuthorized,
+    isProcessing
   };
-};
+}

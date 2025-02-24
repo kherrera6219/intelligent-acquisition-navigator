@@ -1,53 +1,49 @@
 
-import { useState, useEffect } from 'react';
-import { User } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { fetchUserRole } from "@/services/authService";
+import { User } from "@supabase/supabase-js";
 
-export const useAuthState = () => {
+export function useAuthState() {
   const [user, setUser] = useState<User | null>(null);
-  const [userRole, setUserRole] = useState<string>();
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
-
-  const handleFetchUserRole = async (userId: string) => {
-    try {
-      const role = await fetchUserRole(userId);
-      setUserRole(role);
-    } catch (error: any) {
-      console.error('Error fetching user role:', error);
-      setError(error.message || "Failed to fetch user role");
-      toast({
-        title: "Error Fetching Role",
-        description: error.message || "Failed to fetch user role",
-        variant: "destructive",
-      });
-    }
-  };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Get initial session
+    const { data: { session } } = supabase.auth.getSession();
+    setUser(session?.user ?? null);
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) {
-        handleFetchUserRole(session.user.id);
-      }
       setIsLoading(false);
+
+      if (session?.user) {
+        // Fetch user role from profiles table
+        supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data, error }) => {
+            if (error) {
+              console.error('Error fetching user role:', error);
+              setUserRole(null);
+            } else {
+              setUserRole(data?.role ?? null);
+            }
+          });
+      } else {
+        setUserRole(null);
+      }
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await handleFetchUserRole(session.user.id);
-      }
-      setIsLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // Cleanup subscription
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  return { user, userRole, isLoading, handleFetchUserRole, error };
-};
+  return { user, userRole, isLoading, error };
+}
