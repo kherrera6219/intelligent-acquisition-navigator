@@ -9,6 +9,7 @@ export const useAuthState = () => {
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleFetchUserRole = async (userId: string) => {
@@ -17,6 +18,7 @@ export const useAuthState = () => {
       setUserRole(role);
     } catch (error: any) {
       console.error('Error fetching user role:', error);
+      setError(error.message || "Failed to fetch user role");
       toast({
         title: "Error Fetching Role",
         description: error.message || "Failed to fetch user role",
@@ -47,5 +49,5 @@ export const useAuthState = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  return { user, userRole, isLoading, handleFetchUserRole };
+  return { user, userRole, isLoading, handleFetchUserRole, error };
 };

@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   if (isInitializing) {
     return (
       <div className="h-screen w-screen flex items-center justify-center">
-        <LoadingSpinner size="xl" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
