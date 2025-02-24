@@ -11,10 +11,10 @@ import { Container } from "@/components/ui/universal/Container";
 // Simple loading spinner for lazy-loaded components
 export const PageLoader = () => (
   <Container className="py-8">
-    <Card className="w-full p-6 shadow-xl flex items-center justify-center min-h-[400px]">
+    <Card className="w-full p-6 flex items-center justify-center min-h-[400px]">
       <div className="text-center">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 text-gray-400">Loading...</p>
+        <p className="mt-4 text-muted-foreground">Loading...</p>
       </div>
     </Card>
   </Container>
@@ -30,10 +30,9 @@ const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcq
 const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage" /* webpackChunkName: "auth" */));
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage" /* webpackChunkName: "analytics" */));
 
+// Simplified LazyComponent
 const LazyComponent = ({ Component }: { Component: React.ComponentType }) => (
-  <Suspense fallback={<PageLoader />}>
-    <Component />
-  </Suspense>
+  <Component />
 );
 
 // Function to wrap pages with layout and authentication checks
@@ -42,11 +41,15 @@ const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = 
     {requiresAuth ? (
       <ProtectedRoute requiredRole={requiredRole}>
         <MainLayout>
-          <LazyComponent Component={Component} />
+          <Suspense fallback={<PageLoader />}>
+            <LazyComponent Component={Component} />
+          </Suspense>
         </MainLayout>
       </ProtectedRoute>
     ) : (
-      <LazyComponent Component={Component} />
+      <Suspense fallback={<PageLoader />}>
+        <LazyComponent Component={Component} />
+      </Suspense>
     )}
   </PageErrorBoundary>
 );
