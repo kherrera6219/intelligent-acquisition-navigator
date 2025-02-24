@@ -19,38 +19,83 @@ export const PageLoader = () => (
   </Container>
 );
 
-// Lazy-loaded pages with proper chunk names
-const DashboardPage = lazy(() => import("@/pages/DashboardPage" /* webpackChunkName: "dashboard" */));
-const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage" /* webpackChunkName: "document-control" */));
-const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage" /* webpackChunkName: "market-research" */));
-const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage" /* webpackChunkName: "solicitation-review" */));
-const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage" /* webpackChunkName: "texas-acquisition" */));
-const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage" /* webpackChunkName: "federal-acquisition" */));
-const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage" /* webpackChunkName: "auth" */));
-const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage" /* webpackChunkName: "analytics" */));
+// Lazy-loaded pages with comprehensive error handling
+const DashboardPage = lazy(() => 
+  import("@/pages/DashboardPage").catch(() => {
+    console.error("Failed to load DashboardPage");
+    return { default: () => <div>Error loading dashboard</div> };
+  })
+);
 
-// Simplified LazyComponent
+const DocumentControlPage = lazy(() => 
+  import("@/pages/acquisition/DocumentControlPage").catch(() => {
+    console.error("Failed to load DocumentControlPage");
+    return { default: () => <div>Error loading document control</div> };
+  })
+);
+
+const MarketResearchPage = lazy(() => 
+  import("@/pages/acquisition/MarketResearchPage").catch(() => {
+    console.error("Failed to load MarketResearchPage");
+    return { default: () => <div>Error loading market research</div> };
+  })
+);
+
+const SolicitationReviewPage = lazy(() => 
+  import("@/pages/acquisition/SolicitationReviewPage").catch(() => {
+    console.error("Failed to load SolicitationReviewPage");
+    return { default: () => <div>Error loading solicitation review</div> };
+  })
+);
+
+const TexasAcquisitionPage = lazy(() => 
+  import("@/pages/TexasAcquisitionPage").catch(() => {
+    console.error("Failed to load TexasAcquisitionPage");
+    return { default: () => <div>Error loading Texas acquisition</div> };
+  })
+);
+
+const FederalAcquisitionPage = lazy(() => 
+  import("@/pages/acquisition/FederalAcquisitionPage").catch(() => {
+    console.error("Failed to load FederalAcquisitionPage");
+    return { default: () => <div>Error loading federal acquisition</div> };
+  })
+);
+
+const AuthPage = lazy(() => 
+  import("@/pages/auth/AuthenticationPage").catch(() => {
+    console.error("Failed to load AuthenticationPage");
+    return { default: () => <div>Error loading authentication</div> };
+  })
+);
+
+const AnalyticsPage = lazy(() => 
+  import("@/pages/AnalyticsPage").catch(() => {
+    console.error("Failed to load AnalyticsPage");
+    return { default: () => <div>Error loading analytics</div> };
+  })
+);
+
+// Enhanced LazyComponent with error boundary
 const LazyComponent = ({ Component }: { Component: React.ComponentType }) => (
-  <Component />
+  <PageErrorBoundary>
+    <Component />
+  </PageErrorBoundary>
 );
 
 // Function to wrap pages with layout and authentication checks
 const wrapWithLayout = (Component: React.ComponentType, requiresAuth: boolean = true, requiredRole?: string) => (
-  <PageErrorBoundary>
+  <Suspense fallback={<PageLoader />}>
     {requiresAuth ? (
       <ProtectedRoute requiredRole={requiredRole}>
         <MainLayout>
-          <Suspense fallback={<PageLoader />}>
-            <LazyComponent Component={Component} />
-          </Suspense>
+          <LazyComponent Component={Component} />
         </MainLayout>
       </ProtectedRoute>
     ) : (
-      <Suspense fallback={<PageLoader />}>
-        <LazyComponent Component={Component} />
-      </Suspense>
+      <LazyComponent Component={Component} />
     )}
-  </PageErrorBoundary>
+  </Suspense>
 );
 
 export const routes: RouteObject[] = [
@@ -59,7 +104,7 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(DashboardPage)
   },
   {
-    path: "/dashboard", // Adding this for compatibility with existing links
+    path: "/dashboard",
     element: wrapWithLayout(DashboardPage)
   },
   {

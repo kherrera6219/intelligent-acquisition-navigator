@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, FileSearch, FileCheck, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,9 +28,25 @@ export const Header = () => {
   const { signOut, userRole } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState(location.pathname);
+
+  useEffect(() => {
+    setCurrentPath(location.pathname);
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [location.pathname]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const isAuthorized = (minRole?: string) => {
+    if (!minRole) return true;
+    if (!userRole) return false;
+    if (userRole === "admin") return true;
+    if (minRole === "user") return true;
+    return userRole === minRole;
   };
 
   return (
@@ -46,27 +62,13 @@ export const Header = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex gap-6 overflow-x-auto pb-2 scrollbar-none">
               {navItems.map((item) => (
-                item.minRole ? (
-                  userRole && ['admin', 'manager'].includes(userRole) ? (
-                    <Link 
-                      key={item.href}
-                      to={item.href} 
-                      className={cn(
-                        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-                        location.pathname === item.href && "text-white bg-white/5"
-                      )}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                    </Link>
-                  ) : null
-                ) : (
+                isAuthorized(item.minRole) && (
                   <Link 
                     key={item.href}
                     to={item.href} 
                     className={cn(
                       "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-                      location.pathname === item.href && "text-white bg-white/5"
+                      currentPath === item.href && "text-white bg-white/5"
                     )}
                   >
                     <item.icon className="h-4 w-4" />
@@ -112,28 +114,13 @@ export const Header = () => {
           <nav className="md:hidden py-4 border-t border-gray-800">
             <div className="flex flex-col gap-2">
               {navItems.map((item) => (
-                item.minRole ? (
-                  userRole && ['admin', 'manager'].includes(userRole) ? (
-                    <Link 
-                      key={item.href}
-                      to={item.href} 
-                      className={cn(
-                        "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
-                        location.pathname === item.href && "text-white bg-white/5"
-                      )}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                    </Link>
-                  ) : null
-                ) : (
+                isAuthorized(item.minRole) && (
                   <Link 
                     key={item.href}
                     to={item.href} 
                     className={cn(
                       "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
-                      location.pathname === item.href && "text-white bg-white/5"
+                      currentPath === item.href && "text-white bg-white/5"
                     )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
