@@ -7,12 +7,21 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { MetricsChart } from '@/components/MetricsChart';
 import { useToast } from '@/hooks/use-toast';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+
+interface DashboardData {
+  totalProposals: number;
+  activeProjects: number;
+  pendingReviews: number;
+  metrics: Array<Record<string, any>>;
+  activities: Array<Record<string, any>>;
+}
 
 const DashboardPage = () => {
   const [filterValue, setFilterValue] = useState('');
   const { toast } = useToast();
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery<DashboardData>({
     queryKey: ['dashboard'],
     queryFn: async () => {
       // Temporary mock data
@@ -35,11 +44,24 @@ const DashboardPage = () => {
   };
 
   if (isLoading) {
-    return <Progress />;
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-red-500">Error loading dashboard data</div>;
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-red-500">Error loading dashboard data</h2>
+          <Button onClick={() => refetch()} className="mt-4">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
