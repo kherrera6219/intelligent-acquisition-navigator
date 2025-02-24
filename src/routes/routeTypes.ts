@@ -24,8 +24,8 @@ export const wrapWithLayout = (
   Component: ComponentType,
   requiresAuth: boolean = true,
   requiredRole?: string
-) => {
-  return (
+): JSX.Element => {
+  const element = (
     <Suspense fallback={<PageLoader />}>
       {requiresAuth ? (
         <ProtectedRoute requiredRole={requiredRole}>
@@ -38,6 +38,8 @@ export const wrapWithLayout = (
       )}
     </Suspense>
   );
+  
+  return element;
 };
 
 // Route definition type with additional properties
