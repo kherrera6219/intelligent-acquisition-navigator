@@ -15,17 +15,17 @@ export function useAuthState() {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
       if (session?.user) {
-        const { data, error } = await supabase
-          .from('profiles')
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
           .select('role')
-          .eq('id', session.user.id)
+          .eq('user_id', session.user.id)
           .single();
           
-        if (error) {
-          console.error('Error fetching user role:', error);
+        if (roleError) {
+          console.error('Error fetching user role:', roleError);
           setUserRole(null);
         } else {
-          setUserRole(data?.role ?? null);
+          setUserRole(roleData?.role ?? null);
         }
       }
       setIsLoading(false);
@@ -38,17 +38,17 @@ export function useAuthState() {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        const { data, error } = await supabase
-          .from('profiles')
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
           .select('role')
-          .eq('id', session.user.id)
+          .eq('user_id', session.user.id)
           .single();
           
-        if (error) {
-          console.error('Error fetching user role:', error);
+        if (roleError) {
+          console.error('Error fetching user role:', roleError);
           setUserRole(null);
         } else {
-          setUserRole(data?.role ?? null);
+          setUserRole(roleData?.role ?? null);
         }
       } else {
         setUserRole(null);

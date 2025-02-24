@@ -41,7 +41,6 @@ const AuthForm = ({ mode }: AuthFormProps) => {
           description: "You have been logged in successfully.",
         });
       }
-      // Always redirect to dashboard after successful auth
       navigate('/dashboard');
     } catch (error) {
       toast({

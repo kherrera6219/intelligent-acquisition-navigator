@@ -1,47 +1,41 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { Shield, Loader2 } from "lucide-react";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useAuth } from '@/providers/AuthProvider';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
-const SignUpForm = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
+interface SignUpFormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const { signup } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<SignUpFormData>();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: SignUpFormData) => {
     setIsLoading(true);
-
     try {
-      if (formData.password !== formData.confirmPassword) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Passwords do not match",
-        });
-        return;
-      }
-
-      // Handle sign up logic here
+      await signup(data.email, data.password);
       toast({
-        title: "Account created",
-        description: "Welcome to ProcurityIQ!",
+        title: "Success",
+        description: "Please check your email to verify your account.",
       });
-      navigate("/dashboard");
-    } catch (error: any) {
+      navigate('/auth?mode=login');
+    } catch (error) {
+      console.error('Signup error:', error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description: error.message || "Failed to create account",
+        description: error instanceof Error ? error.message : "Something went wrong",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -49,91 +43,80 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
-      <Card className="w-full max-w-md p-8 bg-black/40 backdrop-blur-sm border-white/5">
-        <div className="text-center mb-8">
-          <div className="h-16 w-16 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
-                         rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Shield className="h-8 w-8 text-fuchsia-400" />
-          </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Create Account</h1>
-          <p className="text-gray-400">Join ProcurityIQ to streamline your acquisition process</p>
-        </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="name@example.com"
+          {...register('email', {
+            required: 'Email is required',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'Invalid email address'
+            }
+          })}
+        />
+        {errors.email && (
+          <p className="text-sm text-red-500">{errors.email.message}</p>
+        )}
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Email Address
-            </label>
-            <Input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="bg-white/5 border-white/10 text-white"
-              required
-              disabled={isLoading}
-            />
-          </div>
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          {...register('password', {
+            required: 'Password is required',
+            minLength: {
+              value: 8,
+              message: 'Password must be at least 8 characters'
+            }
+          })}
+        />
+        {errors.password && (
+          <p className="text-sm text-red-500">{errors.password.message}</p>
+        )}
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Password
-            </label>
-            <Input
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="bg-white/5 border-white/10 text-white"
-              required
-              disabled={isLoading}
-            />
-          </div>
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">Confirm Password</Label>
+        <Input
+          id="confirmPassword"
+          type="password"
+          {...register('confirmPassword', {
+            required: 'Please confirm your password',
+            validate: value => value === watch('password') || 'Passwords do not match'
+          })}
+        />
+        {errors.confirmPassword && (
+          <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+        )}
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Confirm Password
-            </label>
-            <Input
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="bg-white/5 border-white/10 text-white"
-              required
-              disabled={isLoading}
-            />
-          </div>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? (
+          <span className="flex items-center gap-2">
+            <span className="animate-spin">⟳</span>
+            Creating account...
+          </span>
+        ) : (
+          'Create account'
+        )}
+      </Button>
 
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 
-                     hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating Account...
-              </>
-            ) : (
-              "Create Account"
-            )}
-          </Button>
-
-          <p className="text-center text-sm text-gray-400">
-            Already have an account?{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/login")}
-              className="text-fuchsia-400 hover:text-fuchsia-300"
-              disabled={isLoading}
-            >
-              Sign in
-            </button>
-          </p>
-        </form>
-      </Card>
-    </div>
+      <p className="text-sm text-center text-gray-500">
+        Already have an account?{' '}
+        <Button
+          variant="link"
+          className="p-0 h-auto font-normal"
+          onClick={() => navigate('/auth?mode=login')}
+        >
+          Sign in
+        </Button>
+      </p>
+    </form>
   );
-};
-
-export default SignUpForm;
+}
