@@ -27,8 +27,8 @@ export const PrivacyPage = lazy(() =>
   }))
 );
 
-export const KnowledgeBasePage = lazy(() => 
-  import("@/pages/KnowledgeBasePage").catch(() => ({
+export const FeaturesPage = lazy(() => // Changed from KnowledgeBasePage
+  import("@/pages/FeaturesPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading features page")
   }))
 );

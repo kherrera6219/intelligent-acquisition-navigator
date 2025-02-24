@@ -13,7 +13,7 @@ import {
   ProposalsPage,
   HomePage,
   HelpPage,
-  KnowledgeBasePage,
+  FeaturesPage, // Changed from KnowledgeBasePage
   PricingPage,
   AboutPage,
   ContactPage,
@@ -42,7 +42,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: "/features",
-    element: wrapWithLayout(KnowledgeBasePage, false)
+    element: wrapWithLayout(FeaturesPage, false)
   },
   {
     path: "/pricing",
