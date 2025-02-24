@@ -5,7 +5,7 @@ import { Grid } from "@/components/ui/universal/Grid";
 import { Container } from "@/components/ui/universal/Container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FileText, Search, Filter, Clock, CheckCircle, AlertTriangle } from "lucide-react";
+import { Search, Filter, Clock, FileText } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const mockSolicitations = [
@@ -21,12 +21,12 @@ const mockSolicitations = [
     id: "2",
     title: "Office Equipment Procurement",
     status: "review",
-    riskLevel: "medium",
+    riskLevel: "medium", 
     dueDate: "2024-03-20",
     department: "Facilities",
   },
   {
-    id: "3",
+    id: "3", 
     title: "Security Services Contract",
     status: "pending",
     riskLevel: "high",
