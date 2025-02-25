@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { ProposalDetails } from '@/components/proposals/ProposalDetails';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
+import { cn } from '@/lib/utils';
 import type { Proposal } from '@/types/proposals';
 
 const ProposalsPage = () => {
