@@ -419,6 +419,24 @@ export type Database = {
           },
         ]
       }
+      health_check: {
+        Row: {
+          id: number
+          status: string
+          timestamp: string
+        }
+        Insert: {
+          id?: number
+          status?: string
+          timestamp?: string
+        }
+        Update: {
+          id?: number
+          status?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
       knowledge_documents: {
         Row: {
           content_text: string | null
