@@ -24,18 +24,17 @@ export const useHomePageInit = (): HomePageInitState => {
   useEffect(() => {
     const initialize = async () => {
       try {
-        // Check Supabase connection
+        // Simple health check query
         const { error: supabaseError } = await supabase
           .from('health_check')
-          .select('*')
-          .limit(1)
-          .single();
+          .select('count')
+          .maybeSingle();
 
         if (supabaseError) {
           throw new Error('Database connection failed');
         }
 
-        // First visit detection
+        // Check first visit
         const hasVisited = localStorage.getItem('hasVisitedBefore');
         if (hasVisited) {
           setIsFirstVisit(false);
@@ -43,13 +42,9 @@ export const useHomePageInit = (): HomePageInitState => {
           localStorage.setItem('hasVisitedBefore', 'true');
         }
 
-        // Scroll handler
-        let scrollTimeout: NodeJS.Timeout;
+        // Scroll handling
         const handleScroll = () => {
-          if (scrollTimeout) clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(() => {
-            setShowBackToTop(window.scrollY > 400);
-          }, 100);
+          setShowBackToTop(window.scrollY > 400);
         };
 
         window.addEventListener('scroll', handleScroll);
@@ -57,12 +52,10 @@ export const useHomePageInit = (): HomePageInitState => {
         setError(null);
 
         return () => {
-          clearTimeout(scrollTimeout);
           window.removeEventListener('scroll', handleScroll);
         };
       } catch (err) {
         const error = err instanceof Error ? err : new Error('Failed to initialize homepage');
-        console.error("Error in homepage initialization:", error);
         setError(error);
         toast({
           title: "Error initializing page",
