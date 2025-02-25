@@ -1,0 +1,36 @@
+
+/* Grid Background */
+.bg-grid {
+  background-size: 100px 100px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  @apply relative z-0;
+}
+
+/* Container Classes */
+.container-tight {
+  @apply w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8;
+}
+
+.container-wide {
+  @apply w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8;
+}
+
+/* Grid Systems */
+.grid-auto-fit {
+  @apply grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6;
+}
+
+.grid-auto-fill {
+  @apply grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 sm:gap-6;
+}
+
+/* Layout Classes */
+.layout-container {
+  @apply w-full min-h-screen flex flex-col;
+}
+
+.main-content {
+  @apply flex-1 w-full max-w-[100vw] overflow-x-hidden;
+}
