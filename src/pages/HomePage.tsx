@@ -1,7 +1,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { FeaturesSection } from "@/components/landing/FeaturesSection";
+import { FeaturesSection } from "@/components/landing/FeaturesSection"; 
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { PrivacyNotice } from "@/components/landing/PrivacyNotice";
