@@ -22,29 +22,20 @@ export const useHomePageInit = (): HomePageInitState => {
   const { toast } = useToast();
 
   useEffect(() => {
-    console.log("Homepage mounting...");
-    let subscription: ReturnType<typeof supabase.channel> | null = null;
-    
     const initialize = async () => {
       try {
-        // Check Supabase connection first
-        const { data, error: supabaseError } = await supabase.from('health_check').select('*').limit(1);
+        // Check Supabase connection
+        const { error: supabaseError } = await supabase
+          .from('health_check')
+          .select('*')
+          .limit(1)
+          .single();
+
         if (supabaseError) {
           throw new Error('Database connection failed');
         }
 
-        // Test WebSocket connection
-        subscription = supabase.channel('health_check')
-          .on('broadcast', { event: 'test' }, () => {
-            console.log('WebSocket connection successful');
-          })
-          .subscribe((status) => {
-            if (status !== 'SUBSCRIBED') {
-              console.warn('WebSocket connection status:', status);
-            }
-          });
-
-        // First visit detection with local storage
+        // First visit detection
         const hasVisited = localStorage.getItem('hasVisitedBefore');
         if (hasVisited) {
           setIsFirstVisit(false);
@@ -52,7 +43,7 @@ export const useHomePageInit = (): HomePageInitState => {
           localStorage.setItem('hasVisitedBefore', 'true');
         }
 
-        // Optimized scroll handler with debounce
+        // Scroll handler
         let scrollTimeout: NodeJS.Timeout;
         const handleScroll = () => {
           if (scrollTimeout) clearTimeout(scrollTimeout);
@@ -62,16 +53,10 @@ export const useHomePageInit = (): HomePageInitState => {
         };
 
         window.addEventListener('scroll', handleScroll);
-
-        // Set loaded state after successful initialization
         setIsLoaded(true);
         setError(null);
-        console.log("Setting isLoaded to true");
 
         return () => {
-          if (subscription) {
-            supabase.removeChannel(subscription);
-          }
           clearTimeout(scrollTimeout);
           window.removeEventListener('scroll', handleScroll);
         };
@@ -84,7 +69,7 @@ export const useHomePageInit = (): HomePageInitState => {
           description: error.message || "Please refresh the page to try again",
           variant: "destructive",
         });
-        setIsLoaded(true); // Ensure page loads even if there's an error
+        setIsLoaded(true);
       }
     };
 
