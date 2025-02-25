@@ -23,6 +23,7 @@ export const useHomePageInit = (): HomePageInitState => {
 
   useEffect(() => {
     console.log("Homepage mounting...");
+    let subscription: ReturnType<typeof supabase.channel> | null = null;
     
     const initialize = async () => {
       try {
@@ -31,6 +32,17 @@ export const useHomePageInit = (): HomePageInitState => {
         if (supabaseError) {
           throw new Error('Database connection failed');
         }
+
+        // Test WebSocket connection
+        subscription = supabase.channel('health_check')
+          .on('broadcast', { event: 'test' }, () => {
+            console.log('WebSocket connection successful');
+          })
+          .subscribe((status) => {
+            if (status !== 'SUBSCRIBED') {
+              console.warn('WebSocket connection status:', status);
+            }
+          });
 
         // First visit detection with local storage
         const hasVisited = localStorage.getItem('hasVisitedBefore');
@@ -57,6 +69,9 @@ export const useHomePageInit = (): HomePageInitState => {
         console.log("Setting isLoaded to true");
 
         return () => {
+          if (subscription) {
+            supabase.removeChannel(subscription);
+          }
           clearTimeout(scrollTimeout);
           window.removeEventListener('scroll', handleScroll);
         };
