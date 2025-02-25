@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { CheckCircle, Circle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { ChecklistFeedback } from "./ChecklistFeedback";
 
 interface ChecklistItem {
   id: number;
@@ -64,34 +64,6 @@ const initialChecklist: ChecklistItem[] = [
   }
 ];
 
-interface FeedbackDialogProps {
-  onClose: () => void;
-  onSubmit: (feedback: string) => void;
-}
-
-const FeedbackDialog: React.FC<FeedbackDialogProps> = ({ onClose, onSubmit }) => {
-  const [feedback, setFeedback] = useState("");
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <Card className="w-full max-w-md p-6 space-y-4">
-        <h2 className="text-xl font-semibold">Your Feedback</h2>
-        <p className="text-sm text-gray-400">Please share your thoughts on the improvements made:</p>
-        <textarea 
-          className="w-full h-32 p-3 rounded-md bg-white/5 border border-white/10 text-white"
-          value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
-          placeholder="Enter your feedback here..."
-        />
-        <div className="flex justify-end space-x-3">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => onSubmit(feedback)}>Submit</Button>
-        </div>
-      </Card>
-    </div>
-  );
-};
-
 export const ImprovementChecklist: React.FC = () => {
   const [checklist, setChecklist] = useState<ChecklistItem[]>(initialChecklist);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -119,22 +91,46 @@ export const ImprovementChecklist: React.FC = () => {
   }, [checklist]);
 
   const toggleItem = (id: number) => {
-    setChecklist(prev => prev.map(item => 
-      item.id === id ? { ...item, completed: !item.completed } : item
-    ));
+    try {
+      setChecklist(prev => prev.map(item => 
+        item.id === id ? { ...item, completed: !item.completed } : item
+      ));
 
-    toast({
-      title: "Task Updated",
-      description: "Progress has been saved",
-    });
+      toast({
+        title: "Task Updated",
+        description: "Progress has been saved",
+      });
+    } catch (error) {
+      console.error("Error toggling item:", error);
+      // Auto-retry on failure
+      setTimeout(() => toggleItem(id), 1000);
+      
+      toast({
+        title: "Error Updating Task",
+        description: "Automatically retrying...",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleFeedbackSubmit = (feedback: string) => {
-    toast({
-      title: "Feedback Received",
-      description: "Thank you for your feedback! We'll use it to improve further.",
-    });
-    setShowFeedback(false);
+    try {
+      toast({
+        title: "Feedback Received",
+        description: "Thank you for your feedback! We'll use it to improve further.",
+      });
+      setShowFeedback(false);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      // Auto-retry on failure
+      setTimeout(() => handleFeedbackSubmit(feedback), 1000);
+      
+      toast({
+        title: "Error Submitting Feedback",
+        description: "Automatically retrying...",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -180,7 +176,7 @@ export const ImprovementChecklist: React.FC = () => {
       </div>
 
       {showFeedback && (
-        <FeedbackDialog 
+        <ChecklistFeedback 
           onClose={() => setShowFeedback(false)}
           onSubmit={handleFeedbackSubmit}
         />
