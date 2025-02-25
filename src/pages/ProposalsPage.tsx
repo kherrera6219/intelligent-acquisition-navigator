@@ -1,16 +1,16 @@
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { ProposalDetails } from '@/components/proposals/ProposalDetails';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
-import { ProposalCard } from '@/components/proposals/ProposalCard';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import type { Proposal } from '@/types/proposals';
+import { SearchBar } from '@/components/proposals/SearchBar';
+import { Pagination } from '@/components/proposals/Pagination';
+import { ProposalList } from '@/components/proposals/ProposalList';
+import { ProposalModal } from '@/components/proposals/ProposalModal';
 
 // Input validation schema
 const searchSchema = z.object({
@@ -103,7 +103,6 @@ const ProposalsPage = () => {
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     try {
-      // Immediate validation for obvious issues
       if (value.length > 50) {
         throw new Error('Search term too long');
       }
@@ -132,7 +131,6 @@ const ProposalsPage = () => {
     setSelectedProposal(null);
   }, []);
 
-  // Show loading skeleton during initial load
   if (isLoading) {
     return (
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-[50vh]">
@@ -160,79 +158,32 @@ const ProposalsPage = () => {
       </h1>
       
       <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div className="relative w-full sm:max-w-sm">
-          <Input
-            ref={searchRef}
-            type="text"
-            placeholder="Search proposals..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="pr-10 w-full"
-            aria-label="Search"
-            disabled={isValidating}
-          />
-          {searchTerm && (
-            <Button
-              variant="ghost"
-              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-              onClick={handleClearSearch}
-              aria-label="Clear search"
-            >
-              ×
-            </Button>
-          )}
-          {isValidating && (
-            <div className="absolute right-12 top-1/2 -translate-y-1/2">
-              <LoadingState variant="inline" size="sm" />
-            </div>
-          )}
-        </div>
+        <SearchBar
+          searchRef={searchRef}
+          searchTerm={searchTerm}
+          onChange={handleSearchChange}
+          onClear={handleClearSearch}
+          isValidating={isValidating}
+        />
         <Button variant="outline" onClick={() => {}}>Sort by date</Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        {data?.proposals.map((proposal) => (
-          <ProposalCard
-            key={proposal.id}
-            proposal={proposal}
-            onClick={handleProposalClick}
-          />
-        ))}
-      </div>
+      <ProposalList
+        proposals={data?.proposals || []}
+        onProposalClick={handleProposalClick}
+      />
 
-      <div className="flex justify-center gap-4 mt-6">
-        <Button
-          onClick={() => setPage(p => Math.max(1, p - 1))}
-          disabled={page === 1}
-          variant="outline"
-        >
-          Previous
-        </Button>
-        <span className="py-2 text-white">Page {page}</span>
-        <Button
-          onClick={() => setPage(p => p + 1)}
-          disabled={page === data?.totalPages}
-          variant="outline"
-        >
-          Next
-        </Button>
-      </div>
+      <Pagination
+        page={page}
+        totalPages={data?.totalPages}
+        onPageChange={setPage}
+      />
 
       {selectedProposal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 transition-opacity">
-          <div className="bg-background/80 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto shadow-xl">
-            <ProposalDetails proposal={selectedProposal} />
-            <div className="p-4 border-t border-border">
-              <Button 
-                onClick={handleCloseDetails}
-                variant="outline"
-                className="w-full"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
+        <ProposalModal
+          proposal={selectedProposal}
+          onClose={handleCloseDetails}
+        />
       )}
     </div>
   );
