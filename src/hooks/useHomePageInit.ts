@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 interface HomePageInitState {
   showPrivacyNotice: boolean;
@@ -20,6 +21,7 @@ export const useHomePageInit = (): HomePageInitState => {
   const [isFirstVisit, setIsFirstVisit] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { toast } = useToast();
+  const [channels, setChannels] = useState<RealtimeChannel[]>([]);
 
   // Memoize the scroll handler
   const handleScroll = useCallback(() => {
@@ -33,14 +35,14 @@ export const useHomePageInit = (): HomePageInitState => {
   }, []);
 
   useEffect(() => {
-    let isMounted = true; // Track component mount state
+    let isMounted = true;
     let retryCount = 0;
     const maxRetries = 3;
     
     const initialize = async () => {
       try {
         // Clear any existing sessions to prevent SID conflicts
-        const { error: sessionError } = await supabase.auth.getSession();
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) {
           console.warn('Session check failed:', sessionError);
         }
@@ -55,10 +57,10 @@ export const useHomePageInit = (): HomePageInitState => {
           .select('count')
           .maybeSingle();
 
-        const { error: supabaseError } = await Promise.race([
+        const { data, error: supabaseError } = await Promise.race([
           dbCheckPromise,
           timeoutPromise
-        ]);
+        ]) as { data: any; error: Error | null };
 
         if (supabaseError) {
           throw new Error('Database connection failed');
@@ -116,18 +118,12 @@ export const useHomePageInit = (): HomePageInitState => {
       isMounted = false;
       window.removeEventListener('scroll', handleScroll);
       
-      // Close any active Supabase connections
-      const cleanupConnections = async () => {
-        try {
-          await supabase.removeAllSubscriptions();
-        } catch (err) {
-          console.warn('Error cleaning up connections:', err);
-        }
-      };
-      
-      cleanupConnections();
+      // Close any active channels
+      channels.forEach(channel => {
+        supabase.removeChannel(channel);
+      });
     };
-  }, [toast, handleScroll]); 
+  }, [toast, handleScroll, channels]); 
 
   return {
     showPrivacyNotice,
