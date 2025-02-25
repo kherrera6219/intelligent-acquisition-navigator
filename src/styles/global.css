@@ -208,7 +208,7 @@ html {
   }
 }
 
-/* Screen Size Debug Helper (only in development) */
+/* Screen Size Debug Helper */
 .debug-screen {
   @apply fixed bottom-1 right-1 px-2 py-1 bg-gray-800 text-white text-xs rounded-full z-50;
 }
