@@ -6,10 +6,14 @@ import { Container } from "@/components/ui/universal/Container";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
-export const MainLayout = ({ children }: { children: React.ReactNode }) => {
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
+
+export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <ThemeProvider>
-      <div className="layout-container">
+      <div className="layout-container bg-gradient-to-b from-gray-900 to-black">
         {/* Accessible Skip Link */}
         <a 
           href="#main-content" 
@@ -23,10 +27,13 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <main 
           id="main-content" 
           role="main" 
-          className="main-content bg-gradient-to-b from-gray-900 to-black"
+          className="main-content"
         >
-          <Container className="py-responsive">
-            <Card className="w-full bg-black/40 backdrop-blur-sm border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl focus-within:shadow-2xl rounded-lg overflow-hidden">
+          <Container size="lg" className="py-responsive">
+            <Card 
+              className="w-full bg-black/40 backdrop-blur-sm border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl focus-within:shadow-2xl rounded-lg overflow-hidden"
+              noShadow
+            >
               <div className="animate-fade-in divide-y divide-white/10">
                 {children}
               </div>

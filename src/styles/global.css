@@ -217,4 +217,3 @@ html {
   content: 'xs';
   @apply sm:content-['sm'] md:content-['md'] lg:content-['lg'] xl:content-['xl'] 2xl:content-['2xl'];
 }
-
