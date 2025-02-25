@@ -134,41 +134,44 @@ export const ImprovementChecklist: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Improvement Checklist</h2>
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+        <h2 className="text-xl sm:text-2xl font-bold">Improvement Checklist</h2>
         <div className="text-sm text-gray-400">
           Completed: {completedCount} / {checklist.length}
         </div>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-3 sm:gap-4">
         {checklist.map((item) => (
           <Card 
             key={item.id}
             className={cn(
-              "p-4 transition-all duration-200 cursor-pointer hover:bg-white/5",
+              "p-3 sm:p-4 transition-all duration-200 cursor-pointer hover:bg-white/5",
+              "transform hover:-translate-y-0.5 hover:shadow-lg",
               item.completed && "bg-white/5",
               currentItem === item.id - 1 && "border-primary"
             )}
             onClick={() => toggleItem(item.id)}
           >
-            <div className="flex items-start gap-4">
-              <div className="text-primary">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div className="text-primary pt-1">
                 {item.completed ? (
-                  <CheckCircle className="h-5 w-5" />
+                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                 ) : (
-                  <Circle className="h-5 w-5" />
+                  <Circle className="h-4 w-4 sm:h-5 sm:w-5" />
                 )}
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <h3 className={cn(
-                  "font-medium",
+                  "font-medium text-sm sm:text-base break-words",
                   item.completed && "line-through text-gray-400"
                 )}>
                   {item.title}
                 </h3>
-                <p className="text-sm text-gray-400">{item.description}</p>
+                <p className="text-xs sm:text-sm text-gray-400 mt-1 break-words">
+                  {item.description}
+                </p>
               </div>
             </div>
           </Card>
@@ -184,4 +187,3 @@ export const ImprovementChecklist: React.FC = () => {
     </div>
   );
 };
-
