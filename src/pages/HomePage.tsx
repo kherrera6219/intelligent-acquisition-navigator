@@ -6,7 +6,7 @@ import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { PrivacyNotice } from "@/components/landing/PrivacyNotice";
 import CookieConsent from "@/components/CookieConsent";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { LoadingState } from "@/components/ui/universal/LoadingState";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { SectionErrorBoundary } from "@/components/ui/section/SectionErrorBoundary";
@@ -28,7 +28,6 @@ const Index = () => {
     error
   } = useHomePageInit();
 
-  // Skip link for accessibility
   const skipToMain = () => {
     const main = document.querySelector('main');
     if (main) {
@@ -36,7 +35,6 @@ const Index = () => {
     }
   };
 
-  // Show error state if initialization failed
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#1A1720]">
@@ -56,22 +54,23 @@ const Index = () => {
     );
   }
 
-  // Show loading state during initialization
   if (!isLoaded) {
     return (
-      <div 
-        className="min-h-screen flex items-center justify-center bg-[#1A1720] animate-fade-in" 
-        role="progressbar" 
-        aria-valuetext="Loading homepage..."
-      >
-        <LoadingSpinner size="lg" />
+      <div className="min-h-screen bg-[#1A1720] p-4 sm:p-6 lg:p-8 animate-fade-in">
+        <Container>
+          <LoadingState 
+            variant="skeleton" 
+            skeletonCount={4}
+            skeletonClassName="h-[200px] w-full rounded-xl bg-white/5"
+            className="max-w-7xl mx-auto space-y-6"
+          />
+        </Container>
       </div>
     );
   }
 
   return (
     <ScrollArea className="min-h-screen neo-blur">
-      {/* Skip Link */}
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
@@ -84,7 +83,6 @@ const Index = () => {
         className="min-h-screen bg-[#1A1720] relative overflow-hidden"
         role="main"
       >
-        {/* Background grid overlay with 3D effect */}
         <div className="absolute inset-0 bg-grid opacity-5 transform-gpu rotate-3d-15"></div>
         
         {showPrivacyNotice && (
@@ -127,7 +125,6 @@ const Index = () => {
           </div>
         </main>
 
-        {/* Fixed Position UI Elements */}
         <div className="fixed bottom-8 right-8 space-y-4 z-50">
           <HelpButton />
           <BackToTopButton visible={showBackToTop} onClick={scrollToTop} />
@@ -140,7 +137,6 @@ const Index = () => {
   );
 };
 
-// Wrap the component with error boundary
 const HomePage = () => (
   <PageErrorBoundary>
     <Index />

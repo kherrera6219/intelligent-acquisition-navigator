@@ -2,12 +2,15 @@
 import React from "react";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface LoadingStateProps {
   className?: string;
   message?: string;
   size?: "sm" | "md" | "lg";
-  variant?: "inline" | "full" | "overlay";
+  variant?: "inline" | "full" | "overlay" | "skeleton";
+  skeletonClassName?: string;
+  skeletonCount?: number;
 }
 
 const sizeMap = {
@@ -21,6 +24,8 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   message = "Loading...",
   size = "md",
   variant = "full",
+  skeletonClassName = "h-16 w-full",
+  skeletonCount = 3
 }) => {
   const content = (
     <>
@@ -28,6 +33,22 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       {message && <p className="mt-2 text-gray-400">{message}</p>}
     </>
   );
+
+  if (variant === "skeleton") {
+    return (
+      <div className={cn("space-y-3", className)}>
+        {Array.from({ length: skeletonCount }).map((_, i) => (
+          <Skeleton 
+            key={i} 
+            className={cn(
+              "bg-white/5 animate-pulse rounded-lg",
+              skeletonClassName
+            )} 
+          />
+        ))}
+      </div>
+    );
+  }
 
   if (variant === "inline") {
     return (
@@ -56,3 +77,4 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
     </div>
   );
 };
+
