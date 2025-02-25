@@ -8,6 +8,7 @@ import { Footer } from "./Footer";
 import { LoadingOverlay } from "@/components/ui/universal/LoadingOverlay";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
+import { VerificationBanner } from "@/components/auth/VerificationBanner";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </a>
 
           <Header />
+          <VerificationBanner />
           
           <main 
             id="main-content" 

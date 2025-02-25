@@ -1,29 +1,44 @@
 
-import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import React from 'react';
+import { useAuth } from "@/providers/AuthProvider";
+import { useToast } from "@/hooks/use-toast";
 
-interface VerificationBannerProps {
-  onResendVerification: () => Promise<void>;
-}
+export const VerificationBanner = () => {
+  const { user, resendVerificationEmail } = useAuth();
+  const { toast } = useToast();
 
-export function VerificationBanner({ onResendVerification }: VerificationBannerProps) {
+  const handleResend = async () => {
+    try {
+      await resendVerificationEmail();
+      toast({
+        title: "Verification email sent",
+        description: "Please check your inbox for the verification link.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to resend verification email. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Only show banner if user exists and email is not verified
+  if (!user || user.email_confirmed_at) {
+    return null;
+  }
+
   return (
-    <div className="fixed top-0 left-0 right-0 bg-blue-500/10 backdrop-blur-sm p-4">
-      <div className="max-w-4xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <AlertCircle className="h-5 w-5 text-blue-400" />
-          <p className="text-blue-400">
-            Please verify your email address to access your account.
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          onClick={onResendVerification}
-          className="border-blue-400 text-blue-400 hover:bg-blue-400/10"
-        >
-          Resend verification email
-        </Button>
-      </div>
+    <div className="bg-yellow-500/10 text-yellow-200 px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
+      <p className="text-sm mb-2 sm:mb-0">
+        Please verify your email address to access all features
+      </p>
+      <button
+        onClick={handleResend}
+        className="text-sm px-4 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-full transition-colors"
+      >
+        Resend verification email
+      </button>
     </div>
   );
-}
+};

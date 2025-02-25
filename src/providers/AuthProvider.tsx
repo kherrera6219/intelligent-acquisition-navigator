@@ -6,6 +6,7 @@ import { useAuthState } from "@/hooks/useAuthState";
 import { useAuthHandlers } from "@/hooks/useAuthHandlers";
 import { useSessionManagement } from "@/hooks/useSessionManagement";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { supabase } from "@/integrations/supabase/client";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
@@ -63,8 +64,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signup: handleSignup,
         signOut: handleSignOut, 
         userRole, 
-        isAuthorized, 
-        resendVerificationEmail: handleResendVerificationEmail 
+        isAuthorized,
+        resendVerificationEmail: handleResendVerificationEmail
       }}
     >
       {isLoading ? (
