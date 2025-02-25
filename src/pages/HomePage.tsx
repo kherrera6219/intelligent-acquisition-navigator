@@ -15,7 +15,6 @@ import { BackToTopButton } from "@/components/ui/navigation/BackToTopButton";
 import { HelpButton } from "@/components/ui/navigation/HelpButton";
 import { FirstVisitGuide } from "@/components/ui/guide/FirstVisitGuide";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
-import { Container } from "@/components/ui/universal/Container";
 
 const Index = () => {
   const {
@@ -38,18 +37,16 @@ const Index = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#1A1720]">
-        <Container>
-          <div className="glass-card p-8 text-center max-w-md mx-auto animate-fade-in">
-            <h1 className="text-2xl font-bold text-red-500 mb-4">Failed to load page</h1>
-            <p className="text-gray-400 mb-6">{error.message}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors duration-200"
-            >
-              Try Again
-            </button>
-          </div>
-        </Container>
+        <div className="glass-card p-8 text-center max-w-md mx-auto animate-fade-in">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">Failed to load page</h1>
+          <p className="text-gray-400 mb-6">{error.message}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors duration-200"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
@@ -57,14 +54,12 @@ const Index = () => {
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-[#1A1720] p-4 sm:p-6 lg:p-8 animate-fade-in">
-        <Container>
-          <LoadingState 
-            variant="skeleton" 
-            skeletonCount={4}
-            skeletonClassName="h-[200px] w-full rounded-xl bg-white/5"
-            className="max-w-7xl mx-auto space-y-6"
-          />
-        </Container>
+        <LoadingState 
+          variant="skeleton" 
+          skeletonCount={4}
+          skeletonClassName="h-[200px] w-full rounded-xl bg-white/5"
+          className="max-w-7xl mx-auto space-y-6"
+        />
       </div>
     );
   }
@@ -80,48 +75,46 @@ const Index = () => {
       </a>
 
       <div 
-        className="min-h-screen bg-[#1A1720] relative overflow-hidden"
+        className="relative min-h-screen bg-[#1A1720] overflow-x-hidden"
         role="main"
       >
-        <div className="absolute inset-0 bg-grid opacity-5 transform-gpu rotate-3d-15"></div>
-        
         {showPrivacyNotice && (
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
         )}
         
-        <main id="main-content" tabIndex={-1} className="relative">
-          <div className="flex flex-col gap-12 md:gap-24 animate-fade-in">
+        <main id="main-content" tabIndex={-1} className="relative w-full">
+          <div className="flex flex-col animate-fade-in">
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <div className="ui-wireframe">
-                  <HeroSection />
-                </div>
+                <HeroSection />
               </Suspense>
             </SectionErrorBoundary>
 
-            <SectionErrorBoundary>
-              <Suspense fallback={<SectionLoader />}>
-                <div className="glass-morphism">
-                  <FeaturesSection />
-                </div>
-              </Suspense>
-            </SectionErrorBoundary>
+            <div className="space-y-24 py-24">
+              <SectionErrorBoundary>
+                <Suspense fallback={<SectionLoader />}>
+                  <div className="glass-morphism">
+                    <FeaturesSection />
+                  </div>
+                </Suspense>
+              </SectionErrorBoundary>
 
-            <SectionErrorBoundary>
-              <Suspense fallback={<SectionLoader />}>
-                <div className="glass-morphism">
-                  <TestimonialsSection />
-                </div>
-              </Suspense>
-            </SectionErrorBoundary>
+              <SectionErrorBoundary>
+                <Suspense fallback={<SectionLoader />}>
+                  <div className="glass-morphism">
+                    <TestimonialsSection />
+                  </div>
+                </Suspense>
+              </SectionErrorBoundary>
 
-            <SectionErrorBoundary>
-              <Suspense fallback={<SectionLoader />}>
-                <div className="glass-morphism">
-                  <CTASection />
-                </div>
-              </Suspense>
-            </SectionErrorBoundary>
+              <SectionErrorBoundary>
+                <Suspense fallback={<SectionLoader />}>
+                  <div className="glass-morphism">
+                    <CTASection />
+                  </div>
+                </Suspense>
+              </SectionErrorBoundary>
+            </div>
           </div>
         </main>
 

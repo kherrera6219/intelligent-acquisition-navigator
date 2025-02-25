@@ -17,40 +17,46 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="relative overflow-hidden py-20 lg:py-32" aria-labelledby="hero-title">
+    <section className="relative w-full min-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden" aria-labelledby="hero-title">
       <div className="absolute inset-0 bg-[#221F26]">
         <KnowledgeGraphAnimation />
       </div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h1 id="hero-title" className="text-4xl md:text-6xl font-bold tracking-tight mb-8">
-            <GradientText>Next-Generation</GradientText>
-            <br />
-            <span className="text-white">
-              Acquisition Management
-            </span>
-          </h1>
-          <p className="max-w-2xl mx-auto text-xl text-gray-400 mb-10">
-            Streamline your procurement process with AI-powered insights and compliance automation.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <GradientButton
-              onClick={() => navigate("/signup")}
-              size="lg"
-              gradientVariant="primary"
-              aria-label="Get started with ProcurityIQ"
-            >
-              Get Started
-            </GradientButton>
-            <GradientButton
-              onClick={handleDemoRequest}
-              gradientVariant="secondary"
-              size="lg"
-              aria-label="Request a demo of ProcurityIQ"
-            >
-              Request Demo
-            </GradientButton>
+      <div className="relative z-10 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-8">
+            <h1 id="hero-title" className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+              <GradientText>Next-Generation</GradientText>
+              <br />
+              <span className="text-white animate-in fade-in-50 delay-150">
+                Acquisition Management
+              </span>
+            </h1>
+            
+            <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 animate-in fade-in-50 delay-300">
+              Streamline your procurement process with AI-powered insights and compliance automation.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-in fade-in-50 delay-500">
+              <GradientButton
+                onClick={() => navigate("/signup")}
+                size="lg"
+                gradientVariant="primary"
+                className="w-full sm:w-auto px-8 py-4 text-lg"
+                aria-label="Get started with ProcurityIQ"
+              >
+                Get Started
+              </GradientButton>
+              <GradientButton
+                onClick={handleDemoRequest}
+                gradientVariant="secondary"
+                size="lg"
+                className="w-full sm:w-auto px-8 py-4 text-lg"
+                aria-label="Request a demo of ProcurityIQ"
+              >
+                Request Demo
+              </GradientButton>
+            </div>
           </div>
         </div>
       </div>
