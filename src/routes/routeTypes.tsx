@@ -33,7 +33,6 @@ export const wrapWithLayout = (
       {requiresAuth ? (
         <ProtectedRoute requiredRole={requiredRole}>
           <MainLayout>
-            {/* LazyComponent handles both loading and component rendering */}
             <LazyComponent Component={Component} />
           </MainLayout>
         </ProtectedRoute>
@@ -53,3 +52,4 @@ export interface RouteDefinition extends Pick<RouteObject, 'path' | 'element' | 
   requiresAuth?: boolean;
   requiredRole?: string;
 }
+
