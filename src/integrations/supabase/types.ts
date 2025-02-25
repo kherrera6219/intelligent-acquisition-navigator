@@ -1250,6 +1250,13 @@ export type Database = {
         }
         Returns: string
       }
+      policy_exists: {
+        Args: {
+          policy_name: string
+          table_name: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       document_type: "RFI" | "RFP" | "RFQ" | "SOW" | "PWS"
