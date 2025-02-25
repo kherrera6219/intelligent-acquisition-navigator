@@ -27,19 +27,23 @@
 
 * {
   @apply border-border selection:bg-white/10 selection:text-white;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  @apply bg-background text-foreground antialiased;
+  @apply bg-background text-foreground antialiased min-h-screen w-full;
   font-family: 'Inter', sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  @apply font-bold tracking-tight text-balance;
+  @apply font-bold tracking-tight text-balance m-0;
 }
 
 /* Focus Styles */
@@ -53,6 +57,7 @@ h1, h2, h3, h4, h5, h6 {
   background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  @apply relative z-0;
 }
 
 /* Glass Morphism */
@@ -80,7 +85,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Form Elements */
 input, textarea, select {
-  @apply bg-black/20 border border-white/10 rounded-md px-4 py-2;
+  @apply bg-black/20 border border-white/10 rounded-md px-4 py-2 w-full;
   @apply focus:outline-none focus:ring-2 focus:ring-primary/50;
   @apply placeholder:text-gray-500;
 }
@@ -112,7 +117,7 @@ button {
 
 /* Smooth Scrolling */
 html {
-  @apply scroll-smooth;
+  @apply scroll-smooth overflow-x-hidden;
 }
 
 /* Scrollbar Styling */
@@ -131,11 +136,11 @@ html {
 
 /* Container Classes */
 .container-tight {
-  @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8;
 }
 
 .container-wide {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8;
 }
 
 /* Loading States */
@@ -145,7 +150,7 @@ html {
 
 /* Improved Card Styles */
 .card {
-  @apply glass-card p-6 space-y-4;
+  @apply glass-card p-4 sm:p-6 space-y-4 w-full;
 }
 
 .card-interactive {
@@ -154,9 +159,62 @@ html {
 
 /* Responsive Grid Systems */
 .grid-auto-fit {
-  @apply grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6;
+  @apply grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6;
 }
 
 .grid-auto-fill {
-  @apply grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-6;
+  @apply grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 sm:gap-6;
 }
+
+/* Responsive Padding Utilities */
+.p-responsive {
+  @apply p-2 sm:p-4 md:p-6 lg:p-8;
+}
+
+.px-responsive {
+  @apply px-2 sm:px-4 md:px-6 lg:px-8;
+}
+
+.py-responsive {
+  @apply py-2 sm:py-4 md:py-6 lg:py-8;
+}
+
+/* Mobile-First Layout Classes */
+.layout-container {
+  @apply w-full min-h-screen flex flex-col;
+}
+
+.main-content {
+  @apply flex-1 w-full max-w-[100vw] overflow-x-hidden;
+}
+
+/* Responsive Typography */
+.text-responsive {
+  @apply text-sm sm:text-base md:text-lg lg:text-xl;
+}
+
+.heading-responsive {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  .touch-feedback {
+    @apply active:scale-95 transition-transform;
+  }
+}
+
+/* Screen Size Debug Helper (only in development) */
+.debug-screen {
+  @apply fixed bottom-1 right-1 px-2 py-1 bg-gray-800 text-white text-xs rounded-full z-50;
+}
+
+.debug-screen::after {
+  content: 'xs';
+  @apply sm:content-['sm'] md:content-['md'] lg:content-['lg'] xl:content-['xl'] 2xl:content-['2xl'];
+}
+

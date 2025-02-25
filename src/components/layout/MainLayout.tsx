@@ -9,7 +9,7 @@ import { Footer } from "./Footer";
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider>
-      <div className="min-h-screen flex flex-col">
+      <div className="layout-container">
         {/* Accessible Skip Link */}
         <a 
           href="#main-content" 
@@ -23,9 +23,9 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <main 
           id="main-content" 
           role="main" 
-          className="flex-1 bg-gradient-to-b from-gray-900 to-black"
+          className="main-content bg-gradient-to-b from-gray-900 to-black"
         >
-          <Container className="py-8 px-4 sm:px-6 lg:px-8">
+          <Container className="py-responsive">
             <Card className="w-full bg-black/40 backdrop-blur-sm border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl focus-within:shadow-2xl rounded-lg overflow-hidden">
               <div className="animate-fade-in divide-y divide-white/10">
                 {children}
