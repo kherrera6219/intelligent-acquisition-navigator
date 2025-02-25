@@ -1,6 +1,14 @@
 
 import { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
+import { z } from 'zod';
+
+// Input validation schemas
+export const userInputSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(2).max(100),
+  message: z.string().min(10).max(1000),
+}).strict();
 
 // CSRF Protection
 export const csrfProtection = (req: Request, res: Response, next: NextFunction) => {
@@ -29,6 +37,16 @@ export const securityHeaders = (req: Request, res: Response, next: NextFunction)
   next();
 };
 
+// Input Sanitization
+export const sanitizeInput = (input: string): string => {
+  return input
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .trim();
+};
+
 // Session Management
 export const sessionManagement = (req: Request, res: Response, next: NextFunction) => {
   if (!(req as any).session) {
@@ -47,3 +65,28 @@ export const sessionManagement = (req: Request, res: Response, next: NextFunctio
   }
   next();
 };
+
+// Request Rate Limiting
+export class RateLimiter {
+  private requests: Map<string, number[]> = new Map();
+  private readonly windowMs: number = 15 * 60 * 1000; // 15 minutes
+  private readonly maxRequests: number = 100; // Max requests per window
+
+  check(ip: string): boolean {
+    const now = Date.now();
+    const windowStart = now - this.windowMs;
+    
+    let clientRequests = this.requests.get(ip) || [];
+    clientRequests = clientRequests.filter(time => time > windowStart);
+    
+    if (clientRequests.length >= this.maxRequests) {
+      return false;
+    }
+    
+    clientRequests.push(now);
+    this.requests.set(ip, clientRequests);
+    return true;
+  }
+}
+
+export const rateLimiter = new RateLimiter();

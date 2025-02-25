@@ -52,4 +52,3 @@ export interface RouteDefinition extends Pick<RouteObject, 'path' | 'element' | 
   requiresAuth?: boolean;
   requiredRole?: string;
 }
-
