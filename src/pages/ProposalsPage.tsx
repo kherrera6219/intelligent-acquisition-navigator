@@ -1,61 +1,91 @@
-
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { ProposalDetails } from '@/components/proposals/ProposalDetails';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
-import { cn } from '@/lib/utils';
+import { ProposalCard } from '@/components/proposals/ProposalCard';
+import { useDebounce } from '@/hooks/use-debounce';
 import type { Proposal } from '@/types/proposals';
 
 const ProposalsPage = () => {
+  const searchRef = React.useRef<HTMLInputElement>(null);
+  
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
 
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  const fetchProposals = useCallback(async () => {
+    return {
+      proposals: [
+        {
+          id: '1',
+          title: 'Proposal 1',
+          description: 'Description 1',
+          status: 'PENDING',
+          submittedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          attachments: [],
+          evaluations: []
+        }
+      ] as Proposal[],
+      totalPages: 2
+    };
+  }, []);
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['proposals', page, searchTerm],
-    queryFn: async () => {
-      // Temporary mock data
-      return {
-        proposals: [
-          {
-            id: '1',
-            title: 'Proposal 1',
-            description: 'Description 1',
-            status: 'PENDING',
-            submittedAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            attachments: [],
-            evaluations: []
-          }
-        ] as Proposal[],
-        totalPages: 2
-      };
-    }
+    queryKey: ['proposals', page, debouncedSearchTerm],
+    queryFn: fetchProposals,
   });
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  }, []);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchTerm('');
+    if (searchRef.current) {
+      searchRef.current.focus();
+    }
+  }, []);
+
+  const handleProposalClick = useCallback((proposal: Proposal) => {
+    setSelectedProposal(proposal);
+  }, []);
+
+  const handleCloseDetails = useCallback(() => {
+    setSelectedProposal(null);
+  }, []);
 
   if (isLoading) {
     return <LoadingState variant="skeleton" skeletonCount={5} />;
   }
 
   if (error) {
-    return <div className="text-red-500">Error loading proposals</div>;
+    return (
+      <div className="text-destructive dark:text-destructive-foreground p-4 rounded-lg bg-destructive/10">
+        Error loading proposals
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Proposals Management</h1>
+    <div className="container mx-auto p-4 sm:p-6 space-y-6">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        Proposals Management
+      </h1>
       
       <div className="flex justify-between mb-6">
         <div className="relative w-full max-w-sm">
           <Input
+            ref={searchRef}
             type="text"
             placeholder="Search proposals..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             className="pr-10"
             aria-label="Search"
           />
@@ -63,39 +93,23 @@ const ProposalsPage = () => {
             <Button
               variant="ghost"
               className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-              onClick={() => setSearchTerm('')}
+              onClick={handleClearSearch}
               aria-label="Clear search"
             >
               ×
             </Button>
           )}
         </div>
-        <Button onClick={() => {}}>Sort by date</Button>
+        <Button variant="outline" onClick={() => {}}>Sort by date</Button>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {data?.proposals.map((proposal) => (
-          <Card 
+          <ProposalCard
             key={proposal.id}
-            className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setSelectedProposal(proposal)}
-          >
-            <h3 className="font-bold">{proposal.title}</h3>
-            <p className="text-gray-600">{proposal.description}</p>
-            <div className="mt-2 flex justify-between items-center">
-              <span className={cn(
-                "px-2 py-1 rounded text-sm font-medium",
-                proposal.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                proposal.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
-                'bg-red-100 text-red-800'
-              )}>
-                {proposal.status}
-              </span>
-              <span className="text-sm text-gray-500">
-                {new Date(proposal.submittedAt).toLocaleDateString()}
-              </span>
-            </div>
-          </Card>
+            proposal={proposal}
+            onClick={handleProposalClick}
+          />
         ))}
       </div>
 
@@ -118,12 +132,12 @@ const ProposalsPage = () => {
       </div>
 
       {selectedProposal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-50 transition-opacity">
+          <div className="bg-background dark:bg-background/80 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto shadow-xl">
             <ProposalDetails proposal={selectedProposal} />
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="p-4 border-t border-border">
               <Button 
-                onClick={() => setSelectedProposal(null)}
+                onClick={handleCloseDetails}
                 variant="outline"
                 className="w-full"
               >
