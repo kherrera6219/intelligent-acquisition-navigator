@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { GradientButton } from "@/components/ui/universal/GradientButton";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils"; // Added missing import
 import { z } from "zod";
 
 // Input validation schema
