@@ -15,6 +15,7 @@ import { BackToTopButton } from "@/components/ui/navigation/BackToTopButton";
 import { HelpButton } from "@/components/ui/navigation/HelpButton";
 import { FirstVisitGuide } from "@/components/ui/guide/FirstVisitGuide";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const {
@@ -23,8 +24,11 @@ const Index = () => {
     isLoaded,
     showBackToTop,
     isFirstVisit,
-    scrollToTop
+    scrollToTop,
+    error
   } = useHomePageInit();
+
+  const { toast } = useToast();
 
   // Skip link for accessibility
   const skipToMain = () => {
@@ -36,11 +40,36 @@ const Index = () => {
 
   console.log("Current loading state:", isLoaded);
 
+  // Show error state if initialization failed
+  if (error) {
+    toast({
+      title: "Error loading page",
+      description: error.message || "An unexpected error occurred",
+      variant: "destructive",
+    });
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900">
+        <div className="text-center p-8">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">Failed to load page</h1>
+          <p className="text-gray-400 mb-4">{error.message}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state during initialization
   if (!isLoaded) {
     console.log("Rendering loading spinner...");
     return (
       <div 
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 fill-mode-forwards" 
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 fill-mode-forwards animate-fade-in" 
         role="progressbar" 
         aria-valuetext="Loading homepage..."
       >
@@ -69,7 +98,7 @@ const Index = () => {
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
         )}
         
-        <main id="main-content" tabIndex={-1} className="relative">
+        <main id="main-content" tabIndex={-1} className="relative animate-fade-in">
           <SectionErrorBoundary>
             <Suspense fallback={<SectionLoader />}>
               <HeroSection />
