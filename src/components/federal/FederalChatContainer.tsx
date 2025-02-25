@@ -47,14 +47,14 @@ export const FederalChatContainer = ({
         </div>
 
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" className="animate-in fade-in slide-in-from-top-2">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
-        <Card className="p-6 space-y-6 bg-black/40 backdrop-blur-sm">
+        <Card className="p-6 space-y-6 bg-black/40 backdrop-blur-sm shadow-xl border border-white/10">
           <ChatToolbar
             onDocumentCreation={onDocumentCreation}
             onCodeCreation={onCodeCreation}
@@ -62,20 +62,20 @@ export const FederalChatContainer = ({
           />
           
           <div 
-            className="h-[600px] overflow-y-auto rounded-lg p-4 space-y-4 bg-gradient-to-b from-background/80 to-background/40 border border-white/10"
+            className="h-[600px] overflow-y-auto rounded-lg p-4 space-y-4 bg-gradient-to-b from-background/80 to-background/40 border border-white/10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
             style={{ scrollBehavior: 'smooth' }}
           >
             {messages.length === 0 && !isLoading && (
               <div className="flex items-center justify-center h-full text-muted-foreground text-center px-4">
-                <div>
-                  <p className="mb-2">No messages yet</p>
-                  <p className="text-sm">Start by asking a question about federal acquisition regulations, contracting procedures, or procurement requirements.</p>
+                <div className="space-y-2">
+                  <p className="text-lg font-medium">No messages yet</p>
+                  <p className="text-sm opacity-70">Start by asking a question about federal acquisition regulations, contracting procedures, or procurement requirements.</p>
                 </div>
               </div>
             )}
             <ChatMessages
               messages={messages}
-              isLoading={isLoading}
+              isLoading={isLoading} 
             />
           </div>
           
@@ -84,7 +84,7 @@ export const FederalChatContainer = ({
             isLoading={isLoading}
             onInputChange={onInputChange}
             onSubmit={onSubmit}
-            placeholder="Ask about federal acquisition regulations, contracting procedures, or procurement requirements..."
+            className="animate-in fade-in-50"
           />
         </Card>
       </div>
