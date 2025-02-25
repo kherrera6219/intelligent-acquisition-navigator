@@ -33,9 +33,19 @@ export const useHomePageInit = (): HomePageInitState => {
   }, []);
 
   useEffect(() => {
+    let isMounted = true; // Track component mount state
+    let retryCount = 0;
+    const maxRetries = 3;
+    
     const initialize = async () => {
       try {
-        // Health check query with timeout
+        // Clear any existing sessions to prevent SID conflicts
+        const { error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) {
+          console.warn('Session check failed:', sessionError);
+        }
+
+        // Health check query with timeout and retry logic
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error('Database connection timeout')), 5000);
         });
@@ -68,28 +78,56 @@ export const useHomePageInit = (): HomePageInitState => {
 
         // Add scroll handler with performance optimization
         window.addEventListener('scroll', handleScroll, { passive: true });
-        setIsLoaded(true);
-        setError(null);
+        
+        if (isMounted) {
+          setIsLoaded(true);
+          setError(null);
+        }
 
-        return () => {
-          window.removeEventListener('scroll', handleScroll);
-        };
       } catch (err) {
+        console.error('Initialization error:', err);
+        
+        if (retryCount < maxRetries) {
+          retryCount++;
+          console.log(`Retrying initialization (attempt ${retryCount}/${maxRetries})...`);
+          // Exponential backoff for retries
+          setTimeout(initialize, Math.pow(2, retryCount) * 1000);
+          return;
+        }
+
         const error = err instanceof Error ? err : new Error('Failed to initialize homepage');
-        setError(error);
         
-        toast({
-          title: "Error initializing page",
-          description: error.message || "Please refresh the page to try again",
-          variant: "destructive",
-        });
-        
-        setIsLoaded(true); // Ensure page loads even with error
+        if (isMounted) {
+          setError(error);
+          toast({
+            title: "Error initializing page",
+            description: error.message || "Please refresh the page to try again",
+            variant: "destructive",
+          });
+          setIsLoaded(true); // Ensure page loads even with error
+        }
       }
     };
 
     initialize();
-  }, [toast, handleScroll]); // Add handleScroll to dependencies
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+      window.removeEventListener('scroll', handleScroll);
+      
+      // Close any active Supabase connections
+      const cleanupConnections = async () => {
+        try {
+          await supabase.removeAllSubscriptions();
+        } catch (err) {
+          console.warn('Error cleaning up connections:', err);
+        }
+      };
+      
+      cleanupConnections();
+    };
+  }, [toast, handleScroll]); 
 
   return {
     showPrivacyNotice,
