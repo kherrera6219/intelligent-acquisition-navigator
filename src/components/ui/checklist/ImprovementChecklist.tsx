@@ -95,20 +95,35 @@ const FeedbackDialog: React.FC<FeedbackDialogProps> = ({ onClose, onSubmit }) =>
 export const ImprovementChecklist: React.FC = () => {
   const [checklist, setChecklist] = useState<ChecklistItem[]>(initialChecklist);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [currentItem, setCurrentItem] = useState(0);
   const { toast } = useToast();
 
   const completedCount = checklist.filter(item => item.completed).length;
 
   useEffect(() => {
+    // Show feedback dialog after every 4 completed items
     if (completedCount > 0 && completedCount % 4 === 0) {
       setShowFeedback(true);
     }
   }, [completedCount]);
 
+  useEffect(() => {
+    // Automatically progress to the next uncompleted item
+    const nextIncomplete = checklist.findIndex((item, index) => !item.completed && index > currentItem);
+    if (nextIncomplete !== -1) {
+      setCurrentItem(nextIncomplete);
+    }
+  }, [checklist, currentItem]);
+
   const toggleItem = (id: number) => {
     setChecklist(prev => prev.map(item => 
       item.id === id ? { ...item, completed: !item.completed } : item
     ));
+
+    toast({
+      title: "Task Updated",
+      description: "Progress has been saved",
+    });
   };
 
   const handleFeedbackSubmit = (feedback: string) => {
@@ -134,7 +149,8 @@ export const ImprovementChecklist: React.FC = () => {
             key={item.id}
             className={cn(
               "p-4 transition-all duration-200 cursor-pointer hover:bg-white/5",
-              item.completed && "bg-white/5"
+              item.completed && "bg-white/5",
+              currentItem === item.id - 1 && "border-primary"
             )}
             onClick={() => toggleItem(item.id)}
           >
