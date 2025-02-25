@@ -26,7 +26,7 @@ const SectionErrorBoundary = ({ children }: { children: React.ReactNode }) => {
         <Button 
           variant="outline"
           onClick={() => setHasError(false)}
-          className="gap-2"
+          className="gap-2 hover:bg-red-500/20"
         >
           <RefreshCcw className="h-4 w-4" />
           Retry
@@ -112,7 +112,7 @@ const Index = () => {
     console.log("Rendering loading spinner...");
     return (
       <div 
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900" 
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 fill-mode-forwards" 
         role="progressbar" 
         aria-valuetext="Loading homepage..."
       >
@@ -134,7 +134,7 @@ const Index = () => {
       </a>
 
       <div 
-        className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900"
+        className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 fill-mode-forwards"
         role="main"
       >
         {showPrivacyNotice && (
