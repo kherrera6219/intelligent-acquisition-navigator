@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
@@ -19,43 +19,47 @@ const Index = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
 
-  // Immediately start loading when component mounts
   useEffect(() => {
     console.log("Homepage mounting...");
     
-    // Set loaded state immediately
-    setIsLoaded(true);
-    console.log("Setting isLoaded to true");
+    try {
+      // First visit detection with local storage
+      const hasVisited = localStorage.getItem('hasVisitedBefore');
+      if (hasVisited) {
+        setIsFirstVisit(false);
+      } else {
+        localStorage.setItem('hasVisitedBefore', 'true');
+      }
 
-    // First visit detection with local storage
-    const hasVisited = localStorage.getItem('hasVisitedBefore');
-    if (hasVisited) {
-      setIsFirstVisit(false);
-    } else {
-      localStorage.setItem('hasVisitedBefore', 'true');
+      // Optimized scroll handler with debounce
+      let scrollTimeout: NodeJS.Timeout;
+      const handleScroll = () => {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          setShowBackToTop(window.scrollY > 400);
+        }, 100);
+      };
+
+      window.addEventListener('scroll', handleScroll);
+
+      // Set loaded state after initializations
+      setIsLoaded(true);
+      console.log("Setting isLoaded to true");
+
+      return () => {
+        clearTimeout(scrollTimeout);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    } catch (error) {
+      console.error("Error in homepage initialization:", error);
+      setIsLoaded(true); // Ensure page loads even if there's an error
     }
-
-    // Optimized scroll handler with debounce
-    let scrollTimeout: NodeJS.Timeout;
-    const handleScroll = () => {
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        setShowBackToTop(window.scrollY > 400);
-      }, 100);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      clearTimeout(scrollTimeout);
-      window.removeEventListener('scroll', handleScroll);
-    };
   }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Log the current loading state
   console.log("Current loading state:", isLoaded);
 
   if (!isLoaded) {
@@ -75,19 +79,21 @@ const Index = () => {
   return (
     <ScrollArea className="min-h-screen">
       <div 
-        className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 transition-opacity duration-500"
+        className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900"
         role="main"
       >
         {showPrivacyNotice && (
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
         )}
         
-        <main className="relative">
-          <HeroSection />
-          <FeaturesSection />
-          <TestimonialsSection />
-          <CTASection />
-        </main>
+        <Suspense fallback={<LoadingSpinner size="lg" />}>
+          <main className="relative">
+            <HeroSection />
+            <FeaturesSection />
+            <TestimonialsSection />
+            <CTASection />
+          </main>
+        </Suspense>
 
         {/* Help Button */}
         <div className="fixed bottom-24 right-4 z-50">
