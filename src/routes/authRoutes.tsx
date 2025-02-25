@@ -1,17 +1,16 @@
 
-import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
-
-const AuthenticationPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
-const PasswordReset = lazy(() => import("@/components/auth/PasswordReset"));
+import { wrapWithLayout } from "./routeTypes";
+import { PasswordResetRequest } from "@/components/auth/PasswordResetRequest";
+import { PasswordResetForm } from "@/components/auth/PasswordResetForm";
 
 export const authRoutes: RouteObject[] = [
   {
-    path: "/auth",
-    element: <AuthenticationPage />
+    path: "/auth/forgot-password",
+    element: wrapWithLayout(PasswordResetRequest, false)
   },
   {
     path: "/auth/reset-password",
-    element: <PasswordReset />
+    element: wrapWithLayout(PasswordResetForm, false)
   }
 ];
