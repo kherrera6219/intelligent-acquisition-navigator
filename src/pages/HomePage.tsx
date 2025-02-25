@@ -1,5 +1,5 @@
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection"; 
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
@@ -7,17 +7,50 @@ import { CTASection } from "@/components/landing/CTASection";
 import { PrivacyNotice } from "@/components/landing/PrivacyNotice";
 import CookieConsent from "@/components/CookieConsent";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, HelpCircle } from 'lucide-react';
+import { ArrowUp, HelpCircle, RefreshCcw } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
+
+// Section error boundary component
+const SectionErrorBoundary = ({ children }: { children: React.ReactNode }) => {
+  const [hasError, setHasError] = useState(false);
+  const { toast } = useToast();
+
+  if (hasError) {
+    return (
+      <div className="p-6 text-center bg-red-500/10 rounded-lg" role="alert">
+        <p className="text-red-500 mb-4">Failed to load this section</p>
+        <Button 
+          variant="outline"
+          onClick={() => setHasError(false)}
+          className="gap-2"
+        >
+          <RefreshCcw className="h-4 w-4" />
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  return children;
+};
+
+// Section loading component
+const SectionLoader = () => (
+  <div className="w-full min-h-[200px] flex items-center justify-center bg-gradient-to-br from-gray-900/50 via-black/50 to-gray-900/50 backdrop-blur-sm animate-pulse">
+    <LoadingSpinner size="md" />
+  </div>
+);
 
 const Index = () => {
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     console.log("Homepage mounting...");
@@ -52,12 +85,25 @@ const Index = () => {
       };
     } catch (error) {
       console.error("Error in homepage initialization:", error);
+      toast({
+        title: "Error initializing page",
+        description: "Please refresh the page to try again",
+        variant: "destructive",
+      });
       setIsLoaded(true); // Ensure page loads even if there's an error
     }
-  }, []);
+  }, [toast]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Skip link for accessibility
+  const skipToMain = () => {
+    const main = document.querySelector('main');
+    if (main) {
+      main.focus();
+    }
   };
 
   console.log("Current loading state:", isLoaded);
@@ -78,6 +124,15 @@ const Index = () => {
   console.log("Rendering full homepage content...");
   return (
     <ScrollArea className="min-h-screen">
+      {/* Skip Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        onClick={skipToMain}
+      >
+        Skip to main content
+      </a>
+
       <div 
         className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900"
         role="main"
@@ -86,17 +141,34 @@ const Index = () => {
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
         )}
         
-        <Suspense fallback={<LoadingSpinner size="lg" />}>
-          <main className="relative">
-            <HeroSection />
-            <FeaturesSection />
-            <TestimonialsSection />
-            <CTASection />
-          </main>
-        </Suspense>
+        <main id="main-content" tabIndex={-1} className="relative">
+          <SectionErrorBoundary>
+            <Suspense fallback={<SectionLoader />}>
+              <HeroSection />
+            </Suspense>
+          </SectionErrorBoundary>
+
+          <SectionErrorBoundary>
+            <Suspense fallback={<SectionLoader />}>
+              <FeaturesSection />
+            </Suspense>
+          </SectionErrorBoundary>
+
+          <SectionErrorBoundary>
+            <Suspense fallback={<SectionLoader />}>
+              <TestimonialsSection />
+            </Suspense>
+          </SectionErrorBoundary>
+
+          <SectionErrorBoundary>
+            <Suspense fallback={<SectionLoader />}>
+              <CTASection />
+            </Suspense>
+          </SectionErrorBoundary>
+        </main>
 
         {/* Help Button */}
-        <div className="fixed bottom-24 right-4 z-50">
+        <div className="fixed bottom-24 right-4 z-50 animate-fade-in">
           <Tooltip content="Need help? Click to contact support">
             <Button
               variant="outline"
@@ -112,7 +184,7 @@ const Index = () => {
 
         {/* Back to Top Button */}
         {showBackToTop && (
-          <div className="fixed bottom-8 right-4 z-50">
+          <div className="fixed bottom-8 right-4 z-50 animate-fade-in">
             <Tooltip content="Scroll back to top">
               <Button
                 variant="outline"
