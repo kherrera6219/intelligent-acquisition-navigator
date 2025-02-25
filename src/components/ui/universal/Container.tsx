@@ -14,7 +14,7 @@ const sizeClasses = {
   sm: "max-w-3xl",
   md: "max-w-5xl",
   lg: "max-w-7xl",
-  xl: "max-w-[1400px]",
+  xl: "max-w-screen-2xl",
   full: "w-full max-w-none"
 } as const;
 
@@ -27,7 +27,7 @@ export const Container: React.FC<ContainerProps> = ({
 }) => (
   <Component
     className={cn(
-      "mx-auto",
+      "mx-auto w-full h-full",
       padding && "px-4 sm:px-6 md:px-8 lg:px-10",
       sizeClasses[size],
       className

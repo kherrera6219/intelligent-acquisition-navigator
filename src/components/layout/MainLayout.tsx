@@ -31,14 +31,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <main 
             id="main-content" 
             role="main" 
-            className="min-h-[calc(100vh-8rem)] w-full"
+            className="w-full flex-grow min-h-screen"
           >
-            <Container size="full" className="py-responsive">
+            <Container size="full" className="h-full py-responsive">
               <Card 
-                className="w-full h-full bg-black/40 backdrop-blur-sm border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl focus-within:shadow-2xl rounded-lg overflow-hidden"
+                className="w-full h-full min-h-[calc(100vh-8rem)] bg-black/40 backdrop-blur-sm border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl focus-within:shadow-2xl rounded-lg overflow-hidden"
                 noShadow
               >
-                <div className="animate-fade-in divide-y divide-white/10">
+                <div className="animate-fade-in divide-y divide-white/10 h-full">
                   <Suspense fallback={<LoadingOverlay />}>
                     {children}
                   </Suspense>
@@ -54,4 +54,3 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     </ThemeProvider>
   );
 };
-
