@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface HomePageInitState {
   showPrivacyNotice: boolean;
@@ -25,6 +26,12 @@ export const useHomePageInit = (): HomePageInitState => {
     
     const initialize = async () => {
       try {
+        // Check Supabase connection first
+        const { data, error: supabaseError } = await supabase.from('health_check').select('*').limit(1);
+        if (supabaseError) {
+          throw new Error('Database connection failed');
+        }
+
         // First visit detection with local storage
         const hasVisited = localStorage.getItem('hasVisitedBefore');
         if (hasVisited) {
@@ -43,9 +50,6 @@ export const useHomePageInit = (): HomePageInitState => {
         };
 
         window.addEventListener('scroll', handleScroll);
-
-        // Simulate any async initialization if needed
-        await Promise.resolve();
 
         // Set loaded state after successful initialization
         setIsLoaded(true);
