@@ -20,7 +20,7 @@ import {
   PrivacyPage,
   SettingsPage,
   SitemapPage,
-  NotFoundPage // Add this import
+  NotFoundPage
 } from "./lazyComponents";
 
 export const routes: RouteObject[] = [
