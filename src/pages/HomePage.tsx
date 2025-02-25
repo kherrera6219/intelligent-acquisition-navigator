@@ -15,7 +15,6 @@ import { BackToTopButton } from "@/components/ui/navigation/BackToTopButton";
 import { HelpButton } from "@/components/ui/navigation/HelpButton";
 import { FirstVisitGuide } from "@/components/ui/guide/FirstVisitGuide";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
-import { useToast } from "@/hooks/use-toast";
 import { Container } from "@/components/ui/universal/Container";
 
 const Index = () => {
@@ -29,8 +28,6 @@ const Index = () => {
     error
   } = useHomePageInit();
 
-  const { toast } = useToast();
-
   // Skip link for accessibility
   const skipToMain = () => {
     const main = document.querySelector('main');
@@ -41,14 +38,8 @@ const Index = () => {
 
   // Show error state if initialization failed
   if (error) {
-    toast({
-      title: "Error loading page",
-      description: error.message || "An unexpected error occurred",
-      variant: "destructive",
-    });
-
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#221F26] via-black to-[#221F26]">
         <Container>
           <div className="glass-card p-8 text-center max-w-md mx-auto animate-fade-in">
             <h1 className="text-2xl font-bold text-red-500 mb-4">Failed to load page</h1>
@@ -69,7 +60,7 @@ const Index = () => {
   if (!isLoaded) {
     return (
       <div 
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 animate-fade-in" 
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#221F26] via-black to-[#221F26] animate-fade-in" 
         role="progressbar" 
         aria-valuetext="Loading homepage..."
       >
@@ -79,7 +70,7 @@ const Index = () => {
   }
 
   return (
-    <ScrollArea className="min-h-screen">
+    <ScrollArea className="min-h-screen neo-blur">
       {/* Skip Link */}
       <a
         href="#main-content"
@@ -90,15 +81,18 @@ const Index = () => {
       </a>
 
       <div 
-        className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 fill-mode-forwards"
+        className="min-h-screen bg-gradient-to-br from-[#221F26] via-black to-[#221F26] fill-mode-forwards relative overflow-hidden"
         role="main"
       >
+        {/* Background grid overlay */}
+        <div className="absolute inset-0 bg-grid opacity-5"></div>
+        
         {showPrivacyNotice && (
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
         )}
         
         <main id="main-content" tabIndex={-1} className="relative">
-          <div className="space-y-24 animate-fade-in">
+          <div className="flex flex-col gap-12 md:gap-24 animate-fade-in">
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
                 <HeroSection />
@@ -107,19 +101,25 @@ const Index = () => {
 
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <FeaturesSection />
+                <div className="glass-morphism">
+                  <FeaturesSection />
+                </div>
               </Suspense>
             </SectionErrorBoundary>
 
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <TestimonialsSection />
+                <div className="glass-morphism">
+                  <TestimonialsSection />
+                </div>
               </Suspense>
             </SectionErrorBoundary>
 
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <CTASection />
+                <div className="glass-morphism">
+                  <CTASection />
+                </div>
               </Suspense>
             </SectionErrorBoundary>
           </div>
@@ -146,3 +146,4 @@ const HomePage = () => (
 );
 
 export default HomePage;
+
