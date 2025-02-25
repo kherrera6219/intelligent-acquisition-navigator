@@ -100,20 +100,23 @@ export const ImprovementChecklist: React.FC = () => {
 
   const completedCount = checklist.filter(item => item.completed).length;
 
+  // Effect to show feedback dialog after every 4 completed items
   useEffect(() => {
-    // Show feedback dialog after every 4 completed items
     if (completedCount > 0 && completedCount % 4 === 0) {
       setShowFeedback(true);
     }
   }, [completedCount]);
 
+  // Effect to handle automatic progression to next uncompleted item
   useEffect(() => {
-    // Automatically progress to the next uncompleted item
-    const nextIncomplete = checklist.findIndex((item, index) => !item.completed && index > currentItem);
-    if (nextIncomplete !== -1) {
-      setCurrentItem(nextIncomplete);
-    }
-  }, [checklist, currentItem]);
+    const findNextIncomplete = () => {
+      const nextIncomplete = checklist.findIndex(item => !item.completed);
+      if (nextIncomplete !== -1) {
+        setCurrentItem(nextIncomplete);
+      }
+    };
+    findNextIncomplete();
+  }, [checklist]);
 
   const toggleItem = (id: number) => {
     setChecklist(prev => prev.map(item => 
