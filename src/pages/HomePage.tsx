@@ -20,10 +20,12 @@ const Index = () => {
   const [isFirstVisit, setIsFirstVisit] = useState(true);
 
   useEffect(() => {
+    // Progressive loading with optimized timing
     const timer = setTimeout(() => {
       setIsLoaded(true);
     }, 100);
 
+    // First visit detection with local storage
     const hasVisited = localStorage.getItem('hasVisitedBefore');
     if (hasVisited) {
       setIsFirstVisit(false);
@@ -31,13 +33,19 @@ const Index = () => {
       localStorage.setItem('hasVisitedBefore', 'true');
     }
 
+    // Optimized scroll handler with debounce
+    let scrollTimeout: NodeJS.Timeout;
     const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 400);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        setShowBackToTop(window.scrollY > 400);
+      }, 100);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => {
       clearTimeout(timer);
+      clearTimeout(scrollTimeout);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
@@ -48,7 +56,11 @@ const Index = () => {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900" role="progressbar" aria-valuetext="Loading homepage...">
+      <div 
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900" 
+        role="progressbar" 
+        aria-valuetext="Loading homepage..."
+      >
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -77,7 +89,7 @@ const Index = () => {
             <Button
               variant="outline"
               size="icon"
-              className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+              className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20 transition-colors duration-200"
               onClick={() => window.open('/contact', '_blank')}
               aria-label="Get help"
             >
@@ -93,7 +105,7 @@ const Index = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20"
+                className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20 transition-colors duration-200"
                 onClick={scrollToTop}
                 aria-label="Scroll back to top"
               >
