@@ -1115,31 +1115,34 @@ export type Database = {
       }
       user_sessions: {
         Row: {
-          created_at: string
-          expires_at: string | null
+          created_at: string | null
+          device_info: Json | null
           id: string
-          metadata: Json | null
-          status: string | null
-          updated_at: string
-          user_id: string | null
+          ip_address: string | null
+          is_valid: boolean | null
+          last_activity: string | null
+          updated_at: string | null
+          user_id: string
         }
         Insert: {
-          created_at?: string
-          expires_at?: string | null
+          created_at?: string | null
+          device_info?: Json | null
           id?: string
-          metadata?: Json | null
-          status?: string | null
-          updated_at?: string
-          user_id?: string | null
+          ip_address?: string | null
+          is_valid?: boolean | null
+          last_activity?: string | null
+          updated_at?: string | null
+          user_id: string
         }
         Update: {
-          created_at?: string
-          expires_at?: string | null
+          created_at?: string | null
+          device_info?: Json | null
           id?: string
-          metadata?: Json | null
-          status?: string | null
-          updated_at?: string
-          user_id?: string | null
+          ip_address?: string | null
+          is_valid?: boolean | null
+          last_activity?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
