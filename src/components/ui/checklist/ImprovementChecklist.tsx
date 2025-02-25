@@ -72,9 +72,9 @@ export const ImprovementChecklist: React.FC = () => {
 
   const completedCount = checklist.filter(item => item.completed).length;
 
-  // Effect to show feedback dialog after every 4 completed items
+  // Effect to show feedback dialog after every 7 completed items
   useEffect(() => {
-    if (completedCount > 0 && completedCount % 4 === 0) {
+    if (completedCount > 0 && completedCount % 7 === 0) {
       setShowFeedback(true);
     }
   }, [completedCount]);
