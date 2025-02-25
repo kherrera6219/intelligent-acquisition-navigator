@@ -1,21 +1,38 @@
 
-export const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour
-export const ACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+export const updateLastActivity = () => {
+  localStorage.setItem('lastActivity', Date.now().toString());
+};
 
-export const setupActivityTracking = (
-  callback: () => void
-): (() => void) => {
-  const updateActivity = () => callback();
+export const getLastActivity = (): number => {
+  const lastActivity = localStorage.getItem('lastActivity');
+  return lastActivity ? parseInt(lastActivity, 10) : Date.now();
+};
 
-  window.addEventListener('mousemove', updateActivity);
-  window.addEventListener('keydown', updateActivity);
-  window.addEventListener('click', updateActivity);
-  window.addEventListener('touchstart', updateActivity);
+export const setupActivityTracking = (updateCallback: () => void) => {
+  // List of events to track
+  const events = [
+    'mousedown',
+    'mousemove',
+    'keypress',
+    'scroll',
+    'touchstart',
+    'click'
+  ];
 
+  const handleActivity = () => {
+    updateLastActivity();
+    updateCallback();
+  };
+
+  // Add event listeners
+  events.forEach(event => {
+    document.addEventListener(event, handleActivity);
+  });
+
+  // Return cleanup function
   return () => {
-    window.removeEventListener('mousemove', updateActivity);
-    window.removeEventListener('keydown', updateActivity);
-    window.removeEventListener('click', updateActivity);
-    window.removeEventListener('touchstart', updateActivity);
+    events.forEach(event => {
+      document.removeEventListener(event, handleActivity);
+    });
   };
 };
