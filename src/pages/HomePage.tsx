@@ -19,11 +19,13 @@ const Index = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
 
+  // Immediately start loading when component mounts
   useEffect(() => {
-    // Progressive loading with optimized timing
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
+    console.log("Homepage mounting...");
+    
+    // Set loaded state immediately
+    setIsLoaded(true);
+    console.log("Setting isLoaded to true");
 
     // First visit detection with local storage
     const hasVisited = localStorage.getItem('hasVisitedBefore');
@@ -44,7 +46,6 @@ const Index = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => {
-      clearTimeout(timer);
       clearTimeout(scrollTimeout);
       window.removeEventListener('scroll', handleScroll);
     };
@@ -54,7 +55,11 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Log the current loading state
+  console.log("Current loading state:", isLoaded);
+
   if (!isLoaded) {
+    console.log("Rendering loading spinner...");
     return (
       <div 
         className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900" 
@@ -66,10 +71,11 @@ const Index = () => {
     );
   }
 
+  console.log("Rendering full homepage content...");
   return (
     <ScrollArea className="min-h-screen">
       <div 
-        className={`min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 transition-opacity duration-500"
         role="main"
       >
         {showPrivacyNotice && (
