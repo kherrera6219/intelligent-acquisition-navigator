@@ -102,7 +102,6 @@ export const ImprovementChecklist: React.FC = () => {
       });
     } catch (error) {
       console.error("Error toggling item:", error);
-      // Auto-retry on failure
       setTimeout(() => toggleItem(id), 1000);
       
       toast({
@@ -122,7 +121,6 @@ export const ImprovementChecklist: React.FC = () => {
       setShowFeedback(false);
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      // Auto-retry on failure
       setTimeout(() => handleFeedbackSubmit(feedback), 1000);
       
       toast({
@@ -134,8 +132,8 @@ export const ImprovementChecklist: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+    <div className="w-full -m-6 px-4 md:px-6 py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-6">
         <h2 className="text-xl sm:text-2xl font-bold">Improvement Checklist</h2>
         <div className="text-sm text-gray-400">
           Completed: {completedCount} / {checklist.length}
