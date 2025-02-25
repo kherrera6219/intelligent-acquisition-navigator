@@ -28,7 +28,9 @@ const KnowledgeGraphAnimation = () => {
       radius: number;
       vx: number;
       vy: number;
-      color: string;
+      baseGlow: number;
+      glow: number;
+      glowDirection: number;
       connections: Node[];
       targetX: number;
       targetY: number;
@@ -36,10 +38,12 @@ const KnowledgeGraphAnimation = () => {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.radius = Math.random() * 3 + 2; // Larger nodes
-        this.vx = (Math.random() - 0.5) * 0.8;
-        this.vy = (Math.random() - 0.5) * 0.8;
-        this.color = `hsla(${Math.random() * 40 + 220}, 70%, 80%, 0.6)`; // Brighter, silvery colors
+        this.radius = Math.random() * 2 + 1.5;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.baseGlow = 0.3 + Math.random() * 0.3;
+        this.glow = this.baseGlow;
+        this.glowDirection = Math.random() < 0.5 ? -1 : 1;
         this.connections = [];
         this.targetX = Math.random() * canvas.width;
         this.targetY = Math.random() * canvas.height;
@@ -47,25 +51,36 @@ const KnowledgeGraphAnimation = () => {
 
       draw() {
         if (!ctx) return;
+
+        // Pulsating glow effect
+        this.glow += 0.01 * this.glowDirection;
+        if (this.glow > this.baseGlow + 0.3 || this.glow < this.baseGlow - 0.3) {
+          this.glowDirection *= -1;
+        }
         
-        // Draw glow effect
-        const gradient = ctx.createRadialGradient(
+        // Enhanced glow effect with multiple layers
+        const gradientInner = ctx.createRadialGradient(
           this.x, this.y, 0,
-          this.x, this.y, this.radius * 2
+          this.x, this.y, this.radius * 4
         );
-        gradient.addColorStop(0, this.color);
-        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        gradientInner.addColorStop(0, `rgba(255, 255, 255, ${this.glow})`);
+        gradientInner.addColorStop(0.5, `rgba(220, 220, 255, ${this.glow * 0.5})`);
+        gradientInner.addColorStop(1, 'rgba(255, 255, 255, 0)');
         
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = gradientInner;
         ctx.fill();
 
-        // Draw connections with gradient
+        // Draw connections with gradient and glow
         this.connections.forEach(node => {
           const gradient = ctx.createLinearGradient(this.x, this.y, node.x, node.y);
-          gradient.addColorStop(0, `hsla(220, 70%, 80%, 0.15)`);
-          gradient.addColorStop(1, `hsla(240, 70%, 80%, 0.05)`);
+          const alpha = Math.max(0.05, 
+            (1 - Math.hypot(this.x - node.x, this.y - node.y) / 300) * 0.2
+          );
+          
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha * this.glow})`);
+          gradient.addColorStop(1, `rgba(220, 220, 255, ${alpha * node.glow})`);
 
           ctx.beginPath();
           ctx.moveTo(this.x, this.y);
@@ -77,14 +92,14 @@ const KnowledgeGraphAnimation = () => {
       }
 
       update() {
-        // Smooth movement towards target
-        this.vx += (this.targetX - this.x) * 0.0005;
-        this.vy += (this.targetY - this.y) * 0.0005;
+        // Smooth movement with inertia
+        this.vx += (this.targetX - this.x) * 0.0002;
+        this.vy += (this.targetY - this.y) * 0.0002;
         
         this.x += this.vx;
         this.y += this.vy;
 
-        // Boundary check
+        // Boundary check with smooth transition
         if (this.x < 0 || this.x > canvas.width) {
           this.vx *= -0.5;
           this.targetX = Math.random() * canvas.width;
@@ -94,18 +109,18 @@ const KnowledgeGraphAnimation = () => {
           this.targetY = Math.random() * canvas.height;
         }
 
-        // Damping
+        // Damping for smoother movement
         this.vx *= 0.99;
         this.vy *= 0.99;
       }
     }
 
-    // Create more nodes for a denser network
-    const nodes: Node[] = Array(80).fill(null).map(() => new Node());
+    // Create nodes network
+    const nodes: Node[] = Array(60).fill(null).map(() => new Node());
 
-    // Create more connections
+    // Create initial connections
     nodes.forEach(node => {
-      const connectionCount = Math.floor(Math.random() * 4) + 2;
+      const connectionCount = Math.floor(Math.random() * 3) + 2;
       for (let i = 0; i < connectionCount; i++) {
         const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
         if (randomNode !== node && !node.connections.includes(randomNode)) {
@@ -126,17 +141,20 @@ const KnowledgeGraphAnimation = () => {
         node.draw();
       });
 
-      // Occasionally create new connections
-      if (Math.random() < 0.03) {
+      // Dynamic connections
+      if (Math.random() < 0.01) {
         const nodeA = nodes[Math.floor(Math.random() * nodes.length)];
         const nodeB = nodes[Math.floor(Math.random() * nodes.length)];
         if (nodeA !== nodeB && !nodeA.connections.includes(nodeB)) {
+          nodeA.connections = nodeA.connections.filter(n => 
+            Math.hypot(n.x - nodeA.x, n.y - nodeA.y) < 300
+          );
           nodeA.connections.push(nodeB);
         }
       }
 
-      // Occasionally update target positions
-      if (Math.random() < 0.01) {
+      // Update target positions occasionally
+      if (Math.random() < 0.005) {
         nodes[Math.floor(Math.random() * nodes.length)].targetX = Math.random() * canvas.width;
         nodes[Math.floor(Math.random() * nodes.length)].targetY = Math.random() * canvas.height;
       }
@@ -154,10 +172,10 @@ const KnowledgeGraphAnimation = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full opacity-70"
+      className="absolute inset-0 w-full h-full opacity-80"
       style={{ 
         mixBlendMode: 'screen',
-        background: 'linear-gradient(to bottom right, rgba(255,255,255,0.1), rgba(200,200,255,0.05))'
+        background: 'linear-gradient(to bottom right, rgba(40,38,45,0.9), rgba(34,31,38,0.95))'
       }}
     />
   );
