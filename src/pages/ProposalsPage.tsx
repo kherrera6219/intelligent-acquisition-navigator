@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { ProposalDetails } from '@/components/proposals/ProposalDetails';
+import { LoadingState } from '@/components/ui/universal/LoadingState';
 import type { Proposal } from '@/types/proposals';
 
 const ProposalsPage = () => {
@@ -36,7 +37,7 @@ const ProposalsPage = () => {
   });
 
   if (isLoading) {
-    return <Progress />;
+    return <LoadingState variant="skeleton" skeletonCount={5} />;
   }
 
   if (error) {
@@ -48,13 +49,26 @@ const ProposalsPage = () => {
       <h1 className="text-3xl font-bold mb-6">Proposals Management</h1>
       
       <div className="flex justify-between mb-6">
-        <Input
-          type="text"
-          placeholder="Search proposals..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
+        <div className="relative w-full max-w-sm">
+          <Input
+            type="text"
+            placeholder="Search proposals..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pr-10"
+            aria-label="Search"
+          />
+          {searchTerm && (
+            <Button
+              variant="ghost"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+              onClick={() => setSearchTerm('')}
+              aria-label="Clear search"
+            >
+              ×
+            </Button>
+          )}
+        </div>
         <Button onClick={() => {}}>Sort by date</Button>
       </div>
 
@@ -62,14 +76,23 @@ const ProposalsPage = () => {
         {data?.proposals.map((proposal) => (
           <Card 
             key={proposal.id}
-            className="p-4 cursor-pointer"
+            className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
             onClick={() => setSelectedProposal(proposal)}
           >
             <h3 className="font-bold">{proposal.title}</h3>
             <p className="text-gray-600">{proposal.description}</p>
-            <div className="mt-2">
-              <span className="font-semibold">Status: </span>
-              {proposal.status}
+            <div className="mt-2 flex justify-between items-center">
+              <span className={cn(
+                "px-2 py-1 rounded text-sm font-medium",
+                proposal.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                proposal.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                'bg-red-100 text-red-800'
+              )}>
+                {proposal.status}
+              </span>
+              <span className="text-sm text-gray-500">
+                {new Date(proposal.submittedAt).toLocaleDateString()}
+              </span>
             </div>
           </Card>
         ))}
@@ -79,6 +102,7 @@ const ProposalsPage = () => {
         <Button
           onClick={() => setPage(p => Math.max(1, p - 1))}
           disabled={page === 1}
+          variant="outline"
         >
           Previous
         </Button>
@@ -86,15 +110,25 @@ const ProposalsPage = () => {
         <Button
           onClick={() => setPage(p => p + 1)}
           disabled={page === data?.totalPages}
+          variant="outline"
         >
           Next
         </Button>
       </div>
 
       {selectedProposal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
             <ProposalDetails proposal={selectedProposal} />
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+              <Button 
+                onClick={() => setSelectedProposal(null)}
+                variant="outline"
+                className="w-full"
+              >
+                Close
+              </Button>
+            </div>
           </div>
         </div>
       )}
