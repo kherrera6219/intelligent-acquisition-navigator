@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { ProposalDetails } from '@/components/proposals/ProposalDetails';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
 import { ProposalCard } from '@/components/proposals/ProposalCard';
-import { useDebounce } from '@/hooks/use-debounce'; 
+import { useDebounce } from '@/hooks/use-debounce';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import type { Proposal } from '@/types/proposals';
@@ -135,7 +135,7 @@ const ProposalsPage = () => {
   // Show loading skeleton during initial load
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4 sm:p-6 space-y-6">
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-[50vh]">
         <LoadingState 
           variant="skeleton" 
           skeletonCount={5} 
@@ -147,15 +147,15 @@ const ProposalsPage = () => {
 
   if (error) {
     return (
-      <div className="text-destructive dark:text-destructive-foreground p-4 rounded-lg bg-destructive/10">
+      <div className="text-destructive dark:text-destructive-foreground p-4 rounded-lg bg-destructive/10 m-4">
         Error loading proposals: {error instanceof Error ? error.message : 'Unknown error'}
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 space-y-6">
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+    <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-[50vh]">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
         Proposals Management
       </h1>
       
@@ -167,7 +167,7 @@ const ProposalsPage = () => {
             placeholder="Search proposals..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="pr-10"
+            className="pr-10 w-full"
             aria-label="Search"
             disabled={isValidating}
           />
@@ -190,7 +190,7 @@ const ProposalsPage = () => {
         <Button variant="outline" onClick={() => {}}>Sort by date</Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {data?.proposals.map((proposal) => (
           <ProposalCard
             key={proposal.id}
@@ -208,7 +208,7 @@ const ProposalsPage = () => {
         >
           Previous
         </Button>
-        <span className="py-2">Page {page}</span>
+        <span className="py-2 text-white">Page {page}</span>
         <Button
           onClick={() => setPage(p => p + 1)}
           disabled={page === data?.totalPages}
@@ -219,8 +219,8 @@ const ProposalsPage = () => {
       </div>
 
       {selectedProposal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-50 transition-opacity">
-          <div className="bg-background dark:bg-background/80 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto shadow-xl">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 transition-opacity">
+          <div className="bg-background/80 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto shadow-xl">
             <ProposalDetails proposal={selectedProposal} />
             <div className="p-4 border-t border-border">
               <Button 

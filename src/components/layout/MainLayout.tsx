@@ -17,7 +17,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <ThemeProvider>
       <PageErrorBoundary>
-        <div className="layout-container bg-gradient-to-b from-gray-900 to-black">
+        <div className="min-h-screen w-full bg-gradient-to-b from-gray-900 to-black">
           {/* Accessible Skip Link */}
           <a 
             href="#main-content" 
@@ -31,11 +31,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <main 
             id="main-content" 
             role="main" 
-            className="main-content"
+            className="min-h-[calc(100vh-8rem)] w-full"
           >
-            <Container size="lg" className="py-responsive">
+            <Container size="full" className="py-responsive">
               <Card 
-                className="w-full bg-black/40 backdrop-blur-sm border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl focus-within:shadow-2xl rounded-lg overflow-hidden"
+                className="w-full h-full bg-black/40 backdrop-blur-sm border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl focus-within:shadow-2xl rounded-lg overflow-hidden"
                 noShadow
               >
                 <div className="animate-fade-in divide-y divide-white/10">
@@ -54,3 +54,4 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     </ThemeProvider>
   );
 };
+
