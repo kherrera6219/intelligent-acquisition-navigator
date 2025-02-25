@@ -7,6 +7,7 @@ import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { FeedbackDialog } from "@/components/ui/universal/FeedbackDialog";
 import { DocumentList } from "@/components/documents/DocumentList";
 import { DocumentSearchBar } from "@/components/documents/DocumentSearchBar";
+import { ImprovementChecklist } from "@/components/ui/checklist/ImprovementChecklist";
 import { mockDocuments } from "@/types/documents";
 
 const DocumentControl = () => {
@@ -46,10 +47,17 @@ const DocumentControl = () => {
           isLoading={isLoading}
         />
 
-        <DocumentList 
-          documents={mockDocuments} 
-          isLoading={isLoading} 
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <DocumentList 
+              documents={mockDocuments} 
+              isLoading={isLoading} 
+            />
+          </div>
+          <div>
+            <ImprovementChecklist />
+          </div>
+        </div>
 
         <FeedbackDialog
           open={showUploadDialog}
