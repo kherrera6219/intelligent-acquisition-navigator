@@ -39,7 +39,7 @@ const Index = () => {
   // Show error state if initialization failed
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#221F26] via-black to-[#221F26]">
+      <div className="min-h-screen flex items-center justify-center bg-[#1A1720]">
         <Container>
           <div className="glass-card p-8 text-center max-w-md mx-auto animate-fade-in">
             <h1 className="text-2xl font-bold text-red-500 mb-4">Failed to load page</h1>
@@ -60,7 +60,7 @@ const Index = () => {
   if (!isLoaded) {
     return (
       <div 
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#221F26] via-black to-[#221F26] animate-fade-in" 
+        className="min-h-screen flex items-center justify-center bg-[#1A1720] animate-fade-in" 
         role="progressbar" 
         aria-valuetext="Loading homepage..."
       >
@@ -81,11 +81,11 @@ const Index = () => {
       </a>
 
       <div 
-        className="min-h-screen bg-gradient-to-br from-[#221F26] via-black to-[#221F26] fill-mode-forwards relative overflow-hidden"
+        className="min-h-screen bg-[#1A1720] relative overflow-hidden"
         role="main"
       >
-        {/* Background grid overlay */}
-        <div className="absolute inset-0 bg-grid opacity-5"></div>
+        {/* Background grid overlay with 3D effect */}
+        <div className="absolute inset-0 bg-grid opacity-5 transform-gpu rotate-3d-15"></div>
         
         {showPrivacyNotice && (
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
@@ -95,7 +95,9 @@ const Index = () => {
           <div className="flex flex-col gap-12 md:gap-24 animate-fade-in">
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <HeroSection />
+                <div className="ui-wireframe">
+                  <HeroSection />
+                </div>
               </Suspense>
             </SectionErrorBoundary>
 
@@ -146,4 +148,3 @@ const HomePage = () => (
 );
 
 export default HomePage;
-

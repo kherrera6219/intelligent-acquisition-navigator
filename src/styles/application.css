@@ -66,22 +66,33 @@
   @apply max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-/* Card System */
+/* Card System with 3D Effect */
 .glass-card {
   @apply bg-[#221F26]/40 backdrop-blur-lg border border-white/10 rounded-2xl 
-         transition-all duration-300 shadow-xl shadow-black/5;
+         transition-all duration-300 shadow-xl shadow-black/5
+         hover:shadow-2xl hover:shadow-black/10
+         before:content-[''] before:absolute before:inset-0 
+         before:bg-gradient-to-b before:from-white/5 before:to-transparent 
+         before:rounded-2xl before:opacity-50
+         after:content-[''] after:absolute after:inset-0
+         after:bg-gradient-to-t after:from-black/20 after:to-transparent
+         after:rounded-2xl after:opacity-50
+         relative overflow-hidden;
 }
 
 .glass-card-hover {
-  @apply hover:bg-white/5;
+  @apply hover:bg-white/5 hover:translate-y-[-2px] hover:scale-[1.01];
 }
 
-/* Background Effects */
+/* Background Grid with 3D Effect */
 .bg-grid {
   background-size: 100px 100px;
   background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 /* Gradient Effects */
@@ -93,13 +104,34 @@
   @apply bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500;
 }
 
-/* Glass Morphism */
+/* Glass Morphism with 3D Effect */
 .glass-morphism {
-  @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)] rounded-2xl;
+  @apply backdrop-blur-xl bg-[#1A1720]/60 border border-white/10 
+         rounded-2xl relative overflow-hidden
+         shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)]
+         before:content-[''] before:absolute before:inset-0 
+         before:bg-gradient-to-b before:from-white/5 before:to-transparent 
+         before:rounded-2xl before:opacity-50;
 }
 
 .neo-blur {
-  @apply backdrop-blur-2xl bg-black/40 border border-white/10;
+  @apply backdrop-blur-2xl bg-[#1A1720]/80 border border-white/10
+         shadow-lg shadow-black/20
+         before:content-[''] before:absolute before:inset-0 
+         before:bg-gradient-to-b before:from-white/5 before:to-transparent;
+}
+
+/* UI Lines and Wireframes */
+.ui-line {
+  @apply border-white/10 shadow-sm shadow-white/5
+         before:content-[''] before:absolute before:inset-0 
+         before:bg-gradient-to-r before:from-white/5 before:to-transparent;
+}
+
+.ui-wireframe {
+  @apply border border-white/10 rounded-md p-4
+         bg-gradient-to-b from-white/5 to-transparent
+         shadow-inner shadow-white/5;
 }
 
 /* Animations */
