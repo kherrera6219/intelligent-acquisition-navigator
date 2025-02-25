@@ -3,9 +3,11 @@ import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export function useAuthHandlers(user: User | null, userRole: string | null) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (email: string, password: string) => {
     try {
@@ -16,10 +18,23 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
       });
 
       if (error) throw error;
+
+      // Log successful login
+      await supabase.from('user_sessions').insert([
+        { 
+          user_id: (await supabase.auth.getUser()).data.user?.id,
+          event_type: 'login',
+          metadata: { source: 'web' }
+        }
+      ]);
+
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in."
       });
+
+      // Redirect to dashboard
+      navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
       toast({
@@ -64,10 +79,23 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+
+      // Log successful signout
+      await supabase.from('user_sessions').insert([
+        {
+          user_id: user?.id,
+          event_type: 'logout',
+          metadata: { source: 'web' }
+        }
+      ]);
+
       toast({
         title: "Signed out",
         description: "You have been successfully signed out."
       });
+      
+      // Navigate to home after signout
+      navigate('/');
     } catch (error) {
       console.error('Sign out error:', error);
       toast({
