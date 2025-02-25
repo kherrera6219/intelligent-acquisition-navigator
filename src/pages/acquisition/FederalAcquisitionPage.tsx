@@ -14,6 +14,7 @@ interface ChatState {
 
 const FederalAcquisition = () => {
   const [input, setInput] = useState("");
+  const [error, setError] = useState<string>();
   const [chatState, setChatState] = useState<ChatState>({
     messages: [],
     conversationId: "federal-" + Date.now(),
@@ -38,6 +39,7 @@ const FederalAcquisition = () => {
 
   const aiMutation = useAzureAI(chatState.messages, {
     onSuccess: async (data) => {
+      setError(undefined);
       const success = await chatState.addMessage({
         role: "assistant",
         content: data.choices[0].message.content
@@ -53,6 +55,7 @@ const FederalAcquisition = () => {
     },
     onError: (error) => {
       console.error('AI Error:', error);
+      setError("Failed to get AI response. Please try again.");
       toast({
         title: "Error",
         description: "Failed to get AI response. Please try again.",
@@ -65,12 +68,14 @@ const FederalAcquisition = () => {
     e.preventDefault();
     if (!input.trim() || aiMutation.isPending || !chatState.conversationId) return;
 
+    setError(undefined);
     const success = await chatState.addMessage({
       role: "user",
       content: input.trim()
     });
     
     if (!success) {
+      setError("Failed to save your message. Please try again.");
       toast({
         title: "Error saving message",
         description: "Your message couldn't be saved. Please try again.",
@@ -83,7 +88,8 @@ const FederalAcquisition = () => {
     setInput("");
     
     const aiContext = `You are a federal acquisition expert, specializing in FAR regulations and federal procurement processes. 
-                      Provide guidance specific to federal acquisition regulations and requirements.`;
+                      Provide clear, accurate guidance specific to federal acquisition regulations and requirements. 
+                      Focus on compliance, best practices, and practical implementation.`;
     
     const aiMessages: AIChatMessage[] = [
       { role: "system", content: aiContext },
@@ -100,21 +106,21 @@ const FederalAcquisition = () => {
   const handleDocumentCreation = () => {
     toast({
       title: "Document Creation",
-      description: "Document creation tool opening...",
+      description: "Opening document creation tool...",
     });
   };
 
   const handleCodeCreation = () => {
     toast({
       title: "Code Editor",
-      description: "Code editor opening...",
+      description: "Opening code editor...",
     });
   };
 
   const handleRunEnvironment = () => {
     toast({
       title: "Environment",
-      description: "Running environment...",
+      description: "Starting environment...",
     });
   };
 
@@ -129,6 +135,7 @@ const FederalAcquisition = () => {
       onDocumentCreation={handleDocumentCreation}
       onCodeCreation={handleCodeCreation}
       onRunEnvironment={handleRunEnvironment}
+      error={error}
     />
   );
 };

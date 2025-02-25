@@ -5,6 +5,8 @@ import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatToolbar } from "@/components/chat/ChatToolbar";
 import { GradientText } from "@/components/ui/universal/GradientText";
 import { Card } from "@/components/ui/universal/Card";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface FederalChatContainerProps {
   conversationId: string;
@@ -16,6 +18,7 @@ interface FederalChatContainerProps {
   onDocumentCreation: () => void;
   onCodeCreation: () => void;
   onRunEnvironment: () => void;
+  error?: string;
 }
 
 export const FederalChatContainer = ({
@@ -28,27 +31,48 @@ export const FederalChatContainer = ({
   onDocumentCreation,
   onCodeCreation,
   onRunEnvironment,
+  error
 }: FederalChatContainerProps) => {
   return (
     <div className="container-module-lg py-8">
       <div className="flex flex-col gap-8">
-        <div className="text-center">
-          <GradientText className="text-3xl font-bold">
+        <div className="text-center max-w-3xl mx-auto">
+          <GradientText className="text-3xl font-bold mb-4">
             Federal Acquisition Chat Assistant
           </GradientText>
-          <p className="text-muted-foreground mt-2">
-            Get expert guidance on federal acquisition regulations and requirements
+          <p className="text-muted-foreground">
+            Get expert guidance on federal acquisition regulations and requirements. Ask questions about FAR compliance, 
+            contracting procedures, and procurement best practices.
           </p>
         </div>
 
-        <Card className="p-6 space-y-6">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <Card className="p-6 space-y-6 bg-black/40 backdrop-blur-sm">
           <ChatToolbar
             onDocumentCreation={onDocumentCreation}
             onCodeCreation={onCodeCreation}
             onRunEnvironment={onRunEnvironment}
           />
           
-          <div className="h-[600px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-4">
+          <div 
+            className="h-[600px] overflow-y-auto rounded-lg p-4 space-y-4 bg-gradient-to-b from-background/80 to-background/40 border border-white/10"
+            style={{ scrollBehavior: 'smooth' }}
+          >
+            {messages.length === 0 && !isLoading && (
+              <div className="flex items-center justify-center h-full text-muted-foreground text-center px-4">
+                <div>
+                  <p className="mb-2">No messages yet</p>
+                  <p className="text-sm">Start by asking a question about federal acquisition regulations, contracting procedures, or procurement requirements.</p>
+                </div>
+              </div>
+            )}
             <ChatMessages
               messages={messages}
               isLoading={isLoading}
@@ -60,6 +84,7 @@ export const FederalChatContainer = ({
             isLoading={isLoading}
             onInputChange={onInputChange}
             onSubmit={onSubmit}
+            placeholder="Ask about federal acquisition regulations, contracting procedures, or procurement requirements..."
           />
         </Card>
       </div>
