@@ -4,6 +4,7 @@ import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { globalRateLimiter } from "@/utils/rateLimit";
 
 export function useAuthHandlers(user: User | null, userRole: string | null) {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -11,6 +12,16 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
 
   const handleLogin = async (email: string, password: string) => {
     try {
+      // Apply rate limiting for login attempts
+      if (!globalRateLimiter.check('auth:login')) {
+        toast({
+          title: "Rate limited",
+          description: "Too many login attempts. Please try again later.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       setIsProcessing(true);
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -49,6 +60,16 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
 
   const handleSignup = async (email: string, password: string) => {
     try {
+      // Apply rate limiting for signup attempts
+      if (!globalRateLimiter.check('auth:signup')) {
+        toast({
+          title: "Rate limited",
+          description: "Too many signup attempts. Please try again later.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       setIsProcessing(true);
       const { error } = await supabase.auth.signUp({
         email,
@@ -77,6 +98,16 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
 
   const handleSignOut = async () => {
     try {
+      // Apply rate limiting for sign out attempts
+      if (!globalRateLimiter.check('auth:signout')) {
+        toast({
+          title: "Rate limited",
+          description: "Too many sign out attempts. Please try again later.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
@@ -110,6 +141,16 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
     if (!user?.email) return;
     
     try {
+      // Apply rate limiting for email resend attempts
+      if (!globalRateLimiter.check('auth:resend-verification')) {
+        toast({
+          title: "Rate limited",
+          description: "Too many email resend attempts. Please try again later.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       setIsProcessing(true);
       const { error } = await supabase.auth.resend({
         type: 'signup',

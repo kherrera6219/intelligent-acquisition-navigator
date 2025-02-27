@@ -1,20 +1,37 @@
 
-import { useEffect } from 'react';
-import { SESSION_TIMEOUT } from '../constants/auth';
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useRef } from 'react';
+import { SESSION_TIMEOUT } from '@/constants/auth';
+import { globalRateLimiter } from '@/utils/rateLimit';
 
-export function useSessionManagement(handleSignOut: () => Promise<void>, lastActivity: number) {
+/**
+ * Hook to manage user session with rate limiting for session operations
+ * @param signOut Function to sign user out when session expires
+ * @param lastActivity Timestamp of last user activity
+ */
+export function useSessionManagement(
+  signOut: () => Promise<void>,
+  lastActivity: number
+) {
+  const timeoutRef = useRef<number | null>(null);
+  
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session && Date.now() - lastActivity > SESSION_TIMEOUT) {
-        console.log('Session timeout - signing out');
-        handleSignOut();
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current);
+    }
+
+    // Set timeout for session expiration
+    timeoutRef.current = window.setTimeout(async () => {
+      // Apply rate limiting to sign out operation to prevent abuse
+      if (globalRateLimiter.check('session:signout')) {
+        await signOut();
+      }
+    }, SESSION_TIMEOUT);
+
+    return () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
       }
     };
-
-    const interval = setInterval(checkSession, 60000); // Check every minute
-    return () => clearInterval(interval);
-  }, [handleSignOut, lastActivity]);
+  }, [lastActivity, signOut]);
 }
