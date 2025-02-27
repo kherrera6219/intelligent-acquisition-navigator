@@ -138,7 +138,14 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
   };
 
   const handleResendVerificationEmail = async () => {
-    if (!user?.email) return;
+    if (!user?.email) {
+      toast({
+        title: "Error",
+        description: "No email address found for verification.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     try {
       // Apply rate limiting for email resend attempts
@@ -154,19 +161,100 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
       setIsProcessing(true);
       const { error } = await supabase.auth.resend({
         type: 'signup',
-        email: user.email
+        email: user.email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`
+        }
       });
 
       if (error) throw error;
       toast({
         title: "Email sent",
-        description: "Verification email has been resent."
+        description: "Verification email has been resent to your email address."
       });
     } catch (error) {
       console.error('Resend verification error:', error);
       toast({
         title: "Error",
         description: "Failed to resend verification email. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePasswordReset = async (email: string) => {
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please provide an email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      // Apply rate limiting for password reset attempts
+      if (!globalRateLimiter.check('auth:password-reset')) {
+        toast({
+          title: "Rate limited",
+          description: "Too many password reset attempts. Please try again later.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setIsProcessing(true);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+
+      if (error) throw error;
+      toast({
+        title: "Email sent",
+        description: "Password reset instructions have been sent to your email address."
+      });
+    } catch (error) {
+      console.error('Password reset error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send password reset email. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePasswordUpdate = async (password: string) => {
+    try {
+      // Apply rate limiting for password update attempts
+      if (!globalRateLimiter.check('auth:password-update')) {
+        toast({
+          title: "Rate limited",
+          description: "Too many password update attempts. Please try again later.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setIsProcessing(true);
+      const { error } = await supabase.auth.updateUser({ password });
+
+      if (error) throw error;
+      toast({
+        title: "Password updated",
+        description: "Your password has been successfully updated."
+      });
+      
+      // Navigate to dashboard after password update
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Password update error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update password. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -186,6 +274,8 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
     handleSignup,
     handleSignOut,
     handleResendVerificationEmail,
+    handlePasswordReset,
+    handlePasswordUpdate,
     isAuthorized,
     isProcessing
   };

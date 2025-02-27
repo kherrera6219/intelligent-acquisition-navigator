@@ -1,14 +1,16 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from "@/providers/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 
 export const VerificationBanner = () => {
   const { user, resendVerificationEmail } = useAuth();
   const { toast } = useToast();
+  const [isResending, setIsResending] = useState(false);
 
   const handleResend = async () => {
     try {
+      setIsResending(true);
       await resendVerificationEmail();
       toast({
         title: "Verification email sent",
@@ -20,6 +22,8 @@ export const VerificationBanner = () => {
         description: "Failed to resend verification email. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -35,9 +39,10 @@ export const VerificationBanner = () => {
       </p>
       <button
         onClick={handleResend}
-        className="text-sm px-4 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-full transition-colors"
+        disabled={isResending}
+        className="text-sm px-4 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Resend verification email
+        {isResending ? "Sending..." : "Resend verification email"}
       </button>
     </div>
   );

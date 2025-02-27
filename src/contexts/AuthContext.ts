@@ -12,6 +12,8 @@ export interface AuthContextType {
   userRole: string | null;
   isAuthorized: (requiredRole?: string) => boolean;
   resendVerificationEmail: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -23,5 +25,7 @@ export const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
   userRole: null,
   isAuthorized: () => false,
-  resendVerificationEmail: async () => {}
+  resendVerificationEmail: async () => {},
+  resetPassword: async () => {},
+  updatePassword: async () => {}
 });

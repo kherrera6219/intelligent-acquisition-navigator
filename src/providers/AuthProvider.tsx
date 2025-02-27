@@ -12,8 +12,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
   const [isInitializing, setIsInitializing] = useState(true);
   const { user, userRole, isLoading, error } = useAuthState();
-  const { handleLogin, handleSignup, handleSignOut, handleResendVerificationEmail, isAuthorized } = 
-    useAuthHandlers(user, userRole);
+  const { 
+    handleLogin, 
+    handleSignup, 
+    handleSignOut, 
+    handleResendVerificationEmail, 
+    handlePasswordReset,
+    handlePasswordUpdate,
+    isAuthorized 
+  } = useAuthHandlers(user, userRole);
 
   useEffect(() => {
     const cleanup = setupActivityTracking(() => setLastActivity(Date.now()));
@@ -65,7 +72,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut: handleSignOut, 
         userRole, 
         isAuthorized,
-        resendVerificationEmail: handleResendVerificationEmail
+        resendVerificationEmail: handleResendVerificationEmail,
+        resetPassword: handlePasswordReset,
+        updatePassword: handlePasswordUpdate
       }}
     >
       {isLoading ? (
