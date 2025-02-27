@@ -43,7 +43,7 @@ export const syncSessionWithDatabase = async (userId: string | undefined, event:
   if (!userId) return;
   
   try {
-    const { error } = await fetch('/api/session-sync', {
+    const response = await fetch('/api/session-sync', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -56,8 +56,9 @@ export const syncSessionWithDatabase = async (userId: string | undefined, event:
       })
     });
     
-    if (error) {
-      console.error('Error syncing session with database:', error);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Failed to parse error response' }));
+      console.error('Error syncing session with database:', errorData);
     }
   } catch (err) {
     console.error('Failed to sync session with database:', err);

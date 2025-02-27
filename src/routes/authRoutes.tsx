@@ -2,7 +2,7 @@
 import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
 import { PasswordResetRequest } from "@/components/auth/PasswordResetRequest";
-import { PasswordResetForm } from "@/components/auth/PasswordResetForm";
+import PasswordResetForm from "@/components/auth/PasswordResetForm";
 
 export const authRoutes: RouteObject[] = [
   {
