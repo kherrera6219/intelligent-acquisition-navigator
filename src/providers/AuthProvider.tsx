@@ -1,123 +1,312 @@
 
-import { createContext, useContext, useState, useEffect } from "react";
-import { setupActivityTracking } from "@/utils/sessionUtils";
-import { AuthContext } from "@/contexts/AuthContext";
-import { useAuthState } from "@/hooks/useAuthState";
-import { useAuthHandlers } from "@/hooks/useAuthHandlers";
-import { useSessionManagement } from "@/hooks/useSessionManagement";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Toaster } from "@/components/ui/toaster";
-import NetworkStatusBanner from "@/components/ui/universal/NetworkStatusBanner";
-import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import React, { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client'; 
+import { AuthContext } from '../contexts/AuthContext';
+import { useSessionManagement } from '@/hooks/useSessionManagement';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { User } from '@supabase/supabase-js';
+import { useToast } from '@/hooks/use-toast';
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [lastActivity, setLastActivity] = useState<number>(Date.now());
-  const [isInitializing, setIsInitializing] = useState(true);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [lastActivity, setLastActivity] = useState(Date.now());
   const [sessionTimeRemaining, setSessionTimeRemaining] = useState<number | null>(null);
   const [showSessionWarning, setShowSessionWarning] = useState(false);
+  const { toast } = useToast();
   const isOnline = useNetworkStatus();
-  
-  const { user, userRole, isLoading, error } = useAuthState();
-  const { 
-    handleLogin, 
-    handleSignup, 
-    handleSignOut, 
-    handleResendVerificationEmail, 
-    handlePasswordReset,
-    handlePasswordUpdate,
-    isAuthorized,
-    isProcessing,
-    refreshSession
-  } = useAuthHandlers(user, userRole);
 
-  // Time in ms before showing warning (5 minutes before expiry)
-  const SESSION_WARNING_THRESHOLD = 5 * 60 * 1000;
-  // Session duration (30 minutes)
-  const SESSION_DURATION = 30 * 60 * 1000;
+  // Session duration constants
+  const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes
+  const WARNING_THRESHOLD = 5 * 60 * 1000; // 5 minutes before expiration
 
+  const handleAuthStateChange = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await supabase.auth.getUser();
+      
+      if (data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        
+        // Fetch user role
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', data.user.id)
+          .single();
+          
+        if (roleData) {
+          setUserRole(roleData.role);
+        }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+        setUserRole(null);
+      }
+    } catch (error) {
+      console.error('Error checking auth state:', error);
+      setUser(null);
+      setIsAuthenticated(false);
+      setUserRole(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleActivityDetection = () => {
+    setLastActivity(Date.now());
+    setShowSessionWarning(false);
+  };
+
+  const updateSessionTimeRemaining = () => {
+    if (!user) {
+      setSessionTimeRemaining(null);
+      setShowSessionWarning(false);
+      return;
+    }
+    
+    const timeElapsed = Date.now() - lastActivity;
+    const remaining = Math.max(0, SESSION_DURATION - timeElapsed);
+    
+    setSessionTimeRemaining(remaining);
+    
+    // Show warning when session is about to expire
+    if (remaining > 0 && remaining <= WARNING_THRESHOLD) {
+      setShowSessionWarning(true);
+    } else if (remaining === 0) {
+      // Session expired
+      signOut();
+    }
+  };
+
+  // Initialize auth state
   useEffect(() => {
-    const cleanup = setupActivityTracking(() => {
-      setLastActivity(Date.now());
-      setShowSessionWarning(false); // Reset warning on user activity
+    handleAuthStateChange();
+    
+    // Subscribe to auth changes
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        handleAuthStateChange();
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setIsAuthenticated(false);
+        setUserRole(null);
+      }
     });
-    return cleanup;
+    
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
+  // User activity tracking
   useEffect(() => {
-    // Handle initialization state
-    if (!isLoading && isInitializing) {
-      setIsInitializing(false);
-    }
-  }, [isLoading, isInitializing]);
-
-  // Session timeout monitoring
-  useEffect(() => {
-    if (!user) return;
+    // Track user activity
+    const events = ['mousedown', 'keydown', 'touchstart', 'scroll'];
     
-    const checkSessionTime = () => {
-      const timeSinceLastActivity = Date.now() - lastActivity;
-      const remainingTime = SESSION_DURATION - timeSinceLastActivity;
-      
-      setSessionTimeRemaining(remainingTime > 0 ? remainingTime : 0);
-      
-      // Show warning when approaching timeout
-      if (remainingTime < SESSION_WARNING_THRESHOLD && remainingTime > 0 && !showSessionWarning) {
-        setShowSessionWarning(true);
-      }
-      
-      // Auto refresh session when there's activity and we're under warning threshold
-      if (timeSinceLastActivity < 60000 && remainingTime < SESSION_WARNING_THRESHOLD && remainingTime > 0) {
-        refreshSession();
-        setShowSessionWarning(false);
-      }
+    const resetTimer = () => {
+      handleActivityDetection();
     };
     
-    const interval = setInterval(checkSessionTime, 1000);
-    return () => clearInterval(interval);
-  }, [user, lastActivity, showSessionWarning, refreshSession]);
+    events.forEach(event => {
+      window.addEventListener(event, resetTimer);
+    });
+    
+    // Check session time remaining periodically
+    const interval = setInterval(updateSessionTimeRemaining, 30000); // Check every 30 seconds
+    
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, resetTimer);
+      });
+      clearInterval(interval);
+    };
+  }, [user, lastActivity]);
 
-  // Use the enhanced session management hook
-  useSessionManagement(handleSignOut, lastActivity, SESSION_DURATION, showSessionWarning);
+  // Use the session management hook
+  useSessionManagement(
+    signOut,
+    lastActivity,
+    SESSION_DURATION,
+    showSessionWarning
+  );
 
-  if (isInitializing) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+  const login = async (email: string, password: string) => {
+    try {
+      setIsProcessing(true);
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) throw error;
+      
+      handleActivityDetection();
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast({
+        title: "Login Failed",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
-  if (error) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <h2 className="text-xl font-semibold text-red-500">Authentication Error</h2>
-          <p className="text-gray-600">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const signup = async (email: string, password: string) => {
+    try {
+      setIsProcessing(true);
+      const { error } = await supabase.auth.signUp({ email, password });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Registration Successful",
+        description: "Please check your email to verify your account",
+      });
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      toast({
+        title: "Registration Failed",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      setIsProcessing(true);
+      await supabase.auth.signOut();
+      setUser(null);
+      setIsAuthenticated(false);
+      setUserRole(null);
+    } catch (error) {
+      console.error('Signout error:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const resendVerificationEmail = async () => {
+    if (!user?.email) return;
+    
+    try {
+      setIsProcessing(true);
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: user.email,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Email Sent",
+        description: "Verification email has been resent",
+      });
+    } catch (error: any) {
+      console.error('Resend verification error:', error);
+      toast({
+        title: "Failed to Resend Email",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      setIsProcessing(true);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Password Reset Email Sent",
+        description: "Check your email for instructions to reset your password",
+      });
+    } catch (error: any) {
+      console.error('Reset password error:', error);
+      toast({
+        title: "Failed to Send Reset Email",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const updatePassword = async (password: string) => {
+    try {
+      setIsProcessing(true);
+      const { error } = await supabase.auth.updateUser({ password });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Password Updated",
+        description: "Your password has been successfully updated",
+      });
+    } catch (error: any) {
+      console.error('Update password error:', error);
+      toast({
+        title: "Failed to Update Password",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const refreshSession = async () => {
+    handleActivityDetection();
+    setShowSessionWarning(false);
+    
+    toast({
+      title: "Session Extended",
+      description: "Your session has been refreshed",
+    });
+  };
+
+  const isAuthorized = (requiredRole?: string) => {
+    if (!isAuthenticated || !userRole) return false;
+    if (!requiredRole) return true;
+    
+    // Simple role hierarchy check
+    if (userRole === 'admin') return true;
+    if (userRole === 'manager' && requiredRole !== 'admin') return true;
+    return userRole === requiredRole;
+  };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
+    <AuthContext.Provider
+      value={{
+        user,
         isLoading,
-        isAuthenticated: !!user, 
-        login: handleLogin,
-        signup: handleSignup,
-        signOut: handleSignOut, 
-        userRole, 
+        isAuthenticated,
+        login,
+        signup,
+        signOut,
+        userRole,
         isAuthorized,
-        resendVerificationEmail: handleResendVerificationEmail,
-        resetPassword: handlePasswordReset,
-        updatePassword: handlePasswordUpdate,
+        resendVerificationEmail,
+        resetPassword,
+        updatePassword,
         isProcessing,
         sessionTimeRemaining,
         showSessionWarning,
@@ -125,38 +314,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isOnline
       }}
     >
-      {isLoading ? (
-        <div className="h-screen w-screen flex items-center justify-center">
-          <LoadingSpinner size="lg" />
-        </div>
-      ) : (
-        <>
-          {children}
-          <Toaster />
-          <NetworkStatusBanner />
-          {showSessionWarning && user && (
-            <div className="fixed top-0 left-0 right-0 bg-yellow-500 text-black py-2 px-4 text-center z-50">
-              <p className="text-sm font-medium">
-                Your session will expire soon. 
-                <button 
-                  onClick={refreshSession}
-                  className="ml-2 underline font-bold hover:text-yellow-800"
-                >
-                  Click to stay logged in
-                </button>
-              </p>
-            </div>
-          )}
-        </>
-      )}
+      {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
+};

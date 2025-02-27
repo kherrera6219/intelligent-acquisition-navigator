@@ -1,89 +1,165 @@
 
-import { useToast } from "@/hooks/use-toast";
+/**
+ * Enhanced API client with optimistic updates and caching
+ */
+import { cachedFetch, CacheConfig } from '@/utils/cachedFetch';
+import { createOptimisticUpdate, updateOptimisticStatus } from '@/utils/optimisticUpdates';
+import { errorTracker } from '@/lib/security/errorTracking';
 
-interface RequestConfig extends RequestInit {
-  baseURL?: string;
-}
+// Default API configuration
+const DEFAULT_HEADERS = {
+  'Content-Type': 'application/json',
+};
 
-interface APIError extends Error {
-  status?: number;
-  code?: string;
-}
+// Enhanced API client with caching and optimistic updates
+class ApiClient {
+  private baseUrl: string;
+  private defaultHeaders: HeadersInit;
 
-class APIClient {
-  private baseURL: string;
-  private toast: ReturnType<typeof useToast>['toast'];
-
-  constructor(baseURL: string = '', toast?: ReturnType<typeof useToast>['toast']) {
-    this.baseURL = baseURL;
-    this.toast = toast as ReturnType<typeof useToast>['toast'];
+  constructor(baseUrl: string = '', defaultHeaders: HeadersInit = {}) {
+    this.baseUrl = baseUrl;
+    this.defaultHeaders = {
+      ...DEFAULT_HEADERS,
+      ...defaultHeaders,
+    };
   }
 
-  private handleError(error: unknown): never {
-    const apiError: APIError = error instanceof Error ? error : new Error('An unknown error occurred');
+  // Helper to build full URL
+  private buildUrl(endpoint: string): string {
+    return `${this.baseUrl}${endpoint}`;
+  }
+
+  // Helper to get CSRF token
+  private getCsrfToken(): string | null {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    return metaTag ? metaTag.getAttribute('content') : null;
+  }
+
+  // Generic request method with caching and optimistic updates
+  async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    cacheConfig: CacheConfig = {}
+  ): Promise<T> {
+    const url = this.buildUrl(endpoint);
     
-    if (this.toast) {
-      this.toast({
-        title: apiError.code || "Error",
-        description: apiError.message,
-        variant: "destructive",
-      });
+    // Set default headers and include CSRF token
+    const csrfToken = this.getCsrfToken();
+    const headers = {
+      ...this.defaultHeaders,
+      ...options.headers,
+    };
+    
+    if (csrfToken) {
+      headers['X-CSRF-Token'] = csrfToken;
     }
-    
-    throw apiError;
-  }
 
-  async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
-    const { baseURL = this.baseURL, headers = {}, ...restConfig } = config;
+    // Determine resource type for optimistic updates
+    const resourceType = cacheConfig.resourceType || endpoint.split('/').filter(Boolean).pop() || 'unknown';
     
+    // Create optimistic update for write operations
+    let optimisticUpdateId;
+    const method = (options.method || 'GET').toUpperCase();
+    
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+      const action = method === 'POST' 
+        ? 'create' 
+        : method === 'DELETE' 
+          ? 'delete' 
+          : 'update';
+      
+      const resourceId = method !== 'POST' 
+        ? endpoint.split('/').filter(Boolean).pop() 
+        : undefined;
+      
+      const body = options.body 
+        ? typeof options.body === 'string' 
+          ? JSON.parse(options.body) 
+          : options.body
+        : undefined;
+      
+      const update = createOptimisticUpdate(
+        resourceType,
+        action,
+        resourceId,
+        undefined, // Original data not available here
+        body
+      );
+      
+      optimisticUpdateId = update.id;
+    }
+
     try {
-      const response = await fetch(`${baseURL}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers,
-        },
-        ...restConfig,
-      });
-
-      if (!response.ok) {
-        const error = new Error(`HTTP error! status: ${response.status}`) as APIError;
-        error.status = response.status;
-        error.code = `HTTP_${response.status}`;
-        throw error;
+      const response = await cachedFetch<T>(url, {
+        ...options,
+        headers,
+      }, cacheConfig);
+      
+      // Update optimistic status if applicable
+      if (optimisticUpdateId) {
+        updateOptimisticStatus(optimisticUpdateId, 'success');
       }
-
-      const data = await response.json();
-      return data as T;
+      
+      return response;
     } catch (error) {
-      return this.handleError(error);
+      // Update optimistic status if applicable
+      if (optimisticUpdateId) {
+        updateOptimisticStatus(optimisticUpdateId, 'error', error as Error);
+      }
+      
+      // Track error
+      errorTracker.trackError({
+        message: error instanceof Error ? error.message : 'Unknown API error',
+        severity: 'HIGH',
+        errorType: 'API',
+        status: 'NEW'
+      });
+      
+      throw error;
     }
   }
 
-  async get<T>(endpoint: string, config: RequestConfig = {}) {
-    return this.request<T>(endpoint, { ...config, method: 'GET' });
+  // CRUD methods with caching and optimistic updates
+  async get<T>(endpoint: string, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'GET',
+    }, cacheConfig);
   }
 
-  async post<T>(endpoint: string, data: unknown, config: RequestConfig = {}) {
+  async post<T>(endpoint: string, data: any, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
     return this.request<T>(endpoint, {
-      ...config,
+      ...options,
       method: 'POST',
       body: JSON.stringify(data),
-    });
+    }, cacheConfig);
   }
 
-  async put<T>(endpoint: string, data: unknown, config: RequestConfig = {}) {
+  async put<T>(endpoint: string, data: any, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
     return this.request<T>(endpoint, {
-      ...config,
+      ...options,
       method: 'PUT',
       body: JSON.stringify(data),
-    });
+    }, cacheConfig);
   }
 
-  async delete<T>(endpoint: string, config: RequestConfig = {}) {
-    return this.request<T>(endpoint, { ...config, method: 'DELETE' });
+  async patch<T>(endpoint: string, data: any, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }, cacheConfig);
+  }
+
+  async delete<T>(endpoint: string, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'DELETE',
+    }, cacheConfig);
   }
 }
 
-export const createAPIClient = (baseURL: string, toast?: ReturnType<typeof useToast>['toast']) => {
-  return new APIClient(baseURL, toast);
-};
+// Create a singleton instance
+const apiClient = new ApiClient();
+
+export default apiClient;

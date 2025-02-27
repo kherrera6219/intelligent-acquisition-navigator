@@ -1,9 +1,11 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { errorTracker } from '@/lib/security/errorTracking';
 import { auditLogger } from '@/lib/audit';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { clearExpiredCache } from '@/utils/cachedFetch';
 
 interface QueryProviderProps {
   children: ReactNode;
@@ -11,22 +13,30 @@ interface QueryProviderProps {
 
 export const QueryProvider = ({ children }: QueryProviderProps) => {
   const { toast } = useToast();
+  const isOnline = useNetworkStatus();
+  
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5, // 5 minutes
         gcTime: 1000 * 60 * 30, // 30 minutes (formerly cacheTime)
-        retry: 2,
-        refetchOnWindowFocus: false,
+        retry: (failureCount, error) => {
+          // Don't retry if we're offline or after 2 failures
+          if (!isOnline) return false;
+          if (failureCount >= 2) return false;
+          
+          return true;
+        },
+        refetchOnWindowFocus: isOnline,
         refetchOnReconnect: true,
-        refetchOnMount: false,
+        refetchOnMount: isOnline,
         meta: {
           onError: (error: Error) => {
             // Track error
             errorTracker.trackError({
               message: error.message,
               severity: 'MEDIUM',
-              errorType: 'SYSTEM', // Changed from 'API' to 'SYSTEM'
+              errorType: 'SYSTEM',
               status: 'NEW'
             });
 
@@ -39,24 +49,32 @@ export const QueryProvider = ({ children }: QueryProviderProps) => {
               details: { error: error.message }
             }).catch(console.error);
 
-            // Show toast
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Failed to fetch data. Please try again."
-            });
+            // Show toast only when online - offline errors are handled by the network status banner
+            if (isOnline) {
+              toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to fetch data. Please try again."
+              });
+            }
           }
         }
       },
       mutations: {
-        retry: 1,
+        retry: (failureCount, error) => {
+          // Don't retry if we're offline or after 1 failure
+          if (!isOnline) return false;
+          if (failureCount >= 1) return false;
+          
+          return true;
+        },
         meta: {
           onError: (error: Error) => {
             // Track error
             errorTracker.trackError({
               message: error.message,
               severity: 'HIGH',
-              errorType: 'SYSTEM', // Changed from 'API' to 'SYSTEM'
+              errorType: 'SYSTEM',
               status: 'NEW'
             });
 
@@ -80,6 +98,23 @@ export const QueryProvider = ({ children }: QueryProviderProps) => {
       }
     }
   }));
+
+  // Clear expired cache periodically
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      clearExpiredCache();
+    }, 1000 * 60 * 15); // Every 15 minutes
+    
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Update refetch behaviors based on online status
+  useEffect(() => {
+    if (isOnline) {
+      // When coming back online, invalidate stale queries
+      queryClient.invalidateQueries();
+    }
+  }, [isOnline, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>

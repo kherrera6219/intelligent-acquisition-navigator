@@ -1,195 +1,269 @@
-import { globalRateLimiter } from './rateLimit';
-
-type FetchOptions = RequestInit & {
-  retries?: number;
-  retryDelay?: number;
-  offlineFallback?: boolean;
-  cacheKey?: string;
-};
-
-type CachedResponse = {
-  data: any;
-  timestamp: number;
-  headers: Record<string, string>;
-  status: number;
-};
-
-const CACHE_EXPIRY = 1000 * 60 * 60; // 1 hour
-const OFFLINE_STORAGE_KEY = 'offline_data_cache';
-
-// Load the cache from localStorage
-const loadCache = (): Record<string, CachedResponse> => {
-  try {
-    const cache = localStorage.getItem(OFFLINE_STORAGE_KEY);
-    return cache ? JSON.parse(cache) : {};
-  } catch (error) {
-    console.error('Failed to load offline cache:', error);
-    return {};
-  }
-};
-
-// Save the cache to localStorage
-const saveCache = (cache: Record<string, CachedResponse>) => {
-  try {
-    localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(cache));
-  } catch (error) {
-    console.error('Failed to save offline cache:', error);
-    // If storage is full, clear old items
-    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-      cleanCache();
-    }
-  }
-};
-
-// Clean old or excessive items from cache
-const cleanCache = () => {
-  const cache = loadCache();
-  const now = Date.now();
-  const entries = Object.entries(cache);
-  
-  // Remove expired entries
-  const filtered = entries.filter(([_, value]) => now - value.timestamp < CACHE_EXPIRY);
-  
-  // If still too many entries, keep only the most recent ones
-  if (filtered.length > 100) {
-    filtered.sort((a, b) => b[1].timestamp - a[1].timestamp);
-    filtered.splice(100);
-  }
-  
-  saveCache(Object.fromEntries(filtered));
-};
-
-// Cache a response
-const cacheResponse = (key: string, response: Response, data: any) => {
-  const cache = loadCache();
-  
-  // Extract headers to store
-  const headers: Record<string, string> = {};
-  response.headers.forEach((value, key) => {
-    headers[key] = value;
-  });
-  
-  cache[key] = {
-    data,
-    timestamp: Date.now(),
-    headers,
-    status: response.status
-  };
-  
-  saveCache(cache);
-};
-
-// Check if response exists in cache and is valid
-const getCachedResponse = (key: string): CachedResponse | null => {
-  const cache = loadCache();
-  const cachedResponse = cache[key];
-  
-  if (!cachedResponse) return null;
-  
-  // Check if cache is expired
-  if (Date.now() - cachedResponse.timestamp > CACHE_EXPIRY) {
-    // Remove expired entry
-    delete cache[key];
-    saveCache(cache);
-    return null;
-  }
-  
-  return cachedResponse;
-};
 
 /**
- * Fetch function with offline support, caching, and retry capability
+ * Enhanced offline fetch utility with retry and background sync
  */
-export async function offlineFetch<T>(url: string, options: FetchOptions = {}): Promise<T> {
-  const {
-    retries = 3,
-    retryDelay = 1000,
-    offlineFallback = true,
-    cacheKey = url,
-    ...fetchOptions
-  } = options;
-  
-  // Apply rate limiting
-  if (!globalRateLimiter.check(`fetch:${url}`)) {
-    throw new Error('Rate limit exceeded for this request.');
-  }
-  
-  // Check for online status
-  const isOnline = navigator.onLine;
-  
-  // If offline and fallback enabled, try to return cached data
-  if (!isOnline && offlineFallback) {
-    const cachedResponse = getCachedResponse(cacheKey);
-    if (cachedResponse) {
-      console.log(`[OfflineFetch] Using cached data for ${url}`);
-      return cachedResponse.data as T;
-    }
-    throw new Error('You are offline and no cached data is available.');
-  }
-  
-  // If we're online, attempt to fetch with retries
-  let lastError: Error;
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      // Wait before retrying, except for first attempt
-      if (attempt > 0) {
-        await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
-      }
-      
-      const response = await fetch(url, fetchOptions);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
-      }
-      
-      // Clone the response before reading it
-      const clonedResponse = response.clone();
-      const data = await response.json();
-      
-      // Cache successful responses for offline use
-      if (offlineFallback) {
-        cacheResponse(cacheKey, clonedResponse, data);
-      }
-      
-      return data as T;
-    } catch (error) {
-      console.error(`[OfflineFetch] Attempt ${attempt + 1}/${retries + 1} failed:`, error);
-      lastError = error instanceof Error ? error : new Error(String(error));
-      
-      // If we're now offline, check cache before continuing retries
-      if (!navigator.onLine && offlineFallback) {
-        const cachedResponse = getCachedResponse(cacheKey);
-        if (cachedResponse) {
-          console.log(`[OfflineFetch] Falling back to cached data for ${url}`);
-          return cachedResponse.data as T;
-        }
-      }
-    }
-  }
-  
-  // If all retries failed, throw the last error
-  throw lastError!;
+import { openDB, IDBPDatabase } from 'idb';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+
+// Interface for failed request
+interface FailedRequest {
+  id: string;
+  url: string;
+  options: RequestInit;
+  timestamp: number;
+  retryCount: number;
+  maxRetries: number;
 }
 
-// Function to clear the entire cache (useful for debugging or user-triggered cache clearing)
-export function clearOfflineCache(): void {
-  localStorage.removeItem(OFFLINE_STORAGE_KEY);
+// Database name and store
+const DB_NAME = 'offline-cache';
+const STORE_NAME = 'failed-requests';
+const CACHE_STORE = 'response-cache';
+
+// Initialize the database
+async function getDB(): Promise<IDBPDatabase> {
+  return openDB(DB_NAME, 1, {
+    upgrade(db) {
+      // Create failed requests store
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      }
+      
+      // Create response cache store
+      if (!db.objectStoreNames.contains(CACHE_STORE)) {
+        db.createObjectStore(CACHE_STORE, { keyPath: 'url' });
+      }
+    },
+  });
 }
 
-// Function to get cache stats for debugging
-export function getOfflineCacheStats(): { size: number, entries: number, oldestEntry: Date | null } {
-  const cache = loadCache();
-  const entries = Object.values(cache);
+/**
+ * Store a failed request for later retry
+ */
+export async function setFailedRequest(
+  url: string,
+  options: RequestInit,
+  maxRetries: number = 3
+): Promise<string> {
+  const db = await getDB();
   
-  if (entries.length === 0) {
-    return { size: 0, entries: 0, oldestEntry: null };
-  }
+  // Create a unique ID for the request
+  const id = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
   
-  const oldest = Math.min(...entries.map(e => e.timestamp));
-  
-  return {
-    size: new Blob([JSON.stringify(cache)]).size,
-    entries: entries.length,
-    oldestEntry: new Date(oldest)
+  // Store the request in IndexedDB
+  const request: FailedRequest = {
+    id,
+    url,
+    options: {
+      ...options,
+      // Clone the body since it might be a stream
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    },
+    timestamp: Date.now(),
+    retryCount: 0,
+    maxRetries,
   };
+  
+  await db.put(STORE_NAME, request);
+  
+  // Schedule background sync if available
+  if ('serviceWorker' in navigator && 'sync' in window.registration) {
+    try {
+      await window.registration.sync.register('sync-failed-requests');
+    } catch (error) {
+      console.error('Background sync registration failed:', error);
+    }
+  }
+  
+  return id;
+}
+
+/**
+ * Get all failed requests
+ */
+export async function getFailedRequests(): Promise<FailedRequest[]> {
+  const db = await getDB();
+  return db.getAll(STORE_NAME);
+}
+
+/**
+ * Delete a failed request
+ */
+export async function deleteFailedRequest(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete(STORE_NAME, id);
+}
+
+/**
+ * Retry a failed request
+ */
+export async function retryFailedRequest(request: FailedRequest): Promise<boolean> {
+  try {
+    // Check if network is available
+    if (!navigator.onLine) {
+      return false;
+    }
+    
+    // Update retry count
+    request.retryCount += 1;
+    
+    // Check if max retries reached
+    if (request.retryCount > request.maxRetries) {
+      await deleteFailedRequest(request.id);
+      return false;
+    }
+    
+    // Update the request in the database
+    const db = await getDB();
+    await db.put(STORE_NAME, request);
+    
+    // Retry the request
+    const response = await fetch(request.url, {
+      ...request.options,
+      // Recreate the body if it was stringified
+      body: request.options.body,
+    });
+    
+    // If successful, remove from queue
+    if (response.ok) {
+      await deleteFailedRequest(request.id);
+      return true;
+    }
+    
+    return false;
+  } catch (error) {
+    console.error('Error retrying request:', error);
+    return false;
+  }
+}
+
+/**
+ * Retry all failed requests
+ */
+export async function retryAllFailedRequests(): Promise<void> {
+  const failedRequests = await getFailedRequests();
+  
+  await Promise.all(
+    failedRequests.map(request => retryFailedRequest(request))
+  );
+}
+
+/**
+ * Cache a response
+ */
+export async function cacheResponse(url: string, response: Response): Promise<void> {
+  const db = await getDB();
+  
+  try {
+    const clonedResponse = response.clone();
+    const responseData = await clonedResponse.json();
+    
+    await db.put(CACHE_STORE, {
+      url,
+      data: responseData,
+      timestamp: Date.now(),
+    });
+  } catch (error) {
+    console.error('Error caching response:', error);
+  }
+}
+
+/**
+ * Get a cached response
+ */
+export async function getCachedResponse(url: string): Promise<any | null> {
+  const db = await getDB();
+  
+  try {
+    const cachedResponse = await db.get(CACHE_STORE, url);
+    return cachedResponse?.data || null;
+  } catch (error) {
+    console.error('Error getting cached response:', error);
+    return null;
+  }
+}
+
+/**
+ * Fetch with offline support and automatic retries
+ */
+export async function offlineFetch(
+  url: string,
+  options: RequestInit & { retryCount?: number } = {}
+): Promise<Response> {
+  const { retryCount = 3, ...fetchOptions } = options;
+  
+  // Try to fetch
+  try {
+    const response = await fetch(url, fetchOptions);
+    
+    // Cache successful GET responses
+    if (response.ok && (fetchOptions.method || 'GET') === 'GET') {
+      await cacheResponse(url, response);
+    }
+    
+    return response;
+  } catch (error) {
+    // If offline and it's a GET request, try to serve from cache
+    if (!navigator.onLine && (fetchOptions.method || 'GET') === 'GET') {
+      const cachedData = await getCachedResponse(url);
+      
+      if (cachedData) {
+        // Create a synthetic response from cached data
+        return new Response(JSON.stringify(cachedData), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    
+    // For write operations, queue for retry later
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes((fetchOptions.method || 'GET').toUpperCase())) {
+      await setFailedRequest(url, fetchOptions, retryCount);
+    }
+    
+    throw error;
+  }
+}
+
+/**
+ * Hook to sync failed requests when coming back online
+ */
+export function useOfflineSync() {
+  const isOnline = useNetworkStatus();
+  
+  React.useEffect(() => {
+    let syncTimeout: NodeJS.Timeout;
+    
+    // When coming back online, retry failed requests
+    if (isOnline) {
+      // Debounce to avoid multiple syncs
+      syncTimeout = setTimeout(() => {
+        retryAllFailedRequests().catch(console.error);
+      }, 1000);
+    }
+    
+    return () => {
+      if (syncTimeout) clearTimeout(syncTimeout);
+    };
+  }, [isOnline]);
+}
+
+// Register event listener for online status
+window.addEventListener('online', () => {
+  retryAllFailedRequests().catch(console.error);
+});
+
+// Auto-retry logic (if service worker is active, this helps process background syncs)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.ready.then((registration) => {
+    // Store registration globally for sync
+    (window as any).registration = registration;
+    
+    // Add listener for sync event
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data && event.data.type === 'retry-failed-requests') {
+        retryAllFailedRequests().catch(console.error);
+      }
+    });
+  });
 }

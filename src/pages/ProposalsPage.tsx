@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -11,6 +11,8 @@ import { SearchBar } from '@/components/proposals/SearchBar';
 import { Pagination } from '@/components/proposals/Pagination';
 import { ProposalList } from '@/components/proposals/ProposalList';
 import { ProposalModal } from '@/components/proposals/ProposalModal';
+import { useOptimisticQuery } from '@/hooks/useOptimisticQuery';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 
 // Input validation schema
 const searchSchema = z.object({
@@ -20,11 +22,14 @@ const searchSchema = z.object({
 const ProposalsPage = () => {
   const searchRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const isOnline = useNetworkStatus();
   
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [sortByDate, setSortByDate] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -46,58 +51,20 @@ const ProposalsPage = () => {
     return true;
   }, [toast]);
 
-  const fetchProposals = useCallback(async () => {
-    if (!canMakeRequest()) {
-      throw new Error('Rate limit exceeded');
-    }
-
-    // Add CSRF token to headers
-    const headers = {
-      'X-CSRF-Token': document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '',
-    };
-
-    try {
-      // Validate search term if present
-      if (debouncedSearchTerm) {
-        setIsValidating(true);
-        const result = searchSchema.safeParse({ term: debouncedSearchTerm });
-        if (!result.success) {
-          throw new Error(result.error.errors[0].message);
-        }
-      }
-
-      // Simulated API response
-      return {
-        proposals: [
-          {
-            id: '1',
-            title: 'Proposal 1',
-            description: 'Description 1',
-            status: 'PENDING',
-            submittedAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            attachments: [],
-            evaluations: []
-          }
-        ] as Proposal[],
-        totalPages: 2
-      };
-    } catch (error) {
+  // Use our optimistic query hook for proposals
+  const { data, isLoading, error } = useOptimisticQuery<Proposal[]>({
+    url: `/api/proposals?page=${page}&search=${encodeURIComponent(debouncedSearchTerm)}&sortByDate=${sortByDate}`,
+    queryKey: ['proposals', page, debouncedSearchTerm, sortByDate],
+    resourceType: 'proposals',
+    enabled: canMakeRequest(),
+    retryCount: isOnline ? 2 : 0, // Don't retry if offline
+    onError: (err) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to fetch proposals",
+        description: err instanceof Error ? err.message : "Failed to fetch proposals",
         variant: "destructive"
       });
-      throw error;
-    } finally {
-      setIsValidating(false);
     }
-  }, [canMakeRequest, debouncedSearchTerm, toast]);
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['proposals', page, debouncedSearchTerm],
-    queryFn: fetchProposals,
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
   });
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,6 +98,10 @@ const ProposalsPage = () => {
     setSelectedProposal(null);
   }, []);
 
+  const toggleSortByDate = useCallback(() => {
+    setSortByDate(prev => !prev);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-[50vh]">
@@ -147,9 +118,18 @@ const ProposalsPage = () => {
     return (
       <div className="text-destructive dark:text-destructive-foreground p-4 rounded-lg bg-destructive/10 m-4">
         Error loading proposals: {error instanceof Error ? error.message : 'Unknown error'}
+        <Button 
+          onClick={() => queryClient.invalidateQueries({ queryKey: ['proposals'] })} 
+          className="mt-4"
+        >
+          Try Again
+        </Button>
       </div>
     );
   }
+
+  const proposals = data || [];
+  const totalPages = proposals.length > 0 ? 2 : 1; // Simulate pagination with mock data
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-[50vh]">
@@ -165,17 +145,36 @@ const ProposalsPage = () => {
           onClear={handleClearSearch}
           isValidating={isValidating}
         />
-        <Button variant="outline" onClick={() => {}}>Sort by date</Button>
+        <Button 
+          variant="outline" 
+          onClick={toggleSortByDate}
+        >
+          {sortByDate ? 'Sort by relevance' : 'Sort by date'}
+        </Button>
       </div>
 
-      <ProposalList
-        proposals={data?.proposals || []}
-        onProposalClick={handleProposalClick}
-      />
+      {!isOnline && (
+        <div className="rounded-md bg-amber-50 p-4 mb-4 dark:bg-amber-900/30">
+          <p className="text-amber-800 dark:text-amber-200">
+            You're currently offline. Showing cached proposals.
+          </p>
+        </div>
+      )}
+
+      {proposals.length === 0 ? (
+        <div className="text-center p-8 border rounded-lg">
+          <p className="text-muted-foreground">No proposals found matching your criteria.</p>
+        </div>
+      ) : (
+        <ProposalList
+          proposals={proposals}
+          onProposalClick={handleProposalClick}
+        />
+      )}
 
       <Pagination
         page={page}
-        totalPages={data?.totalPages}
+        totalPages={totalPages}
         onPageChange={setPage}
       />
 
