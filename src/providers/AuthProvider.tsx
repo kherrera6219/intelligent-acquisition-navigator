@@ -19,7 +19,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     handleResendVerificationEmail, 
     handlePasswordReset,
     handlePasswordUpdate,
-    isAuthorized 
+    isAuthorized,
+    isProcessing 
   } = useAuthHandlers(user, userRole);
 
   useEffect(() => {
@@ -74,7 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthorized,
         resendVerificationEmail: handleResendVerificationEmail,
         resetPassword: handlePasswordReset,
-        updatePassword: handlePasswordUpdate
+        updatePassword: handlePasswordUpdate,
+        isProcessing
       }}
     >
       {isLoading ? (

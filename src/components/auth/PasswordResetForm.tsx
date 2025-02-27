@@ -1,85 +1,77 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/providers/AuthProvider';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
-export const PasswordResetForm = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const { updatePassword, isProcessing } = useAuth();
-  const navigate = useNavigate();
+const PasswordResetForm = () => {
+  const { resetPassword, isProcessing } = useAuth();
+  const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters');
-      return;
-    }
-    
+  // Form schema
+  const formSchema = z.object({
+    email: z.string().email('Please enter a valid email address'),
+  });
+
+  // Form setup
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await updatePassword(password);
-      // Navigation to dashboard is handled in updatePassword function
-    } catch (err) {
-      setError('Failed to update password. Please try again.');
+      await resetPassword(values.email);
+      toast({
+        title: "Password reset email sent",
+        description: "Check your inbox for a link to reset your password.",
+      });
+    } catch (error) {
+      console.error("Password reset error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send password reset email. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Reset Your Password</CardTitle>
-        <CardDescription>
-          Please enter your new password below.
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-          </div>
-        </CardContent>
-        <CardFooter>
+    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+      <h2 className="text-2xl font-bold mb-6 text-center">Reset Password</h2>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button 
             type="submit" 
-            className="w-full"
+            className="w-full" 
             disabled={isProcessing}
           >
-            {isProcessing ? 'Updating...' : 'Reset Password'}
+            {isProcessing ? "Sending..." : "Send Reset Link"}
           </Button>
-        </CardFooter>
-      </form>
-    </Card>
+        </form>
+      </Form>
+    </div>
   );
 };
+
+export default PasswordResetForm;

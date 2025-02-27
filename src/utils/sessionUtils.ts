@@ -16,7 +16,8 @@ export const setupActivityTracking = (updateCallback: () => void) => {
     'keypress',
     'scroll',
     'touchstart',
-    'click'
+    'click',
+    'focus' // Adding focus event for better tracking
   ];
 
   const handleActivity = () => {
@@ -35,4 +36,30 @@ export const setupActivityTracking = (updateCallback: () => void) => {
       document.removeEventListener(event, handleActivity);
     });
   };
+};
+
+// Add function to sync session data with database
+export const syncSessionWithDatabase = async (userId: string | undefined, event: string, metadata: any = {}) => {
+  if (!userId) return;
+  
+  try {
+    const { error } = await fetch('/api/session-sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        event,
+        timestamp: new Date().toISOString(),
+        metadata
+      })
+    });
+    
+    if (error) {
+      console.error('Error syncing session with database:', error);
+    }
+  } catch (err) {
+    console.error('Failed to sync session with database:', err);
+  }
 };

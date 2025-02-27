@@ -14,6 +14,7 @@ export interface AuthContextType {
   resendVerificationEmail: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
+  isProcessing: boolean; // Add isProcessing property to fix the error
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -27,5 +28,6 @@ export const AuthContext = createContext<AuthContextType>({
   isAuthorized: () => false,
   resendVerificationEmail: async () => {},
   resetPassword: async () => {},
-  updatePassword: async () => {}
+  updatePassword: async () => {},
+  isProcessing: false // Initialize isProcessing with a default value
 });
