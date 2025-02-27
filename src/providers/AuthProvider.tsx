@@ -6,7 +6,8 @@ import { useAuthState } from "@/hooks/useAuthState";
 import { useAuthHandlers } from "@/hooks/useAuthHandlers";
 import { useSessionManagement } from "@/hooks/useSessionManagement";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { supabase } from "@/integrations/supabase/client";
+import { Toaster } from "@/components/ui/toaster";
+import NetworkStatusBanner from "@/components/ui/universal/NetworkStatusBanner";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
@@ -33,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!isLoading && isInitializing) {
       setIsInitializing(false);
     }
-  }, [isLoading]);
+  }, [isLoading, isInitializing]);
 
   useSessionManagement(handleSignOut, lastActivity);
 
@@ -84,7 +85,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           <LoadingSpinner size="lg" />
         </div>
       ) : (
-        children
+        <>
+          {children}
+          <Toaster />
+          <NetworkStatusBanner />
+        </>
       )}
     </AuthContext.Provider>
   );

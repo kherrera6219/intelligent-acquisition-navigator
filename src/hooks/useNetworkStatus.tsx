@@ -1,9 +1,10 @@
 
 import { useState, useEffect } from 'react';
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export function useNetworkStatus() {
   const [isOnline, setIsOnline] = useState(window.navigator.onLine);
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleOnline = () => {
@@ -31,7 +32,7 @@ export function useNetworkStatus() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [toast]);
 
   return isOnline;
 }

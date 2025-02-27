@@ -4,6 +4,7 @@ import { SESSION_TIMEOUT } from '@/constants/auth';
 import { globalRateLimiter } from '@/utils/rateLimit';
 import { syncSessionWithDatabase } from '@/utils/sessionUtils';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 /**
  * Enhanced hook to manage user session with rate limiting and database syncing
@@ -15,13 +16,19 @@ export function useSessionManagement(
   lastActivity: number
 ) {
   const timeoutRef = useRef<number | null>(null);
+  const warningTimeoutRef = useRef<number | null>(null);
   const [warningShown, setWarningShown] = useState(false);
+  const { toast } = useToast();
   const WARNING_TIME = 60000; // 1 minute before timeout
   
   useEffect(() => {
-    // Clear any existing timeout
+    // Clear any existing timeouts
     if (timeoutRef.current) {
       window.clearTimeout(timeoutRef.current);
+    }
+    
+    if (warningTimeoutRef.current) {
+      window.clearTimeout(warningTimeoutRef.current);
     }
 
     // Get the current user
@@ -33,20 +40,23 @@ export function useSessionManagement(
     // Set timeout for session expiration warning
     const warningTime = SESSION_TIMEOUT - WARNING_TIME;
     if (warningTime > 0) {
-      setTimeout(() => {
-        if (!warningShown) {
-          setWarningShown(true);
-          console.warn("Your session will expire soon. Please take action to stay logged in.");
-          
-          // Record warning event in database
-          getUserId().then(userId => {
-            if (userId) {
-              syncSessionWithDatabase(userId, 'session_warning', {
-                expiresIn: WARNING_TIME / 1000
-              });
-            }
-          });
-        }
+      warningTimeoutRef.current = window.setTimeout(() => {
+        setWarningShown(true);
+        
+        toast({
+          title: "Session Warning",
+          description: "Your session will expire soon. Please interact with the page to stay logged in.",
+          variant: "destructive",
+        });
+        
+        // Record warning event in database
+        getUserId().then(userId => {
+          if (userId) {
+            syncSessionWithDatabase(userId, 'session_warning', {
+              expiresIn: WARNING_TIME / 1000
+            });
+          }
+        });
       }, warningTime);
     }
 
@@ -55,6 +65,12 @@ export function useSessionManagement(
       // Apply rate limiting to sign out operation to prevent abuse
       if (globalRateLimiter.check('session:signout')) {
         const userId = await getUserId();
+        
+        toast({
+          title: "Session Expired",
+          description: "Your session has timed out due to inactivity. Please log in again.",
+          variant: "destructive",
+        });
         
         // Record session timeout in database
         if (userId) {
@@ -72,11 +88,22 @@ export function useSessionManagement(
       if (timeoutRef.current) {
         window.clearTimeout(timeoutRef.current);
       }
+      if (warningTimeoutRef.current) {
+        window.clearTimeout(warningTimeoutRef.current);
+      }
     };
-  }, [lastActivity, signOut, warningShown]);
+  }, [lastActivity, signOut, toast]);
 
   // Reset warning state on activity
   useEffect(() => {
-    setWarningShown(false);
-  }, [lastActivity]);
+    if (warningShown) {
+      setWarningShown(false);
+      
+      // Optional: Show a toast that the session has been extended
+      toast({
+        title: "Session Extended",
+        description: "Your session has been extended due to activity.",
+      });
+    }
+  }, [lastActivity, warningShown, toast]);
 }
