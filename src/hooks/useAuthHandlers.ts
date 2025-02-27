@@ -262,6 +262,46 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
     }
   };
 
+  // Add a new method to refresh the session
+  const refreshSession = async () => {
+    try {
+      setIsProcessing(true);
+      
+      // Refresh the session
+      const { data, error } = await supabase.auth.refreshSession();
+      
+      if (error) throw error;
+      
+      if (data.session) {
+        // Log session refresh
+        await supabase.from('user_sessions').insert([
+          {
+            user_id: data.session.user.id,
+            event_type: 'session_refresh',
+            metadata: { source: 'web' }
+          }
+        ]);
+        
+        toast({
+          title: "Session refreshed",
+          description: "Your session has been extended.",
+          variant: "default"
+        });
+      }
+    } catch (error) {
+      console.error('Session refresh error:', error);
+      toast({
+        title: "Session refresh failed",
+        description: "Your session could not be refreshed. Please log in again.",
+        variant: "destructive"
+      });
+      // Force sign out if refresh fails
+      await handleSignOut();
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const isAuthorized = (requiredRole?: string): boolean => {
     if (!user) return false;
     if (!requiredRole) return true;
@@ -277,6 +317,7 @@ export function useAuthHandlers(user: User | null, userRole: string | null) {
     handlePasswordReset,
     handlePasswordUpdate,
     isAuthorized,
-    isProcessing
+    isProcessing,
+    refreshSession
   };
 }

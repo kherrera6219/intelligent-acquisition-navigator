@@ -1,109 +1,86 @@
 
-import { useEffect, useRef, useState } from 'react';
-import { SESSION_TIMEOUT } from '@/constants/auth';
-import { globalRateLimiter } from '@/utils/rateLimit';
-import { syncSessionWithDatabase } from '@/utils/sessionUtils';
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 /**
- * Enhanced hook to manage user session with rate limiting and database syncing
- * @param signOut Function to sign user out when session expires
- * @param lastActivity Timestamp of last user activity
+ * Enhanced hook to manage session timeouts
+ * @param handleSignOut - Function to sign out the user
+ * @param lastActivity - Timestamp of the last user activity
+ * @param sessionDuration - The duration of the session in milliseconds
+ * @param showSessionWarning - Whether the session warning is being shown
  */
 export function useSessionManagement(
-  signOut: () => Promise<void>,
-  lastActivity: number
+  handleSignOut: () => Promise<void>,
+  lastActivity: number,
+  sessionDuration: number = 30 * 60 * 1000, // 30 minutes default
+  showSessionWarning: boolean = false
 ) {
-  const timeoutRef = useRef<number | null>(null);
-  const warningTimeoutRef = useRef<number | null>(null);
-  const [warningShown, setWarningShown] = useState(false);
   const { toast } = useToast();
-  const WARNING_TIME = 60000; // 1 minute before timeout
-  
+
   useEffect(() => {
-    // Clear any existing timeouts
-    if (timeoutRef.current) {
-      window.clearTimeout(timeoutRef.current);
-    }
+    let timeoutId: NodeJS.Timeout;
     
-    if (warningTimeoutRef.current) {
-      window.clearTimeout(warningTimeoutRef.current);
-    }
-
-    // Get the current user
-    const getUserId = async () => {
-      const { data } = await supabase.auth.getUser();
-      return data?.user?.id;
-    };
-
-    // Set timeout for session expiration warning
-    const warningTime = SESSION_TIMEOUT - WARNING_TIME;
-    if (warningTime > 0) {
-      warningTimeoutRef.current = window.setTimeout(() => {
-        setWarningShown(true);
+    const handleVisibilityChange = async () => {
+      // Check session when tab becomes visible again
+      if (document.visibilityState === 'visible') {
+        const timeSinceLastActivity = Date.now() - lastActivity;
         
-        toast({
-          title: "Session Warning",
-          description: "Your session will expire soon. Please interact with the page to stay logged in.",
-          variant: "destructive",
-        });
-        
-        // Record warning event in database
-        getUserId().then(userId => {
-          if (userId) {
-            syncSessionWithDatabase(userId, 'session_warning', {
-              expiresIn: WARNING_TIME / 1000
-            });
-          }
-        });
-      }, warningTime);
-    }
-
-    // Set timeout for session expiration
-    timeoutRef.current = window.setTimeout(async () => {
-      // Apply rate limiting to sign out operation to prevent abuse
-      if (globalRateLimiter.check('session:signout')) {
-        const userId = await getUserId();
-        
-        toast({
-          title: "Session Expired",
-          description: "Your session has timed out due to inactivity. Please log in again.",
-          variant: "destructive",
-        });
-        
-        // Record session timeout in database
-        if (userId) {
-          syncSessionWithDatabase(userId, 'session_timeout', {
-            lastActivity
+        // If inactive for too long, sign out
+        if (timeSinceLastActivity > sessionDuration) {
+          toast({
+            title: "Session expired",
+            description: "You have been signed out due to inactivity.",
+            variant: "destructive"
           });
+          await handleSignOut();
         }
-        
-        await signOut();
-        setWarningShown(false);
-      }
-    }, SESSION_TIMEOUT);
-
-    return () => {
-      if (timeoutRef.current) {
-        window.clearTimeout(timeoutRef.current);
-      }
-      if (warningTimeoutRef.current) {
-        window.clearTimeout(warningTimeoutRef.current);
       }
     };
-  }, [lastActivity, signOut, toast]);
-
-  // Reset warning state on activity
-  useEffect(() => {
-    if (warningShown) {
-      setWarningShown(false);
+    
+    // Set a timeout to automatically sign out after session duration
+    timeoutId = setTimeout(async () => {
+      const timeSinceLastActivity = Date.now() - lastActivity;
       
-      // Optional: Show a toast that the session has been extended
-      toast({
-        title: "Session Extended",
-        description: "Your session has been extended due to activity.",
-      });
-    }
-  }, [lastActivity, warningShown, toast]);
+      // Double-check if we should actually sign out
+      if (timeSinceLastActivity > sessionDuration) {
+        toast({
+          title: "Session expired",
+          description: "You have been signed out due to inactivity.",
+          variant: "destructive"
+        });
+        await handleSignOut();
+      }
+    }, sessionDuration);
+    
+    // Watch for visibility changes to handle returning to the page
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Listen for storage events to handle session expiry across tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'last_activity') {
+        const newLastActivity = parseInt(e.newValue || '0', 10);
+        if (newLastActivity > lastActivity) {
+          // Activity detected in another tab, update our timeout
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(async () => {
+            const timeSinceLastActivity = Date.now() - newLastActivity;
+            if (timeSinceLastActivity > sessionDuration) {
+              await handleSignOut();
+            }
+          }, sessionDuration - (Date.now() - newLastActivity));
+        }
+      } else if (e.key === 'session_expired' && e.newValue === 'true') {
+        // Another tab triggered session expiry
+        handleSignOut();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [handleSignOut, lastActivity, sessionDuration, toast, showSessionWarning]);
 }
