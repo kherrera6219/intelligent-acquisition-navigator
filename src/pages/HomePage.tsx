@@ -15,6 +15,7 @@ import { BackToTopButton } from "@/components/ui/navigation/BackToTopButton";
 import { HelpButton } from "@/components/ui/navigation/HelpButton";
 import { FirstVisitGuide } from "@/components/ui/guide/FirstVisitGuide";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
+import { VerificationBanner } from "@/components/auth/VerificationBanner";
 
 const Index = () => {
   const {
@@ -81,6 +82,8 @@ const Index = () => {
         {showPrivacyNotice && (
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
         )}
+        
+        <VerificationBanner />
         
         <main id="main-content" tabIndex={-1} className="relative w-full">
           <div className="flex flex-col animate-fade-in">
