@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ProposalDetails } from './ProposalDetails';
+import ProposalDetails from './ProposalDetails';
 import type { Proposal } from '@/types/proposals';
 
 interface ProposalModalProps {

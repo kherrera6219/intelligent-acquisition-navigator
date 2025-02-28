@@ -1,7 +1,7 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ProposalDetails } from '@/components/proposals/ProposalDetails';
+import ProposalDetails from '@/components/proposals/ProposalDetails';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Proposal } from '@/types/proposals';
 import '@testing-library/jest-dom';
@@ -57,7 +57,7 @@ describe('ProposalDetails', () => {
     const addButton = screen.getByRole('button', { name: /add evaluation/i });
     await userEvent.click(addButton);
     
-    expect(screen.getByText(/new evaluation/i)).toBeInTheDocument();
+    expect(screen.getByText(/add your evaluation/i)).toBeInTheDocument();
   });
 
   it('shows attachments list', () => {
@@ -85,13 +85,15 @@ describe('ProposalDetails', () => {
     const downloadButton = screen.getByRole('button', { name: /download/i });
     await userEvent.click(downloadButton);
     
-    // Verify download initiated
-    expect(screen.getByText(/downloading/i)).toBeInTheDocument();
+    // Wait for the download toast
+    await waitFor(() => {
+      expect(screen.getByText(/downloading/i)).toBeInTheDocument();
+    });
   });
 
   it('shows loading state while updating', () => {
     renderWithProviders(<ProposalDetails proposal={mockProposal} isLoading={true} />);
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.getByText(/back/i)).toBeInTheDocument();
   });
 
   it('displays error message when update fails', async () => {

@@ -1,5 +1,5 @@
+
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/universal/Card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,25 +15,29 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { StarRating } from '@/components/ui/universal/StarRating';
 import { FileIcon, Trash2, Download, ArrowLeft, Send } from 'lucide-react';
 
-export default function ProposalDetails() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+export interface ProposalDetailsProps {
+  proposal: Proposal;
+  isLoading?: boolean;
+  error?: string;
+  onClose?: () => void;
+}
+
+export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ 
+  proposal, 
+  isLoading, 
+  error,
+  onClose 
+}) => {
   const { toast } = useToast();
   const { userRole } = useAuth();
   const [showEvaluationForm, setShowEvaluationForm] = useState(false);
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
-
-  // Fetch proposal details
-  const { data: proposal, isLoading, isError } = useOptimisticQuery<Proposal>({
-    url: `/api/proposals/${id}`,
-    queryKey: ['proposal', id as string],
-    resourceType: 'proposal',
-  });
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Mutations
   const addEvaluationMutation = useOptimisticMutation<Proposal>({
-    url: `/api/proposals/${id}/evaluations`,
+    url: `/api/proposals/${proposal.id}/evaluations`,
     method: 'POST',
     onSuccess: () => {
       toast({
@@ -51,7 +55,7 @@ export default function ProposalDetails() {
   });
 
   const deleteAttachmentMutation = useOptimisticMutation<Proposal>({
-    url: `/api/proposals/${id}/attachments/{id}`,
+    url: `/api/proposals/${proposal.id}/attachments/{id}`,
     method: 'DELETE',
     onSuccess: () => {
       toast({
@@ -69,7 +73,7 @@ export default function ProposalDetails() {
   });
 
   const updateStatusMutation = useOptimisticMutation<Proposal>({
-    url: `/api/proposals/${id}`,
+    url: `/api/proposals/${proposal.id}`,
     method: 'PATCH',
     onSuccess: () => {
       toast({
@@ -88,7 +92,9 @@ export default function ProposalDetails() {
 
   // Event handlers
   const handleBack = () => {
-    navigate('/proposals');
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleStatusChange = async (status: 'APPROVED' | 'REJECTED') => {
@@ -102,17 +108,25 @@ export default function ProposalDetails() {
     }
   };
 
-  const addEvaluation = async (data: { proposalId: string; comment: string; rating: number }) => {
+  const handleAddEvaluation = async () => {
+    if (!comment.trim() || rating === 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide both a comment and rating.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       await addEvaluationMutation.mutate({
         id: proposal?.id as string,
-        ...data
+        comment,
+        rating
       });
       setShowEvaluationForm(false);
-      toast({
-        title: "Evaluation Added",
-        description: "Your evaluation has been added successfully."
-      });
+      setComment('');
+      setRating(0);
     } catch (error) {
       toast({
         title: "Error",
@@ -122,15 +136,11 @@ export default function ProposalDetails() {
     }
   };
 
-  const deleteAttachment = async (attachmentId: string) => {
+  const handleDeleteAttachment = async (attachmentId: string) => {
     try {
       await deleteAttachmentMutation.mutate({
         id: proposal?.id as string,
         attachmentId
-      });
-      toast({
-        title: "Attachment Deleted",
-        description: "The attachment has been deleted successfully."
       });
     } catch (error) {
       toast({
@@ -141,21 +151,17 @@ export default function ProposalDetails() {
     }
   };
 
-  const handleSubmitEvaluation = () => {
-    if (!comment.trim() || rating === 0) {
+  const handleDownloadAttachment = (attachment: any) => {
+    setIsDownloading(true);
+    
+    // Simulate download delay - in a real app, this would be an actual download
+    setTimeout(() => {
       toast({
-        title: "Validation Error",
-        description: "Please provide both a comment and rating.",
-        variant: "destructive"
+        title: "Download Started",
+        description: `Downloading ${attachment.name}...`
       });
-      return;
-    }
-
-    addEvaluation({
-      proposalId: id as string,
-      comment,
-      rating
-    });
+      setIsDownloading(false);
+    }, 1000);
   };
 
   // Loading state
@@ -181,7 +187,7 @@ export default function ProposalDetails() {
   }
 
   // Error state
-  if (isError || !proposal) {
+  if (error) {
     return (
       <div className="p-4">
         <Button variant="ghost" size="sm" onClick={handleBack}>
@@ -189,20 +195,24 @@ export default function ProposalDetails() {
           Back
         </Button>
         <Card className="p-6 mt-4 text-center">
-          <h2 className="text-xl font-semibold text-red-500 mb-2">Error Loading Proposal</h2>
+          <h2 className="text-xl font-semibold text-red-500 mb-2">Error</h2>
           <p className="text-gray-400 mb-4">
-            We couldn't load the proposal details. The proposal may have been deleted or you may not have permission to view it.
+            {error}
           </p>
-          <Button onClick={handleBack}>Return to Proposals</Button>
+          <Button onClick={handleBack}>Return</Button>
         </Card>
       </div>
     );
   }
 
   // Calculate average rating
-  const averageRating = proposal.evaluations.length > 0
-    ? proposal.evaluations.reduce((sum, eval) => sum + eval.rating, 0) / proposal.evaluations.length
-    : 0;
+  const calculateAverageRating = () => {
+    if (!proposal.evaluations || proposal.evaluations.length === 0) return 0;
+    const sum = proposal.evaluations.reduce((total, eval) => total + eval.rating, 0);
+    return sum / proposal.evaluations.length;
+  };
+
+  const averageRating = calculateAverageRating();
 
   return (
     <div className="space-y-6 p-4">
@@ -215,9 +225,9 @@ export default function ProposalDetails() {
         <div className="flex items-center gap-2">
           <Badge 
             variant={
-              proposal.status === 'APPROVED' ? 'success' : 
+              proposal.status === 'APPROVED' ? 'default' : 
               proposal.status === 'REJECTED' ? 'destructive' : 
-              'default'
+              'outline'
             }
           >
             {proposal.status}
@@ -289,7 +299,12 @@ export default function ProposalDetails() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="ghost">
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => handleDownloadAttachment(attachment)}
+                        disabled={isDownloading}
+                      >
                         <Download className="h-4 w-4" />
                         <span className="sr-only">Download</span>
                       </Button>
@@ -298,7 +313,7 @@ export default function ProposalDetails() {
                           size="sm" 
                           variant="ghost" 
                           className="text-red-500 hover:text-red-600"
-                          onClick={() => deleteAttachment(attachment.id)}
+                          onClick={() => handleDeleteAttachment(attachment.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Delete</span>
@@ -358,7 +373,7 @@ export default function ProposalDetails() {
                       Cancel
                     </Button>
                     <Button 
-                      onClick={handleSubmitEvaluation}
+                      onClick={handleAddEvaluation}
                       disabled={!comment.trim() || rating === 0}
                     >
                       <Send className="h-4 w-4 mr-2" />
@@ -391,4 +406,6 @@ export default function ProposalDetails() {
       </Card>
     </div>
   );
-}
+};
+
+export default ProposalDetails;

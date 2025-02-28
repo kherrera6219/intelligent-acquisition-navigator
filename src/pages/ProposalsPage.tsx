@@ -58,14 +58,18 @@ const ProposalsPage = () => {
     resourceType: 'proposals',
     enabled: canMakeRequest(),
     retryCount: isOnline ? 2 : 0, // Don't retry if offline
-    onError: (err) => {
+  });
+
+  // Handle query errors
+  React.useEffect(() => {
+    if (error) {
       toast({
         title: "Error",
-        description: err instanceof Error ? err.message : "Failed to fetch proposals",
+        description: error instanceof Error ? error.message : "Failed to fetch proposals",
         variant: "destructive"
       });
     }
-  });
+  }, [error, toast]);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
