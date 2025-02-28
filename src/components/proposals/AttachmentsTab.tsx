@@ -6,27 +6,24 @@ import { FileIcon, Download, Trash2 } from 'lucide-react';
 import { Proposal } from '@/types/proposals';
 
 interface AttachmentsTabProps {
-  proposal: Proposal;
-  userRole?: string;
-  isDownloading: boolean;
-  handleDownloadAttachment: (attachment: any) => void;
-  handleDeleteAttachment: (attachmentId: string) => void;
+  attachments: Array<{
+    id: string;
+    name: string;
+    url: string;
+    type: string;
+  }>;
 }
 
-const AttachmentsTab: React.FC<AttachmentsTabProps> = ({
-  proposal,
-  userRole,
-  isDownloading,
-  handleDownloadAttachment,
-  handleDeleteAttachment
+export const AttachmentsTab: React.FC<AttachmentsTabProps> = ({
+  attachments
 }) => {
   return (
     <div className="pt-4">
-      {proposal.attachments.length === 0 ? (
+      {attachments.length === 0 ? (
         <p className="text-gray-400 text-center py-4">No attachments available</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {proposal.attachments.map((attachment) => (
+          {attachments.map((attachment) => (
             <Card key={attachment.id} className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <FileIcon className="h-8 w-8 text-blue-500" />
@@ -39,23 +36,11 @@ const AttachmentsTab: React.FC<AttachmentsTabProps> = ({
                 <Button 
                   size="sm" 
                   variant="ghost"
-                  onClick={() => handleDownloadAttachment(attachment)}
-                  disabled={isDownloading}
+                  onClick={() => window.open(attachment.url, '_blank')}
                 >
                   <Download className="h-4 w-4" />
                   <span className="sr-only">Download</span>
                 </Button>
-                {userRole === 'admin' && (
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
-                    className="text-red-500 hover:text-red-600"
-                    onClick={() => handleDeleteAttachment(attachment.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">Delete</span>
-                  </Button>
-                )}
               </div>
             </Card>
           ))}

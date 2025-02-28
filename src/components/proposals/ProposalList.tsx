@@ -52,14 +52,14 @@ export const ProposalList: React.FC<ProposalListProps> = ({
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
-                  {formatDate(proposal.submissionDate)}
+                  {formatDate(proposal.submissionDate || proposal.submittedAt)}
                 </span>
               </div>
               
               <div className="flex items-center">
                 <DollarSign className="h-4 w-4 mr-1 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
-                  {formatCurrency(proposal.budget)}
+                  {formatCurrency(proposal.budget || 0)}
                 </span>
               </div>
             </div>

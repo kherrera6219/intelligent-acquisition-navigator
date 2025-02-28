@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/universal/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EvaluationForm from '@/components/proposals/EvaluationForm';
-import { AttachmentsTab } from '@/components/proposals/AttachmentsTab';
-import { EvaluationsTab } from '@/components/proposals/EvaluationsTab';
+import AttachmentsTab from '@/components/proposals/AttachmentsTab';
+import EvaluationsTab from '@/components/proposals/EvaluationsTab';
 import { formatDate, formatCurrency } from '@/utils/formatters';
 import type { Proposal, Evaluation } from '@/types/proposals';
 
@@ -28,7 +28,7 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal, hand
       userName: 'Current User',
       comment,
       rating,
-      date: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     };
     
     setEvaluations([...evaluations, newEvaluation]);
@@ -53,7 +53,7 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal, hand
       <div className="mt-4">
         <h1 className="text-2xl font-bold mb-2">{proposal.title}</h1>
         <p className="text-sm text-muted-foreground mb-4">
-          ID: {proposal.id} • Submitted: {formatDate(proposal.submissionDate)}
+          ID: {proposal.id} • Submitted: {formatDate(proposal.submissionDate || proposal.submittedAt)}
         </p>
 
         <Card className="p-4 mb-6">
@@ -67,14 +67,14 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal, hand
             <DollarSign className="h-5 w-5 mr-2 text-muted-foreground" />
             <div>
               <p className="text-sm text-muted-foreground">Budget</p>
-              <p className="font-semibold">{formatCurrency(proposal.budget)}</p>
+              <p className="font-semibold">{formatCurrency(proposal.budget || 0)}</p>
             </div>
           </Card>
           <Card className="p-4 flex items-center">
             <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
             <div>
               <p className="text-sm text-muted-foreground">Timeline</p>
-              <p className="font-semibold">{proposal.timeframe} {proposal.timeframe === 1 ? 'month' : 'months'}</p>
+              <p className="font-semibold">{proposal.timeframe || 0} {proposal.timeframe === 1 ? 'month' : 'months'}</p>
             </div>
           </Card>
         </div>

@@ -1,83 +1,82 @@
 
 import React from 'react';
-import { Container } from "@/components/ui/universal/Container";
-import { Card } from "@/components/ui/universal/Card";
-import { Grid } from "@/components/ui/universal/Grid";
-import { MetricsChart } from "@/components/MetricsChart";
+import { Card } from '@/components/ui/universal/Card';
+import { PieChart, BarChart3, TrendingUp, ArrowDown, ArrowUp } from 'lucide-react';
 
-export default function Analytics() {
-  const chartData = [
-    { month: 'Jan', efficiency: 65, compliance: 75, risk: 35 },
-    { month: 'Feb', efficiency: 70, compliance: 80, risk: 30 },
-    { month: 'Mar', efficiency: 75, compliance: 85, risk: 25 },
-    { month: 'Apr', efficiency: 80, compliance: 85, risk: 20 },
-  ];
-
+const AnalyticsPage: React.FC = () => {
   const metricCards = [
     {
-      title: "Total Transactions",
-      value: "2,546",
-      change: "+12.5% from last month"
+      title: 'Total Proposals',
+      value: '164',
+      change: '+12%',
+      trend: 'up',
+      icon: <PieChart className="h-8 w-8 text-blue-500" />
     },
     {
-      title: "Average Processing Time",
-      value: "3.2 days",
-      change: "-0.5 days from last month"
+      title: 'Avg. Processing Time',
+      value: '8.5 days',
+      change: '-2.3 days',
+      trend: 'down',
+      icon: <TrendingUp className="h-8 w-8 text-green-500" />
     },
     {
-      title: "Compliance Rate",
-      value: "98.5%",
-      change: "+1.2% from last month"
+      title: 'Approval Rate',
+      value: '73%',
+      change: '+5%',
+      trend: 'up',
+      icon: <BarChart3 className="h-8 w-8 text-purple-500" />
     },
     {
-      title: "Active Users",
-      value: "1,243",
-      change: "+85 from last month"
+      title: 'Budget Under Review',
+      value: '$1.2M',
+      change: '+$250K',
+      trend: 'up',
+      icon: <BarChart3 className="h-8 w-8 text-amber-500" />
     }
   ];
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Analytics Dashboard</h1>
+    <div className="container mx-auto p-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Analytics & Reporting</h1>
+        <p className="text-muted-foreground">Track key performance metrics and proposal statistics</p>
+      </div>
 
-      <Grid columns={4} gap="lg" className="mb-6">
-        {metricCards.map((metric, index) => (
-          <Card 
-            key={index} 
-            className="p-4"
-          >
-            <h3 className="text-sm text-gray-500 mb-2">
-              {metric.title}
-            </h3>
-            <p className="text-2xl font-bold mb-1">
-              {metric.value}
-            </p>
-            <p className="text-sm text-gray-500">
-              {metric.change}
-            </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {metricCards.map((card) => (
+          <Card key={card.title} className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-medium text-muted-foreground">{card.title}</h3>
+              {card.icon}
+            </div>
+            <div className="flex items-end justify-between">
+              <p className="text-3xl font-bold">{card.value}</p>
+              <div className={`flex items-center ${card.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+                {card.trend === 'up' ? <ArrowUp className="h-4 w-4 mr-1" /> : <ArrowDown className="h-4 w-4 mr-1" />}
+                <span>{card.change}</span>
+              </div>
+            </div>
           </Card>
         ))}
-      </Grid>
+      </div>
 
-      <Grid columns={2} gap="lg">
-        <Card className="p-4">
-          <h2 className="text-xl font-semibold mb-4">
-            Performance Trends
-          </h2>
-          <div className="h-[400px]">
-            <MetricsChart data={chartData} type="line" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-6">
+          <h3 className="font-bold text-lg mb-4">Proposal Status Distribution</h3>
+          <div className="h-64 flex items-center justify-center">
+            <p className="text-muted-foreground">Chart will be implemented in Phase 3</p>
           </div>
         </Card>
-
-        <Card className="p-4">
-          <h2 className="text-xl font-semibold mb-4">
-            Compliance Overview
-          </h2>
-          <div className="h-[400px]">
-            <MetricsChart data={chartData} type="bar" />
+        
+        <Card className="p-6">
+          <h3 className="font-bold text-lg mb-4">Monthly Submission Trends</h3>
+          <div className="h-64 flex items-center justify-center">
+            <p className="text-muted-foreground">Chart will be implemented in Phase 3</p>
           </div>
         </Card>
-      </Grid>
+      </div>
     </div>
   );
-}
+};
+
+export default AnalyticsPage;

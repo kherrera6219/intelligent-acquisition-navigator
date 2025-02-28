@@ -1,68 +1,52 @@
 
-import { ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React, { ReactNode } from 'react';
+import {
+  QueryClient,
+  QueryClientProvider,
+  MutationCache,
+  QueryCache,
+} from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-import { auditLogger } from '@/lib/audit';
 
 interface QueryProviderProps {
   children: ReactNode;
 }
 
-export function QueryProvider({ children }: QueryProviderProps) {
+export const QueryProvider: React.FC<QueryProviderProps> = ({ children }) => {
   const { toast } = useToast();
-  const isOnline = useNetworkStatus();
 
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        retry: isOnline ? 2 : 0,
-        refetchOnWindowFocus: isOnline,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5, // 5 minutes
-        gcTime: 1000 * 60 * 60 * 24, // 24 hours
-        placeholderData: (previousData) => previousData,
-      },
-      mutations: {
-        retry: isOnline ? 1 : 0,
+        retry: 1,
+        refetchOnWindowFocus: false,
+        staleTime: 5 * 60 * 1000, // 5 minutes
       },
     },
-  });
-
-  // Log query cache operations in development
-  if (process.env.NODE_ENV === 'development') {
-    queryClient.getQueryCache().subscribe(event => {
-      if (event.type === 'error') {
-        console.error('Query error:', event.query.queryKey, event.error);
-        
-        // Log through audit system
-        auditLogger.log({
-          action: 'QUERY_ERROR',
-          resource: `query:${event.query.queryKey.join(':')}`,
-          details: { 
-            error: event.error instanceof Error ? event.error.message : String(event.error) 
-          },
-          status: 'error'
-        });
-        
-        // Show toast for network errors
-        if (event.error instanceof Error && 
-            (event.error.message.includes('network') || 
-             event.error.message.includes('Network') ||
-             event.error.message.includes('Failed to fetch'))) {
+    queryCache: new QueryCache({
+      onError: (error, query) => {
+        // Only show error toasts if we have not already custom handled them
+        if (query.state.data !== undefined) {
           toast({
-            title: 'Network Error',
-            description: 'Please check your internet connection and try again.',
+            title: 'Error',
+            description: error instanceof Error ? error.message : 'An unknown error occurred',
             variant: 'destructive',
           });
         }
-      }
-    });
-  }
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        toast({
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'An unknown error occurred',
+          variant: 'destructive',
+        });
+      },
+    }),
+  });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
-}
+};

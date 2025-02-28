@@ -1,136 +1,92 @@
 
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Card } from '@/components/ui/card';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronRight, PieChart, FilePlus, Users, Settings, FileText } from 'lucide-react';
+import { Card } from '@/components/ui/universal/Card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { MetricsChart } from '@/components/MetricsChart';
-import { useToast } from '@/hooks/use-toast';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
-interface MetricData {
-  month: string;
-  efficiency: number;
-  compliance: number;
-  risk: number;
-}
+const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
 
-interface DashboardData {
-  totalProposals: number;
-  activeProjects: number;
-  pendingReviews: number;
-  metrics: MetricData[];
-  activities: MetricData[];
-}
-
-const DashboardPage = () => {
-  const [filterValue, setFilterValue] = useState('');
-  const { toast } = useToast();
-
-  const { data, isLoading, error, refetch } = useQuery<DashboardData>({
-    queryKey: ['dashboard'],
-    queryFn: async () => {
-      // Temporary mock data with proper types
-      const mockMetrics: MetricData[] = [
-        { month: 'Jan', efficiency: 85, compliance: 90, risk: 20 },
-        { month: 'Feb', efficiency: 88, compliance: 92, risk: 18 },
-        { month: 'Mar', efficiency: 87, compliance: 91, risk: 22 }
-      ];
-      
-      return {
-        totalProposals: 150,
-        activeProjects: 45,
-        pendingReviews: 12,
-        metrics: mockMetrics,
-        activities: mockMetrics // Using same mock data for activities
-      };
+  const dashboardItems = [
+    {
+      title: 'Proposals',
+      description: 'Manage and review all proposals',
+      icon: <FileText className="h-8 w-8 text-blue-500" />,
+      path: '/proposals',
+      count: '24'
+    },
+    {
+      title: 'Analytics',
+      description: 'View proposal statistics and metrics',
+      icon: <PieChart className="h-8 w-8 text-purple-500" />,
+      path: '/analytics',
+      count: '5'
+    },
+    {
+      title: 'Document Control',
+      description: 'Manage procurement documents',
+      icon: <FilePlus className="h-8 w-8 text-green-500" />,
+      path: '/acquisition/document-control',
+      count: '12'
+    },
+    {
+      title: 'User Management',
+      description: 'Manage user access and roles',
+      icon: <Users className="h-8 w-8 text-amber-500" />,
+      path: '/settings',
+      count: '7'
     }
-  });
-
-  const handleRefresh = async () => {
-    await refetch();
-    toast({
-      title: "Success",
-      description: "Data refreshed"
-    });
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-red-500">Error loading dashboard data</h2>
-          <Button onClick={() => refetch()} className="mt-4">
-            Try Again
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  ];
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      
-      <div className="flex justify-between mb-6">
-        <Input
-          type="text"
-          placeholder="Filter..."
-          value={filterValue}
-          onChange={(e) => setFilterValue(e.target.value)}
-          className="max-w-sm"
-        />
-        <div className="space-x-2">
-          <Button onClick={() => {}}>Date Range</Button>
-          <Button onClick={handleRefresh}>Refresh</Button>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Procurement Dashboard</h1>
+        <p className="text-muted-foreground">Manage your procurement processes efficiently</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card className="p-4">
-          <h3 className="font-semibold">Total Proposals</h3>
-          <p className="text-2xl">{data?.totalProposals}</p>
-        </Card>
-        <Card className="p-4">
-          <h3 className="font-semibold">Active Projects</h3>
-          <p className="text-2xl">{data?.activeProjects}</p>
-        </Card>
-        <Card className="p-4">
-          <h3 className="font-semibold">Pending Reviews</h3>
-          <p className="text-2xl">{data?.pendingReviews}</p>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {dashboardItems.map((item) => (
+          <Card 
+            key={item.title} 
+            className="p-6 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => navigate(item.path)}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-start space-x-4">
+                <div className="rounded-lg p-2 bg-gray-100 dark:bg-gray-800">
+                  {item.icon}
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.description}</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <span className="bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1 text-sm font-medium mr-2">
+                  {item.count}
+                </span>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-4">
-          <h3 className="font-semibold mb-4">Metrics Overview</h3>
-          <div data-testid="metrics-chart">
-            <MetricsChart data={data?.metrics || []} />
-          </div>
-        </Card>
-        
-        <Card className="p-4">
-          <h3 className="font-semibold mb-4">Recent Activity</h3>
-          <div data-testid="activity-chart">
-            <MetricsChart data={data?.activities || []} />
-          </div>
-        </Card>
-      </div>
-
-      <div className="mt-6" data-testid="notifications-panel">
-        <Card className="p-4">
-          <h3 className="font-semibold mb-4">Notifications</h3>
-          <div className="space-y-2">
-            {/* Notifications will be populated here */}
+      <div className="mt-8">
+        <Card className="p-6 bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+          <h3 className="font-bold text-lg mb-2">Quick Actions</h3>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="outline" onClick={() => navigate('/proposals')}>
+              View All Proposals
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/acquisition/document-control')}>
+              Manage Documents
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/settings')}>
+              System Settings
+            </Button>
           </div>
         </Card>
       </div>
