@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, FileSearch, FileCheck, Database, BookOpen, Scale, MessageSquare, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/universal/Container";
-import { useAuth } from "@/providers/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 interface NavItem {

@@ -4,7 +4,7 @@ import { Grid } from "@/components/ui/universal/Grid";
 import { Card } from "@/components/ui/universal/Card";
 import { Settings as SettingsIcon, UserCog, Bell, Shield, Palette, Database } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/providers/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 
 export function SettingsNav() {
   const { isAuthorized } = useAuth();

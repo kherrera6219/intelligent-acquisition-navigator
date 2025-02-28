@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useAuth } from "@/providers/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
 export const VerificationBanner = () => {

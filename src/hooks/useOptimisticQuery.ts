@@ -15,8 +15,6 @@ export interface UseOptimisticQueryOptions<TData = any, TError = Error> {
   refetchInterval?: number;
   refetchOnWindowFocus?: boolean;
   retryCount?: number;
-  onSuccess?: (data: TData) => void;
-  onError?: (error: TError) => void;
   staleTime?: number;
   cacheTime?: number;
 }
@@ -43,8 +41,6 @@ export function useOptimisticQuery<TData = any, TError = Error>({
   refetchInterval,
   refetchOnWindowFocus = true,
   retryCount = 3,
-  onSuccess,
-  onError,
   staleTime,
   cacheTime
 }: UseOptimisticQueryOptions<TData, TError>) {
@@ -69,8 +65,6 @@ export function useOptimisticQuery<TData = any, TError = Error>({
     staleTime,
     gcTime: cacheTime,
     retry: retryCount,
-    onSuccess,
-    onError
   });
 
   // Apply any pending optimistic updates to the data
@@ -140,8 +134,8 @@ export function useOptimisticMutation<TData = any, TCreateVars = any, TError = E
     }
   };
 
-  // For update operations
-  const update = async (variables: { id: string } & Record<string, any>): Promise<TData> => {
+  // For update operations that require an id
+  const update = async (variables: TCreateVars & { id: string }): Promise<TData> => {
     setIsPending(true);
     let optimisticResult: TData | undefined;
     const updateUrl = url.replace('{id}', variables.id);
@@ -182,8 +176,8 @@ export function useOptimisticMutation<TData = any, TCreateVars = any, TError = E
     }
   };
 
-  // For delete operations
-  const remove = async (variables: { id: string }): Promise<void> => {
+  // For delete operations that require an id
+  const remove = async (variables: { id: string } & Record<string, any>): Promise<void> => {
     setIsPending(true);
     let optimisticResult: TData | undefined;
     const deleteUrl = url.replace('{id}', variables.id);
@@ -191,7 +185,7 @@ export function useOptimisticMutation<TData = any, TCreateVars = any, TError = E
     try {
       // Apply optimistic update if onMutate is provided
       if (onMutate) {
-        optimisticResult = await onMutate(variables);
+        optimisticResult = await onMutate(variables as any);
       }
       
       // Perform the actual API call

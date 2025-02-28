@@ -1,186 +1,189 @@
 
-export type Permission = 
-  | 'READ_SOLICITATIONS'
-  | 'WRITE_SOLICITATIONS'
-  | 'APPROVE_SOLICITATIONS'
-  | 'READ_PROPOSALS'
-  | 'EVALUATE_PROPOSALS'
-  | 'MANAGE_USERS'
-  | 'VIEW_AUDIT_LOGS'
-  | 'EXPORT_DATA';
+import { auditLogger } from '../audit';
 
-export type Role = 
-  | 'CONTRACTING_OFFICER'
-  | 'CONTRACT_SPECIALIST'
-  | 'PROGRAM_MANAGER'
-  | 'LEGAL_REVIEWER'
-  | 'SMALL_BUSINESS_SPECIALIST'
-  | 'SYSTEM_ADMIN';
+// Sample user roles - in a real app these would come from authentication
+export type UserRole = 'guest' | 'user' | 'admin' | 'developer';
 
-export interface AuthenticationMethod {
-  type: 'PIV' | 'CAC' | 'PASSWORD';
-  lastAuthenticated: Date;
-  expiresAt: Date;
+export interface User {
+  id: string;
+  role: UserRole;
+  permissions?: string[];
 }
 
-export interface SecurityContext {
-  userId: string;
-  role: Role;
-  permissions: Permission[];
-  authMethod: AuthenticationMethod;
-  sessionId: string;
-  ipAddress: string;
-  userAgent: string;
-}
-
-const rolePermissions: Record<Role, Permission[]> = {
-  CONTRACTING_OFFICER: [
-    'READ_SOLICITATIONS',
-    'WRITE_SOLICITATIONS',
-    'APPROVE_SOLICITATIONS',
-    'READ_PROPOSALS',
-    'EVALUATE_PROPOSALS',
-    'VIEW_AUDIT_LOGS'
-  ],
-  CONTRACT_SPECIALIST: [
-    'READ_SOLICITATIONS',
-    'WRITE_SOLICITATIONS',
-    'READ_PROPOSALS',
-    'EVALUATE_PROPOSALS'
-  ],
-  PROGRAM_MANAGER: [
-    'READ_SOLICITATIONS',
-    'READ_PROPOSALS',
-    'EVALUATE_PROPOSALS'
-  ],
-  LEGAL_REVIEWER: [
-    'READ_SOLICITATIONS',
-    'READ_PROPOSALS',
-    'VIEW_AUDIT_LOGS'
-  ],
-  SMALL_BUSINESS_SPECIALIST: [
-    'READ_SOLICITATIONS',
-    'READ_PROPOSALS'
-  ],
-  SYSTEM_ADMIN: [
-    'READ_SOLICITATIONS',
-    'WRITE_SOLICITATIONS',
-    'APPROVE_SOLICITATIONS',
-    'READ_PROPOSALS',
-    'EVALUATE_PROPOSALS',
-    'MANAGE_USERS',
-    'VIEW_AUDIT_LOGS',
-    'EXPORT_DATA'
-  ]
+// Define permissions for each role
+const rolePermissions: Record<UserRole, string[]> = {
+  guest: ['view:public'],
+  user: ['view:public', 'view:user', 'create:post', 'edit:own:post', 'delete:own:post'],
+  admin: ['view:public', 'view:user', 'view:admin', 'create:post', 'edit:post', 'delete:post', 'manage:users'],
+  developer: ['view:public', 'view:user', 'view:admin', 'view:system', 'create:post', 'edit:post', 'delete:post', 'manage:users', 'manage:system'],
 };
 
-export class AccessControl {
-  private static instance: AccessControl;
-  private securityContext: SecurityContext | null = null;
-  private readonly sessionTimeout = 1000 * 60 * 15; // 15 minutes
+// Resource types
+export type ResourceType = 'post' | 'user' | 'system' | 'page' | 'file';
 
-  private constructor() {
-    this.startSessionMonitor();
-  }
+// Action types
+export type ActionType = 'view' | 'create' | 'edit' | 'delete' | 'manage' | 'approve' | 'reject';
 
-  static getInstance(): AccessControl {
-    if (!AccessControl.instance) {
-      AccessControl.instance = new AccessControl();
-    }
-    return AccessControl.instance;
-  }
-
-  private startSessionMonitor() {
-    setInterval(() => {
-      if (this.securityContext && this.securityContext.authMethod.expiresAt < new Date()) {
-        this.logout();
-        // Trigger re-authentication
-        window.location.href = '/login';
-      }
-    }, 60000); // Check every minute
-  }
-
-  async authenticateWithPIV(): Promise<boolean> {
-    try {
-      // Implement PIV card authentication logic here
-      // This would typically involve:
-      // 1. Reading the PIV card certificate
-      // 2. Validating the certificate chain
-      // 3. Checking certificate revocation status
-      // 4. Verifying the PIN
-      return true;
-    } catch (error) {
-      console.error('PIV authentication failed:', error);
-      return false;
-    }
-  }
-
-  async authenticateWithCAC(): Promise<boolean> {
-    try {
-      // Implement CAC card authentication logic here
-      // Similar to PIV but with CAC-specific requirements
-      return true;
-    } catch (error) {
-      console.error('CAC authentication failed:', error);
-      return false;
-    }
-  }
-
-  setSecurityContext(context: SecurityContext) {
-    this.securityContext = context;
-    // Log the authentication event
-    auditLogger.log({
-      action: 'USER_AUTHENTICATION',
-      resourceType: 'AUTH',
-      resourceId: context.userId,
-      severity: 'INFO',
-      details: {
-        authMethod: context.authMethod.type,
-        role: context.role,
-        sessionId: context.sessionId
-      }
-    });
-  }
-
-  hasPermission(permission: Permission): boolean {
-    if (!this.securityContext) return false;
-    return rolePermissions[this.securityContext.role].includes(permission);
-  }
-
-  hasRole(role: Role): boolean {
-    return this.securityContext?.role === role;
-  }
-
-  getRolePermissions(role: Role): Permission[] {
-    return rolePermissions[role];
-  }
-
-  getCurrentUserPermissions(): Permission[] {
-    if (!this.securityContext) return [];
-    return rolePermissions[this.securityContext.role];
-  }
-
-  getSecurityContext(): SecurityContext | null {
-    return this.securityContext;
-  }
-
-  logout() {
-    if (this.securityContext) {
-      auditLogger.log({
-        action: 'USER_LOGOUT',
-        resourceType: 'AUTH',
-        resourceId: this.securityContext.userId,
-        severity: 'INFO',
-        details: {
-          sessionId: this.securityContext.sessionId
-        }
-      });
-    }
-    this.securityContext = null;
-  }
+// Permission format: action:resource or action:own:resource
+export interface Permission {
+  action: ActionType;
+  resource: ResourceType;
+  owner?: boolean;
 }
 
-export const accessControl = AccessControl.getInstance();
+// Parse a permission string into a Permission object
+export function parsePermission(permission: string): Permission {
+  const parts = permission.split(':');
+  
+  if (parts.length === 2) {
+    return {
+      action: parts[0] as ActionType,
+      resource: parts[1] as ResourceType,
+    };
+  } else if (parts.length === 3 && parts[1] === 'own') {
+    return {
+      action: parts[0] as ActionType,
+      resource: parts[2] as ResourceType,
+      owner: true,
+    };
+  }
+  
+  throw new Error(`Invalid permission format: ${permission}`);
+}
 
-// Import the audit logger
-import { auditLogger } from '../audit';
+// Check if a user has a specific permission
+export function hasPermission(user: User | null, permissionStr: string): boolean {
+  if (!user) {
+    return false;
+  }
+  
+  // Convert the permission string to a Permission object
+  let permission: Permission;
+  try {
+    permission = parsePermission(permissionStr);
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+  
+  // Get the permissions for the user's role
+  const permissions = user.permissions || rolePermissions[user.role] || [];
+  
+  // Check if the user has the exact permission
+  if (permissions.includes(permissionStr)) {
+    return true;
+  }
+  
+  // Check if the user has a broader permission that covers this one
+  if (permission.owner) {
+    // Check if the user has non-owner-restricted permission
+    if (permissions.includes(`${permission.action}:${permission.resource}`)) {
+      return true;
+    }
+  }
+  
+  // Check for management permissions, which imply all other permissions for the resource
+  if (permissions.includes(`manage:${permission.resource}`)) {
+    return true;
+  }
+  
+  // Special case for 'admin' role - they can do everything except system management
+  if (user.role === 'admin' && permission.resource !== 'system') {
+    return true;
+  }
+  
+  // Special case for 'developer' role - they can do everything
+  if (user.role === 'developer') {
+    return true;
+  }
+  
+  return false;
+}
+
+// Check if a user is the owner of a resource
+export function isResourceOwner(user: User | null, resource: { userId?: string }): boolean {
+  if (!user || !resource.userId) {
+    return false;
+  }
+  
+  return user.id === resource.userId;
+}
+
+// Authorize an action on a resource
+export function authorizeAction(
+  user: User | null,
+  action: ActionType,
+  resourceType: ResourceType,
+  resource?: { userId?: string }
+): boolean {
+  if (!user) {
+    return false;
+  }
+  
+  // Check for unrestricted permission
+  if (hasPermission(user, `${action}:${resourceType}`)) {
+    return true;
+  }
+  
+  // Check for owner-restricted permission
+  if (resource && hasPermission(user, `${action}:own:${resourceType}`)) {
+    return isResourceOwner(user, resource);
+  }
+  
+  return false;
+}
+
+// Create authorization middleware for Express (if using Node.js)
+export function authorizationMiddleware(
+  action: ActionType,
+  resourceType: ResourceType,
+  getResource?: (req: any) => Promise<{ userId?: string } | null>
+) {
+  return async (req: any, res: any, next: any) => {
+    const user = req.user as User | null;
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    
+    let resource: { userId?: string } | null = null;
+    
+    if (getResource) {
+      resource = await getResource(req);
+      
+      if (!resource) {
+        return res.status(404).json({ error: 'Resource not found' });
+      }
+    }
+    
+    if (authorizeAction(user, action, resourceType, resource || undefined)) {
+      // Log the authorized action
+      auditLogger.log({
+        action: 'AUTHORIZATION',
+        resource: resourceType,
+        details: {
+          action,
+          userId: user.id,
+          userRole: user.role,
+        },
+        status: 'success',
+      });
+      
+      return next();
+    }
+    
+    // Log the unauthorized attempt
+    auditLogger.log({
+      action: 'AUTHORIZATION',
+      resource: resourceType,
+      details: {
+        action,
+        userId: user.id,
+        userRole: user.role,
+      },
+      status: 'error',
+    });
+    
+    return res.status(403).json({ error: 'Unauthorized' });
+  };
+}

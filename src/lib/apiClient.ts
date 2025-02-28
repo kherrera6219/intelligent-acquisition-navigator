@@ -1,176 +1,225 @@
 
-import { errorTracker } from './security/errorTracking';
-import { auditLogger } from './utils/auditLogger';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { auditLogger } from '@/lib/audit';
+import { useToast } from '@/hooks/use-toast';
 
-/**
- * API response types
- */
-export interface ApiResponse<T = any> {
-  data?: T;
-  error?: string;
-  statusCode: number;
-  message?: string;
-  success: boolean;
-}
-
-/**
- * Request options for API client
- */
-interface RequestOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  headers?: Record<string, string>;
-  body?: any;
-  retries?: number;
-  authRequired?: boolean;
+export interface APIClientOptions {
+  baseUrl?: string;
   timeout?: number;
+  headers?: Record<string, string>;
+  retryCount?: number;
+  retryDelay?: number;
 }
 
-/**
- * API client configuration
- */
-interface ApiClientConfig {
-  baseUrl: string;
-  defaultHeaders?: Record<string, string>;
-  defaultRetries?: number;
-  defaultTimeout?: number;
+export interface RequestOptions {
+  headers?: Record<string, string>;
+  timeout?: number;
+  retryCount?: number;
+  retryDelay?: number;
 }
 
-/**
- * API client for making network requests
- */
-export default function createAPIClient(config: ApiClientConfig) {
+export interface APIClient {
+  get: <T>(path: string, options?: RequestOptions) => Promise<T>;
+  post: <T>(path: string, data: any, options?: RequestOptions) => Promise<T>;
+  put: <T>(path: string, data: any, options?: RequestOptions) => Promise<T>;
+  patch: <T>(path: string, data: any, options?: RequestOptions) => Promise<T>;
+  delete: <T>(path: string, options?: RequestOptions) => Promise<T>;
+}
+
+export interface APIError extends Error {
+  status?: number;
+  statusText?: string;
+  data?: any;
+}
+
+export interface ErrorTracker {
+  (error: Error, context?: Record<string, any>): void;
+}
+
+// Error tracker stub
+const errorTracker: ErrorTracker = (error: Error, context?: Record<string, any>) => {
+  console.error('Error tracked:', error, context);
+  // In a real implementation, this would send error data to an error tracking service
+};
+
+export function createAPIClient(options: APIClientOptions = {}): APIClient {
   const {
-    baseUrl,
-    defaultHeaders = {
-      'Content-Type': 'application/json',
-    },
-    defaultRetries = 3,
-    defaultTimeout = 10000,
-  } = config;
+    baseUrl = '/api',
+    timeout = 30000,
+    headers: defaultHeaders = {},
+    retryCount = 3,
+    retryDelay = 1000,
+  } = options;
 
-  /**
-   * Make API request with retry capability
-   */
-  async function request<T = any>(
-    endpoint: string,
+  const executeRequest = async <T>(
+    path: string,
+    method: string,
+    data?: any,
     options: RequestOptions = {}
-  ): Promise<ApiResponse<T>> {
+  ): Promise<T> => {
     const {
-      method = 'GET',
       headers = {},
-      body,
-      retries = defaultRetries,
-      timeout = defaultTimeout,
+      timeout: requestTimeout = timeout,
+      retryCount: requestRetryCount = retryCount,
+      retryDelay: requestRetryDelay = retryDelay,
     } = options;
 
-    let currentRetry = 0;
-
-    const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
+    const url = path.startsWith('http') ? path : `${baseUrl}${path}`;
     
-    // Request timeout promise
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => {
-        reject(new Error(`Request timeout after ${timeout}ms`));
-      }, timeout);
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), requestTimeout);
 
-    while (currentRetry <= retries) {
+    const requestOptions: RequestInit = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        ...defaultHeaders,
+        ...headers,
+      },
+      signal: controller.signal,
+    };
+
+    if (data) {
+      requestOptions.body = JSON.stringify(data);
+    }
+
+    let attempts = 0;
+    let error: APIError | null = null;
+
+    while (attempts < requestRetryCount) {
       try {
-        const controller = new AbortController();
-        const signal = controller.signal;
-
-        const requestHeaders = {
-          ...defaultHeaders,
-          ...headers,
-        };
-
-        const requestBody = body ? JSON.stringify(body) : undefined;
-
-        // Log audit event
-        auditLogger({
-          action: `${method} ${endpoint}`,
-          details: `Attempt ${currentRetry + 1} of ${retries + 1}`,
-          module: "APPLICATION"
-        });
-
-        // Race between fetch and timeout
-        const response = await Promise.race([
-          fetch(url, {
-            method,
-            headers: requestHeaders,
-            body: requestBody,
-            signal,
-          }),
-          timeoutPromise,
-        ]);
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(responseData.error || `HTTP error ${response.status}`);
-        }
-
-        return {
-          data: responseData,
-          statusCode: response.status,
-          success: true,
-        };
-      } catch (error) {
-        currentRetry++;
+        const response = await fetch(url, requestOptions);
         
-        // Track error
-        errorTracker(error, {
-          method,
-          url,
-          retryAttempt: currentRetry,
-        });
-
-        // Log audit event for error
-        auditLogger({
-          action: `${method} ${endpoint} failed`,
-          details: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          module: "APPLICATION",
-          status: 'error',
-        });
-
-        // If we've used all retries, throw the error
-        if (currentRetry > retries) {
-          return {
-            error: error instanceof Error ? error.message : 'Unknown error',
-            statusCode: 500,
-            success: false,
-          };
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          const responseData = await response.json().catch(() => ({}));
+          error = new Error(response.statusText) as APIError;
+          error.status = response.status;
+          error.statusText = response.statusText;
+          error.data = responseData;
+          
+          // Log failed API calls
+          auditLogger.log({
+            action: 'API_ERROR',
+            resource: path,
+            details: {
+              method,
+              status: response.status,
+              statusText: response.statusText,
+            },
+            status: 'error',
+          });
+          
+          throw error;
         }
-
-        // Wait before retrying (exponential backoff)
-        await new Promise(resolve => {
-          setTimeout(resolve, Math.pow(2, currentRetry) * 100);
+        
+        // Log successful API calls
+        auditLogger.log({
+          action: 'API_CALL',
+          resource: path,
+          details: {
+            method,
+          },
+          status: 'success',
         });
+        
+        if (response.status === 204) {
+          return {} as T;
+        }
+        
+        return await response.json();
+      } catch (err: any) {
+        error = err;
+        
+        if (err.name === 'AbortError') {
+          error.message = 'Request timed out';
+          break;
+        }
+        
+        // Don't retry if it's a 4xx error (client error)
+        if (err.status && err.status >= 400 && err.status < 500) {
+          break;
+        }
+        
+        attempts++;
+        
+        if (attempts < requestRetryCount) {
+          await new Promise(resolve => setTimeout(resolve, requestRetryDelay * attempts));
+        }
       }
     }
 
-    // This should never be reached due to the previous error handling
-    return {
-      error: 'Maximum retries exceeded',
-      statusCode: 500,
-      success: false,
-    };
-  }
+    // Track the error
+    console.error(`API Error (${attempts} attempts):`, error);
+    
+    // Additional error tracking
+    errorTracker(error as Error, {
+      path,
+      method,
+      attempts,
+    });
+    
+    throw error;
+  };
 
   return {
-    get: <T = any>(endpoint: string, options?: Omit<RequestOptions, 'method' | 'body'>) => 
-      request<T>(endpoint, { ...options, method: 'GET' }),
+    get: <T>(path: string, options?: RequestOptions) => 
+      executeRequest<T>(path, 'GET', undefined, options),
+    post: <T>(path: string, data: any, options?: RequestOptions) => 
+      executeRequest<T>(path, 'POST', data, options),
+    put: <T>(path: string, data: any, options?: RequestOptions) => 
+      executeRequest<T>(path, 'PUT', data, options),
+    patch: <T>(path: string, data: any, options?: RequestOptions) => 
+      executeRequest<T>(path, 'PATCH', data, options),
+    delete: <T>(path: string, options?: RequestOptions) => 
+      executeRequest<T>(path, 'DELETE', undefined, options),
+  };
+}
+
+export function useAPI() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [client, setClient] = useState<APIClient | null>(null);
+
+  useEffect(() => {
+    const headers: Record<string, string> = {};
     
-    post: <T = any>(endpoint: string, body: any, options?: Omit<RequestOptions, 'method'>) => 
-      request<T>(endpoint, { ...options, method: 'POST', body }),
+    if (user) {
+      headers['Authorization'] = `Bearer ${user.id}`;
+    }
     
-    put: <T = any>(endpoint: string, body: any, options?: Omit<RequestOptions, 'method'>) => 
-      request<T>(endpoint, { ...options, method: 'PUT', body }),
+    setClient(createAPIClient({
+      headers,
+      retryCount: 2,
+    }));
+  }, [user]);
+
+  const handleAPIError = (error: APIError) => {
+    let message = 'An error occurred';
     
-    patch: <T = any>(endpoint: string, body: any, options?: Omit<RequestOptions, 'method'>) => 
-      request<T>(endpoint, { ...options, method: 'PATCH', body }),
+    if (error.status === 401) {
+      message = 'Authentication required. Please log in.';
+    } else if (error.status === 403) {
+      message = 'You do not have permission to perform this action.';
+    } else if (error.status === 404) {
+      message = 'The requested resource was not found.';
+    } else if (error.status && error.status >= 500) {
+      message = 'A server error occurred. Please try again later.';
+    } else if (error.message) {
+      message = error.message;
+    }
     
-    delete: <T = any>(endpoint: string, options?: Omit<RequestOptions, 'method'>) => 
-      request<T>(endpoint, { ...options, method: 'DELETE' }),
+    toast({
+      title: 'Error',
+      description: message,
+      variant: 'destructive',
+    });
+  };
+
+  return {
+    client,
+    handleAPIError,
   };
 }

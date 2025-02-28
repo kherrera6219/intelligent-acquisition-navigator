@@ -1,145 +1,109 @@
 
 import { auditLogger } from '../audit';
 
-interface ErrorDetails {
+export interface ErrorDetails {
+  name: string;
   message: string;
   stack?: string;
-  timestamp: Date;
-  userId?: string;
   component?: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  errorCode?: string;
-  errorType: 'SECURITY' | 'VALIDATION' | 'SYSTEM' | 'APPLICATION';
-  status: 'NEW' | 'INVESTIGATING' | 'RESOLVED';
-  additionalData?: Record<string, unknown>;
+  action?: string;
+  metadata?: Record<string, any>;
 }
 
-class ErrorTracker {
-  private static instance: ErrorTracker;
-  private errors: ErrorDetails[] = [];
-  private readonly MAX_ERRORS = 1000;
-  private securityIncidents: ErrorDetails[] = [];
-
-  private constructor() {
-    window.onerror = (message, source, lineno, colno, error) => {
-      this.trackError({
-        message: message.toString(),
-        stack: error?.stack,
-        component: source,
-        severity: 'MEDIUM',
-        errorType: 'APPLICATION',
-        status: 'NEW',
-        additionalData: { lineno, colno }
-      });
+class ErrorTrackingService {
+  private enabled: boolean = true;
+  private projectId: string = '';
+  private environment: string = 'development';
+  
+  public initialize(options: { projectId: string; enabled?: boolean; environment?: string }) {
+    this.projectId = options.projectId;
+    this.enabled = options.enabled !== false;
+    this.environment = options.environment || 'development';
+    
+    // Set up global error handlers
+    if (typeof window !== 'undefined' && this.enabled) {
+      window.addEventListener('error', this.handleGlobalError);
+      window.addEventListener('unhandledrejection', this.handleUnhandledRejection);
+    }
+    
+    console.log(`Error tracking initialized for project ${this.projectId} in ${this.environment} environment`);
+  }
+  
+  public trackError(error: Error | string, metadata?: Record<string, any>) {
+    if (!this.enabled) return;
+    
+    const errorObj = typeof error === 'string' ? new Error(error) : error;
+    const details: ErrorDetails = {
+      name: errorObj.name,
+      message: errorObj.message,
+      stack: errorObj.stack,
+      metadata,
     };
-
-    window.addEventListener('unhandledrejection', (event) => {
-      this.trackError({
-        message: event.reason?.message || 'Unhandled Promise Rejection',
-        stack: event.reason?.stack,
-        severity: 'HIGH',
-        errorType: 'APPLICATION',
-        status: 'NEW',
-        additionalData: { reason: event.reason }
-      });
+    
+    this.processError(details);
+  }
+  
+  public trackComponentError(error: Error, component: string, action?: string, metadata?: Record<string, any>) {
+    if (!this.enabled) return;
+    
+    const details: ErrorDetails = {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+      component,
+      action,
+      metadata,
+    };
+    
+    this.processError(details);
+  }
+  
+  public setEnabled(enabled: boolean) {
+    this.enabled = enabled;
+  }
+  
+  public setEnvironment(environment: string) {
+    this.environment = environment;
+  }
+  
+  private processError(details: ErrorDetails) {
+    // Log the error to the console in development
+    if (this.environment === 'development') {
+      console.error('Error tracked:', details);
+    }
+    
+    // In a real app, this would send the error to a service like Sentry, LogRocket, etc.
+    // For now, we'll just log it using our audit logger
+    auditLogger.log({
+      action: 'ERROR',
+      resource: details.component || 'application',
+      details: {
+        errorName: details.name,
+        errorMessage: details.message,
+        action: details.action,
+        metadata: details.metadata,
+      },
+      status: 'error',
     });
   }
-
-  static getInstance(): ErrorTracker {
-    if (!ErrorTracker.instance) {
-      ErrorTracker.instance = new ErrorTracker();
-    }
-    return ErrorTracker.instance;
+  
+  private handleGlobalError = (event: ErrorEvent) => {
+    this.trackError(event.error || new Error(event.message), {
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    });
   }
-
-  trackError(details: Omit<ErrorDetails, 'timestamp'>): void {
-    const errorDetails: ErrorDetails = {
-      ...details,
-      timestamp: new Date()
-    };
-
-    // Track error in memory
-    this.errors.unshift(errorDetails);
-    if (this.errors.length > this.MAX_ERRORS) {
-      this.errors.pop();
-    }
-
-    // Check if this is a security incident
-    if (this.isSecurityIncident(errorDetails)) {
-      this.securityIncidents.push(errorDetails);
-      errorDetails.severity = 'CRITICAL';
-      errorDetails.errorType = 'SECURITY';
-    }
-
-    // Convert ErrorDetails to Record<string, unknown> for audit logging
-    const auditDetails: Record<string, unknown> = {
-      message: errorDetails.message,
-      stack: errorDetails.stack,
-      timestamp: errorDetails.timestamp,
-      userId: errorDetails.userId,
-      component: errorDetails.component,
-      severity: errorDetails.severity,
-      errorCode: errorDetails.errorCode,
-      errorType: errorDetails.errorType,
-      status: errorDetails.status,
-      additionalData: errorDetails.additionalData
-    };
-
-    // Log to audit system
-    auditLogger.log({
-      action: 'ERROR_OCCURRED',
-      resourceType: 'ERROR',
-      resourceId: errorDetails.errorCode || 'system',
-      severity: this.mapSeverityToAudit(errorDetails.severity),
-      details: auditDetails
-    }).catch(console.error);
-  }
-
-  private isSecurityIncident(error: ErrorDetails): boolean {
-    const securityKeywords = [
-      'unauthorized', 'forbidden', 'invalid token', 'csrf',
-      'xss', 'injection', 'authentication failed', 'access denied'
-    ];
-
-    return securityKeywords.some(keyword => 
-      error.message.toLowerCase().includes(keyword) ||
-      error.stack?.toLowerCase().includes(keyword)
-    );
-  }
-
-  private mapSeverityToAudit(severity: ErrorDetails['severity']): 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL' {
-    switch (severity) {
-      case 'LOW': return 'INFO';
-      case 'MEDIUM': return 'WARNING';
-      case 'HIGH': return 'ERROR';
-      case 'CRITICAL': return 'CRITICAL';
-    }
-  }
-
-  getRecentErrors(): ErrorDetails[] {
-    return [...this.errors];
-  }
-
-  getSecurityIncidents(): ErrorDetails[] {
-    return [...this.securityIncidents];
-  }
-
-  clearErrors(): void {
-    this.errors = [];
-  }
-
-  updateErrorStatus(errorCode: string, status: ErrorDetails['status']): void {
-    const error = this.errors.find(e => e.errorCode === errorCode);
-    if (error) {
-      error.status = status;
-      auditLogger.log({
-        action: 'ERROR_STATUS_UPDATED',
-        resourceType: 'ERROR',
-        resourceId: errorCode,
-        details: { oldStatus: error.status, newStatus: status }
-      });
-    }
+  
+  private handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+    const error = typeof event.reason === 'object' && event.reason instanceof Error
+      ? event.reason
+      : new Error(String(event.reason));
+    
+    this.trackError(error, {
+      type: 'unhandledrejection',
+    });
   }
 }
 
-export const errorTracker = ErrorTracker.getInstance();
+export const errorTracker = new ErrorTrackingService();

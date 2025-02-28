@@ -1,55 +1,35 @@
 
-import { nanoid } from 'nanoid';
-import createAPIClient from './apiClient';
+// Basic audit logging functionality
 
-/**
- * Audit event types
- */
-export type AuditModule = 'SECURITY' | 'VALIDATION' | 'SYSTEM' | 'APPLICATION';
-
-export interface AuditEvent {
-  id?: string;
-  timestamp?: string;
-  userId?: string;
+export interface AuditLogPayload {
   action: string;
-  module: AuditModule;
-  details?: string;
+  resource: string;
+  resourceId?: string;
+  details?: Record<string, any>;
   status?: 'success' | 'error' | 'warning' | 'info';
-  metadata?: Record<string, any>;
 }
 
-// Create API client for audit events
-const auditClient = createAPIClient({
-  baseUrl: '/api',
-  defaultHeaders: {
-    'Content-Type': 'application/json',
-  },
-});
+export interface AuditLog extends AuditLogPayload {
+  id: string;
+  timestamp: string;
+  userId?: string;
+  ipAddress?: string;
+  userAgent?: string;
+}
 
-/**
- * Log an audit event
- */
-export const logAudit = async (event: AuditEvent): Promise<void> => {
-  try {
-    const auditEvent = {
-      id: event.id || nanoid(),
-      timestamp: event.timestamp || new Date().toISOString(),
-      userId: event.userId || 'anonymous',
-      action: event.action,
-      module: event.module,
-      details: event.details || '',
-      status: event.status || 'info',
-      metadata: event.metadata || {},
-    };
-
-    // Log to server if online
-    if (navigator.onLine) {
-      await auditClient.post('/audit', auditEvent);
+export const auditLogger = {
+  log: async (payload: AuditLogPayload): Promise<void> => {
+    try {
+      console.log('Audit log:', payload);
+      // In a real implementation, this would send data to a backend service
+    } catch (error) {
+      console.error('Failed to log audit event:', error);
     }
-
-    // Also log to console for debugging
-    console.log(`[Audit] ${auditEvent.module} - ${auditEvent.action}`);
-  } catch (error) {
-    console.error('Failed to log audit event:', error);
+  },
+  
+  getAuditLogs: async (filters?: Record<string, any>): Promise<AuditLog[]> => {
+    console.log('Getting audit logs with filters:', filters);
+    // This is a stub - in a real implementation, this would fetch data from a backend
+    return [];
   }
 };
