@@ -20,7 +20,8 @@ import {
   PrivacyPage,
   SettingsPage,
   SitemapPage,
-  NotFoundPage
+  NotFoundPage,
+  ProposalDetailPage
 } from "./lazyComponents";
 
 export const routes: RouteObject[] = [
@@ -74,6 +75,10 @@ export const routes: RouteObject[] = [
   {
     path: "/proposals",
     element: wrapWithLayout(ProposalsPage, true, "user")
+  },
+  {
+    path: "/proposals/:id",
+    element: wrapWithLayout(ProposalDetailPage, true, "user")
   },
   {
     path: "/settings",

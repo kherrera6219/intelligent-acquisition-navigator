@@ -1,232 +1,122 @@
 
 import React, { useState } from 'react';
+import { ArrowLeft, FileText, Calendar, DollarSign, Users, Star, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/universal/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
-import { Proposal } from '@/types/proposals';
-import { useOptimisticMutation } from '@/hooks/useOptimisticQuery';
-import ProposalDetailsHeader from './ProposalDetailsHeader';
-import AttachmentsTab from './AttachmentsTab';
-import EvaluationsTab from './EvaluationsTab';
-import ProposalDetailsLoading from './ProposalDetailsLoading';
-import ProposalDetailsError from './ProposalDetailsError';
+import EvaluationForm from '@/components/proposals/EvaluationForm';
+import { AttachmentsTab } from '@/components/proposals/AttachmentsTab';
+import { EvaluationsTab } from '@/components/proposals/EvaluationsTab';
+import { formatDate, formatCurrency } from '@/utils/formatters';
+import type { Proposal, Evaluation } from '@/types/proposals';
 
-export interface ProposalDetailsProps {
+interface ProposalDetailsProps {
   proposal: Proposal;
-  isLoading?: boolean;
-  error?: string;
-  onClose?: () => void;
+  handleBack: () => void;
 }
 
-const ProposalDetails: React.FC<ProposalDetailsProps> = ({ 
-  proposal, 
-  isLoading, 
-  error,
-  onClose 
-}) => {
-  const { toast } = useToast();
-  const { userRole } = useAuth();
-  const [showEvaluationForm, setShowEvaluationForm] = useState(false);
+export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal, handleBack }) => {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evaluations, setEvaluations] = useState<Evaluation[]>(proposal.evaluations || []);
 
-  // Mutations
-  const addEvaluationMutation = useOptimisticMutation<Proposal>({
-    url: `/api/proposals/${proposal.id}/evaluations`,
-    method: 'POST',
-    onSuccess: () => {
-      toast({
-        title: "Evaluation Added",
-        description: "Your evaluation has been added successfully."
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to add evaluation. Please try again.",
-        variant: "destructive"
-      });
-    }
-  });
-
-  const deleteAttachmentMutation = useOptimisticMutation<Proposal>({
-    url: `/api/proposals/${proposal.id}/attachments/{id}`,
-    method: 'DELETE',
-    onSuccess: () => {
-      toast({
-        title: "Attachment Deleted",
-        description: "The attachment has been deleted successfully."
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to delete attachment. Please try again.",
-        variant: "destructive"
-      });
-    }
-  });
-
-  const updateStatusMutation = useOptimisticMutation<Proposal>({
-    url: `/api/proposals/${proposal.id}`,
-    method: 'PATCH',
-    onSuccess: () => {
-      toast({
-        title: "Status Updated",
-        description: "The proposal status has been updated successfully."
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to update status. Please try again.",
-        variant: "destructive"
-      });
-    }
-  });
-
-  // Event handlers
-  const handleBack = () => {
-    if (onClose) {
-      onClose();
-    }
-  };
-
-  const handleStatusChange = async (status: 'APPROVED' | 'REJECTED') => {
-    try {
-      await updateStatusMutation.mutate({
-        id: proposal?.id as string,
-        status
-      });
-    } catch (error) {
-      console.error('Error updating status:', error);
-    }
-  };
-
-  const handleAddEvaluation = async () => {
-    if (!comment.trim() || rating === 0) {
-      toast({
-        title: "Validation Error",
-        description: "Please provide both a comment and rating.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      await addEvaluationMutation.mutate({
-        id: proposal?.id as string,
-        comment,
-        rating
-      });
-      setShowEvaluationForm(false);
-      setComment('');
-      setRating(0);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add evaluation. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleDeleteAttachment = async (attachmentId: string) => {
-    try {
-      await deleteAttachmentMutation.mutate({
-        id: proposal?.id as string,
-        attachmentId
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete attachment. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleDownloadAttachment = (attachment: any) => {
-    setIsDownloading(true);
+  const handleAddEvaluation = () => {
+    const newEvaluation: Evaluation = {
+      id: `eval-${Date.now()}`,
+      userId: 'current-user',
+      userName: 'Current User',
+      comment,
+      rating,
+      date: new Date().toISOString(),
+    };
     
-    // Simulate download delay - in a real app, this would be an actual download
-    setTimeout(() => {
-      toast({
-        title: "Download Started",
-        description: `Downloading ${attachment.name}...`
-      });
-      setIsDownloading(false);
-    }, 1000);
+    setEvaluations([...evaluations, newEvaluation]);
+    setComment('');
+    setRating(0);
+    setIsEvaluating(false);
   };
 
-  // Loading state
-  if (isLoading) {
-    return <ProposalDetailsLoading />;
-  }
-
-  // Error state
-  if (error) {
-    return <ProposalDetailsError error={error} handleBack={handleBack} />;
-  }
-
-  // Calculate average rating
-  const calculateAverageRating = () => {
-    if (!proposal.evaluations || proposal.evaluations.length === 0) return 0;
-    const sum = proposal.evaluations.reduce((total, eval) => total + eval.rating, 0);
-    return sum / proposal.evaluations.length;
+  const handleCancelEvaluation = () => {
+    setComment('');
+    setRating(0);
+    setIsEvaluating(false);
   };
-
-  const averageRating = calculateAverageRating();
 
   return (
-    <div className="space-y-6 p-4">
-      <ProposalDetailsHeader
-        proposal={proposal}
-        userRole={userRole}
-        handleBack={handleBack}
-        handleStatusChange={handleStatusChange}
-        averageRating={averageRating}
-      />
+    <div className="p-4">
+      <Button variant="ghost" size="sm" onClick={handleBack}>
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back
+      </Button>
 
-      <Card className="p-6">
-        <Tabs defaultValue="attachments">
-          <TabsList>
-            <TabsTrigger value="attachments">
-              Attachments ({proposal.attachments.length})
-            </TabsTrigger>
-            <TabsTrigger value="evaluations">
-              Evaluations ({proposal.evaluations.length})
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="attachments">
-            <AttachmentsTab
-              proposal={proposal}
-              userRole={userRole}
-              isDownloading={isDownloading}
-              handleDownloadAttachment={handleDownloadAttachment}
-              handleDeleteAttachment={handleDeleteAttachment}
-            />
-          </TabsContent>
-          
-          <TabsContent value="evaluations">
-            <EvaluationsTab
-              proposal={proposal}
-              showEvaluationForm={showEvaluationForm}
-              comment={comment}
-              rating={rating}
-              setShowEvaluationForm={setShowEvaluationForm}
-              setComment={setComment}
-              setRating={setRating}
-              handleAddEvaluation={handleAddEvaluation}
-            />
-          </TabsContent>
-        </Tabs>
-      </Card>
+      <div className="mt-4">
+        <h1 className="text-2xl font-bold mb-2">{proposal.title}</h1>
+        <p className="text-sm text-muted-foreground mb-4">
+          ID: {proposal.id} • Submitted: {formatDate(proposal.submissionDate)}
+        </p>
+
+        <Card className="p-4 mb-6">
+          <div className="prose dark:prose-invert max-w-none">
+            <p>{proposal.description}</p>
+          </div>
+        </Card>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <Card className="p-4 flex items-center">
+            <DollarSign className="h-5 w-5 mr-2 text-muted-foreground" />
+            <div>
+              <p className="text-sm text-muted-foreground">Budget</p>
+              <p className="font-semibold">{formatCurrency(proposal.budget)}</p>
+            </div>
+          </Card>
+          <Card className="p-4 flex items-center">
+            <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
+            <div>
+              <p className="text-sm text-muted-foreground">Timeline</p>
+              <p className="font-semibold">{proposal.timeframe} {proposal.timeframe === 1 ? 'month' : 'months'}</p>
+            </div>
+          </Card>
+        </div>
+
+        <Card className="mb-6">
+          <Tabs defaultValue="evaluations">
+            <TabsList className="w-full border-b rounded-none">
+              <TabsTrigger value="evaluations" className="flex-1">
+                <Star className="h-4 w-4 mr-2" />
+                Evaluations ({evaluations.length})
+              </TabsTrigger>
+              <TabsTrigger value="attachments" className="flex-1">
+                <FileText className="h-4 w-4 mr-2" />
+                Attachments ({proposal.attachments?.length || 0})
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="evaluations" className="p-4">
+              {isEvaluating ? (
+                <EvaluationForm
+                  comment={comment}
+                  rating={rating}
+                  setComment={setComment}
+                  setRating={setRating}
+                  handleAddEvaluation={handleAddEvaluation}
+                  handleCancelEvaluation={handleCancelEvaluation}
+                />
+              ) : (
+                <div className="mb-4">
+                  <Button onClick={() => setIsEvaluating(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Evaluation
+                  </Button>
+                </div>
+              )}
+              <EvaluationsTab evaluations={evaluations} />
+            </TabsContent>
+            <TabsContent value="attachments" className="p-4">
+              <AttachmentsTab attachments={proposal.attachments || []} />
+            </TabsContent>
+          </Tabs>
+        </Card>
+      </div>
     </div>
   );
 };
-
-export default ProposalDetails;

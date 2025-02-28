@@ -13,6 +13,9 @@ export const formatDate = (date: Date | string): string => {
   
   const dateObject = typeof date === 'string' ? new Date(date) : date;
   
+  // Check if date is valid
+  if (isNaN(dateObject.getTime())) return 'Invalid date';
+  
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',
@@ -27,6 +30,8 @@ export const formatDate = (date: Date | string): string => {
  * @returns Formatted currency string
  */
 export const formatCurrency = (value: number, currency = 'USD'): string => {
+  if (value === null || value === undefined || isNaN(value)) return 'N/A';
+  
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
@@ -39,6 +44,8 @@ export const formatCurrency = (value: number, currency = 'USD'): string => {
  * @returns Formatted number string
  */
 export const formatNumber = (value: number): string => {
+  if (value === null || value === undefined || isNaN(value)) return 'N/A';
+  
   return new Intl.NumberFormat('en-US').format(value);
 };
 
@@ -49,6 +56,8 @@ export const formatNumber = (value: number): string => {
  * @returns Formatted percentage string
  */
 export const formatPercentage = (value: number, decimals = 1): string => {
+  if (value === null || value === undefined || isNaN(value)) return 'N/A';
+  
   return new Intl.NumberFormat('en-US', {
     style: 'percent',
     minimumFractionDigits: decimals,

@@ -106,6 +106,12 @@ export const ProposalsPage = lazy(() =>
   }))
 );
 
+export const ProposalDetailPage = lazy(() => 
+  import("@/pages/ProposalDetailPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading proposal details")
+  }))
+);
+
 export const SettingsPage = lazy(() => 
   import("@/pages/SettingsPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading settings")
@@ -117,4 +123,3 @@ export const NotFoundPage = lazy(() =>
     default: () => React.createElement("div", null, "Error loading 404 page")
   }))
 );
-

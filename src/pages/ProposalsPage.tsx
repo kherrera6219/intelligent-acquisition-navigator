@@ -1,6 +1,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -24,6 +25,7 @@ const ProposalsPage = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isOnline = useNetworkStatus();
+  const navigate = useNavigate();
   
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -95,12 +97,20 @@ const ProposalsPage = () => {
   }, []);
 
   const handleProposalClick = useCallback((proposal: Proposal) => {
+    // Option 1: Open in modal
     setSelectedProposal(proposal);
+    
+    // Option 2: Navigate to detail page
+    // navigate(`/proposals/${proposal.id}`);
   }, []);
 
   const handleCloseDetails = useCallback(() => {
     setSelectedProposal(null);
   }, []);
+
+  const handleViewDetails = useCallback((proposal: Proposal) => {
+    navigate(`/proposals/${proposal.id}`);
+  }, [navigate]);
 
   const toggleSortByDate = useCallback(() => {
     setSortByDate(prev => !prev);
@@ -173,6 +183,7 @@ const ProposalsPage = () => {
         <ProposalList
           proposals={proposals}
           onProposalClick={handleProposalClick}
+          onViewDetails={handleViewDetails}
         />
       )}
 
