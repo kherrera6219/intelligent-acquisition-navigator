@@ -4,49 +4,54 @@
  */
 
 /**
- * Format a date string into a readable format
- * @param dateString ISO date string to format
+ * Format a date into a readable string
+ * @param date Date to format
  * @returns Formatted date string
  */
-export const formatDate = (dateString: string): string => {
-  if (!dateString) return 'N/A';
+export const formatDate = (date: Date | string): string => {
+  if (!date) return 'N/A';
   
-  try {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return dateString;
-  }
+  const dateObject = typeof date === 'string' ? new Date(date) : date;
+  
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(dateObject);
 };
 
 /**
- * Format a number as currency
+ * Format a currency value
  * @param value Number to format as currency
+ * @param currency Currency code (default: USD)
  * @returns Formatted currency string
  */
-export const formatCurrency = (value: number): string => {
+export const formatCurrency = (value: number, currency = 'USD'): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD'
+    currency,
   }).format(value);
 };
 
 /**
- * Format a number with appropriate decimal places
+ * Format a number with thousands separators
  * @param value Number to format
- * @param decimals Number of decimal places (default: 2)
  * @returns Formatted number string
  */
-export const formatNumber = (value: number, decimals = 2): string => {
+export const formatNumber = (value: number): string => {
+  return new Intl.NumberFormat('en-US').format(value);
+};
+
+/**
+ * Format a percentage value
+ * @param value Number to format as percentage
+ * @param decimals Number of decimal places (default: 1)
+ * @returns Formatted percentage string
+ */
+export const formatPercentage = (value: number, decimals = 1): string => {
   return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: decimals
-  }).format(value);
+    style: 'percent',
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value / 100);
 };

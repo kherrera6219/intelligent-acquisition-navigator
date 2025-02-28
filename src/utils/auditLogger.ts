@@ -1,67 +1,49 @@
 
-/**
- * Utility for logging audit events
- */
+import { toast } from '@/hooks/use-toast';
 
-export enum AuditEvent {
-  USER_LOGIN = 'USER_LOGIN',
-  USER_LOGOUT = 'USER_LOGOUT',
-  USER_REGISTER = 'USER_REGISTER',
-  PASSWORD_RESET = 'PASSWORD_RESET',
-  PROPOSAL_CREATE = 'PROPOSAL_CREATE',
-  PROPOSAL_UPDATE = 'PROPOSAL_UPDATE',
-  PROPOSAL_DELETE = 'PROPOSAL_DELETE',
-  PROPOSAL_STATUS_CHANGE = 'PROPOSAL_STATUS_CHANGE',
-  EVALUATION_ADD = 'EVALUATION_ADD',
-  EVALUATION_DELETE = 'EVALUATION_DELETE',
-  ATTACHMENT_ADD = 'ATTACHMENT_ADD',
-  ATTACHMENT_DELETE = 'ATTACHMENT_DELETE',
-  ATTACHMENT_DOWNLOAD = 'ATTACHMENT_DOWNLOAD',
-  SYSTEM_ERROR = 'SYSTEM_ERROR'
+// This is a placeholder implementation since we don't have access to the actual @/lib/audit implementation
+// In a real application, you would import and use the actual audit module
+
+export interface AuditEvent {
+  type: string;
+  details: Record<string, any>;
+  userId?: string;
+  timestamp?: Date;
 }
 
-/**
- * Log an audit event
- * @param event The audit event type
- * @param details Additional details about the event
- * @param userId Optional user ID associated with the event
- */
-export const logAudit = (
-  event: AuditEvent,
-  details: Record<string, any>,
-  userId?: string
-): void => {
+export const logAudit = async (event: AuditEvent): Promise<void> => {
+  console.log('Audit event logged:', event);
+  
+  // In a real application, this would send the audit event to a server or service
   try {
-    // In a real implementation, this would send to a server or log service
-    console.log('[AUDIT]', {
-      event,
-      details,
-      userId: userId || 'anonymous',
-      timestamp: new Date().toISOString()
-    });
+    // Simulated API call
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // For development purposes, we can show a toast notification
+    if (process.env.NODE_ENV === 'development') {
+      toast({
+        title: 'Audit event logged',
+        description: `Type: ${event.type}, User: ${event.userId || 'unknown'}`,
+        variant: 'default',
+      });
+    }
   } catch (error) {
-    console.error('Error logging audit event:', error);
+    console.error('Failed to log audit event:', error);
   }
 };
 
-/**
- * Log an error as an audit event
- * @param error The error object
- * @param context Additional context information
- * @param userId Optional user ID
- */
-export const logErrorAudit = (
-  error: Error,
-  context: Record<string, any>,
-  userId?: string
-): void => {
-  logAudit(
-    AuditEvent.SYSTEM_ERROR,
-    {
-      error: error.message,
-      stack: error.stack,
-      ...context
-    },
-    userId
-  );
+export const trackUserAction = (action: string, details: Record<string, any> = {}): void => {
+  logAudit({
+    type: 'USER_ACTION',
+    details: { action, ...details },
+    timestamp: new Date(),
+  });
+};
+
+export const trackSystemEvent = (event: string, details: Record<string, any> = {}): void => {
+  logAudit({
+    type: 'SYSTEM_EVENT',
+    details: { event, ...details },
+    timestamp: new Date(),
+  });
 };
