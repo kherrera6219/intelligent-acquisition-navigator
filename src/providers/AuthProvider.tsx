@@ -79,7 +79,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setShowSessionWarning(true);
     } else if (remaining === 0) {
       // Session expired
-      signOut();
+      handleSignOut();
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      setIsProcessing(true);
+      await supabase.auth.signOut();
+      setUser(null);
+      setIsAuthenticated(false);
+      setUserRole(null);
+    } catch (error) {
+      console.error('Signout error:', error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -129,7 +143,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Use the session management hook
   useSessionManagement(
-    signOut,
+    handleSignOut,
     lastActivity,
     SESSION_DURATION,
     showSessionWarning
@@ -180,19 +194,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const signOut = async () => {
-    try {
-      setIsProcessing(true);
-      await supabase.auth.signOut();
-      setUser(null);
-      setIsAuthenticated(false);
-      setUserRole(null);
-    } catch (error) {
-      console.error('Signout error:', error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  const signOut = handleSignOut;
 
   const resendVerificationEmail = async () => {
     if (!user?.email) return;

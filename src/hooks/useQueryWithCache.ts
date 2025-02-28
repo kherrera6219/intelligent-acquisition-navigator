@@ -1,140 +1,61 @@
 
-/**
- * A custom React Query hook with enhanced caching capabilities
- */
-import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
-import { cachedFetch, clearCache } from '@/utils/cachedFetch';
-import { useToast } from '@/hooks/use-toast';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useQuery } from '@tanstack/react-query';
+import { cachedFetch } from '@/utils/cachedFetch';
 
-export interface UseQueryWithCacheOptions<TData> extends Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn'> {
+export interface UseQueryWithCacheOptions<TData = any, TError = Error> {
   url: string;
-  queryKey: string | string[];
-  fetchOptions?: RequestInit;
-  cacheTime?: number;
-  offlineFallback?: boolean;
+  cacheKey?: string;
+  cacheTtl?: number;
+  enabled?: boolean;
+  refetchInterval?: number;
+  refetchOnWindowFocus?: boolean;
+  forceRefresh?: boolean;
   retryCount?: number;
-  onError?: (error: Error) => void;
   onSuccess?: (data: TData) => void;
-  resourceType?: string;
+  onError?: (error: TError) => void;
+  queryKey: string | string[];
 }
 
 /**
- * A custom React Query hook with enhanced caching and offline support
+ * Custom hook for fetching data with caching support
  */
-export function useQueryWithCache<TData = unknown>({
+export function useQueryWithCache<TData = any, TError = Error>({
   url,
-  queryKey,
-  fetchOptions = {},
-  cacheTime = 1000 * 60 * 30, // 30 minutes
-  staleTime = 1000 * 60 * 5, // 5 minutes
-  offlineFallback = true,
+  cacheKey,
+  cacheTtl,
+  enabled = true,
+  refetchInterval,
+  refetchOnWindowFocus = true,
+  forceRefresh = false,
   retryCount = 3,
-  onError,
   onSuccess,
-  resourceType = url.split('/').pop() || 'unknown',
-  ...options
-}: UseQueryWithCacheOptions<TData>) {
-  const { toast } = useToast();
-  const isOnline = useNetworkStatus();
-  const queryClient = useQueryClient();
+  onError,
+  queryKey
+}: UseQueryWithCacheOptions<TData, TError>) {
+  const key = Array.isArray(queryKey) ? queryKey : [queryKey];
   
-  // Normalize queryKey to always be an array
-  const normalizedQueryKey = Array.isArray(queryKey) ? queryKey : [queryKey];
-  
-  return useQuery<TData>({
-    queryKey: normalizedQueryKey,
+  return useQuery({
+    queryKey: key,
     queryFn: async () => {
       try {
-        return await cachedFetch<TData>(url, fetchOptions, {
-          cacheTtl: staleTime,
-          offlineFallback,
-          retryCount,
-          resourceType
+        const response = await cachedFetch<TData>(url, {}, {
+          cacheKey,
+          cacheTtl,
+          forceRefresh,
+          retryCount
         });
+        return response;
       } catch (error) {
-        if (!isOnline) {
-          toast({
-            title: 'You are offline',
-            description: 'Using cached data. Some information may be outdated.',
-            variant: 'default'
-          });
-          
-          // Try to get cached data from the queryClient cache
-          const cachedData = queryClient.getQueryData<TData>(normalizedQueryKey);
-          if (cachedData) return cachedData;
-        }
-        
+        console.error('Error fetching data:', error);
         throw error;
       }
     },
-    staleTime,
-    gcTime: cacheTime,
-    meta: {
-      onSuccess: (data: TData) => {
-        if (onSuccess) onSuccess(data);
-      },
-      onError: (error: Error) => {
-        if (onError) onError(error);
-        
-        toast({
-          title: 'Error',
-          description: error.message || 'An error occurred while fetching data',
-          variant: 'destructive'
-        });
-      }
-    },
-    ...options
+    enabled,
+    refetchInterval,
+    refetchOnWindowFocus,
+    staleTime: cacheTtl || 1000 * 60 * 5, // Default to 5 minutes if not specified
+    retry: retryCount,
+    onSuccess,
+    onError
   });
-}
-
-/**
- * Prefetch and cache data for later use
- * @param url The URL to prefetch
- * @param queryKey The query key to use for caching
- */
-export function prefetchQuery<TData = unknown>(
-  queryClient: ReturnType<typeof useQueryClient>,
-  url: string,
-  queryKey: string | string[],
-  options: {
-    fetchOptions?: RequestInit;
-    staleTime?: number;
-  } = {}
-): Promise<void> {
-  const { fetchOptions = {}, staleTime = 1000 * 60 * 5 } = options;
-  const normalizedQueryKey = Array.isArray(queryKey) ? queryKey : [queryKey];
-  
-  return queryClient.prefetchQuery({
-    queryKey: normalizedQueryKey,
-    queryFn: () => cachedFetch<TData>(url, fetchOptions),
-    staleTime
-  });
-}
-
-/**
- * Invalidate and refetch queries
- */
-export function invalidateAndRefetch(
-  queryClient: ReturnType<typeof useQueryClient>,
-  queryKey: string | string[]
-): Promise<void> {
-  const normalizedQueryKey = Array.isArray(queryKey) ? queryKey : [queryKey];
-  return queryClient.invalidateQueries({ queryKey: normalizedQueryKey });
-}
-
-/**
- * Clear specific query cache
- */
-export function clearQueryCache(
-  queryClient: ReturnType<typeof useQueryClient>,
-  queryKey: string | string[]
-): void {
-  const normalizedQueryKey = Array.isArray(queryKey) ? queryKey : [queryKey];
-  queryClient.removeQueries({ queryKey: normalizedQueryKey });
-  
-  // Also clear from our custom cache
-  if (typeof queryKey === 'string') {
-    clearCache(queryKey);
-  }
 }

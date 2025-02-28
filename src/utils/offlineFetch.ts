@@ -1,269 +1,243 @@
 
 /**
- * Enhanced offline fetch utility with retry and background sync
+ * Module for managing offline request functionality
  */
+import { nanoid } from 'nanoid';
+import React from 'react';
 import { openDB, IDBPDatabase } from 'idb';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 
-// Interface for failed request
-interface FailedRequest {
+// IndexedDB database name
+const DB_NAME = 'offlineRequestsDB';
+const STORE_NAME = 'failedRequests';
+
+// Queue to store failed requests when offline
+let failedRequestsDbPromise: Promise<IDBPDatabase> | null = null;
+
+/**
+ * Initialize the IndexedDB database
+ */
+const initDatabase = async () => {
+  if (!failedRequestsDbPromise) {
+    failedRequestsDbPromise = openDB(DB_NAME, 1, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        }
+      },
+    });
+  }
+  return failedRequestsDbPromise;
+};
+
+/**
+ * Interface for failed request object
+ */
+export interface FailedRequest {
   id: string;
   url: string;
   options: RequestInit;
   timestamp: number;
   retryCount: number;
-  maxRetries: number;
-}
-
-// Database name and store
-const DB_NAME = 'offline-cache';
-const STORE_NAME = 'failed-requests';
-const CACHE_STORE = 'response-cache';
-
-// Initialize the database
-async function getDB(): Promise<IDBPDatabase> {
-  return openDB(DB_NAME, 1, {
-    upgrade(db) {
-      // Create failed requests store
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-      }
-      
-      // Create response cache store
-      if (!db.objectStoreNames.contains(CACHE_STORE)) {
-        db.createObjectStore(CACHE_STORE, { keyPath: 'url' });
-      }
-    },
-  });
 }
 
 /**
- * Store a failed request for later retry
+ * Store a failed request in the queue
  */
-export async function setFailedRequest(
-  url: string,
-  options: RequestInit,
-  maxRetries: number = 3
-): Promise<string> {
-  const db = await getDB();
-  
-  // Create a unique ID for the request
-  const id = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-  
-  // Store the request in IndexedDB
-  const request: FailedRequest = {
-    id,
-    url,
-    options: {
-      ...options,
-      // Clone the body since it might be a stream
-      body: options.body ? JSON.stringify(options.body) : undefined,
-    },
-    timestamp: Date.now(),
-    retryCount: 0,
-    maxRetries,
-  };
-  
-  await db.put(STORE_NAME, request);
-  
-  // Schedule background sync if available
-  if ('serviceWorker' in navigator && 'sync' in window.registration) {
-    try {
-      await window.registration.sync.register('sync-failed-requests');
-    } catch (error) {
-      console.error('Background sync registration failed:', error);
-    }
+export const setFailedRequest = async (url: string, options: RequestInit): Promise<void> => {
+  try {
+    const db = await initDatabase();
+    const id = nanoid();
+    
+    await db.add(STORE_NAME, {
+      id,
+      url,
+      options,
+      timestamp: Date.now(),
+      retryCount: 0,
+    });
+    
+    console.log(`Request queued for offline processing: ${url}`);
+  } catch (error) {
+    console.error('Failed to queue request for offline processing:', error);
   }
-  
-  return id;
-}
+};
 
 /**
  * Get all failed requests
  */
-export async function getFailedRequests(): Promise<FailedRequest[]> {
-  const db = await getDB();
-  return db.getAll(STORE_NAME);
-}
-
-/**
- * Delete a failed request
- */
-export async function deleteFailedRequest(id: string): Promise<void> {
-  const db = await getDB();
-  await db.delete(STORE_NAME, id);
-}
-
-/**
- * Retry a failed request
- */
-export async function retryFailedRequest(request: FailedRequest): Promise<boolean> {
+export const getFailedRequests = async (): Promise<FailedRequest[]> => {
   try {
-    // Check if network is available
-    if (!navigator.onLine) {
-      return false;
-    }
-    
-    // Update retry count
-    request.retryCount += 1;
-    
-    // Check if max retries reached
-    if (request.retryCount > request.maxRetries) {
-      await deleteFailedRequest(request.id);
-      return false;
-    }
-    
-    // Update the request in the database
-    const db = await getDB();
-    await db.put(STORE_NAME, request);
-    
-    // Retry the request
-    const response = await fetch(request.url, {
-      ...request.options,
-      // Recreate the body if it was stringified
-      body: request.options.body,
-    });
-    
-    // If successful, remove from queue
-    if (response.ok) {
-      await deleteFailedRequest(request.id);
-      return true;
-    }
-    
-    return false;
+    const db = await initDatabase();
+    return await db.getAll(STORE_NAME);
   } catch (error) {
-    console.error('Error retrying request:', error);
+    console.error('Failed to get offline requests:', error);
+    return [];
+  }
+};
+
+/**
+ * Retry a specific failed request
+ */
+export const retryFailedRequest = async (id: string): Promise<boolean> => {
+  try {
+    const db = await initDatabase();
+    const request = await db.get(STORE_NAME, id);
+    
+    if (!request) {
+      console.warn(`Failed request with ID ${id} not found.`);
+      return false;
+    }
+    
+    // Attempt to resend the request
+    const response = await fetch(request.url, request.options);
+    
+    if (response.ok) {
+      // If successful, remove from the queue
+      await db.delete(STORE_NAME, id);
+      return true;
+    } else {
+      // Update retry count
+      await db.put(STORE_NAME, {
+        ...request,
+        retryCount: request.retryCount + 1,
+      });
+      return false;
+    }
+  } catch (error) {
+    console.error(`Failed to retry request ${id}:`, error);
     return false;
   }
-}
+};
+
+/**
+ * Register service worker for offline support if available
+ */
+export const registerServiceWorker = async () => {
+  if ('serviceWorker' in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register('/serviceWorker.js');
+      console.log('Service Worker registered with scope:', registration.scope);
+    } catch (error) {
+      console.error('Service Worker registration failed:', error);
+    }
+  }
+};
+
+/**
+ * Fetch with automatic retry and offline handling
+ */
+export const offlineFetch = async (
+  url: string,
+  options: RequestInit & { retryCount?: number } = {}
+): Promise<Response> => {
+  const { retryCount = 3, ...fetchOptions } = options;
+  
+  // Try to fetch with retries
+  for (let attempt = 0; attempt <= retryCount; attempt++) {
+    try {
+      const response = await fetch(url, fetchOptions);
+      
+      if (response.ok) {
+        return response;
+      }
+      
+      // If we get a non-2xx response, throw to trigger retry
+      throw new Error(`HTTP Error ${response.status}`);
+    } catch (error) {
+      // Last attempt failed, check if we're offline
+      if (attempt === retryCount && !navigator.onLine) {
+        // If this is a mutation (POST, PUT, DELETE), queue it for later
+        const method = (fetchOptions.method || 'GET').toUpperCase();
+        if (method !== 'GET' && method !== 'HEAD') {
+          await setFailedRequest(url, fetchOptions);
+          
+          // Return a mock response
+          return new Response(
+            JSON.stringify({ success: true, offlineQueued: true }),
+            {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' }
+            }
+          );
+        }
+      }
+      
+      // If it's not the last attempt, wait before retrying
+      if (attempt < retryCount) {
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+        continue;
+      }
+      
+      // If it's the last attempt or we're offline with a GET request, throw
+      throw error;
+    }
+  }
+  
+  // This should never be reached due to the throws above
+  throw new Error('Maximum retries exceeded');
+};
 
 /**
  * Retry all failed requests
  */
-export async function retryAllFailedRequests(): Promise<void> {
-  const failedRequests = await getFailedRequests();
-  
-  await Promise.all(
-    failedRequests.map(request => retryFailedRequest(request))
-  );
-}
-
-/**
- * Cache a response
- */
-export async function cacheResponse(url: string, response: Response): Promise<void> {
-  const db = await getDB();
-  
+export const retryAllFailedRequests = async (): Promise<{
+  total: number;
+  succeeded: number;
+  failed: number;
+}> => {
   try {
-    const clonedResponse = response.clone();
-    const responseData = await clonedResponse.json();
+    const requests = await getFailedRequests();
+    let succeeded = 0;
+    let failed = 0;
     
-    await db.put(CACHE_STORE, {
-      url,
-      data: responseData,
-      timestamp: Date.now(),
-    });
-  } catch (error) {
-    console.error('Error caching response:', error);
-  }
-}
-
-/**
- * Get a cached response
- */
-export async function getCachedResponse(url: string): Promise<any | null> {
-  const db = await getDB();
-  
-  try {
-    const cachedResponse = await db.get(CACHE_STORE, url);
-    return cachedResponse?.data || null;
-  } catch (error) {
-    console.error('Error getting cached response:', error);
-    return null;
-  }
-}
-
-/**
- * Fetch with offline support and automatic retries
- */
-export async function offlineFetch(
-  url: string,
-  options: RequestInit & { retryCount?: number } = {}
-): Promise<Response> {
-  const { retryCount = 3, ...fetchOptions } = options;
-  
-  // Try to fetch
-  try {
-    const response = await fetch(url, fetchOptions);
-    
-    // Cache successful GET responses
-    if (response.ok && (fetchOptions.method || 'GET') === 'GET') {
-      await cacheResponse(url, response);
-    }
-    
-    return response;
-  } catch (error) {
-    // If offline and it's a GET request, try to serve from cache
-    if (!navigator.onLine && (fetchOptions.method || 'GET') === 'GET') {
-      const cachedData = await getCachedResponse(url);
-      
-      if (cachedData) {
-        // Create a synthetic response from cached data
-        return new Response(JSON.stringify(cachedData), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        });
+    for (const request of requests) {
+      const success = await retryFailedRequest(request.id);
+      if (success) {
+        succeeded++;
+      } else {
+        failed++;
       }
     }
     
-    // For write operations, queue for retry later
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes((fetchOptions.method || 'GET').toUpperCase())) {
-      await setFailedRequest(url, fetchOptions, retryCount);
-    }
-    
-    throw error;
-  }
-}
-
-/**
- * Hook to sync failed requests when coming back online
- */
-export function useOfflineSync() {
-  const isOnline = useNetworkStatus();
-  
-  React.useEffect(() => {
-    let syncTimeout: NodeJS.Timeout;
-    
-    // When coming back online, retry failed requests
-    if (isOnline) {
-      // Debounce to avoid multiple syncs
-      syncTimeout = setTimeout(() => {
-        retryAllFailedRequests().catch(console.error);
-      }, 1000);
-    }
-    
-    return () => {
-      if (syncTimeout) clearTimeout(syncTimeout);
+    return {
+      total: requests.length,
+      succeeded,
+      failed,
     };
-  }, [isOnline]);
-}
+  } catch (error) {
+    console.error('Failed to retry all requests:', error);
+    return {
+      total: 0,
+      succeeded: 0,
+      failed: 0,
+    };
+  }
+};
 
-// Register event listener for online status
-window.addEventListener('online', () => {
-  retryAllFailedRequests().catch(console.error);
-});
+/**
+ * Remove a specific failed request without retrying
+ */
+export const removeFailedRequest = async (id: string): Promise<boolean> => {
+  try {
+    const db = await initDatabase();
+    await db.delete(STORE_NAME, id);
+    return true;
+  } catch (error) {
+    console.error(`Failed to remove request ${id}:`, error);
+    return false;
+  }
+};
 
-// Auto-retry logic (if service worker is active, this helps process background syncs)
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.ready.then((registration) => {
-    // Store registration globally for sync
-    (window as any).registration = registration;
-    
-    // Add listener for sync event
-    navigator.serviceWorker.addEventListener('message', event => {
-      if (event.data && event.data.type === 'retry-failed-requests') {
-        retryAllFailedRequests().catch(console.error);
-      }
-    });
-  });
-}
+/**
+ * Clear all failed requests
+ */
+export const clearAllFailedRequests = async (): Promise<boolean> => {
+  try {
+    const db = await initDatabase();
+    await db.clear(STORE_NAME);
+    return true;
+  } catch (error) {
+    console.error('Failed to clear all requests:', error);
+    return false;
+  }
+};

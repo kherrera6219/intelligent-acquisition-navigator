@@ -35,7 +35,7 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({
         id: `temp-${Date.now()}`,
         comment,
         rating,
-        date: new Date().toISOString()
+        createdAt: new Date().toISOString()
       };
       
       // Return optimistic data for context

@@ -121,7 +121,7 @@ const NetworkStatusBanner: React.FC<NetworkStatusBannerProps> = ({ className }) 
           </AlertDescription>
         </Alert>
       ) : pendingSync > 0 ? (
-        <Alert variant="warning" className="border-amber-600 bg-amber-600/90 backdrop-blur-sm text-white">
+        <Alert variant="destructive" className="border-amber-600 bg-amber-600/90 backdrop-blur-sm text-white">
           <Upload className="h-5 w-5" />
           <AlertTitle className="text-white">
             {isSyncing ? 'Syncing changes...' : `You have ${pendingSync} pending ${pendingSync === 1 ? 'change' : 'changes'} to sync`}

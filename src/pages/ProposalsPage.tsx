@@ -53,7 +53,7 @@ const ProposalsPage = () => {
 
   // Use our optimistic query hook for proposals
   const { data, isLoading, error } = useOptimisticQuery<Proposal[]>({
-    url: `/api/proposals?page=${page}&search=${encodeURIComponent(debouncedSearchTerm)}&sortByDate=${sortByDate}`,
+    url: `/api/proposals?page=${page.toString()}&search=${encodeURIComponent(debouncedSearchTerm)}&sortByDate=${sortByDate.toString()}`,
     queryKey: ['proposals', page, debouncedSearchTerm, sortByDate],
     resourceType: 'proposals',
     enabled: canMakeRequest(),

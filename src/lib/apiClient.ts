@@ -1,165 +1,176 @@
 
+import { errorTracker } from './security/errorTracking';
+import { auditLogger } from './utils/auditLogger';
+
 /**
- * Enhanced API client with optimistic updates and caching
+ * API response types
  */
-import { cachedFetch, CacheConfig } from '@/utils/cachedFetch';
-import { createOptimisticUpdate, updateOptimisticStatus } from '@/utils/optimisticUpdates';
-import { errorTracker } from '@/lib/security/errorTracking';
-
-// Default API configuration
-const DEFAULT_HEADERS = {
-  'Content-Type': 'application/json',
-};
-
-// Enhanced API client with caching and optimistic updates
-class ApiClient {
-  private baseUrl: string;
-  private defaultHeaders: HeadersInit;
-
-  constructor(baseUrl: string = '', defaultHeaders: HeadersInit = {}) {
-    this.baseUrl = baseUrl;
-    this.defaultHeaders = {
-      ...DEFAULT_HEADERS,
-      ...defaultHeaders,
-    };
-  }
-
-  // Helper to build full URL
-  private buildUrl(endpoint: string): string {
-    return `${this.baseUrl}${endpoint}`;
-  }
-
-  // Helper to get CSRF token
-  private getCsrfToken(): string | null {
-    const metaTag = document.querySelector('meta[name="csrf-token"]');
-    return metaTag ? metaTag.getAttribute('content') : null;
-  }
-
-  // Generic request method with caching and optimistic updates
-  async request<T>(
-    endpoint: string,
-    options: RequestInit = {},
-    cacheConfig: CacheConfig = {}
-  ): Promise<T> {
-    const url = this.buildUrl(endpoint);
-    
-    // Set default headers and include CSRF token
-    const csrfToken = this.getCsrfToken();
-    const headers = {
-      ...this.defaultHeaders,
-      ...options.headers,
-    };
-    
-    if (csrfToken) {
-      headers['X-CSRF-Token'] = csrfToken;
-    }
-
-    // Determine resource type for optimistic updates
-    const resourceType = cacheConfig.resourceType || endpoint.split('/').filter(Boolean).pop() || 'unknown';
-    
-    // Create optimistic update for write operations
-    let optimisticUpdateId;
-    const method = (options.method || 'GET').toUpperCase();
-    
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
-      const action = method === 'POST' 
-        ? 'create' 
-        : method === 'DELETE' 
-          ? 'delete' 
-          : 'update';
-      
-      const resourceId = method !== 'POST' 
-        ? endpoint.split('/').filter(Boolean).pop() 
-        : undefined;
-      
-      const body = options.body 
-        ? typeof options.body === 'string' 
-          ? JSON.parse(options.body) 
-          : options.body
-        : undefined;
-      
-      const update = createOptimisticUpdate(
-        resourceType,
-        action,
-        resourceId,
-        undefined, // Original data not available here
-        body
-      );
-      
-      optimisticUpdateId = update.id;
-    }
-
-    try {
-      const response = await cachedFetch<T>(url, {
-        ...options,
-        headers,
-      }, cacheConfig);
-      
-      // Update optimistic status if applicable
-      if (optimisticUpdateId) {
-        updateOptimisticStatus(optimisticUpdateId, 'success');
-      }
-      
-      return response;
-    } catch (error) {
-      // Update optimistic status if applicable
-      if (optimisticUpdateId) {
-        updateOptimisticStatus(optimisticUpdateId, 'error', error as Error);
-      }
-      
-      // Track error
-      errorTracker.trackError({
-        message: error instanceof Error ? error.message : 'Unknown API error',
-        severity: 'HIGH',
-        errorType: 'API',
-        status: 'NEW'
-      });
-      
-      throw error;
-    }
-  }
-
-  // CRUD methods with caching and optimistic updates
-  async get<T>(endpoint: string, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'GET',
-    }, cacheConfig);
-  }
-
-  async post<T>(endpoint: string, data: any, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify(data),
-    }, cacheConfig);
-  }
-
-  async put<T>(endpoint: string, data: any, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }, cacheConfig);
-  }
-
-  async patch<T>(endpoint: string, data: any, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    }, cacheConfig);
-  }
-
-  async delete<T>(endpoint: string, options: RequestInit = {}, cacheConfig: CacheConfig = {}): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: 'DELETE',
-    }, cacheConfig);
-  }
+export interface ApiResponse<T = any> {
+  data?: T;
+  error?: string;
+  statusCode: number;
+  message?: string;
+  success: boolean;
 }
 
-// Create a singleton instance
-const apiClient = new ApiClient();
+/**
+ * Request options for API client
+ */
+interface RequestOptions {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  headers?: Record<string, string>;
+  body?: any;
+  retries?: number;
+  authRequired?: boolean;
+  timeout?: number;
+}
 
-export default apiClient;
+/**
+ * API client configuration
+ */
+interface ApiClientConfig {
+  baseUrl: string;
+  defaultHeaders?: Record<string, string>;
+  defaultRetries?: number;
+  defaultTimeout?: number;
+}
+
+/**
+ * API client for making network requests
+ */
+export default function createAPIClient(config: ApiClientConfig) {
+  const {
+    baseUrl,
+    defaultHeaders = {
+      'Content-Type': 'application/json',
+    },
+    defaultRetries = 3,
+    defaultTimeout = 10000,
+  } = config;
+
+  /**
+   * Make API request with retry capability
+   */
+  async function request<T = any>(
+    endpoint: string,
+    options: RequestOptions = {}
+  ): Promise<ApiResponse<T>> {
+    const {
+      method = 'GET',
+      headers = {},
+      body,
+      retries = defaultRetries,
+      timeout = defaultTimeout,
+    } = options;
+
+    let currentRetry = 0;
+
+    const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
+    
+    // Request timeout promise
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => {
+        reject(new Error(`Request timeout after ${timeout}ms`));
+      }, timeout);
+    });
+
+    while (currentRetry <= retries) {
+      try {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        const requestHeaders = {
+          ...defaultHeaders,
+          ...headers,
+        };
+
+        const requestBody = body ? JSON.stringify(body) : undefined;
+
+        // Log audit event
+        auditLogger({
+          action: `${method} ${endpoint}`,
+          details: `Attempt ${currentRetry + 1} of ${retries + 1}`,
+          module: "APPLICATION"
+        });
+
+        // Race between fetch and timeout
+        const response = await Promise.race([
+          fetch(url, {
+            method,
+            headers: requestHeaders,
+            body: requestBody,
+            signal,
+          }),
+          timeoutPromise,
+        ]);
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.error || `HTTP error ${response.status}`);
+        }
+
+        return {
+          data: responseData,
+          statusCode: response.status,
+          success: true,
+        };
+      } catch (error) {
+        currentRetry++;
+        
+        // Track error
+        errorTracker(error, {
+          method,
+          url,
+          retryAttempt: currentRetry,
+        });
+
+        // Log audit event for error
+        auditLogger({
+          action: `${method} ${endpoint} failed`,
+          details: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          module: "APPLICATION",
+          status: 'error',
+        });
+
+        // If we've used all retries, throw the error
+        if (currentRetry > retries) {
+          return {
+            error: error instanceof Error ? error.message : 'Unknown error',
+            statusCode: 500,
+            success: false,
+          };
+        }
+
+        // Wait before retrying (exponential backoff)
+        await new Promise(resolve => {
+          setTimeout(resolve, Math.pow(2, currentRetry) * 100);
+        });
+      }
+    }
+
+    // This should never be reached due to the previous error handling
+    return {
+      error: 'Maximum retries exceeded',
+      statusCode: 500,
+      success: false,
+    };
+  }
+
+  return {
+    get: <T = any>(endpoint: string, options?: Omit<RequestOptions, 'method' | 'body'>) => 
+      request<T>(endpoint, { ...options, method: 'GET' }),
+    
+    post: <T = any>(endpoint: string, body: any, options?: Omit<RequestOptions, 'method'>) => 
+      request<T>(endpoint, { ...options, method: 'POST', body }),
+    
+    put: <T = any>(endpoint: string, body: any, options?: Omit<RequestOptions, 'method'>) => 
+      request<T>(endpoint, { ...options, method: 'PUT', body }),
+    
+    patch: <T = any>(endpoint: string, body: any, options?: Omit<RequestOptions, 'method'>) => 
+      request<T>(endpoint, { ...options, method: 'PATCH', body }),
+    
+    delete: <T = any>(endpoint: string, options?: Omit<RequestOptions, 'method'>) => 
+      request<T>(endpoint, { ...options, method: 'DELETE' }),
+  };
+}
