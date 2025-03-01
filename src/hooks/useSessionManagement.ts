@@ -1,86 +1,74 @@
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-/**
- * Enhanced hook to manage session timeouts
- * @param handleSignOut - Function to sign out the user
- * @param lastActivity - Timestamp of the last user activity
- * @param sessionDuration - The duration of the session in milliseconds
- * @param showSessionWarning - Whether the session warning is being shown
- */
-export function useSessionManagement(
-  handleSignOut: () => Promise<void>,
-  lastActivity: number,
-  sessionDuration: number = 30 * 60 * 1000, // 30 minutes default
-  showSessionWarning: boolean = false
-) {
-  const { toast } = useToast();
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    
-    const handleVisibilityChange = async () => {
-      // Check session when tab becomes visible again
-      if (document.visibilityState === 'visible') {
-        const timeSinceLastActivity = Date.now() - lastActivity;
-        
-        // If inactive for too long, sign out
-        if (timeSinceLastActivity > sessionDuration) {
-          toast({
-            title: "Session expired",
-            description: "You have been signed out due to inactivity.",
-            variant: "destructive"
-          });
-          await handleSignOut();
-        }
-      }
-    };
-    
-    // Set a timeout to automatically sign out after session duration
-    timeoutId = setTimeout(async () => {
-      const timeSinceLastActivity = Date.now() - lastActivity;
-      
-      // Double-check if we should actually sign out
-      if (timeSinceLastActivity > sessionDuration) {
-        toast({
-          title: "Session expired",
-          description: "You have been signed out due to inactivity.",
-          variant: "destructive"
-        });
-        await handleSignOut();
-      }
-    }, sessionDuration);
-    
-    // Watch for visibility changes to handle returning to the page
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    // Listen for storage events to handle session expiry across tabs
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'last_activity') {
-        const newLastActivity = parseInt(e.newValue || '0', 10);
-        if (newLastActivity > lastActivity) {
-          // Activity detected in another tab, update our timeout
-          clearTimeout(timeoutId);
-          timeoutId = setTimeout(async () => {
-            const timeSinceLastActivity = Date.now() - newLastActivity;
-            if (timeSinceLastActivity > sessionDuration) {
-              await handleSignOut();
-            }
-          }, sessionDuration - (Date.now() - newLastActivity));
-        }
-      } else if (e.key === 'session_expired' && e.newValue === 'true') {
-        // Another tab triggered session expiry
-        handleSignOut();
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      clearTimeout(timeoutId);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [handleSignOut, lastActivity, sessionDuration, toast, showSessionWarning]);
+interface SessionManagementOptions {
+  warningThreshold?: number; // Time in ms before session expiry to show warning
+  autoRefresh?: boolean; // Whether to automatically refresh session
 }
+
+/**
+ * Hook to manage user session timeouts, warnings, and auto-refresh
+ * 
+ * @param onSessionExpired - Function to call when session expires
+ * @param lastActivity - Timestamp of last user activity
+ * @param sessionDuration - Duration of session in ms
+ * @param showWarning - Whether to show session expiry warning
+ * @param options - Additional options for session management
+ */
+export const useSessionManagement = (
+  onSessionExpired: () => Promise<void> | void,
+  lastActivity: number,
+  sessionDuration: number,
+  showWarning: boolean,
+  options: SessionManagementOptions = {}
+) => {
+  const { toast } = useToast();
+  const { warningThreshold = 5 * 60 * 1000, autoRefresh = false } = options;
+
+  const handleSessionWarning = useCallback(() => {
+    if (showWarning) {
+      toast({
+        title: "Session Expiring Soon",
+        description: "Your session will expire soon. Would you like to stay logged in?",
+        variant: "warning",
+        action: autoRefresh ? {
+          label: "Stay Logged In",
+          onClick: () => {
+            // Reset last activity time
+            window.dispatchEvent(new MouseEvent('mousedown'));
+          }
+        } : undefined,
+        duration: 10000, // Show for 10 seconds
+      });
+    }
+  }, [showWarning, toast, autoRefresh]);
+
+  // Check session status periodically
+  useEffect(() => {
+    const checkSession = () => {
+      const now = Date.now();
+      const timeElapsed = now - lastActivity;
+      const timeRemaining = sessionDuration - timeElapsed;
+
+      // If session expired
+      if (timeRemaining <= 0) {
+        onSessionExpired();
+        return;
+      }
+
+      // If session expiring soon
+      if (timeRemaining <= warningThreshold) {
+        handleSessionWarning();
+      }
+    };
+
+    const intervalId = setInterval(checkSession, 60000); // Check every minute
+    
+    return () => clearInterval(intervalId);
+  }, [lastActivity, sessionDuration, warningThreshold, onSessionExpired, handleSessionWarning]);
+
+  return null;
+};
+
+export default useSessionManagement;

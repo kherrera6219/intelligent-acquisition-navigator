@@ -2,6 +2,9 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
+import { VerificationBanner } from "@/components/auth/VerificationBanner";
+import { SessionTimeoutWarning } from "@/components/auth/SessionTimeoutWarning";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,25 +12,25 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
-  const { user, isLoading, isAuthorized } = useAuth();
+  const { user, isLoading, isAuthorized, isAuthenticated } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
-  if (!user) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/auth?returnUrl=${encodeURIComponent(location.pathname)}" state={{ from: location }} replace />;
   }
 
-  if (!user.email_confirmed_at) {
+  if (user && !user.email_confirmed_at) {
     toast({
       title: "Email verification required",
       description: "Please verify your email address to access this resource.",
       variant: "destructive",
     });
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+    return <Navigate to="/auth/verify" state={{ from: location }} replace />;
   }
 
   if (requiredRole && !isAuthorized(requiredRole)) {
@@ -39,5 +42,12 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
     return <Navigate to="/" replace />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <NetworkStatusBanner />
+      <VerificationBanner />
+      <SessionTimeoutWarning />
+      {children}
+    </>
+  );
 }

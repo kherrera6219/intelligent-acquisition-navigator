@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, DollarSign, ExternalLink } from 'lucide-react';
+import { Calendar, DollarSign, ExternalLink, Users, Clock } from 'lucide-react';
 import { Card } from '@/components/ui/universal/Card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -62,6 +62,22 @@ export const ProposalList: React.FC<ProposalListProps> = ({
                   {formatCurrency(proposal.budget || 0)}
                 </span>
               </div>
+              
+              <div className="flex items-center">
+                <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">
+                  {proposal.timeframe || 0} {proposal.timeframe === 1 ? 'month' : 'months'}
+                </span>
+              </div>
+              
+              {proposal.evaluations?.length > 0 && (
+                <div className="flex items-center">
+                  <Users className="h-4 w-4 mr-1 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
+                    {proposal.evaluations.length} evaluation{proposal.evaluations.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              )}
             </div>
             
             {onViewDetails && (

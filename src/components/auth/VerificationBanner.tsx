@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
 export const VerificationBanner = () => {
-  const { user, resendVerificationEmail } = useAuth();
+  const { user, resendVerificationEmail, isProcessing } = useAuth();
   const { toast } = useToast();
   const [isResending, setIsResending] = useState(false);
 
@@ -34,13 +34,18 @@ export const VerificationBanner = () => {
 
   return (
     <div className="bg-yellow-500/10 text-yellow-200 px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
-      <p className="text-sm mb-2 sm:mb-0">
-        Please verify your email address to access all features
-      </p>
+      <div>
+        <p className="text-sm mb-2 sm:mb-0 font-medium">
+          Please verify your email address to access all features
+        </p>
+        <p className="text-xs opacity-80">
+          Check your inbox for a verification email sent to: {user.email}
+        </p>
+      </div>
       <button
         onClick={handleResend}
-        disabled={isResending}
-        className="text-sm px-4 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={isResending || isProcessing}
+        className="text-sm px-4 py-1 mt-2 sm:mt-0 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isResending ? "Sending..." : "Resend verification email"}
       </button>
