@@ -1,7 +1,10 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, FileSearch, FileCheck, Database, BookOpen, Scale, MessageSquare, HelpCircle } from "lucide-react";
+import { 
+  Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, 
+  FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/universal/Container";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,7 +35,8 @@ const navItems: NavItem[] = [
   // Support & Resources
   { href: "/features", label: "Features", icon: BookOpen },
   { href: "/pricing", label: "Pricing", icon: Scale },
-  { href: "/help", label: "Help", icon: HelpCircle }
+  { href: "/help", label: "Help", icon: HelpCircle },
+  { href: "/sitemap", label: "Sitemap", icon: Map }
 ];
 
 export const Header = () => {
@@ -65,6 +69,10 @@ export const Header = () => {
       <Container>
         <div className="py-4 flex justify-between items-center">
           <div className="flex items-center gap-8">
+            <Link to="/" className="text-white font-bold text-xl">
+              ProcurityIQ
+            </Link>
+            
             <Link to="/settings" className="text-gray-400 hover:text-white">
               <Settings className="h-5 w-5" />
               <span className="sr-only">Settings</span>

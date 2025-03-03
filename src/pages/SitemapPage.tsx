@@ -2,7 +2,11 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, BarChart, Home, FileText, Map, FileCheck, Users, Building2, Scale, ClipboardCheck, BookOpen, Flag, HelpCircle, Settings, MessageSquare } from 'lucide-react';
+import { 
+  ArrowRight, Shield, BarChart, Home, FileText, Map, FileCheck, 
+  Users, Building2, Scale, ClipboardCheck, BookOpen, Flag, 
+  HelpCircle, Settings, MessageSquare, Database, Layers 
+} from 'lucide-react';
 
 const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
   <Card className="p-6 glass-card">
@@ -34,25 +38,23 @@ const Sitemap = () => {
       { path: "/privacy", label: "Privacy", icon: Shield }
     ],
     auth: [
-      { path: "/signup", label: "Sign Up", icon: Users },
-      { path: "/profile", label: "User Profile", icon: Users },
-      { path: "/reset-password", label: "Reset Password", icon: Shield }
+      { path: "/auth", label: "Sign In / Sign Up", icon: Users },
+      { path: "/settings", label: "User Settings", icon: Settings },
     ],
     core: [
       { path: "/dashboard", label: "Dashboard", icon: Home },
       { path: "/proposals", label: "Proposals", icon: FileText },
-      { path: "/chat", label: "Chat", icon: MessageSquare },
-      { path: "/knowledge-base", label: "Knowledge Base", icon: BookOpen }
+      { path: "/proposals/:id", label: "Proposal Details", icon: Layers },
+      { path: "/analytics", label: "Analytics", icon: BarChart }
     ],
     acquisition: [
-      { path: "/acquisition/solicitation-review", label: "Solicitation Review", icon: FileText },
+      { path: "/acquisition/solicitation-review", label: "Solicitation Review", icon: FileCheck },
       { path: "/acquisition/market-research", label: "Market Research", icon: Map },
       { path: "/acquisition/document-control", label: "Document Control", icon: FileText },
-      { path: "/texas-acquisition", label: "Texas Acquisition", icon: Flag }
+      { path: "/acquisition/texas-acquisition", label: "Texas Acquisition", icon: Flag },
+      { path: "/acquisition/federal-acquisition", label: "Federal Acquisition", icon: Database }
     ],
     system: [
-      { path: "/analytics", label: "Analytics", icon: BarChart },
-      { path: "/settings", label: "Settings", icon: Settings },
       { path: "/help", label: "Help", icon: HelpCircle },
       { path: "/sitemap", label: "Sitemap", icon: Map }
     ]
