@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
   // Core Features
   { href: "/dashboard", label: "Dashboard", icon: Home },
   { href: "/proposals", label: "Proposals", minRole: "user", icon: FileText },
+  { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 },
   
   // Acquisition Management
   { href: "/acquisition/document-control", label: "Document Control", minRole: "user", icon: FileText },
@@ -28,9 +29,6 @@ const navItems: NavItem[] = [
   { href: "/acquisition/solicitation-review", label: "Solicitation Review", minRole: "manager", icon: FileCheck },
   { href: "/acquisition/texas-acquisition", label: "Texas Acquisition", minRole: "user", icon: Building2 },
   { href: "/acquisition/federal-acquisition", label: "Federal Acquisition", minRole: "manager", icon: Database },
-  
-  // Analytics & Reports
-  { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 },
   
   // Support & Resources
   { href: "/features", label: "Features", icon: BookOpen },

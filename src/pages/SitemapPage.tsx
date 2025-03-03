@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
-  ArrowRight, Shield, BarChart, Home, FileText, Map, FileCheck, 
-  Users, Building2, Scale, ClipboardCheck, BookOpen, Flag, 
-  HelpCircle, Settings, MessageSquare, Database, Layers 
+  ArrowRight, Shield, BarChart2, Home, FileText, Map, FileCheck, 
+  Users, Building2, Scale, BookOpen, 
+  HelpCircle, Settings, Database, Layers,
+  FileSearch
 } from 'lucide-react';
 
 const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
@@ -45,13 +46,13 @@ const Sitemap = () => {
       { path: "/dashboard", label: "Dashboard", icon: Home },
       { path: "/proposals", label: "Proposals", icon: FileText },
       { path: "/proposals/:id", label: "Proposal Details", icon: Layers },
-      { path: "/analytics", label: "Analytics", icon: BarChart }
+      { path: "/analytics", label: "Analytics", icon: BarChart2 }
     ],
     acquisition: [
-      { path: "/acquisition/solicitation-review", label: "Solicitation Review", icon: FileCheck },
-      { path: "/acquisition/market-research", label: "Market Research", icon: Map },
       { path: "/acquisition/document-control", label: "Document Control", icon: FileText },
-      { path: "/acquisition/texas-acquisition", label: "Texas Acquisition", icon: Flag },
+      { path: "/acquisition/market-research", label: "Market Research", icon: FileSearch },
+      { path: "/acquisition/solicitation-review", label: "Solicitation Review", icon: FileCheck },
+      { path: "/acquisition/texas-acquisition", label: "Texas Acquisition", icon: Building2 },
       { path: "/acquisition/federal-acquisition", label: "Federal Acquisition", icon: Database }
     ],
     system: [
