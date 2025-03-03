@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, 
-  FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map 
+  FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map,
+  ChevronDown, ChevronUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/universal/Container";
@@ -15,26 +16,46 @@ interface NavItem {
   label: string;
   minRole?: string;
   icon: React.ElementType;
+  items?: NavItem[];
 }
 
 const navItems: NavItem[] = [
   // Core Features
   { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/proposals", label: "Proposals", minRole: "user", icon: FileText },
-  { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 },
-  
-  // Acquisition Management
-  { href: "/acquisition/document-control", label: "Document Control", minRole: "user", icon: FileText },
-  { href: "/acquisition/market-research", label: "Market Research", minRole: "user", icon: FileSearch },
-  { href: "/acquisition/solicitation-review", label: "Solicitation Review", minRole: "manager", icon: FileCheck },
-  { href: "/acquisition/texas-acquisition", label: "Texas Acquisition", minRole: "user", icon: Building2 },
-  { href: "/acquisition/federal-acquisition", label: "Federal Acquisition", minRole: "manager", icon: Database },
+  { 
+    href: "#", 
+    label: "Acquisition", 
+    icon: FileText,
+    items: [
+      { href: "/acquisition/document-control", label: "Document Control", minRole: "user", icon: FileText },
+      { href: "/acquisition/market-research", label: "Market Research", minRole: "user", icon: FileSearch },
+      { href: "/acquisition/solicitation-review", label: "Solicitation Review", minRole: "manager", icon: FileCheck },
+      { href: "/acquisition/texas-acquisition", label: "Texas Acquisition", minRole: "user", icon: Building2 },
+      { href: "/acquisition/federal-acquisition", label: "Federal Acquisition", minRole: "manager", icon: Database }
+    ]
+  },
+  { 
+    href: "#", 
+    label: "Management", 
+    icon: BarChart2,
+    items: [
+      { href: "/proposals", label: "Proposals", minRole: "user", icon: FileText },
+      { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 }
+    ]
+  },
   
   // Support & Resources
-  { href: "/features", label: "Features", icon: BookOpen },
-  { href: "/pricing", label: "Pricing", icon: Scale },
-  { href: "/help", label: "Help", icon: HelpCircle },
-  { href: "/sitemap", label: "Sitemap", icon: Map }
+  { 
+    href: "#", 
+    label: "Resources", 
+    icon: BookOpen,
+    items: [
+      { href: "/features", label: "Features", icon: BookOpen },
+      { href: "/pricing", label: "Pricing", icon: Scale },
+      { href: "/help", label: "Help", icon: HelpCircle },
+      { href: "/sitemap", label: "Sitemap", icon: Map }
+    ]
+  }
 ];
 
 export const Header = () => {
@@ -42,16 +63,23 @@ export const Header = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState(location.pathname);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentPath(location.pathname);
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
     }
+    setOpenDropdown(null);
   }, [location.pathname]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+    setOpenDropdown(null);
+  };
+
+  const toggleDropdown = (label: string) => {
+    setOpenDropdown(prev => prev === label ? null : label);
   };
 
   const isAuthorized = (minRole?: string) => {
@@ -60,6 +88,44 @@ export const Header = () => {
     if (userRole === "admin") return true;
     if (minRole === "user") return true;
     return userRole === minRole;
+  };
+
+  const isActiveRoute = (href: string, items?: NavItem[]) => {
+    if (href !== "#" && currentPath === href) return true;
+    if (items) {
+      return items.some(item => {
+        if (item.href === currentPath) return true;
+        if (item.items) return isActiveRoute(item.href, item.items);
+        return false;
+      });
+    }
+    return false;
+  };
+
+  // A helper for rendering dropdown items
+  const renderDropdownItems = (items?: NavItem[]) => {
+    if (!items) return null;
+    
+    return (
+      <div className="absolute left-0 mt-2 py-2 w-56 bg-gray-800 rounded-md shadow-xl z-50">
+        {items.map((item) => (
+          isAuthorized(item.minRole) && (
+            <Link 
+              key={item.href}
+              to={item.href} 
+              className={cn(
+                "flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700",
+                currentPath === item.href && "bg-gray-700 text-white"
+              )}
+              onClick={() => setOpenDropdown(null)}
+            >
+              <item.icon className="h-4 w-4 mr-2" />
+              {item.label}
+            </Link>
+          )
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -80,17 +146,39 @@ export const Header = () => {
             <nav className="hidden md:flex gap-6 overflow-x-auto pb-2 scrollbar-none">
               {navItems.map((item) => (
                 isAuthorized(item.minRole) && (
-                  <Link 
-                    key={item.href}
-                    to={item.href} 
-                    className={cn(
-                      "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-                      currentPath === item.href && "text-white bg-white/5"
+                  <div key={item.label} className="relative">
+                    {item.items ? (
+                      <button
+                        onClick={() => toggleDropdown(item.label)}
+                        className={cn(
+                          "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
+                          (openDropdown === item.label || isActiveRoute(item.href, item.items)) && "text-white bg-white/5"
+                        )}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.label}
+                        {openDropdown === item.label ? (
+                          <ChevronUp className="h-3 w-3 ml-1" />
+                        ) : (
+                          <ChevronDown className="h-3 w-3 ml-1" />
+                        )}
+                      </button>
+                    ) : (
+                      <Link 
+                        to={item.href} 
+                        className={cn(
+                          "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
+                          currentPath === item.href && "text-white bg-white/5"
+                        )}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.label}
+                      </Link>
                     )}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
+                    
+                    {/* Dropdown Menu */}
+                    {item.items && openDropdown === item.label && renderDropdownItems(item.items)}
+                  </div>
                 )
               ))}
             </nav>
@@ -132,18 +220,65 @@ export const Header = () => {
             <div className="flex flex-col gap-2">
               {navItems.map((item) => (
                 isAuthorized(item.minRole) && (
-                  <Link 
-                    key={item.href}
-                    to={item.href} 
-                    className={cn(
-                      "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
-                      currentPath === item.href && "text-white bg-white/5"
+                  <div key={item.label}>
+                    {item.items ? (
+                      <>
+                        <button
+                          onClick={() => toggleDropdown(item.label)}
+                          className={cn(
+                            "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center justify-between w-full",
+                            (openDropdown === item.label || isActiveRoute(item.href, item.items)) && "text-white bg-white/5"
+                          )}
+                        >
+                          <div className="flex items-center gap-2">
+                            <item.icon className="h-4 w-4" />
+                            {item.label}
+                          </div>
+                          {openDropdown === item.label ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </button>
+                        
+                        {openDropdown === item.label && (
+                          <div className="pl-8 mt-1 space-y-1">
+                            {item.items.map((subItem) => (
+                              isAuthorized(subItem.minRole) && (
+                                <Link 
+                                  key={subItem.href}
+                                  to={subItem.href} 
+                                  className={cn(
+                                    "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
+                                    currentPath === subItem.href && "text-white bg-white/5"
+                                  )}
+                                  onClick={() => {
+                                    setIsMobileMenuOpen(false);
+                                    setOpenDropdown(null);
+                                  }}
+                                >
+                                  <subItem.icon className="h-4 w-4" />
+                                  {subItem.label}
+                                </Link>
+                              )
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <Link 
+                        to={item.href} 
+                        className={cn(
+                          "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
+                          currentPath === item.href && "text-white bg-white/5"
+                        )}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.label}
+                      </Link>
                     )}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
+                  </div>
                 )
               ))}
             </div>
