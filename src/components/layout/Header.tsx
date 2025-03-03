@@ -1,62 +1,15 @@
 
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { 
-  Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, 
-  FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map,
-  ChevronDown, ChevronUp, User
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useLocation } from "react-router-dom";
 import { Container } from "@/components/ui/universal/Container";
 import { useAuth } from "@/hooks/useAuth";
+import { HeaderLeft } from "./navigation/HeaderLeft";
+import { HeaderRight } from "./navigation/HeaderRight";
+import { DesktopNavigation } from "./navigation/DesktopNavigation";
+import { MobileNavigation } from "./navigation/MobileNavigation";
+import { navItems } from "./navigation/navItems";
+import { NavItem } from "./navigation/types";
 import { cn } from "@/lib/utils";
-
-interface NavItem {
-  href: string;
-  label: string;
-  minRole?: string;
-  icon: React.ElementType;
-  items?: NavItem[];
-}
-
-const navItems: NavItem[] = [
-  // Core Features
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { 
-    href: "#", 
-    label: "Acquisition", 
-    icon: FileText,
-    items: [
-      { href: "/acquisition/document-control", label: "Document Control", minRole: "user", icon: FileText },
-      { href: "/acquisition/market-research", label: "Market Research", minRole: "user", icon: FileSearch },
-      { href: "/acquisition/solicitation-review", label: "Solicitation Review", minRole: "manager", icon: FileCheck },
-      { href: "/acquisition/texas-acquisition", label: "Texas Acquisition", minRole: "user", icon: Building2 },
-      { href: "/acquisition/federal-acquisition", label: "Federal Acquisition", minRole: "manager", icon: Database }
-    ]
-  },
-  { 
-    href: "#", 
-    label: "Management", 
-    icon: BarChart2,
-    items: [
-      { href: "/proposals", label: "Proposals", minRole: "user", icon: FileText },
-      { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 }
-    ]
-  },
-  
-  // Support & Resources
-  { 
-    href: "#", 
-    label: "Resources", 
-    icon: BookOpen,
-    items: [
-      { href: "/features", label: "Features", icon: BookOpen },
-      { href: "/pricing", label: "Pricing", icon: Scale },
-      { href: "/help", label: "Help", icon: HelpCircle },
-      { href: "/sitemap", label: "Sitemap", icon: Map }
-    ]
-  }
-];
 
 export const Header = () => {
   const { signOut, userRole } = useAuth();
@@ -110,18 +63,22 @@ export const Header = () => {
       <div className="absolute left-0 mt-2 py-2 w-56 bg-gray-800 rounded-md shadow-xl z-50">
         {items.map((item) => (
           isAuthorized(item.minRole) && (
-            <Link 
+            <a 
               key={item.href}
-              to={item.href} 
+              href={item.href} 
               className={cn(
                 "flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700",
                 currentPath === item.href && "bg-gray-700 text-white"
               )}
-              onClick={() => setOpenDropdown(null)}
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = item.href;
+                setOpenDropdown(null);
+              }}
             >
               <item.icon className="h-4 w-4 mr-2" />
               {item.label}
-            </Link>
+            </a>
           )
         ))}
       </div>
@@ -133,168 +90,40 @@ export const Header = () => {
       <Container>
         <div className="py-4 flex justify-between items-center">
           {/* Logo and Settings (Left) */}
-          <div className="flex items-center gap-4">
-            <Link to="/" className="text-white font-bold text-xl">
-              ProcurityIQ
-            </Link>
-            
-            <Link to="/settings" className="text-gray-400 hover:text-white transition-colors duration-200">
-              <Settings className="h-5 w-5" />
-              <span className="sr-only">Settings</span>
-            </Link>
-          </div>
+          <HeaderLeft />
             
           {/* Desktop Navigation (Center) */}
-          <nav className="hidden md:flex gap-6 overflow-x-auto pb-2 scrollbar-none">
-            {navItems.map((item) => (
-              isAuthorized(item.minRole) && (
-                <div key={item.label} className="relative">
-                  {item.items ? (
-                    <button
-                      onClick={() => toggleDropdown(item.label)}
-                      className={cn(
-                        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-                        (openDropdown === item.label || isActiveRoute(item.href, item.items)) && "text-white bg-white/5"
-                      )}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                      {openDropdown === item.label ? (
-                        <ChevronUp className="h-3 w-3 ml-1" />
-                      ) : (
-                        <ChevronDown className="h-3 w-3 ml-1" />
-                      )}
-                    </button>
-                  ) : (
-                    <Link 
-                      to={item.href} 
-                      className={cn(
-                        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-                        currentPath === item.href && "text-white bg-white/5"
-                      )}
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                    </Link>
-                  )}
-                  
-                  {/* Dropdown Menu */}
-                  {item.items && openDropdown === item.label && renderDropdownItems(item.items)}
-                </div>
-              )
-            ))}
-          </nav>
+          <DesktopNavigation
+            navItems={navItems}
+            currentPath={currentPath}
+            openDropdown={openDropdown}
+            toggleDropdown={toggleDropdown}
+            isActiveRoute={isActiveRoute}
+            isAuthorized={isAuthorized}
+            renderDropdownItems={renderDropdownItems}
+          />
 
           {/* User Profile and Sign Out (Right) */}
-          <div className="flex items-center gap-4">
-            {userRole && (
-              <div className="flex items-center gap-3">
-                <Link 
-                  to="/settings" 
-                  className="flex items-center gap-2 text-sm text-gray-400 bg-white/5 px-3 py-1 rounded-full hover:bg-white/10 transition-colors"
-                >
-                  <User className="h-4 w-4" />
-                  <span className="hidden sm:inline">
-                    {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
-                  </span>
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 hover:bg-white/5"
-                  onClick={signOut}
-                >
-                  <LogOut className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Sign Out</span>
-                </Button>
-              </div>
-            )}
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden text-gray-400 hover:text-white"
-              onClick={toggleMobileMenu}
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
-          </div>
+          <HeaderRight
+            userRole={userRole}
+            signOut={signOut}
+            isMobileMenuOpen={isMobileMenuOpen}
+            toggleMobileMenu={toggleMobileMenu}
+          />
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-gray-800">
-            <div className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                isAuthorized(item.minRole) && (
-                  <div key={item.label}>
-                    {item.items ? (
-                      <>
-                        <button
-                          onClick={() => toggleDropdown(item.label)}
-                          className={cn(
-                            "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center justify-between w-full",
-                            (openDropdown === item.label || isActiveRoute(item.href, item.items)) && "text-white bg-white/5"
-                          )}
-                        >
-                          <div className="flex items-center gap-2">
-                            <item.icon className="h-4 w-4" />
-                            {item.label}
-                          </div>
-                          {openDropdown === item.label ? (
-                            <ChevronUp className="h-4 w-4" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4" />
-                          )}
-                        </button>
-                        
-                        {openDropdown === item.label && (
-                          <div className="pl-8 mt-1 space-y-1">
-                            {item.items.map((subItem) => (
-                              isAuthorized(subItem.minRole) && (
-                                <Link 
-                                  key={subItem.href}
-                                  to={subItem.href} 
-                                  className={cn(
-                                    "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
-                                    currentPath === subItem.href && "text-white bg-white/5"
-                                  )}
-                                  onClick={() => {
-                                    setIsMobileMenuOpen(false);
-                                    setOpenDropdown(null);
-                                  }}
-                                >
-                                  <subItem.icon className="h-4 w-4" />
-                                  {subItem.label}
-                                </Link>
-                              )
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <Link 
-                        to={item.href} 
-                        className={cn(
-                          "text-gray-400 hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg flex items-center gap-2",
-                          currentPath === item.href && "text-white bg-white/5"
-                        )}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {item.label}
-                      </Link>
-                    )}
-                  </div>
-                )
-              ))}
-            </div>
-          </nav>
-        )}
+        <MobileNavigation
+          isMobileMenuOpen={isMobileMenuOpen}
+          navItems={navItems}
+          isAuthorized={isAuthorized}
+          currentPath={currentPath}
+          openDropdown={openDropdown}
+          toggleDropdown={toggleDropdown}
+          isActiveRoute={isActiveRoute}
+          setIsMobileMenuOpen={setIsMobileMenuOpen}
+          setOpenDropdown={setOpenDropdown}
+        />
       </Container>
     </header>
   );
