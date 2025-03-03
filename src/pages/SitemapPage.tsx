@@ -45,8 +45,8 @@ const Sitemap = () => {
     core: [
       { path: "/dashboard", label: "Dashboard", icon: Home },
       { path: "/proposals", label: "Proposals", icon: FileText },
-      { path: "/proposals/:id", label: "Proposal Details", icon: Layers },
-      { path: "/analytics", label: "Analytics", icon: BarChart2 }
+      { path: "/analytics", label: "Analytics", icon: BarChart2 },
+      { path: "/proposals/:id", label: "Proposal Details", icon: Layers }
     ],
     acquisition: [
       { path: "/acquisition/document-control", label: "Document Control", icon: FileText },
