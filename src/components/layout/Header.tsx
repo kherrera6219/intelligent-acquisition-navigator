@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Container } from "@/components/ui/universal/Container";
 import { useAuth } from "@/hooks/useAuth";
 import { HeaderLeft } from "./navigation/HeaderLeft";
@@ -55,7 +54,6 @@ export const Header = () => {
     return false;
   };
 
-  // A helper for rendering dropdown items
   const renderDropdownItems = (items?: NavItem[]) => {
     if (!items) return null;
     
@@ -63,22 +61,18 @@ export const Header = () => {
       <div className="absolute left-0 mt-2 py-2 w-56 bg-gray-800 rounded-md shadow-xl z-50">
         {items.map((item) => (
           isAuthorized(item.minRole) && (
-            <a 
+            <Link 
               key={item.href}
-              href={item.href} 
+              to={item.href}
               className={cn(
                 "flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700",
                 currentPath === item.href && "bg-gray-700 text-white"
               )}
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = item.href;
-                setOpenDropdown(null);
-              }}
+              onClick={() => setOpenDropdown(null)}
             >
               <item.icon className="h-4 w-4 mr-2" />
               {item.label}
-            </a>
+            </Link>
           )
         ))}
       </div>
@@ -89,10 +83,8 @@ export const Header = () => {
     <header className="sticky top-0 z-50 border-b border-gray-800 bg-black/40 backdrop-blur-sm">
       <Container>
         <div className="py-4 flex justify-between items-center">
-          {/* Logo and Settings (Left) */}
           <HeaderLeft />
             
-          {/* Desktop Navigation (Center) */}
           <DesktopNavigation
             navItems={navItems}
             currentPath={currentPath}
@@ -103,7 +95,6 @@ export const Header = () => {
             renderDropdownItems={renderDropdownItems}
           />
 
-          {/* User Profile and Sign Out (Right) */}
           <HeaderRight
             userRole={userRole}
             signOut={signOut}
@@ -112,7 +103,6 @@ export const Header = () => {
           />
         </div>
 
-        {/* Mobile Navigation */}
         <MobileNavigation
           isMobileMenuOpen={isMobileMenuOpen}
           navItems={navItems}
