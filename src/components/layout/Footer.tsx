@@ -1,12 +1,13 @@
 
 import { Link } from "react-router-dom";
 import { Container } from "@/components/ui/universal/Container";
+import { Mail, Phone, Clock, Shield, FileText, HelpCircle, Settings, Map } from "lucide-react";
 
 const footerLinks = [
-  { href: "/help", label: "Help" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/settings", label: "Settings" },
-  { href: "/sitemap", label: "Sitemap" },
+  { href: "/help", label: "Help", icon: HelpCircle },
+  { href: "/analytics", label: "Analytics", icon: FileText },
+  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/sitemap", label: "Sitemap", icon: Map },
 ];
 
 export const Footer = () => {
@@ -21,8 +22,9 @@ export const Footer = () => {
                 <li key={link.href}>
                   <Link 
                     to={link.href}
-                    className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
                   >
+                    <link.icon className="h-4 w-4" />
                     {link.label}
                   </Link>
                 </li>
@@ -36,24 +38,27 @@ export const Footer = () => {
               <li>
                 <Link 
                   to="/help" 
-                  className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
                 >
+                  <FileText className="h-4 w-4" />
                   Documentation
                 </Link>
               </li>
               <li>
                 <Link 
                   to="/help" 
-                  className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
                 >
+                  <HelpCircle className="h-4 w-4" />
                   FAQs
                 </Link>
               </li>
               <li>
                 <Link 
                   to="/help" 
-                  className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
                 >
+                  <Mail className="h-4 w-4" />
                   Support
                 </Link>
               </li>
@@ -66,16 +71,18 @@ export const Footer = () => {
               <li>
                 <Link 
                   to="/privacy" 
-                  className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
                 >
+                  <Shield className="h-4 w-4" />
                   Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link 
                   to="/terms" 
-                  className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
                 >
+                  <FileText className="h-4 w-4" />
                   Terms of Service
                 </Link>
               </li>
@@ -88,13 +95,24 @@ export const Footer = () => {
               <li>
                 <a 
                   href="mailto:support@example.com" 
-                  className="text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
                 >
+                  <Mail className="h-4 w-4" />
                   support@example.com
                 </a>
               </li>
               <li>
-                <span className="text-gray-400">
+                <a 
+                  href="tel:+1234567890" 
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 hover:underline"
+                >
+                  <Phone className="h-4 w-4" />
+                  +1 (234) 567-890
+                </a>
+              </li>
+              <li>
+                <span className="flex items-center gap-2 text-gray-400">
+                  <Clock className="h-4 w-4" />
                   Mon-Fri, 9:00 AM - 5:00 PM EST
                 </span>
               </li>
@@ -103,7 +121,7 @@ export const Footer = () => {
         </div>
 
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p>© {new Date().getFullYear()} Your Organization. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} ProcurityIQ. All rights reserved.</p>
         </div>
       </Container>
     </footer>

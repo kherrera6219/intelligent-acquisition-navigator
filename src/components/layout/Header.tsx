@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { 
   Settings, LogOut, Menu, X, Home, FileText, BarChart2, Building2, 
   FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map,
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/universal/Container";
@@ -132,56 +132,83 @@ export const Header = () => {
     <header className="sticky top-0 z-50 border-b border-gray-800 bg-black/40 backdrop-blur-sm">
       <Container>
         <div className="py-4 flex justify-between items-center">
-          <div className="flex items-center gap-8">
+          {/* Logo and Settings (Left) */}
+          <div className="flex items-center gap-4">
             <Link to="/" className="text-white font-bold text-xl">
               ProcurityIQ
             </Link>
             
-            <Link to="/settings" className="text-gray-400 hover:text-white">
+            <Link to="/settings" className="text-gray-400 hover:text-white transition-colors duration-200">
               <Settings className="h-5 w-5" />
               <span className="sr-only">Settings</span>
             </Link>
+          </div>
             
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex gap-6 overflow-x-auto pb-2 scrollbar-none">
-              {navItems.map((item) => (
-                isAuthorized(item.minRole) && (
-                  <div key={item.label} className="relative">
-                    {item.items ? (
-                      <button
-                        onClick={() => toggleDropdown(item.label)}
-                        className={cn(
-                          "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-                          (openDropdown === item.label || isActiveRoute(item.href, item.items)) && "text-white bg-white/5"
-                        )}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {item.label}
-                        {openDropdown === item.label ? (
-                          <ChevronUp className="h-3 w-3 ml-1" />
-                        ) : (
-                          <ChevronDown className="h-3 w-3 ml-1" />
-                        )}
-                      </button>
-                    ) : (
-                      <Link 
-                        to={item.href} 
-                        className={cn(
-                          "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-                          currentPath === item.href && "text-white bg-white/5"
-                        )}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {item.label}
-                      </Link>
-                    )}
-                    
-                    {/* Dropdown Menu */}
-                    {item.items && openDropdown === item.label && renderDropdownItems(item.items)}
-                  </div>
-                )
-              ))}
-            </nav>
+          {/* Desktop Navigation (Center) */}
+          <nav className="hidden md:flex gap-6 overflow-x-auto pb-2 scrollbar-none">
+            {navItems.map((item) => (
+              isAuthorized(item.minRole) && (
+                <div key={item.label} className="relative">
+                  {item.items ? (
+                    <button
+                      onClick={() => toggleDropdown(item.label)}
+                      className={cn(
+                        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
+                        (openDropdown === item.label || isActiveRoute(item.href, item.items)) && "text-white bg-white/5"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                      {openDropdown === item.label ? (
+                        <ChevronUp className="h-3 w-3 ml-1" />
+                      ) : (
+                        <ChevronDown className="h-3 w-3 ml-1" />
+                      )}
+                    </button>
+                  ) : (
+                    <Link 
+                      to={item.href} 
+                      className={cn(
+                        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
+                        currentPath === item.href && "text-white bg-white/5"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                    </Link>
+                  )}
+                  
+                  {/* Dropdown Menu */}
+                  {item.items && openDropdown === item.label && renderDropdownItems(item.items)}
+                </div>
+              )
+            ))}
+          </nav>
+
+          {/* User Profile and Sign Out (Right) */}
+          <div className="flex items-center gap-4">
+            {userRole && (
+              <div className="flex items-center gap-3">
+                <Link 
+                  to="/settings" 
+                  className="flex items-center gap-2 text-sm text-gray-400 bg-white/5 px-3 py-1 rounded-full hover:bg-white/10 transition-colors"
+                >
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline">
+                    {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
+                  </span>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 hover:bg-white/5"
+                  onClick={signOut}
+                >
+                  <LogOut className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                </Button>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -195,22 +222,6 @@ export const Header = () => {
                 <Menu className="h-6 w-6" />
               )}
             </button>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {userRole && (
-              <span className="text-sm text-gray-400 bg-white/5 px-3 py-1 rounded-full">
-                {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
-              </span>
-            )}
-            <Button
-              variant="ghost"
-              className="text-gray-400 hover:text-white transition-colors duration-200 hover:bg-white/5"
-              onClick={signOut}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Sign Out</span>
-            </Button>
           </div>
         </div>
 
