@@ -82,36 +82,45 @@ export const UniversalHeader: React.FC<UniversalHeaderProps> = ({ className }) =
       
       <TooltipProvider>
         <div className="flex items-center gap-3">
-          <Tooltip content="Refresh Session">
+          <Tooltip>
             <TooltipTrigger asChild>
               <button onClick={() => refreshSession()} className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800">
                 <RefreshCw className="h-4 w-4" />
               </button>
             </TooltipTrigger>
+            <TooltipContent>
+              <p>Refresh Session</p>
+            </TooltipContent>
           </Tooltip>
           
           <SessionTimeoutTimer className="flex items-center gap-1 px-2 py-1 bg-gray-800 rounded text-xs" />
           
-          <Tooltip content="Help">
+          <Tooltip>
             <TooltipTrigger asChild>
               <Link to="/help" className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800">
                 <HelpCircle className="h-4 w-4" />
               </Link>
             </TooltipTrigger>
+            <TooltipContent>
+              <p>Help</p>
+            </TooltipContent>
           </Tooltip>
           
-          <Tooltip content="Notifications">
+          <Tooltip>
             <TooltipTrigger asChild>
               <Link to="/notifications" className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800 relative">
                 <Bell className="h-4 w-4" />
                 <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-[10px] flex items-center justify-center rounded-full h-3.5 w-3.5 font-medium">3</span>
               </Link>
             </TooltipTrigger>
+            <TooltipContent>
+              <p>Notifications</p>
+            </TooltipContent>
           </Tooltip>
           
           <div className="h-4 border-r border-gray-600" />
           
-          <Tooltip content="View Profile">
+          <Tooltip>
             <TooltipTrigger asChild>
               <Link to="/profile" className="flex items-center gap-2 text-sm">
                 <div className="h-6 w-6 rounded-full bg-primary/20 text-primary ring-1 ring-gray-700 flex items-center justify-center text-xs font-medium">
@@ -123,6 +132,9 @@ export const UniversalHeader: React.FC<UniversalHeaderProps> = ({ className }) =
                 </div>
               </Link>
             </TooltipTrigger>
+            <TooltipContent>
+              <p>View Profile</p>
+            </TooltipContent>
           </Tooltip>
         </div>
       </TooltipProvider>
