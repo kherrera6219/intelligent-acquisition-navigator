@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 interface Props {
   children: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 
 interface State {
@@ -46,8 +47,13 @@ export class PageErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      // If a custom fallback is provided, use it
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
       return (
-        <div className="flex min-h-[70vh] items-center justify-center p-4">
+        <div className="flex min-h-[calc(100vh-200px)] items-center justify-center p-4">
           <div className="max-w-md w-full">
             <ErrorDisplay 
               error={this.state.error}

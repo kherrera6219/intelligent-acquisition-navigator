@@ -5,9 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SessionExpiryProgress } from './SessionExpiryProgress';
+import { useAuth } from '@/hooks/useAuth';
+import { Clock, LogOut, RefreshCw } from 'lucide-react';
+import { format } from 'date-fns';
 
 export function SessionSettings() {
   const { toast } = useToast();
+  const { refreshSession, sessionTimeRemaining, signOut } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [sessionTimeout, setSessionTimeout] = useState('30');
 
@@ -31,13 +36,48 @@ export function SessionSettings() {
     }
   };
 
+  const handleRefreshSession = async () => {
+    try {
+      await refreshSession();
+      toast({
+        title: "Session refreshed",
+        description: "Your session has been extended.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error refreshing session",
+        description: "There was a problem refreshing your session. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error signing out",
+        description: "There was a problem signing out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="p-4 sm:p-5 md:p-6 mb-6">
-      <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">
+      <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 flex items-center gap-2">
+        <Clock className="h-5 w-5 text-primary" />
         Session Management
       </h2>
       
       <div className="space-y-6">
+        <SessionExpiryProgress className="mb-6" />
+
         <div className="space-y-2">
           <Label htmlFor="sessionTimeout">Session Timeout</Label>
           <p className="text-sm text-gray-400 mb-2">
@@ -66,25 +106,35 @@ export function SessionSettings() {
             <div className="flex justify-between items-center mb-2">
               <div>
                 <p className="font-medium">Current Browser Session</p>
-                <p className="text-sm text-gray-400">Started 45 minutes ago</p>
+                <p className="text-sm text-gray-400">
+                  Started {format(new Date(Date.now() - 45 * 60 * 1000), 'h:mm a')}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                 <span className="text-sm text-gray-400">Active</span>
               </div>
             </div>
-            <Button 
-              variant="destructive" 
-              size="sm"
-              onClick={() => {
-                toast({
-                  title: "Feature coming soon",
-                  description: "Session termination will be available in a future update.",
-                });
-              }}
-            >
-              Terminate Session
-            </Button>
+            <div className="flex gap-2 mt-4">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleRefreshSession}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Refresh Session
+              </Button>
+              <Button 
+                variant="destructive" 
+                size="sm"
+                onClick={handleSignOut}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Terminate Session
+              </Button>
+            </div>
           </div>
         </div>
 
