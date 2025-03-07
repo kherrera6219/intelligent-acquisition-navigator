@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Container } from "@/components/ui/universal/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SecuritySettings } from "@/components/settings/SecuritySettings";
-import { SettingsNav } from "@/components/settings/SettingsNav";
 import { ProfileSettings } from "@/components/settings/ProfileSettings";
 import { TwoFactorSettings } from "@/components/settings/TwoFactorSettings";
 import { SessionSettings } from "@/components/settings/SessionSettings";
@@ -26,8 +25,6 @@ const SettingsPage = () => {
         />
         
         <SessionExpiryManager />
-        
-        <SettingsNav />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-4 mb-6">
