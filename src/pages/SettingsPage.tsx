@@ -14,6 +14,16 @@ import { SessionExpiryManager } from '@/components/settings/SessionExpiryManager
 
 type SettingsTab = 'profile' | 'security' | 'notifications' | 'display' | 'session';
 
+interface SettingsNavProps {
+  tabs: Array<{
+    value: string;
+    label: string;
+    icon: React.ReactNode;
+  }>;
+  activeTab: string;
+  onChange: (value: string) => void;
+}
+
 const SettingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
   
