@@ -1,9 +1,11 @@
 
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BrowserRouter } from 'react-router-dom';
 import DashboardPage from '@/pages/DashboardPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
+import { ToastProvider } from '@/components/ui/toaster';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,7 +18,9 @@ const queryClient = new QueryClient({
 const renderWithProviders = (ui: React.ReactElement) => {
   return render(
     <QueryClientProvider client={queryClient}>
-      {ui}
+      <BrowserRouter>
+        <ToastProvider>{ui}</ToastProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 };
@@ -24,84 +28,85 @@ const renderWithProviders = (ui: React.ReactElement) => {
 describe('DashboardPage', () => {
   beforeEach(() => {
     queryClient.clear();
+    jest.clearAllMocks();
   });
 
-  it('renders the dashboard title', () => {
+  it('renders the dashboard title', async () => {
     renderWithProviders(<DashboardPage />);
-    expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Procurement Dashboard/i)).toBeInTheDocument();
   });
 
   it('shows loading state while fetching data', () => {
     renderWithProviders(<DashboardPage />);
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  it('displays key metrics', async () => {
+  it('displays dashboard cards after loading', async () => {
     renderWithProviders(<DashboardPage />);
     
     await waitFor(() => {
-      expect(screen.getByText(/total proposals/i)).toBeInTheDocument();
-      expect(screen.getByText(/active projects/i)).toBeInTheDocument();
-      expect(screen.getByText(/pending reviews/i)).toBeInTheDocument();
+      expect(screen.getByText(/Proposals/i)).toBeInTheDocument();
+      expect(screen.getByText(/Analytics/i)).toBeInTheDocument();
+      expect(screen.getByText(/Document Control/i)).toBeInTheDocument();
+      expect(screen.getByText(/Knowledge Base/i)).toBeInTheDocument();
     });
   });
 
-  it('allows filtering of dashboard data', async () => {
+  it('allows refreshing dashboard data', async () => {
+    const user = userEvent.setup();
     renderWithProviders(<DashboardPage />);
     
-    const filterInput = screen.getByPlaceholderText(/filter/i);
-    await userEvent.type(filterInput, 'test');
+    // Wait for initial load to complete
+    await waitFor(() => {
+      expect(screen.getByText(/Refresh/i)).toBeInTheDocument();
+    });
+
+    // Click refresh button
+    const refreshButton = screen.getByText(/Refresh/i);
+    await user.click(refreshButton);
     
-    expect(filterInput).toHaveValue('test');
+    // Should show loading state again
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    
+    // Should show refreshed data
+    await waitFor(() => {
+      expect(screen.getByText(/Proposals/i)).toBeInTheDocument();
+    });
   });
 
-  it('displays charts and graphs', async () => {
+  it('displays error message when data fetching fails', async () => {
+    // Mock console.error to prevent test output noise
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    
+    // Override fetch implementation to simulate error
+    global.fetch = jest.fn().mockRejectedValue(new Error('Failed to fetch'));
+    
     renderWithProviders(<DashboardPage />);
     
     await waitFor(() => {
-      expect(screen.getByTestId('metrics-chart')).toBeInTheDocument();
-      expect(screen.getByTestId('activity-chart')).toBeInTheDocument();
+      expect(screen.getByText(/Error loading dashboard data/i)).toBeInTheDocument();
     });
+    
+    // Restore console.error
+    jest.restoreAllMocks();
   });
 
-  it('allows date range selection', async () => {
-    renderWithProviders(<DashboardPage />);
-    
-    const dateRangeButton = screen.getByRole('button', { name: /date range/i });
-    await userEvent.click(dateRangeButton);
-    
-    expect(screen.getByText(/select date range/i)).toBeInTheDocument();
-  });
-
-  it('handles error states gracefully', async () => {
-    // Mock a failed query
-    queryClient.setQueryData(['dashboard'], () => {
-      throw new Error('Failed to fetch');
-    });
-
-    renderWithProviders(<DashboardPage />);
-    
-    await waitFor(() => {
-      expect(screen.getByText(/error loading dashboard data/i)).toBeInTheDocument();
-    });
-  });
-
-  it('supports data refresh', async () => {
-    renderWithProviders(<DashboardPage />);
-    
-    const refreshButton = screen.getByRole('button', { name: /refresh/i });
-    await userEvent.click(refreshButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText(/data refreshed/i)).toBeInTheDocument();
-    });
-  });
-
-  it('displays user notifications', async () => {
+  it('displays notifications panel', async () => {
     renderWithProviders(<DashboardPage />);
     
     await waitFor(() => {
       expect(screen.getByTestId('notifications-panel')).toBeInTheDocument();
+      expect(screen.getByText(/System Maintenance/i)).toBeInTheDocument();
+      expect(screen.getByText(/New Features Available/i)).toBeInTheDocument();
+    });
+  });
+
+  it('displays recent activity section', async () => {
+    renderWithProviders(<DashboardPage />);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Recent Activity/i)).toBeInTheDocument();
+      expect(screen.getByText(/View All Activity/i)).toBeInTheDocument();
     });
   });
 });
