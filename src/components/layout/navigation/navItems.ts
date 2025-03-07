@@ -1,7 +1,7 @@
 
 import { 
   Home, FileText, BarChart2, Building2, 
-  FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map
+  FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map, BookOpen, Database
 } from "lucide-react";
 import { NavItem } from "./types";
 
@@ -26,7 +26,8 @@ export const navItems: NavItem[] = [
     icon: BarChart2,
     items: [
       { href: "/proposals", label: "Proposals", minRole: "user", icon: FileText },
-      { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 }
+      { href: "/analytics", label: "Analytics", minRole: "user", icon: BarChart2 },
+      { href: "/knowledge-base", label: "Knowledge Base", minRole: "user", icon: Database }
     ]
   },
   

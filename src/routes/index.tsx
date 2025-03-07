@@ -1,4 +1,3 @@
-
 import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
 import {
@@ -21,7 +20,8 @@ import {
   SettingsPage,
   SitemapPage,
   NotFoundPage,
-  ProposalDetailPage
+  ProposalDetailPage,
+  KnowledgeBasePage
 } from "./lazyComponents";
 
 export const routes: RouteObject[] = [
@@ -103,6 +103,10 @@ export const routes: RouteObject[] = [
   {
     path: "/acquisition/federal-acquisition",
     element: wrapWithLayout(FederalAcquisitionPage, true, "manager")
+  },
+  {
+    path: "/knowledge-base",
+    element: wrapWithLayout(KnowledgeBasePage, true, "user")
   },
   
   // Catch-all route for 404

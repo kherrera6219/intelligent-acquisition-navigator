@@ -1,4 +1,3 @@
-
 import { lazy } from "react";
 import React from "react";
 
@@ -115,6 +114,12 @@ export const ProposalDetailPage = lazy(() =>
 export const SettingsPage = lazy(() => 
   import("@/pages/SettingsPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading settings")
+  }))
+);
+
+export const KnowledgeBasePage = lazy(() => 
+  import("@/pages/KnowledgeBasePage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading knowledge base page")
   }))
 );
 
