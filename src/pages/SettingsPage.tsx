@@ -40,9 +40,8 @@ const SettingsPage = () => {
         <Container>
           <div className="space-y-6 py-6">
             <PageHeader
-              title="Settings"
+              title={<div className="flex items-center"><Settings className="h-5 w-5 mr-2 text-primary" /> Settings</div>}
               description="Manage your account settings and preferences"
-              icon={<Settings className="h-5 w-5 mr-2 text-primary" />}
             />
             
             <SessionExpiryManager />
