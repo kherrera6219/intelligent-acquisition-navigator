@@ -123,6 +123,12 @@ export const KnowledgeBasePage = lazy(() =>
   }))
 );
 
+export const ProfilePage = lazy(() => 
+  import("@/pages/ProfilePage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading profile page")
+  }))
+);
+
 export const NotFoundPage = lazy(() => 
   import("@/pages/NotFoundPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading 404 page")

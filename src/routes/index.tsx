@@ -22,7 +22,8 @@ import {
   SitemapPage,
   NotFoundPage,
   ProposalDetailPage,
-  KnowledgeBasePage
+  KnowledgeBasePage,
+  ProfilePage
 } from "./lazyComponents";
 
 export const routes: RouteObject[] = [
@@ -84,6 +85,10 @@ export const routes: RouteObject[] = [
   {
     path: "/settings",
     element: wrapWithLayout(SettingsPage, false)
+  },
+  {
+    path: "/profile",
+    element: wrapWithLayout(ProfilePage, false)
   },
   {
     path: "/acquisition/document-control",
