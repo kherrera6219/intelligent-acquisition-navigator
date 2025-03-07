@@ -13,10 +13,10 @@ export const Footer = () => {
   ];
 
   const resourceRoutes = [
-    { path: "/help", label: "Help" },
-    { path: "/privacy", label: "Privacy" },
+    { path: "/help", label: "Help Center" },
     { path: "/knowledge-base", label: "Knowledge Base" },
-    { path: "/contact", label: "Contact" },
+    { path: "/privacy", label: "Privacy Policy" },
+    { path: "/contact", label: "Contact Support" },
   ];
 
   const appRoutes = [

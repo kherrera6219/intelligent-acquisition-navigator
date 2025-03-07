@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,7 @@ import {
   ArrowRight, Shield, BarChart2, Home, FileText, Map, FileCheck, 
   Users, Building2, Scale, BookOpen, 
   HelpCircle, Settings, Database, Layers,
-  FileSearch
+  FileSearch, User, Webhook
 } from 'lucide-react';
 
 const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
@@ -33,19 +34,23 @@ const Sitemap = () => {
       { path: "/", label: "Home", icon: Home },
       { path: "/features", label: "Features", icon: BookOpen },
       { path: "/pricing", label: "Pricing", icon: Scale },
-      { path: "/about", label: "About", icon: BookOpen },
+      { path: "/about", label: "About", icon: Users },
       { path: "/contact", label: "Contact", icon: Users },
-      { path: "/privacy", label: "Privacy", icon: Shield }
+      { path: "/privacy", label: "Privacy Policy", icon: Shield }
     ],
     auth: [
       { path: "/auth", label: "Sign In / Sign Up", icon: Users },
       { path: "/settings", label: "User Settings", icon: Settings },
+      { path: "/profile", label: "User Profile", icon: User },
     ],
     core: [
       { path: "/dashboard", label: "Dashboard", icon: Home },
-      { path: "/proposals", label: "Proposals", icon: FileText },
       { path: "/analytics", label: "Analytics", icon: BarChart2 },
-      { path: "/proposals/:id", label: "Proposal Details", icon: Layers }
+      { path: "/knowledge-base", label: "Knowledge Base", icon: Database },
+    ],
+    proposals: [
+      { path: "/proposals", label: "Proposals", icon: FileText },
+      { path: "/proposals/:id", label: "Proposal Details", icon: Layers },
     ],
     acquisition: [
       { path: "/acquisition/document-control", label: "Document Control", icon: FileText },
@@ -55,8 +60,12 @@ const Sitemap = () => {
       { path: "/acquisition/federal-acquisition", label: "Federal Acquisition", icon: Database }
     ],
     system: [
-      { path: "/help", label: "Help", icon: HelpCircle },
+      { path: "/help", label: "Help Center", icon: HelpCircle },
       { path: "/sitemap", label: "Sitemap", icon: Map }
+    ],
+    development: [
+      { path: "/api-docs", label: "API Documentation", icon: Webhook },
+      { path: "/component-library", label: "Component Library", icon: Layers }
     ]
   };
 
@@ -74,10 +83,12 @@ const Sitemap = () => {
         {/* Sitemap Sections */}
         <div className="space-y-8">
           <SitemapSection title="Main Navigation" links={sections.main} />
-          <SitemapSection title="Authentication" links={sections.auth} />
+          <SitemapSection title="Authentication & User" links={sections.auth} />
           <SitemapSection title="Core Features" links={sections.core} />
+          <SitemapSection title="Proposal Management" links={sections.proposals} />
           <SitemapSection title="Acquisition Management" links={sections.acquisition} />
           <SitemapSection title="System & Support" links={sections.system} />
+          <SitemapSection title="Developer Resources" links={sections.development} />
         </div>
 
         {/* Quick Actions */}
@@ -87,8 +98,8 @@ const Sitemap = () => {
             size="lg"
             asChild
           >
-            <Link to="/">
-              Return to Home
+            <Link to="/dashboard">
+              Go to Dashboard
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>

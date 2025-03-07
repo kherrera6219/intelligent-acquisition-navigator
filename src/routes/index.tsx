@@ -27,7 +27,7 @@ import {
 } from "./lazyComponents";
 
 export const routes: RouteObject[] = [
-  // Public Routes (external)
+  // Marketing & Public Routes
   {
     path: "/",
     element: wrapWithLayout(HomePage, false)
@@ -53,10 +53,6 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(PricingPage, false)
   },
   {
-    path: "/auth",
-    element: wrapWithLayout(AuthPage, false)
-  },
-  {
     path: "/help",
     element: wrapWithLayout(HelpPage, false)
   },
@@ -64,55 +60,67 @@ export const routes: RouteObject[] = [
     path: "/sitemap",
     element: wrapWithLayout(SitemapPage, false)
   },
-
-  // Application routes
+  
+  // Authentication
+  {
+    path: "/auth",
+    element: wrapWithLayout(AuthPage, false)
+  },
+  
+  // Core Application Routes
   {
     path: "/dashboard",
-    element: wrapWithLayout(DashboardPage, false)
+    element: wrapWithLayout(DashboardPage, true)
   },
   {
     path: "/analytics",
-    element: wrapWithLayout(AnalyticsPage, false)
-  },
-  {
-    path: "/proposals",
-    element: wrapWithLayout(ProposalsPage, false)
-  },
-  {
-    path: "/proposals/:id",
-    element: wrapWithLayout(ProposalDetailPage, false)
-  },
-  {
-    path: "/settings",
-    element: wrapWithLayout(SettingsPage, false)
+    element: wrapWithLayout(AnalyticsPage, true)
   },
   {
     path: "/profile",
-    element: wrapWithLayout(ProfilePage, false)
+    element: wrapWithLayout(ProfilePage, true)
   },
   {
+    path: "/settings",
+    element: wrapWithLayout(SettingsPage, true)
+  },
+  
+  // Proposal Management
+  {
+    path: "/proposals",
+    element: wrapWithLayout(ProposalsPage, true)
+  },
+  {
+    path: "/proposals/:id",
+    element: wrapWithLayout(ProposalDetailPage, true)
+  },
+  
+  // Knowledge & Resources
+  {
+    path: "/knowledge-base",
+    element: wrapWithLayout(KnowledgeBasePage, true)
+  },
+  
+  // Acquisition Management
+  {
     path: "/acquisition/document-control",
-    element: wrapWithLayout(DocumentControlPage, false)
+    element: wrapWithLayout(DocumentControlPage, true)
   },
   {
     path: "/acquisition/market-research",
-    element: wrapWithLayout(MarketResearchPage, false)
+    element: wrapWithLayout(MarketResearchPage, true)
   },
   {
     path: "/acquisition/solicitation-review",
-    element: wrapWithLayout(SolicitationReviewPage, false)
+    element: wrapWithLayout(SolicitationReviewPage, true)
   },
   {
     path: "/acquisition/texas-acquisition",
-    element: wrapWithLayout(TexasAcquisitionPage, false)
+    element: wrapWithLayout(TexasAcquisitionPage, true)
   },
   {
     path: "/acquisition/federal-acquisition",
-    element: wrapWithLayout(FederalAcquisitionPage, false)
-  },
-  {
-    path: "/knowledge-base",
-    element: wrapWithLayout(KnowledgeBasePage, false)
+    element: wrapWithLayout(FederalAcquisitionPage, true)
   },
   
   // Catch-all route for 404
