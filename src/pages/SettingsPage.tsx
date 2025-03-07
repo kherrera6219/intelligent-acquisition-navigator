@@ -1,117 +1,95 @@
 
 import React, { useState } from 'react';
-import { Container } from "@/components/ui/universal/Container";
-import { PageHeader } from "@/components/layout/PageHeader";
-import { SecuritySettings } from "@/components/settings/SecuritySettings";
-import { ProfileSettings } from "@/components/settings/ProfileSettings";
-import { TwoFactorSettings } from "@/components/settings/TwoFactorSettings";
-import { SessionSettings } from "@/components/settings/SessionSettings";
-import { NotificationSettings } from '@/components/settings/NotificationSettings';
+import { Container } from '@/components/ui/universal/Container';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Settings, Shield, Bell, User, Eye } from 'lucide-react';
 import { DisplaySettings } from '@/components/settings/DisplaySettings';
-import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
+import { NotificationSettings } from '@/components/settings/NotificationSettings';
+import { ProfileSettings } from '@/components/settings/ProfileSettings';
+import { SecuritySettings } from '@/components/settings/SecuritySettings';
+import { SessionSettings } from '@/components/settings/SessionSettings';
+import { SettingsNav } from '@/components/settings/SettingsNav';
 import { SessionExpiryManager } from '@/components/settings/SessionExpiryManager';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UniversalHeader } from "@/components/ui/universal/UniversalHeader";
-import { 
-  Shield, 
-  User, 
-  Clock, 
-  Bell, 
-  Settings, 
-  PanelLeft, 
-  Palette
-} from 'lucide-react';
-import { Card } from "@/components/ui/universal/Card";
 
-const SettingsPage = () => {
-  const [activeTab, setActiveTab] = useState("security");
+type SettingsTab = 'profile' | 'security' | 'notifications' | 'display' | 'session';
 
-  const tabIcons = {
-    security: <Shield className="h-4 w-4 mr-2" />,
-    profile: <User className="h-4 w-4 mr-2" />,
-    session: <Clock className="h-4 w-4 mr-2" />,
-    notifications: <Bell className="h-4 w-4 mr-2" />,
-    display: <Palette className="h-4 w-4 mr-2" />
+const SettingsPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
+  
+  const handleTabChange = (value: string) => {
+    setActiveTab(value as SettingsTab);
   };
-
+  
+  const settingsTabs = [
+    { value: 'profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
+    { value: 'security', label: 'Security', icon: <Shield className="h-4 w-4" /> },
+    { value: 'notifications', label: 'Notifications', icon: <Bell className="h-4 w-4" /> },
+    { value: 'display', label: 'Display', icon: <Eye className="h-4 w-4" /> },
+    { value: 'session', label: 'Session', icon: <Settings className="h-4 w-4" /> }
+  ];
+  
   return (
-    <PageErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
-        <Container>
-          <div className="space-y-6 py-6">
-            <PageHeader
-              title={<div className="flex items-center"><Settings className="h-5 w-5 mr-2 text-primary" /> Settings</div>}
-              description="Manage your account settings and preferences"
-            />
+    <main className="flex-grow">
+      <Container>
+        <div className="space-y-6 py-6">
+          <PageHeader
+            title="Settings"
+            description="Manage your account settings and preferences"
+          />
+          
+          <SessionExpiryManager />
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div className="md:col-span-3">
+              <SettingsNav
+                tabs={settingsTabs}
+                activeTab={activeTab}
+                onChange={handleTabChange}
+              />
+            </div>
             
-            <SessionExpiryManager />
-            
-            <UniversalHeader className="mb-6" />
-            
-            <Card className="p-0 overflow-hidden fluent-acrylic">
-              <div className="sm:grid sm:grid-cols-5 sm:divide-x sm:divide-gray-800">
-                {/* Sidebar Navigation */}
-                <div className="p-4 border-b sm:border-b-0 border-gray-800">
-                  <div className="flex sm:flex-col gap-4 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0">
-                    {Object.entries(tabIcons).map(([key, icon]) => (
-                      <button
-                        key={key}
-                        onClick={() => setActiveTab(key)}
-                        className={cn(
-                          "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                          activeTab === key 
-                            ? "bg-primary/10 text-primary" 
-                            : "text-gray-400 hover:text-white hover:bg-gray-800/50"
-                        )}
-                        aria-selected={activeTab === key}
-                        role="tab"
-                      >
-                        {icon}
-                        <span className="capitalize">{key}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            <div className="md:col-span-9">
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                <TabsList className="mb-4 flex md:hidden">
+                  {settingsTabs.map((tab) => (
+                    <TabsTrigger 
+                      key={tab.value} 
+                      value={tab.value}
+                      className="flex items-center gap-1.5"
+                    >
+                      {tab.icon}
+                      <span className="hidden sm:inline">{tab.label}</span>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
                 
-                {/* Main Content */}
-                <div className="col-span-4 p-6">
-                  <div className="space-y-6">
-                    {activeTab === "security" && (
-                      <>
-                        <SecuritySettings />
-                        <TwoFactorSettings />
-                      </>
-                    )}
-                    
-                    {activeTab === "profile" && (
-                      <ProfileSettings />
-                    )}
-                    
-                    {activeTab === "session" && (
-                      <SessionSettings />
-                    )}
-                    
-                    {activeTab === "notifications" && (
-                      <NotificationSettings />
-                    )}
-                    
-                    {activeTab === "display" && (
-                      <DisplaySettings />
-                    )}
-                  </div>
-                </div>
-              </div>
-            </Card>
+                <TabsContent value="profile">
+                  <ProfileSettings />
+                </TabsContent>
+                
+                <TabsContent value="security">
+                  <SecuritySettings />
+                </TabsContent>
+                
+                <TabsContent value="notifications">
+                  <NotificationSettings />
+                </TabsContent>
+                
+                <TabsContent value="display">
+                  <DisplaySettings />
+                </TabsContent>
+                
+                <TabsContent value="session">
+                  <SessionSettings />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
-        </Container>
-      </div>
-    </PageErrorBoundary>
+        </div>
+      </Container>
+    </main>
   );
 };
 
 export default SettingsPage;
-
-// Helper function to conditionally join class names
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}

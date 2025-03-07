@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-// Import the new component parts
+// Import the component parts
 import { HeaderLogo } from './header/HeaderLogo';
 import { HeaderSystemStatus } from './header/HeaderSystemStatus';
 import { HeaderMobileMenu } from './header/HeaderMobileMenu';
