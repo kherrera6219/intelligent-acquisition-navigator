@@ -1,7 +1,6 @@
 
 import React, { Suspense } from 'react';
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { Card } from "@/components/ui/universal/Card";
 import { Container } from "@/components/ui/universal/Container";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
@@ -33,19 +32,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <main 
             id="main-content" 
             role="main" 
-            className="flex-1 w-full"
+            className="flex-1 w-full py-4 sm:py-6"
           >
-            <Container size="full" className="h-full py-4 sm:py-6 md:py-8">
-              <Card 
-                className="w-full h-full min-h-[calc(100vh-theme(spacing.32))] bg-black/40 backdrop-blur-sm border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl focus-within:shadow-2xl rounded-lg overflow-hidden"
-                noShadow
-              >
-                <div className="animate-fade-in divide-y divide-white/10 h-full">
-                  <Suspense fallback={<LoadingOverlay />}>
-                    {children}
-                  </Suspense>
-                </div>
-              </Card>
+            <Container size="full" className="h-full">
+              <div className="w-full h-full min-h-[calc(100vh-theme(spacing.40))] rounded-lg overflow-hidden animate-fade-in">
+                <Suspense fallback={<LoadingOverlay />}>
+                  {children}
+                </Suspense>
+              </div>
             </Container>
           </main>
 

@@ -1,0 +1,133 @@
+
+/* Microsoft Fluent UI inspired styles */
+
+.fluent-card {
+  @apply bg-gray-900/90 backdrop-blur-md border border-gray-700 rounded-lg;
+  @apply shadow-lg shadow-black/20 transition-all duration-200;
+  @apply hover:shadow-xl hover:border-gray-600;
+}
+
+.fluent-acrylic {
+  @apply bg-gray-900/70 backdrop-blur-xl border border-gray-800/50;
+  @apply relative overflow-hidden;
+}
+
+.fluent-acrylic::before {
+  @apply content-[''] absolute inset-0 bg-noise opacity-[0.03] pointer-events-none;
+}
+
+.fluent-button {
+  @apply inline-flex items-center justify-center;
+  @apply px-4 py-2 rounded-md font-medium transition-colors duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.fluent-button-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white;
+  @apply focus:ring-blue-500/50;
+}
+
+.fluent-button-secondary {
+  @apply bg-gray-800 hover:bg-gray-700 text-white border border-gray-700;
+  @apply focus:ring-gray-500/50;
+}
+
+.fluent-input {
+  @apply bg-gray-800/50 border border-gray-700 rounded-md px-4 py-2;
+  @apply focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30;
+  @apply placeholder:text-gray-500 transition-all duration-200;
+}
+
+.fluent-typography-title {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.fluent-typography-subtitle {
+  @apply text-lg font-medium text-gray-300;
+}
+
+.fluent-typography-caption {
+  @apply text-sm text-gray-400;
+}
+
+.fluent-divider {
+  @apply border-t border-gray-700 my-4;
+}
+
+.fluent-badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium;
+}
+
+.fluent-badge-info {
+  @apply bg-blue-500/20 text-blue-400;
+}
+
+.fluent-badge-success {
+  @apply bg-green-500/20 text-green-400;
+}
+
+.fluent-badge-warning {
+  @apply bg-amber-500/20 text-amber-400;
+}
+
+.fluent-badge-danger {
+  @apply bg-red-500/20 text-red-400;
+}
+
+.fluent-panel {
+  @apply bg-gray-800/70 border border-gray-700 rounded-md p-4;
+}
+
+/* Fluent Motion */
+.fluent-fade-in {
+  animation: fluentFadeIn 0.3s ease-out forwards;
+}
+
+.fluent-scale-in {
+  animation: fluentScaleIn 0.2s ease-out forwards;
+}
+
+.fluent-slide-up {
+  animation: fluentSlideUp 0.3s ease-out forwards;
+}
+
+@keyframes fluentFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fluentScaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fluentSlideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fluent Depth (Shadows) */
+.fluent-depth-1 {
+  @apply shadow-sm shadow-black/10;
+}
+
+.fluent-depth-2 {
+  @apply shadow-md shadow-black/20;
+}
+
+.fluent-depth-3 {
+  @apply shadow-lg shadow-black/30;
+}

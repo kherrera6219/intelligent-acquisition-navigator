@@ -65,7 +65,7 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(SitemapPage, false)
   },
 
-  // Make previously protected routes accessible without authentication
+  // Application routes
   {
     path: "/dashboard",
     element: wrapWithLayout(DashboardPage, false)
