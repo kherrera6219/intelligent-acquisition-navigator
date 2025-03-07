@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Container } from "@/components/ui/universal/Container";
@@ -12,6 +11,7 @@ import { NavItem } from "./navigation/types";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Settings, User } from "lucide-react";
+import { SessionTimeoutTimer } from '@/components/settings/SessionTimeoutTimer';
 
 export const Header = () => {
   const { signOut, userRole, user } = useAuth();
@@ -101,6 +101,8 @@ export const Header = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <SessionTimeoutTimer className="mr-2 hidden md:flex" />
+            
             <Link to="/settings" className="text-gray-400 hover:text-white transition-colors duration-200">
               <Settings className="h-5 w-5" />
               <span className="sr-only">Settings</span>

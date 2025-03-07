@@ -7,6 +7,8 @@ import { SettingsNav } from "@/components/settings/SettingsNav";
 import { ProfileSettings } from "@/components/settings/ProfileSettings";
 import { TwoFactorSettings } from "@/components/settings/TwoFactorSettings";
 import { SessionSettings } from "@/components/settings/SessionSettings";
+import { NotificationSettings } from '@/components/settings/NotificationSettings';
+import { DisplaySettings } from '@/components/settings/DisplaySettings';
 import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { SessionExpiryManager } from '@/components/settings/SessionExpiryManager';
@@ -28,10 +30,11 @@ const SettingsPage = () => {
         <SettingsNav />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-6">
+          <TabsList className="grid grid-cols-4 mb-6">
             <TabsTrigger value="security">Security</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="session">Session</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
           </TabsList>
           
           <TabsContent value="security" className="space-y-6">
@@ -45,6 +48,11 @@ const SettingsPage = () => {
           
           <TabsContent value="session">
             <SessionSettings />
+          </TabsContent>
+          
+          <TabsContent value="notifications" className="space-y-6">
+            <NotificationSettings />
+            <DisplaySettings />
           </TabsContent>
         </Tabs>
       </Container>
