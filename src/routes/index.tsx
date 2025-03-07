@@ -1,3 +1,4 @@
+
 import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
 import {
@@ -63,50 +64,50 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(SitemapPage, false)
   },
 
-  // Protected Routes (internal)
+  // Make previously protected routes accessible without authentication
   {
     path: "/dashboard",
-    element: wrapWithLayout(DashboardPage)
+    element: wrapWithLayout(DashboardPage, false)
   },
   {
     path: "/analytics",
-    element: wrapWithLayout(AnalyticsPage, true, "user")
+    element: wrapWithLayout(AnalyticsPage, false)
   },
   {
     path: "/proposals",
-    element: wrapWithLayout(ProposalsPage, true, "user")
+    element: wrapWithLayout(ProposalsPage, false)
   },
   {
     path: "/proposals/:id",
-    element: wrapWithLayout(ProposalDetailPage, true, "user")
+    element: wrapWithLayout(ProposalDetailPage, false)
   },
   {
     path: "/settings",
-    element: wrapWithLayout(SettingsPage, true, "user")
+    element: wrapWithLayout(SettingsPage, false)
   },
   {
     path: "/acquisition/document-control",
-    element: wrapWithLayout(DocumentControlPage, true, "user")
+    element: wrapWithLayout(DocumentControlPage, false)
   },
   {
     path: "/acquisition/market-research",
-    element: wrapWithLayout(MarketResearchPage, true, "user")
+    element: wrapWithLayout(MarketResearchPage, false)
   },
   {
     path: "/acquisition/solicitation-review",
-    element: wrapWithLayout(SolicitationReviewPage, true, "manager")
+    element: wrapWithLayout(SolicitationReviewPage, false)
   },
   {
     path: "/acquisition/texas-acquisition",
-    element: wrapWithLayout(TexasAcquisitionPage, true, "user")
+    element: wrapWithLayout(TexasAcquisitionPage, false)
   },
   {
     path: "/acquisition/federal-acquisition",
-    element: wrapWithLayout(FederalAcquisitionPage, true, "manager")
+    element: wrapWithLayout(FederalAcquisitionPage, false)
   },
   {
     path: "/knowledge-base",
-    element: wrapWithLayout(KnowledgeBasePage, true, "user")
+    element: wrapWithLayout(KnowledgeBasePage, false)
   },
   
   // Catch-all route for 404
