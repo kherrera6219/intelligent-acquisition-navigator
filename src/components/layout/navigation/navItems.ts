@@ -1,7 +1,7 @@
 
 import { 
   Home, FileText, BarChart2, Building2, 
-  FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map, BookOpen, Database
+  FileSearch, FileCheck, Database, BookOpen, Scale, HelpCircle, Map
 } from "lucide-react";
 import { NavItem } from "./types";
 
