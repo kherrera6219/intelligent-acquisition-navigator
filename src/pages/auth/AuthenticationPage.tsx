@@ -3,6 +3,9 @@ import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearchParams, Navigate } from 'react-router-dom';
 import AuthForm from '@/components/auth/AuthForm';
+import { Container } from '@/components/ui/universal/Container';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function AuthenticationPage() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -10,7 +13,14 @@ export default function AuthenticationPage() {
   const mode = searchParams.get('mode') === 'register' ? 'register' : 'login';
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Container>
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <LoadingSpinner size="lg" />
+          <span className="sr-only">Loading</span>
+        </div>
+      </Container>
+    );
   }
 
   if (isAuthenticated) {
@@ -18,10 +28,20 @@ export default function AuthenticationPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-md mx-auto">
-        <AuthForm mode={mode} />
+    <Container>
+      <div className="py-8 animate-fade-in">
+        <PageHeader
+          title={mode === 'login' ? "Sign In" : "Create Account"}
+          description={mode === 'login' 
+            ? "Welcome back! Sign in to access your account" 
+            : "Join us today! Create an account to get started"
+          }
+        />
+        
+        <div className="max-w-md mx-auto mt-8">
+          <AuthForm mode={mode} />
+        </div>
       </div>
-    </div>
+    </Container>
   );
 }
