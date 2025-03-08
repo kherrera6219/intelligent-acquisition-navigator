@@ -9,6 +9,8 @@ import {
   TexasAcquisitionPage,
   FederalAcquisitionPage,
   AuthPage,
+  PasswordResetRequestPage,
+  PasswordResetPage,
   AnalyticsPage,
   ProposalsPage,
   HomePage,
@@ -67,6 +69,14 @@ export const routes: RouteObject[] = [
   {
     path: "/auth",
     element: wrapWithLayout(AuthPage, false)
+  },
+  {
+    path: "/auth/reset-password",
+    element: wrapWithLayout(PasswordResetRequestPage, false)
+  },
+  {
+    path: "/auth/reset-password/confirm",
+    element: wrapWithLayout(PasswordResetPage, false)
   },
   
   // Core Application Routes

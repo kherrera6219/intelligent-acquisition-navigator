@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface AuthFormProps {
   mode: 'login' | 'register';
@@ -121,6 +121,17 @@ const AuthForm = ({ mode }: AuthFormProps) => {
             {errors.confirmPassword && (
               <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
             )}
+          </div>
+        )}
+
+        {mode === 'login' && (
+          <div className="text-right">
+            <Link 
+              to="/auth/reset-password" 
+              className="text-primary hover:underline text-sm"
+            >
+              Forgot password?
+            </Link>
           </div>
         )}
       </div>

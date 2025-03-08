@@ -42,6 +42,7 @@ const Sitemap = () => {
     ],
     auth: [
       { path: "/auth", label: "Sign In / Sign Up", icon: Users },
+      { path: "/auth/reset-password", label: "Reset Password", icon: Shield },
       { path: "/settings", label: "User Settings", icon: Settings },
       { path: "/profile", label: "User Profile", icon: User },
     ],

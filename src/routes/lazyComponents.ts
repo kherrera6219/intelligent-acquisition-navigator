@@ -94,6 +94,18 @@ export const AuthPage = lazy(() =>
   }))
 );
 
+export const PasswordResetRequestPage = lazy(() => 
+  import("@/pages/auth/PasswordResetRequestPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading password reset")
+  }))
+);
+
+export const PasswordResetPage = lazy(() => 
+  import("@/pages/auth/PasswordResetPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading password reset confirm")
+  }))
+);
+
 export const AnalyticsPage = lazy(() => 
   import("@/pages/AnalyticsPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading analytics")
