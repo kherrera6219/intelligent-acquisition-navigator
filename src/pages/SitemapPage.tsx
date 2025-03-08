@@ -58,8 +58,8 @@ const Sitemap = () => {
       { path: "/acquisition/document-control", label: "Document Control", icon: FileText },
       { path: "/acquisition/market-research", label: "Market Research", icon: FileSearch },
       { path: "/acquisition/solicitation-review", label: "Solicitation Review", icon: FileCheck },
-      { path: "/acquisition/texas-acquisition", label: "Texas Acquisition", icon: Building2 },
-      { path: "/acquisition/federal-acquisition", label: "Federal Acquisition", icon: Database }
+      { path: "/acquisition/texas", label: "Texas Acquisition", icon: Building2 },
+      { path: "/acquisition/federal", label: "Federal Acquisition", icon: Database }
     ],
     system: [
       { path: "/help", label: "Help Center", icon: HelpCircle },

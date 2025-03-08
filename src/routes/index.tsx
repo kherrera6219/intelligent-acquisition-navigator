@@ -117,11 +117,11 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(SolicitationReviewPage, true)
   },
   {
-    path: "/acquisition/texas-acquisition",
+    path: "/acquisition/texas",
     element: wrapWithLayout(TexasAcquisitionPage, true)
   },
   {
-    path: "/acquisition/federal-acquisition",
+    path: "/acquisition/federal",
     element: wrapWithLayout(FederalAcquisitionPage, true)
   },
   

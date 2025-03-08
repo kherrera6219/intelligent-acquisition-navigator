@@ -19,8 +19,8 @@ export const navItems: NavItem[] = [
       { href: "/acquisition/document-control", label: "Document Control", minRole: "user", icon: FileText },
       { href: "/acquisition/market-research", label: "Market Research", minRole: "user", icon: FileSearch },
       { href: "/acquisition/solicitation-review", label: "Solicitation Review", minRole: "manager", icon: FileCheck },
-      { href: "/acquisition/texas-acquisition", label: "Texas Acquisition", minRole: "user", icon: Building2 },
-      { href: "/acquisition/federal-acquisition", label: "Federal Acquisition", minRole: "manager", icon: Database }
+      { href: "/acquisition/texas", label: "Texas Acquisition", minRole: "user", icon: Building2 },
+      { href: "/acquisition/federal", label: "Federal Acquisition", minRole: "manager", icon: Database }
     ]
   },
   
