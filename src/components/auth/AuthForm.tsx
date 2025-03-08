@@ -43,11 +43,8 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       }
       navigate('/dashboard');
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "An error occurred",
-        variant: "destructive",
-      });
+      // Error is already handled in useAuthActions, showing toast there
+      console.error('Authentication error:', error);
     } finally {
       setIsLoading(false);
     }
