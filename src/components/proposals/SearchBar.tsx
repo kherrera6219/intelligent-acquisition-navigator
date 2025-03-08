@@ -1,51 +1,30 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { LoadingState } from '@/components/ui/universal/LoadingState';
 
-interface SearchBarProps {
-  searchTerm: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onClear: () => void;
-  isValidating: boolean;
-  searchRef: React.RefObject<HTMLInputElement>;
+export interface SearchBarProps {
+  onSearch: (term: string) => void;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({
-  searchTerm,
-  onChange,
-  onClear,
-  isValidating,
-  searchRef
-}) => {
+export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [searchValue, setSearchValue] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch(searchValue);
+  };
+
   return (
-    <div className="relative w-full sm:max-w-sm">
+    <form onSubmit={handleSubmit} className="w-full relative">
       <Input
-        ref={searchRef}
         type="text"
         placeholder="Search proposals..."
-        value={searchTerm}
-        onChange={onChange}
-        className="pr-10 w-full"
-        aria-label="Search"
-        disabled={isValidating}
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        className="pl-10"
       />
-      {searchTerm && (
-        <Button
-          variant="ghost"
-          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-          onClick={onClear}
-          aria-label="Clear search"
-        >
-          ×
-        </Button>
-      )}
-      {isValidating && (
-        <div className="absolute right-12 top-1/2 -translate-y-1/2">
-          <LoadingState variant="inline" size="sm" />
-        </div>
-      )}
-    </div>
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+    </form>
   );
 };

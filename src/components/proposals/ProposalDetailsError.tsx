@@ -1,29 +1,30 @@
 
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/universal/Card';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ProposalDetailsErrorProps {
-  error: string;
-  handleBack: () => void;
+  onBack: () => void;
+  error: Error | null;
 }
 
-const ProposalDetailsError: React.FC<ProposalDetailsErrorProps> = ({ error, handleBack }) => {
+const ProposalDetailsError: React.FC<ProposalDetailsErrorProps> = ({ onBack, error }) => {
   return (
-    <div className="p-4">
-      <Button variant="ghost" size="sm" onClick={handleBack}>
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back
-      </Button>
-      <Card className="p-6 mt-4 text-center">
-        <h2 className="text-xl font-semibold text-red-500 mb-2">Error</h2>
-        <p className="text-gray-400 mb-4">
-          {error}
+    <Card className="p-8 text-center">
+      <div className="flex flex-col items-center">
+        <div className="bg-red-500/10 p-3 rounded-full mb-4">
+          <AlertCircle className="h-8 w-8 text-red-500" />
+        </div>
+        <h3 className="text-xl font-semibold mb-2">Error Loading Proposal</h3>
+        <p className="text-gray-400 mb-6 max-w-md mx-auto">
+          {error?.message || "We couldn't load the proposal details. Please try again later."}
         </p>
-        <Button onClick={handleBack}>Return</Button>
-      </Card>
-    </div>
+        <Button onClick={onBack} variant="default">
+          Go Back
+        </Button>
+      </div>
+    </Card>
   );
 };
 

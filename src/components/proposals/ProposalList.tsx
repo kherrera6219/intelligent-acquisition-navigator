@@ -1,102 +1,30 @@
 
 import React from 'react';
-import { Calendar, DollarSign, ExternalLink, Users, Clock } from 'lucide-react';
-import { Card } from '@/components/ui/universal/Card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { formatDate, formatCurrency } from '@/utils/formatters';
-import type { Proposal } from '@/types/proposals';
+import { Proposal } from '@/types/proposals';
+import { ProposalCard } from '@/components/proposals/ProposalCard';
 
-interface ProposalListProps {
+export interface ProposalListProps {
   proposals: Proposal[];
-  onProposalClick: (proposal: Proposal) => void;
-  onViewDetails?: (proposal: Proposal) => void;
+  onProposalClick: (id: string) => void;
 }
 
-export const ProposalList: React.FC<ProposalListProps> = ({ 
-  proposals, 
-  onProposalClick,
-  onViewDetails
-}) => {
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'approved': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-      case 'pending': return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
-      case 'rejected': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-      case 'draft': return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
-      default: return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
-    }
-  };
-
+export const ProposalList: React.FC<ProposalListProps> = ({ proposals, onProposalClick }) => {
+  if (proposals.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-gray-400">No proposals found.</p>
+      </div>
+    );
+  }
+  
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="space-y-4">
       {proposals.map((proposal) => (
-        <Card 
+        <ProposalCard 
           key={proposal.id} 
-          className="p-4 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => onProposalClick(proposal)}
-        >
-          <div className="flex flex-col space-y-2">
-            <div className="flex justify-between">
-              <h3 className="text-lg font-medium">{proposal.title}</h3>
-              <Badge className={getStatusColor(proposal.status)}>
-                {proposal.status}
-              </Badge>
-            </div>
-            
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {proposal.description}
-            </p>
-            
-            <div className="flex flex-wrap gap-4 mt-2">
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
-                  {formatDate(proposal.submissionDate || proposal.submittedAt)}
-                </span>
-              </div>
-              
-              <div className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-1 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
-                  {formatCurrency(proposal.budget || 0)}
-                </span>
-              </div>
-              
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
-                  {proposal.timeframe || 0} {proposal.timeframe === 1 ? 'month' : 'months'}
-                </span>
-              </div>
-              
-              {proposal.evaluations?.length > 0 && (
-                <div className="flex items-center">
-                  <Users className="h-4 w-4 mr-1 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">
-                    {proposal.evaluations.length} evaluation{proposal.evaluations.length !== 1 ? 's' : ''}
-                  </span>
-                </div>
-              )}
-            </div>
-            
-            {onViewDetails && (
-              <div className="mt-2 flex justify-end" onClick={(e) => e.stopPropagation()}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onViewDetails(proposal);
-                  }}
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  View Details
-                </Button>
-              </div>
-            )}
-          </div>
-        </Card>
+          proposal={proposal} 
+          onClick={() => onProposalClick(proposal.id)} 
+        />
       ))}
     </div>
   );

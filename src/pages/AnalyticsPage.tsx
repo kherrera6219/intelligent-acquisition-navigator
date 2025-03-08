@@ -2,53 +2,25 @@
 import React, { useState, useEffect } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { Card } from '@/components/ui/universal/Card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from '@/components/ui/button';
-import { BarChart2, Download, Calendar, ArrowUpRight, TrendingUp, TrendingDown, Activity, DollarSign } from 'lucide-react';
-
-// Metric card component
-const MetricCard = ({ 
-  title, 
-  value, 
-  change, 
-  icon: Icon, 
-  trend = "neutral" 
-}: { 
-  title: string; 
-  value: string; 
-  change?: string; 
-  icon: React.ElementType; 
-  trend?: "up" | "down" | "neutral" 
-}) => {
-  const trendIcon = trend === "up" ? TrendingUp : trend === "down" ? TrendingDown : Activity;
-  const trendColor = trend === "up" ? "text-green-500" : trend === "down" ? "text-red-500" : "text-blue-500";
-  
-  return (
-    <Card className="p-5">
-      <div className="flex justify-between items-start">
-        <div className="space-y-2">
-          <p className="text-sm text-gray-400">{title}</p>
-          <p className="text-2xl font-semibold">{value}</p>
-          {change && (
-            <div className={`flex items-center ${trendColor} text-sm`}>
-              <trendIcon className="h-3 w-3 mr-1" />
-              {change}
-            </div>
-          )}
-        </div>
-        <div className="p-3 rounded-full bg-gray-800">
-          <Icon className="h-5 w-5 text-gray-300" />
-        </div>
-      </div>
-    </Card>
-  );
-};
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
+import { ArrowUpRight, ArrowDownRight, TrendingUp } from 'lucide-react';
 
 export default function AnalyticsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [period, setPeriod] = useState("30d");
   
   // Simulate loading data
   useEffect(() => {
@@ -66,10 +38,69 @@ export default function AnalyticsPage() {
     loadAnalytics();
   }, []);
 
+  // Mock data for charts
+  const barData = [
+    { name: 'Jan', value: 12 },
+    { name: 'Feb', value: 19 },
+    { name: 'Mar', value: 15 },
+    { name: 'Apr', value: 27 },
+    { name: 'May', value: 22 },
+    { name: 'Jun', value: 32 },
+  ];
+
+  const lineData = [
+    { name: 'Week 1', value: 35 },
+    { name: 'Week 2', value: 42 },
+    { name: 'Week 3', value: 38 },
+    { name: 'Week 4', value: 50 },
+    { name: 'Week 5', value: 55 },
+    { name: 'Week 6', value: 48 },
+  ];
+
+  const pieData = [
+    { name: 'Approved', value: 65 },
+    { name: 'Pending', value: 25 },
+    { name: 'Rejected', value: 10 },
+  ];
+
+  const COLORS = ['#0088FE', '#FFBB28', '#FF8042'];
+
+  // Metric cards
+  const metrics = [
+    { 
+      title: 'Total Proposals', 
+      value: '245', 
+      change: '+12%', 
+      trend: 'up',
+      trendIconComponent: ArrowUpRight 
+    },
+    { 
+      title: 'Approval Rate', 
+      value: '72%', 
+      change: '+3%', 
+      trend: 'up',
+      trendIconComponent: ArrowUpRight 
+    },
+    { 
+      title: 'Average Response Time', 
+      value: '4.2 days', 
+      change: '-0.8 days', 
+      trend: 'up',
+      trendIconComponent: ArrowUpRight 
+    },
+    { 
+      title: 'Active Projects', 
+      value: '28', 
+      change: '-2', 
+      trend: 'down',
+      trendIconComponent: ArrowDownRight 
+    },
+  ];
+
   return (
     <ProtectedPageLayout
       title="Analytics Dashboard"
-      description="View insights and metrics for your acquisition activities."
+      description="View performance metrics and acquisition analytics."
       isLoading={isLoading}
       error={error}
       breadcrumbs={[
@@ -77,101 +108,156 @@ export default function AnalyticsPage() {
         { label: 'Analytics', href: '/analytics' }
       ]}
       action={
-        <div className="flex gap-2">
-          <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-[140px]">
-              <Calendar className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Select period" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7d">Last 7 days</SelectItem>
-              <SelectItem value="30d">Last 30 days</SelectItem>
-              <SelectItem value="90d">Last 90 days</SelectItem>
-              <SelectItem value="1y">Last year</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+        <div className="flex space-x-2">
+          <select className="bg-gray-800 border border-gray-700 rounded px-3 py-1 text-sm">
+            <option>Last 7 Days</option>
+            <option>Last 30 Days</option>
+            <option>This Quarter</option>
+            <option>This Year</option>
+          </select>
         </div>
       }
     >
       <div className="space-y-6">
-        {/* Key Metrics */}
+        {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard 
-            title="Total Proposals" 
-            value="124" 
-            change="+12.5% from last period" 
-            icon={BarChart2}
-            trend="up" 
-          />
-          <MetricCard 
-            title="Approved Proposals" 
-            value="78" 
-            change="+5.2% from last period" 
-            icon={ArrowUpRight}
-            trend="up" 
-          />
-          <MetricCard 
-            title="Rejection Rate" 
-            value="24%" 
-            change="-2.1% from last period" 
-            icon={TrendingDown}
-            trend="up" 
-          />
-          <MetricCard 
-            title="Total Value" 
-            value="$1.24M" 
-            change="+8.7% from last period" 
-            icon={DollarSign}
-            trend="up" 
-          />
+          {metrics.map((metric, index) => {
+            const TrendIcon = metric.trendIconComponent;
+            return (
+              <Card key={index} className="p-4">
+                <h3 className="text-gray-400 text-sm">{metric.title}</h3>
+                <div className="flex justify-between items-end mt-2">
+                  <p className="text-2xl font-semibold">{metric.value}</p>
+                  <div className={`flex items-center text-sm ${metric.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+                    <TrendIcon className="h-4 w-4 mr-1" />
+                    <span>{metric.change}</span>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
         </div>
-        
-        {/* Charts and Details */}
-        <Card>
-          <Tabs defaultValue="overview">
-            <TabsList className="w-full border-b rounded-none">
-              <TabsTrigger value="overview" className="flex-1">
-                Overview
-              </TabsTrigger>
-              <TabsTrigger value="proposals" className="flex-1">
-                Proposals
-              </TabsTrigger>
-              <TabsTrigger value="performance" className="flex-1">
-                Performance
-              </TabsTrigger>
-              <TabsTrigger value="budget" className="flex-1">
-                Budget
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="p-6">
-              <div className="h-[400px] flex items-center justify-center bg-gray-800/50 rounded-lg">
-                <p className="text-gray-400">Chart visualization will appear here</p>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Bar Chart */}
+          <Card className="p-4">
+            <h3 className="text-lg font-medium mb-4">Proposal Submissions</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                  <XAxis dataKey="name" stroke="#888" />
+                  <YAxis stroke="#888" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#333', 
+                      border: '1px solid #444',
+                      borderRadius: '4px'
+                    }} 
+                  />
+                  <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+
+          {/* Line Chart */}
+          <Card className="p-4">
+            <h3 className="text-lg font-medium mb-4">Response Times</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={lineData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                  <XAxis dataKey="name" stroke="#888" />
+                  <YAxis stroke="#888" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#333', 
+                      border: '1px solid #444',
+                      borderRadius: '4px'
+                    }} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="#10b981" 
+                    strokeWidth={2}
+                    activeDot={{ r: 8 }} 
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        </div>
+
+        {/* Pie Chart */}
+        <Card className="p-4">
+          <h3 className="text-lg font-medium mb-4">Proposal Status Distribution</h3>
+          <div className="h-80 flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#333', 
+                    border: '1px solid #444',
+                    borderRadius: '4px'
+                  }} 
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Additional Analytics */}
+        <Card className="p-4">
+          <h3 className="text-lg font-medium mb-4">Top Performing Departments</h3>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-medium">IT Department</p>
+                <p className="text-sm text-gray-400">32 proposals, 85% approval rate</p>
               </div>
-            </TabsContent>
-            
-            <TabsContent value="proposals" className="p-6">
-              <div className="h-[400px] flex items-center justify-center bg-gray-800/50 rounded-lg">
-                <p className="text-gray-400">Proposal metrics will appear here</p>
+              <div className="flex items-center text-green-500">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span>12%</span>
               </div>
-            </TabsContent>
-            
-            <TabsContent value="performance" className="p-6">
-              <div className="h-[400px] flex items-center justify-center bg-gray-800/50 rounded-lg">
-                <p className="text-gray-400">Performance metrics will appear here</p>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-medium">Marketing</p>
+                <p className="text-sm text-gray-400">28 proposals, 79% approval rate</p>
               </div>
-            </TabsContent>
-            
-            <TabsContent value="budget" className="p-6">
-              <div className="h-[400px] flex items-center justify-center bg-gray-800/50 rounded-lg">
-                <p className="text-gray-400">Budget analytics will appear here</p>
+              <div className="flex items-center text-green-500">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span>9%</span>
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-medium">Operations</p>
+                <p className="text-sm text-gray-400">25 proposals, 72% approval rate</p>
+              </div>
+              <div className="flex items-center text-green-500">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span>5%</span>
+              </div>
+            </div>
+          </div>
         </Card>
       </div>
     </ProtectedPageLayout>

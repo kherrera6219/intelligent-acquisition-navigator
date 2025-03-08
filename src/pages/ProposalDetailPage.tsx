@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { ProposalDetails } from '@/components/proposals/ProposalDetails';
-import { ProposalDetailsError } from '@/components/proposals/ProposalDetailsError';
-import { ProposalDetailsLoading } from '@/components/proposals/ProposalDetailsLoading';
+import ProposalDetailsError from '@/components/proposals/ProposalDetailsError';
+import ProposalDetailsLoading from '@/components/proposals/ProposalDetailsLoading';
 import type { Proposal } from '@/types/proposals';
 
 export default function ProposalDetailPage() {
@@ -22,12 +22,15 @@ export default function ProposalDetailPage() {
 
         // Mock data
         if (id) {
+          // Ensure the data conforms to the Proposal type
           const mockProposal: Proposal = {
             id,
             title: `Proposal ${id}`,
             description: `This is a detailed description for proposal ${id}. It contains more information about the proposal and its objectives. The proposal aims to address specific needs and provides a comprehensive solution.`,
-            status: Math.random() > 0.3 ? 'approved' : Math.random() > 0.5 ? 'pending' : 'rejected',
+            status: Math.random() > 0.3 ? 'APPROVED' : Math.random() > 0.5 ? 'PENDING' : 'REJECTED',
             submittedAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+            updatedAt: new Date(Date.now() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000).toISOString(),
+            submissionDate: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
             budget: Math.floor(Math.random() * 500000) + 50000,
             timeframe: Math.floor(Math.random() * 12) + 1,
             evaluations: Array.from({ length: Math.floor(Math.random() * 3) + 1 }, (_, j) => ({
@@ -41,9 +44,8 @@ export default function ProposalDetailPage() {
             attachments: Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (_, j) => ({
               id: `att-${id}-${j}`,
               name: `Document-${j + 1}.pdf`,
-              size: Math.floor(Math.random() * 1000000) + 100000,
               url: '#',
-              uploadedAt: new Date(Date.now() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000).toISOString(),
+              type: 'application/pdf', // Add the required type property
             })),
           };
           
