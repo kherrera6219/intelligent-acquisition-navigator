@@ -1,0 +1,154 @@
+
+/* Primary Theme Variables */
+:root {
+  /* Color Palette */
+  --primary-hue: 250;
+  --primary-saturation: 82%;
+  --primary-lightness: 51%;
+  
+  --primary: var(--primary-hue) var(--primary-saturation) var(--primary-lightness);
+  --primary-100: var(--primary-hue) var(--primary-saturation) 95%;
+  --primary-200: var(--primary-hue) var(--primary-saturation) 90%;
+  --primary-300: var(--primary-hue) var(--primary-saturation) 80%;
+  --primary-400: var(--primary-hue) var(--primary-saturation) 70%;
+  --primary-500: var(--primary-hue) var(--primary-saturation) var(--primary-lightness);
+  --primary-600: var(--primary-hue) var(--primary-saturation) 41%;
+  --primary-700: var(--primary-hue) var(--primary-saturation) 31%;
+  --primary-800: var(--primary-hue) var(--primary-saturation) 21%;
+  --primary-900: var(--primary-hue) var(--primary-saturation) 11%;
+  
+  /* System UI Colors */
+  --success: 142 76% 36%;
+  --warning: 38 92% 50%;
+  --error: 0 84% 60%;
+  --info: 217 91% 60%;
+  
+  /* Neutral Colors */
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 222.2 84% 4.9%;
+  
+  /* UI Dimensions */
+  --radius: 0.75rem;
+  --header-height: 4rem;
+  --sidebar-width: 16rem;
+  --content-max-width: 1400px;
+  
+  /* Animation Speeds */
+  --transition-slow: 500ms;
+  --transition-medium: 300ms;
+  --transition-fast: 150ms;
+  
+  /* Z-Index Layers */
+  --z-background: -10;
+  --z-default: 1;
+  --z-floating: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-drawer: 300;
+  --z-modal: 400;
+  --z-popover: 500;
+  --z-toast: 600;
+  --z-tooltip: 700;
+  --z-highest: 9999;
+}
+
+/* Light Mode Variables - To be implemented later */
+.light-theme {
+  /* Will contain light mode overrides */
+}
+
+/* Marketplace-Ready Adjustments */
+@layer base {
+  * {
+    @apply border-border selection:bg-white/10 selection:text-white;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-balance m-0;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  h4 {
+    @apply text-lg md:text-xl;
+  }
+
+  p {
+    @apply leading-relaxed text-balance;
+  }
+  
+  /* Focus Styles */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary ring-2 ring-primary/50;
+  }
+}
+
+/* High Contrast Mode Optimizations */
+@media (prefers-contrast: high) {
+  :root {
+    --primary: 0 0% 0%;
+    --foreground: 0 0% 0%;
+    --background: 0 0% 100%;
+    --border: 0 0% 0%;
+  }
+
+  .glass-card, .glass-morphism {
+    background: hsl(0 0% 100%) !important;
+    border: 2px solid hsl(0 0% 0%) !important;
+    backdrop-filter: none !important;
+  }
+
+  .text-gradient {
+    background: none !important;
+    color: hsl(0 0% 0%) !important;
+  }
+}
+
+/* Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

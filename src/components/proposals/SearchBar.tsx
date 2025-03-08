@@ -7,6 +7,9 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
     <UniversalSearchBar 
       {...props} 
       placeholder={props.placeholder || "Search proposals..."}
+      ariaLabel="Search proposals"
+      debounceMs={400}
+      className="max-w-md"
     />
   );
 };

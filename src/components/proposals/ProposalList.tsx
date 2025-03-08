@@ -1,29 +1,75 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Proposal } from '@/types/proposals';
 import { ProposalCard } from '@/components/proposals/ProposalCard';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
+import { AlertCircle } from 'lucide-react';
 
 export interface ProposalListProps {
   proposals: Proposal[];
   onProposalClick: (id: string) => void;
   isLoading?: boolean;
+  isError?: boolean;
+  error?: Error | null;
   emptyMessage?: string;
+  retryFunction?: () => void;
 }
 
 export const ProposalList: React.FC<ProposalListProps> = ({ 
   proposals, 
   onProposalClick, 
   isLoading = false,
-  emptyMessage = "No proposals found."
+  isError = false,
+  error = null,
+  emptyMessage = "No proposals found.",
+  retryFunction
 }) => {
+  // Memoize the list to prevent unnecessary re-renders
+  const memoizedProposals = useMemo(() => {
+    return proposals.map((proposal) => (
+      <ProposalCard 
+        key={proposal.id} 
+        proposal={proposal} 
+        onClick={() => onProposalClick(proposal.id)} 
+      />
+    ));
+  }, [proposals, onProposalClick]);
+
   if (isLoading) {
     return <LoadingState variant="skeleton" skeletonCount={3} />;
   }
   
+  if (isError) {
+    return (
+      <div className="text-center py-12 bg-white/5 rounded-lg border border-white/10 animate-in fade-in">
+        <div className="flex flex-col items-center">
+          <div className="bg-red-500/10 p-3 rounded-full mb-4">
+            <AlertCircle className="h-8 w-8 text-red-500" aria-hidden="true" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2">Error Loading Proposals</h3>
+          <p className="text-gray-400 mb-6 max-w-md mx-auto">
+            {error?.message || "We couldn't load the proposals. Please try again later."}
+          </p>
+          {retryFunction && (
+            <button 
+              onClick={retryFunction}
+              className="px-4 py-2 bg-primary/90 hover:bg-primary text-primary-foreground rounded-md transition-colors"
+            >
+              Try Again
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+  
   if (proposals.length === 0) {
     return (
-      <div className="text-center py-12 bg-white/5 rounded-lg border border-white/10">
+      <div 
+        className="text-center py-12 bg-white/5 rounded-lg border border-white/10 animate-in fade-in"
+        role="status"
+        aria-live="polite"
+      >
         <p className="text-gray-400">{emptyMessage}</p>
       </div>
     );
@@ -35,13 +81,7 @@ export const ProposalList: React.FC<ProposalListProps> = ({
       role="list"
       aria-label="Proposals list"
     >
-      {proposals.map((proposal) => (
-        <ProposalCard 
-          key={proposal.id} 
-          proposal={proposal} 
-          onClick={() => onProposalClick(proposal.id)} 
-        />
-      ))}
+      {memoizedProposals}
     </div>
   );
 };
