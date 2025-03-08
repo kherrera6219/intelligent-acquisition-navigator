@@ -64,10 +64,12 @@ export const FederalChatContainer = ({
           <div 
             className="h-[600px] overflow-y-auto rounded-lg p-4 space-y-4 bg-gradient-to-b from-background/80 to-background/40 border border-white/10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
             style={{ scrollBehavior: 'smooth' }}
+            aria-live="polite"
+            aria-relevant="additions"
           >
             {messages.length === 0 && !isLoading && (
               <div className="flex items-center justify-center h-full text-muted-foreground text-center px-4">
-                <div className="space-y-2">
+                <div className="space-y-2 max-w-md">
                   <p className="text-lg font-medium">No messages yet</p>
                   <p className="text-sm opacity-70">Start by asking a question about federal acquisition regulations, contracting procedures, or procurement requirements.</p>
                 </div>

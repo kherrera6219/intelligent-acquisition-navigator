@@ -47,7 +47,65 @@ h1, h2, h3, h4, h5, h6 {
   @apply font-bold tracking-tight text-balance m-0;
 }
 
+h1 {
+  @apply text-3xl md:text-4xl;
+}
+
+h2 {
+  @apply text-2xl md:text-3xl;
+}
+
+h3 {
+  @apply text-xl md:text-2xl;
+}
+
+h4 {
+  @apply text-lg md:text-xl;
+}
+
+p {
+  @apply leading-relaxed text-balance;
+}
+
 /* Focus Styles */
 :focus-visible {
   @apply outline-2 outline-offset-2 outline-primary ring-2 ring-primary/50;
+}
+
+/* Responsive Components */
+@media (max-width: 640px) {
+  .responsive-container {
+    @apply px-4;
+  }
+  
+  .responsive-card {
+    @apply p-4;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .responsive-container {
+    @apply px-6;
+  }
+  
+  .responsive-card {
+    @apply p-5;
+  }
+}
+
+@media (min-width: 1025px) {
+  .responsive-container {
+    @apply px-8;
+  }
+  
+  .responsive-card {
+    @apply p-6;
+  }
+}
+
+/* Touch Optimizations */
+@media (hover: none) {
+  .touch-button {
+    @apply active:scale-95 transition-transform;
+  }
 }
