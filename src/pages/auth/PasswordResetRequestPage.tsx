@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Container } from '@/components/ui/universal/Container';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { Card } from '@/components/ui/universal/Card';
-import { AlertCircle, Mail } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { AlertCircle, Mail, ArrowLeft } from 'lucide-react';
+import { MainLayout } from '@/components/layout/MainLayout';
 
 export default function PasswordResetRequestPage() {
   const [email, setEmail] = useState('');
@@ -19,6 +20,11 @@ export default function PasswordResetRequestPage() {
   const { resetPassword } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Update page title
+  useEffect(() => {
+    document.title = 'Reset Password | ProcurityIQ';
+  }, []);
 
   const validateEmail = () => {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -61,7 +67,7 @@ export default function PasswordResetRequestPage() {
   };
 
   return (
-    <Container>
+    <MainLayout containerSize="sm">
       <div className="py-6 animate-fade-in">
         <PageHeader
           title="Reset Your Password"
@@ -74,13 +80,13 @@ export default function PasswordResetRequestPage() {
         
         <div className="max-w-md mx-auto mt-8">
           {isSubmitted ? (
-            <Card className="p-6 text-center space-y-6">
+            <Card className="p-6 text-center space-y-6 border-white/10 bg-black/30">
               <div className="mx-auto bg-blue-500/20 p-3 rounded-full w-fit">
                 <Mail className="h-8 w-8 text-blue-500" />
               </div>
               <h2 className="text-2xl font-bold">Check Your Email</h2>
               <p className="text-gray-400">
-                We've sent password reset instructions to <span className="font-medium text-gray-300">{email}</span>. Please check your inbox.
+                We've sent password reset instructions to <span className="font-medium text-gray-300">{email}</span>. Please check your inbox and spam folder.
               </p>
               <div className="flex flex-col gap-4">
                 <Button onClick={() => setIsSubmitted(false)}>
@@ -92,11 +98,11 @@ export default function PasswordResetRequestPage() {
               </div>
             </Card>
           ) : (
-            <Card className="p-6">
+            <Card className="p-6 border-white/10 bg-black/30">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">Email Address</Label>
                     <Input
                       id="email"
                       type="email"
@@ -108,11 +114,12 @@ export default function PasswordResetRequestPage() {
                       required
                       autoFocus
                       aria-invalid={emailError ? "true" : "false"}
+                      aria-describedby={emailError ? "email-error" : undefined}
                     />
                   </div>
 
                   {emailError && (
-                    <div className="bg-red-500/10 p-3 rounded-md flex items-start gap-2">
+                    <div id="email-error" className="bg-red-500/10 p-3 rounded-md flex items-start gap-2">
                       <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-red-500" role="alert">
                         {emailError}
@@ -140,8 +147,9 @@ export default function PasswordResetRequestPage() {
                 <div className="text-center">
                   <Link 
                     to="/auth" 
-                    className="text-primary hover:underline text-sm"
+                    className="inline-flex items-center text-primary hover:underline text-sm gap-1"
                   >
+                    <ArrowLeft className="h-3 w-3" />
                     Return to login
                   </Link>
                 </div>
@@ -150,6 +158,6 @@ export default function PasswordResetRequestPage() {
           )}
         </div>
       </div>
-    </Container>
+    </MainLayout>
   );
 }

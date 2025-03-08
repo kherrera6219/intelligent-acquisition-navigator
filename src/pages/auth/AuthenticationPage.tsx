@@ -1,34 +1,45 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSearchParams, Navigate } from 'react-router-dom';
+import { useSearchParams, Navigate, useLocation } from 'react-router-dom';
 import AuthForm from '@/components/auth/AuthForm';
 import { Container } from '@/components/ui/universal/Container';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { Card } from '@/components/ui/card';
 
 export default function AuthenticationPage() {
   const { isAuthenticated, isLoading } = useAuth();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const mode = searchParams.get('mode') === 'register' ? 'register' : 'login';
+  
+  // Get the return URL from location state or default to dashboard
+  const from = location.state?.from?.pathname || '/dashboard';
+
+  // Page title based on mode
+  useEffect(() => {
+    document.title = mode === 'login' ? 'Sign In | ProcurityIQ' : 'Create Account | ProcurityIQ';
+  }, [mode]);
 
   if (isLoading) {
     return (
-      <Container>
+      <MainLayout containerSize="sm">
         <div className="flex justify-center items-center min-h-[50vh]">
           <LoadingSpinner size="lg" />
-          <span className="sr-only">Loading</span>
+          <span className="sr-only">Loading authentication page</span>
         </div>
-      </Container>
+      </MainLayout>
     );
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={from} replace />;
   }
 
   return (
-    <Container>
+    <MainLayout containerSize="sm">
       <div className="py-8 animate-fade-in">
         <PageHeader
           title={mode === 'login' ? "Sign In" : "Create Account"}
@@ -38,10 +49,28 @@ export default function AuthenticationPage() {
           }
         />
         
-        <div className="max-w-md mx-auto mt-8">
+        <Card className="max-w-md mx-auto mt-8 p-6 border-white/10 bg-black/30 backdrop-blur-md">
           <AuthForm mode={mode} />
-        </div>
+          
+          <div className="mt-6 text-center">
+            {mode === 'login' ? (
+              <div className="text-sm text-gray-400">
+                Don't have an account?{' '}
+                <a href="/auth?mode=register" className="text-primary hover:underline">
+                  Create one
+                </a>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-400">
+                Already have an account?{' '}
+                <a href="/auth" className="text-primary hover:underline">
+                  Sign in
+                </a>
+              </div>
+            )}
+          </div>
+        </Card>
       </div>
-    </Container>
+    </MainLayout>
   );
 }

@@ -11,9 +11,19 @@ import { VerificationBanner } from "@/components/auth/VerificationBanner";
 
 interface MainLayoutProps {
   children: React.ReactNode;
+  showHeader?: boolean;
+  showFooter?: boolean;
+  containerSize?: "sm" | "md" | "lg" | "xl" | "full";
+  className?: string;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+export const MainLayout: React.FC<MainLayoutProps> = ({ 
+  children, 
+  showHeader = true, 
+  showFooter = true,
+  containerSize = "full",
+  className
+}) => {
   return (
     <ThemeProvider>
       <PageErrorBoundary>
@@ -26,15 +36,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             Skip to main content
           </a>
 
-          <Header />
+          {showHeader && <Header />}
           <VerificationBanner />
           
           <main 
             id="main-content" 
             role="main" 
-            className="flex-1 w-full py-4 sm:py-6"
+            className={`flex-1 w-full py-4 sm:py-6 ${className || ''}`}
+            tabIndex={-1}
           >
-            <Container size="full" className="h-full">
+            <Container size={containerSize} className="h-full">
               <div className="w-full h-full min-h-[calc(100vh-theme(spacing.40))] rounded-lg overflow-hidden animate-fade-in">
                 <Suspense fallback={<LoadingOverlay />}>
                   {children}
@@ -43,7 +54,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </Container>
           </main>
 
-          <Footer />
+          {showFooter && <Footer />}
           <NetworkStatusBanner />
         </div>
       </PageErrorBoundary>
