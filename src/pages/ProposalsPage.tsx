@@ -1,206 +1,151 @@
 
-import React, { useState, useCallback } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { LoadingState } from '@/components/ui/universal/LoadingState';
-import { useDebounce } from '@/hooks/use-debounce';
-import { useToast } from '@/hooks/use-toast';
-import { z } from 'zod';
-import type { Proposal } from '@/types/proposals';
+import React, { useState, useEffect } from 'react';
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { ProposalList } from '@/components/proposals/ProposalList';
 import { SearchBar } from '@/components/proposals/SearchBar';
 import { Pagination } from '@/components/proposals/Pagination';
-import { ProposalList } from '@/components/proposals/ProposalList';
 import { ProposalModal } from '@/components/proposals/ProposalModal';
-import { useOptimisticQuery } from '@/hooks/useOptimisticQuery';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import type { Proposal } from '@/types/proposals';
 
-// Input validation schema
-const searchSchema = z.object({
-  term: z.string().trim().min(2, 'Search term must be at least 2 characters').max(50, 'Search term too long')
-});
-
-const ProposalsPage = () => {
-  const searchRef = React.useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const isOnline = useNetworkStatus();
-  const navigate = useNavigate();
-  
-  const [page, setPage] = useState(1);
+export default function ProposalsPage() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
+  const [filteredProposals, setFilteredProposals] = useState<Proposal[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
-  const [isValidating, setIsValidating] = useState(false);
-  const [sortByDate, setSortByDate] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const itemsPerPage = 10;
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
-
-  // Rate limiting using useRef to track request timestamps
-  const lastRequestRef = React.useRef<number>(Date.now());
-  const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
-
-  const canMakeRequest = useCallback(() => {
-    const now = Date.now();
-    if (now - lastRequestRef.current < MIN_REQUEST_INTERVAL) {
-      toast({
-        title: "Please wait",
-        description: "Making too many requests. Please wait a moment.",
-        variant: "destructive"
-      });
-      return false;
-    }
-    lastRequestRef.current = now;
-    return true;
-  }, [toast]);
-
-  // Use our optimistic query hook for proposals
-  const { data, isLoading, error } = useOptimisticQuery<Proposal[]>({
-    url: `/api/proposals?page=${page.toString()}&search=${encodeURIComponent(debouncedSearchTerm)}&sortByDate=${sortByDate.toString()}`,
-    queryKey: ['proposals', page, debouncedSearchTerm, sortByDate],
-    resourceType: 'proposals',
-    enabled: canMakeRequest(),
-    retryCount: isOnline ? 2 : 0, // Don't retry if offline
-  });
-
-  // Handle query errors
-  React.useEffect(() => {
-    if (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to fetch proposals",
-        variant: "destructive"
-      });
-    }
-  }, [error, toast]);
-
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    try {
-      if (value.length > 50) {
-        throw new Error('Search term too long');
+  // Simulate loading proposal data
+  useEffect(() => {
+    const loadProposals = async () => {
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Mock data
+        const mockProposals: Proposal[] = Array.from({ length: 25 }, (_, i) => ({
+          id: `prop-${i + 1}`,
+          title: `Proposal ${i + 1}`,
+          description: `Description for proposal ${i + 1}. This is a mock proposal for demonstration purposes.`,
+          status: i % 3 === 0 ? 'approved' : i % 3 === 1 ? 'pending' : 'rejected',
+          submittedAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+          budget: Math.floor(Math.random() * 500000) + 50000,
+          timeframe: Math.floor(Math.random() * 12) + 1,
+          evaluations: Array.from({ length: Math.floor(Math.random() * 3) }, (_, j) => ({
+            id: `eval-${i}-${j}`,
+            userId: `user-${j}`,
+            userName: `Evaluator ${j + 1}`,
+            comment: `This is evaluation comment ${j + 1} for proposal ${i + 1}.`,
+            rating: Math.floor(Math.random() * 5) + 1,
+            createdAt: new Date(Date.now() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000).toISOString(),
+          })),
+          attachments: Array.from({ length: Math.floor(Math.random() * 3) }, (_, j) => ({
+            id: `att-${i}-${j}`,
+            name: `Document-${j + 1}.pdf`,
+            size: Math.floor(Math.random() * 1000000) + 100000,
+            url: '#',
+            uploadedAt: new Date(Date.now() - Math.floor(Math.random() * 10) * 24 * 60 * 60 * 1000).toISOString(),
+          })),
+        }));
+        
+        setProposals(mockProposals);
+        setFilteredProposals(mockProposals);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to load proposals'));
+        setIsLoading(false);
       }
-      setSearchTerm(value);
-    } catch (error) {
-      toast({
-        title: "Invalid Input",
-        description: error instanceof Error ? error.message : "Invalid search term",
-        variant: "destructive"
-      });
-    }
-  }, [toast]);
-
-  const handleClearSearch = useCallback(() => {
-    setSearchTerm('');
-    if (searchRef.current) {
-      searchRef.current.focus();
-    }
-  }, []);
-
-  const handleProposalClick = useCallback((proposal: Proposal) => {
-    // Option 1: Open in modal
-    setSelectedProposal(proposal);
+    };
     
-    // Option 2: Navigate to detail page
-    // navigate(`/proposals/${proposal.id}`);
+    loadProposals();
   }, []);
 
-  const handleCloseDetails = useCallback(() => {
-    setSelectedProposal(null);
-  }, []);
+  // Filter proposals based on search term
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredProposals(proposals);
+    } else {
+      const filtered = proposals.filter(
+        proposal => proposal.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                   proposal.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProposals(filtered);
+    }
+    setCurrentPage(1);
+  }, [searchTerm, proposals]);
 
-  const handleViewDetails = useCallback((proposal: Proposal) => {
-    navigate(`/proposals/${proposal.id}`);
-  }, [navigate]);
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProposals.length / itemsPerPage);
+  const currentProposals = filteredProposals.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-  const toggleSortByDate = useCallback(() => {
-    setSortByDate(prev => !prev);
-  }, []);
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-[50vh]">
-        <LoadingState 
-          variant="skeleton" 
-          skeletonCount={5} 
-          skeletonClassName="h-32 w-full rounded-lg"
-        />
-      </div>
-    );
-  }
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
-  if (error) {
-    return (
-      <div className="text-destructive dark:text-destructive-foreground p-4 rounded-lg bg-destructive/10 m-4">
-        Error loading proposals: {error instanceof Error ? error.message : 'Unknown error'}
-        <Button 
-          onClick={() => queryClient.invalidateQueries({ queryKey: ['proposals'] })} 
-          className="mt-4"
-        >
-          Try Again
-        </Button>
-      </div>
-    );
-  }
-
-  const proposals = data || [];
-  const totalPages = proposals.length > 0 ? 2 : 1; // Simulate pagination with mock data
+  const handleAddProposal = (proposal: Omit<Proposal, 'id'>) => {
+    const newProposal: Proposal = {
+      ...proposal,
+      id: `prop-${proposals.length + 1}`,
+      submittedAt: new Date().toISOString(),
+      evaluations: [],
+      attachments: [],
+    };
+    
+    setProposals([newProposal, ...proposals]);
+    setIsModalOpen(false);
+  };
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-[50vh]">
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-        Proposals Management
-      </h1>
-      
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <SearchBar
-          searchRef={searchRef}
-          searchTerm={searchTerm}
-          onChange={handleSearchChange}
-          onClear={handleClearSearch}
-          isValidating={isValidating}
-        />
-        <Button 
-          variant="outline" 
-          onClick={toggleSortByDate}
-        >
-          {sortByDate ? 'Sort by relevance' : 'Sort by date'}
+    <ProtectedPageLayout
+      title="Proposals"
+      description="View and manage all proposal submissions."
+      isLoading={isLoading}
+      error={error}
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Proposals', href: '/proposals' }
+      ]}
+      action={
+        <Button onClick={() => setIsModalOpen(true)}>
+          <PlusCircle className="h-4 w-4 mr-2" />
+          New Proposal
         </Button>
+      }
+    >
+      <div className="space-y-6">
+        <SearchBar onSearch={handleSearch} />
+        
+        <ProposalList proposals={currentProposals} />
+        
+        {filteredProposals.length > itemsPerPage && (
+          <div className="mt-6 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        )}
+
+        {isModalOpen && (
+          <ProposalModal
+            onClose={() => setIsModalOpen(false)}
+            onSubmit={handleAddProposal}
+          />
+        )}
       </div>
-
-      {!isOnline && (
-        <div className="rounded-md bg-amber-50 p-4 mb-4 dark:bg-amber-900/30">
-          <p className="text-amber-800 dark:text-amber-200">
-            You're currently offline. Showing cached proposals.
-          </p>
-        </div>
-      )}
-
-      {proposals.length === 0 ? (
-        <div className="text-center p-8 border rounded-lg">
-          <p className="text-muted-foreground">No proposals found matching your criteria.</p>
-        </div>
-      ) : (
-        <ProposalList
-          proposals={proposals}
-          onProposalClick={handleProposalClick}
-          onViewDetails={handleViewDetails}
-        />
-      )}
-
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-      />
-
-      {selectedProposal && (
-        <ProposalModal
-          proposal={selectedProposal}
-          onClose={handleCloseDetails}
-        />
-      )}
-    </div>
+    </ProtectedPageLayout>
   );
-};
-
-export default ProposalsPage;
+}
