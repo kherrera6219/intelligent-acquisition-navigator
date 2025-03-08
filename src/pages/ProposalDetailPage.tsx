@@ -1,7 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
+import { Container } from '@/components/ui/universal/Container';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { useToast } from '@/hooks/use-toast';
 import { useOptimisticQuery } from '@/hooks/useOptimisticQuery';
 import ProposalDetailsLoading from '@/components/proposals/ProposalDetailsLoading';
@@ -13,7 +14,6 @@ const ProposalDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   
   // Handle navigation back to proposals list
   const handleBack = () => {
@@ -39,23 +39,37 @@ const ProposalDetailPage: React.FC = () => {
     }
   }, [error, toast]);
 
-  // Show loading state
-  if (isLoading) {
-    return <ProposalDetailsLoading />;
-  }
-
-  // Show error state
-  if (error || !proposal) {
-    return (
-      <ProposalDetailsError 
-        error={error instanceof Error ? error.message : "Failed to fetch proposal details"} 
-        handleBack={handleBack} 
-      />
-    );
-  }
-
-  // Show proposal details
-  return <ProposalDetails proposal={proposal} handleBack={handleBack} />;
+  return (
+    <main className="flex-grow">
+      <Container>
+        <div className="space-y-6 py-6">
+          <PageHeader
+            title="Proposal Details"
+            description="View and manage proposal information"
+            action={
+              <button 
+                onClick={handleBack}
+                className="text-sm text-primary hover:underline"
+              >
+                Back to Proposals
+              </button>
+            }
+          />
+          
+          {isLoading ? (
+            <ProposalDetailsLoading />
+          ) : error || !proposal ? (
+            <ProposalDetailsError 
+              error={error instanceof Error ? error.message : "Failed to fetch proposal details"} 
+              handleBack={handleBack} 
+            />
+          ) : (
+            <ProposalDetails proposal={proposal} handleBack={handleBack} />
+          )}
+        </div>
+      </Container>
+    </main>
+  );
 };
 
 export default ProposalDetailPage;
