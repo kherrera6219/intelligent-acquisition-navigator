@@ -23,7 +23,9 @@ import {
   NotFoundPage,
   ProposalDetailPage,
   KnowledgeBasePage,
-  ProfilePage
+  ProfilePage,
+  ApiDocsPage,
+  ComponentLibraryPage
 } from "./lazyComponents";
 
 export const routes: RouteObject[] = [
@@ -121,6 +123,16 @@ export const routes: RouteObject[] = [
   {
     path: "/acquisition/federal-acquisition",
     element: wrapWithLayout(FederalAcquisitionPage, true)
+  },
+  
+  // Developer Resources
+  {
+    path: "/api-docs",
+    element: wrapWithLayout(ApiDocsPage, false)
+  },
+  {
+    path: "/component-library",
+    element: wrapWithLayout(ComponentLibraryPage, false)
   },
   
   // Catch-all route for 404

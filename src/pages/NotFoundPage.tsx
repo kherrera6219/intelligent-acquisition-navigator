@@ -5,6 +5,7 @@ import { Container } from '@/components/ui/universal/Container';
 import { Link } from "react-router-dom";
 import { GlassCard } from '@/components/ui/universal/GlassCard';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { Home, Map, HelpCircle } from 'lucide-react';
 
 const NotFoundPage: React.FC = () => {
   return (
@@ -22,15 +23,35 @@ const NotFoundPage: React.FC = () => {
               <p className="text-lg sm:text-xl text-gray-400 mb-8">
                 The page you're looking for doesn't exist or has been moved
               </p>
-              <Link to="/" className="block">
-                <Button 
-                  variant="default" 
-                  size="lg"
-                  className="w-full sm:w-auto"
-                >
-                  Return Home
-                </Button>
-              </Link>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Link to="/" className="block">
+                  <Button 
+                    variant="default" 
+                    className="w-full flex items-center justify-center gap-2"
+                  >
+                    <Home className="h-4 w-4" />
+                    Return Home
+                  </Button>
+                </Link>
+                
+                <Link to="/sitemap" className="block">
+                  <Button 
+                    variant="outline" 
+                    className="w-full flex items-center justify-center gap-2"
+                  >
+                    <Map className="h-4 w-4" />
+                    View Sitemap
+                  </Button>
+                </Link>
+              </div>
+              
+              <div className="pt-4">
+                <Link to="/help" className="text-primary hover:text-primary/80 flex items-center justify-center gap-2">
+                  <HelpCircle className="h-4 w-4" />
+                  <span>Need help?</span>
+                </Link>
+              </div>
             </GlassCard>
           </div>
         </div>

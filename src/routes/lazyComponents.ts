@@ -1,3 +1,4 @@
+
 import { lazy } from "react";
 import React from "react";
 
@@ -132,5 +133,18 @@ export const ProfilePage = lazy(() =>
 export const NotFoundPage = lazy(() => 
   import("@/pages/NotFoundPage").catch(() => ({
     default: () => React.createElement("div", null, "Error loading 404 page")
+  }))
+);
+
+// Developer Resources
+export const ApiDocsPage = lazy(() => 
+  import("@/pages/developer/ApiDocsPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading API docs page")
+  }))
+);
+
+export const ComponentLibraryPage = lazy(() => 
+  import("@/pages/developer/ComponentLibraryPage").catch(() => ({
+    default: () => React.createElement("div", null, "Error loading component library page")
   }))
 );

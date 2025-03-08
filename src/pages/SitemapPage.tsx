@@ -2,6 +2,8 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/universal/Container";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { 
   ArrowRight, Shield, BarChart2, Home, FileText, Map, FileCheck, 
   Users, Building2, Scale, BookOpen, 
@@ -50,7 +52,7 @@ const Sitemap = () => {
     ],
     proposals: [
       { path: "/proposals", label: "Proposals", icon: FileText },
-      { path: "/proposals/:id", label: "Proposal Details", icon: Layers },
+      { path: "/proposals/1", label: "Proposal Details Example", icon: Layers },
     ],
     acquisition: [
       { path: "/acquisition/document-control", label: "Document Control", icon: FileText },
@@ -70,42 +72,39 @@ const Sitemap = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Page Title */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gradient mb-4">Application Map</h1>
-          <p className="text-lg text-gray-400">
-            Complete overview of ProcurityIQ's structure and navigation
-          </p>
-        </div>
+    <main className="flex-grow">
+      <Container>
+        <div className="space-y-6 py-6">
+          <PageHeader
+            title="Application Map"
+            description="Complete overview of ProcurityIQ's structure and navigation"
+          />
 
-        {/* Sitemap Sections */}
-        <div className="space-y-8">
-          <SitemapSection title="Main Navigation" links={sections.main} />
-          <SitemapSection title="Authentication & User" links={sections.auth} />
-          <SitemapSection title="Core Features" links={sections.core} />
-          <SitemapSection title="Proposal Management" links={sections.proposals} />
-          <SitemapSection title="Acquisition Management" links={sections.acquisition} />
-          <SitemapSection title="System & Support" links={sections.system} />
-          <SitemapSection title="Developer Resources" links={sections.development} />
-        </div>
+          <div className="space-y-8">
+            <SitemapSection title="Main Navigation" links={sections.main} />
+            <SitemapSection title="Authentication & User" links={sections.auth} />
+            <SitemapSection title="Core Features" links={sections.core} />
+            <SitemapSection title="Proposal Management" links={sections.proposals} />
+            <SitemapSection title="Acquisition Management" links={sections.acquisition} />
+            <SitemapSection title="System & Support" links={sections.system} />
+            <SitemapSection title="Developer Resources" links={sections.development} />
+          </div>
 
-        {/* Quick Actions */}
-        <div className="mt-12 flex justify-center gap-4">
-          <Button 
-            className="enterprise-gradient"
-            size="lg"
-            asChild
-          >
-            <Link to="/dashboard">
-              Go to Dashboard
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <div className="mt-12 flex justify-center gap-4">
+            <Button 
+              className="enterprise-gradient"
+              size="lg"
+              asChild
+            >
+              <Link to="/dashboard">
+                Go to Dashboard
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
-      </div>
-    </div>
+      </Container>
+    </main>
   );
 };
 
