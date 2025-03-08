@@ -1,6 +1,7 @@
 
 import { MobileNavItem } from "./MobileNavItem";
 import { NavItem } from "./types";
+import { motion } from "framer-motion";
 
 interface MobileNavigationProps {
   isMobileMenuOpen: boolean;
@@ -28,11 +29,15 @@ export const MobileNavigation = ({
   if (!isMobileMenuOpen) return null;
   
   return (
-    <nav 
-      className="md:hidden py-3 px-2 border-t border-gray-800 max-h-[calc(100vh-6rem)] overflow-y-auto"
+    <motion.nav 
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.3 }}
+      className="md:hidden py-3 px-2 border-t border-gray-800 max-h-[calc(100vh-6rem)] overflow-y-auto bg-gray-900/95 backdrop-blur-sm"
       aria-label="Mobile navigation"
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-1">
         {navItems.map((item) => (
           isAuthorized(item.minRole) && (
             <MobileNavItem
@@ -48,6 +53,6 @@ export const MobileNavigation = ({
           )
         ))}
       </div>
-    </nav>
+    </motion.nav>
   );
 };

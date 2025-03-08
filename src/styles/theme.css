@@ -126,6 +126,41 @@
   }
 }
 
+/* Header Styles */
+@layer components {
+  .header-transparent {
+    @apply bg-transparent;
+  }
+
+  .header-solid {
+    @apply bg-gray-900;
+  }
+
+  .header-scrolled {
+    @apply bg-gray-900/90 backdrop-blur-md shadow-md;
+  }
+
+  .nav-link {
+    @apply text-gray-300 hover:text-white transition-colors;
+  }
+
+  .nav-link-active {
+    @apply text-white font-medium;
+  }
+
+  .nav-dropdown {
+    @apply relative;
+  }
+
+  .dropdown-menu {
+    @apply absolute z-50 min-w-[200px] rounded-md border border-gray-700 bg-gray-900/95 shadow-lg backdrop-blur-sm;
+  }
+
+  .dropdown-item {
+    @apply flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors;
+  }
+}
+
 /* High Contrast Mode Optimizations */
 @media (prefers-contrast: high) {
   :root {

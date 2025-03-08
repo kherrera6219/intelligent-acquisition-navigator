@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavItem } from "@/components/layout/navigation/types";
+import { motion } from "framer-motion";
 
 interface DesktopNavItemProps {
   item: NavItem;
@@ -21,6 +22,9 @@ export const DesktopNavItem = ({
   isActiveRoute,
   renderDropdownItems
 }: DesktopNavItemProps) => {
+  const isActive = isActiveRoute(item.href, item.items);
+  const isOpen = openDropdown === item.label;
+
   if (item.items) {
     return (
       <div className="relative">
@@ -28,24 +32,33 @@ export const DesktopNavItem = ({
           onClick={() => toggleDropdown(item.label)}
           className={cn(
             "text-gray-300 hover:text-white whitespace-nowrap transition-all duration-200",
-            "px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-gray-800/70",
-            (openDropdown === item.label || isActiveRoute(item.href, item.items)) && 
-            "text-white bg-gray-800/80"
+            "px-3 py-1.5 rounded-md flex items-center gap-2 hover:bg-gray-800/70",
+            (isOpen || isActive) && "text-white bg-gray-800/80"
           )}
-          aria-expanded={openDropdown === item.label}
+          aria-expanded={isOpen}
           aria-haspopup="true"
         >
           <item.icon className="h-4 w-4" />
           <span>{item.label}</span>
-          {openDropdown === item.label ? (
+          {isOpen ? (
             <ChevronUp className="h-3 w-3 ml-1 opacity-70" />
           ) : (
             <ChevronDown className="h-3 w-3 ml-1 opacity-70" />
           )}
         </button>
         
-        {/* Dropdown Menu */}
-        {item.items && openDropdown === item.label && renderDropdownItems(item.items)}
+        {/* Dropdown Menu with Animation */}
+        {item.items && isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-0 mt-1 z-50 min-w-[200px] overflow-hidden rounded-md border border-gray-700 bg-gray-900/95 shadow-lg backdrop-blur-sm"
+          >
+            {renderDropdownItems(item.items)}
+          </motion.div>
+        )}
       </div>
     );
   }
@@ -55,7 +68,7 @@ export const DesktopNavItem = ({
       to={item.href} 
       className={cn(
         "text-gray-300 hover:text-white whitespace-nowrap transition-all duration-200",
-        "px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-gray-800/70",
+        "px-3 py-1.5 rounded-md flex items-center gap-2 hover:bg-gray-800/70",
         currentPath === item.href && "text-white bg-gray-800/80"
       )}
     >

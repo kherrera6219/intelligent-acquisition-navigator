@@ -2,7 +2,8 @@
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NavItem } from "@/components/layout/navigation/types";
+import { NavItem } from "./types";
+import { motion } from "framer-motion";
 
 interface MobileNavItemProps {
   item: NavItem;
@@ -23,66 +24,75 @@ export const MobileNavItem = ({
   setIsMobileMenuOpen,
   setOpenDropdown
 }: MobileNavItemProps) => {
+  const isOpen = openDropdown === item.label;
+  const isActive = isActiveRoute(item.href, item.items);
+
+  const handleLinkClick = () => {
+    setIsMobileMenuOpen(false);
+    setOpenDropdown(null);
+  };
+
   if (item.items) {
     return (
-      <div className="mb-1">
+      <div className="w-full">
         <button
           onClick={() => toggleDropdown(item.label)}
           className={cn(
-            "text-gray-300 hover:text-white transition-all duration-200",
-            "px-4 py-2.5 rounded-lg flex items-center justify-between w-full",
-            (openDropdown === item.label || isActiveRoute(item.href, item.items)) && 
-            "text-white bg-gray-800/70"
+            "w-full text-left text-gray-300 hover:text-white px-4 py-2.5 my-0.5 rounded-md",
+            "flex items-center justify-between transition-colors", 
+            (isOpen || isActive) && "bg-gray-800 text-white"
           )}
-          aria-expanded={openDropdown === item.label}
-          aria-haspopup="true"
+          aria-expanded={isOpen}
         >
           <div className="flex items-center gap-3">
             <item.icon className="h-5 w-5" />
             <span className="font-medium">{item.label}</span>
           </div>
-          {openDropdown === item.label ? (
-            <ChevronUp className="h-4 w-4 opacity-70" />
+          {isOpen ? (
+            <ChevronUp className="h-4 w-4 mr-1" />
           ) : (
-            <ChevronDown className="h-4 w-4 opacity-70" />
+            <ChevronDown className="h-4 w-4 mr-1" />
           )}
         </button>
         
-        {openDropdown === item.label && (
-          <div className="pl-6 mt-1 space-y-0.5 border-l border-gray-700 ml-4">
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="pl-4 ml-4 border-l border-gray-700"
+          >
             {item.items.map((subItem) => (
-              <Link 
-                key={subItem.href}
-                to={subItem.href} 
+              <Link
+                key={subItem.label}
+                to={subItem.href}
                 className={cn(
-                  "text-gray-400 hover:text-white transition-all duration-200",
-                  "px-4 py-2 rounded-lg flex items-center gap-3 block",
-                  currentPath === subItem.href && "text-white bg-gray-800/50"
+                  "flex items-center gap-3 text-gray-300 hover:text-white hover:bg-gray-800/60",
+                  "px-4 py-2.5 my-0.5 rounded-md block w-full transition-colors",
+                  currentPath === subItem.href && "bg-gray-800 text-white"
                 )}
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setOpenDropdown(null);
-                }}
+                onClick={handleLinkClick}
               >
                 <subItem.icon className="h-4 w-4" />
                 <span>{subItem.label}</span>
               </Link>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
     );
   }
 
   return (
-    <Link 
-      to={item.href} 
+    <Link
+      to={item.href}
       className={cn(
-        "text-gray-300 hover:text-white transition-all duration-200",
-        "px-4 py-2.5 rounded-lg flex items-center gap-3 mb-1",
-        currentPath === item.href && "text-white bg-gray-800/70"
+        "flex items-center gap-3 text-gray-300 hover:text-white px-4 py-2.5 my-0.5 rounded-md",
+        "transition-colors",
+        currentPath === item.href && "bg-gray-800 text-white"
       )}
-      onClick={() => setIsMobileMenuOpen(false)}
+      onClick={handleLinkClick}
     >
       <item.icon className="h-5 w-5" />
       <span className="font-medium">{item.label}</span>
