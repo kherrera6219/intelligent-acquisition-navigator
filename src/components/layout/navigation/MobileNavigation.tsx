@@ -28,8 +28,11 @@ export const MobileNavigation = ({
   if (!isMobileMenuOpen) return null;
   
   return (
-    <nav className="md:hidden py-4 border-t border-gray-800">
-      <div className="flex flex-col gap-2">
+    <nav 
+      className="md:hidden py-3 px-2 border-t border-gray-800 max-h-[calc(100vh-6rem)] overflow-y-auto"
+      aria-label="Mobile navigation"
+    >
+      <div className="flex flex-col">
         {navItems.map((item) => (
           isAuthorized(item.minRole) && (
             <MobileNavItem

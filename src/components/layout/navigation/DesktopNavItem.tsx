@@ -27,16 +27,20 @@ export const DesktopNavItem = ({
         <button
           onClick={() => toggleDropdown(item.label)}
           className={cn(
-            "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-            (openDropdown === item.label || isActiveRoute(item.href, item.items)) && "text-white bg-white/5"
+            "text-gray-300 hover:text-white whitespace-nowrap transition-all duration-200",
+            "px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-gray-800/70",
+            (openDropdown === item.label || isActiveRoute(item.href, item.items)) && 
+            "text-white bg-gray-800/80"
           )}
+          aria-expanded={openDropdown === item.label}
+          aria-haspopup="true"
         >
           <item.icon className="h-4 w-4" />
-          {item.label}
+          <span>{item.label}</span>
           {openDropdown === item.label ? (
-            <ChevronUp className="h-3 w-3 ml-1" />
+            <ChevronUp className="h-3 w-3 ml-1 opacity-70" />
           ) : (
-            <ChevronDown className="h-3 w-3 ml-1" />
+            <ChevronDown className="h-3 w-3 ml-1 opacity-70" />
           )}
         </button>
         
@@ -50,12 +54,13 @@ export const DesktopNavItem = ({
     <Link 
       to={item.href} 
       className={cn(
-        "text-gray-400 hover:text-white whitespace-nowrap transition-colors duration-200 hover:bg-white/5 px-3 py-1 rounded-full flex items-center gap-2",
-        currentPath === item.href && "text-white bg-white/5"
+        "text-gray-300 hover:text-white whitespace-nowrap transition-all duration-200",
+        "px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-gray-800/70",
+        currentPath === item.href && "text-white bg-gray-800/80"
       )}
     >
       <item.icon className="h-4 w-4" />
-      {item.label}
+      <span>{item.label}</span>
     </Link>
   );
 };
