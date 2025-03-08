@@ -94,8 +94,9 @@ export const useAuthActions = () => {
   const resetPassword = async (email: string) => {
     try {
       setIsProcessing(true);
+      // Fix: Update redirectTo to use the correct path for password reset confirmation
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}/auth/reset-password/confirm`,
       });
       
       if (error) throw error;

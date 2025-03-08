@@ -19,7 +19,7 @@ export default function PasswordResetPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check if token exists in URL
+  // Check if token exists in URL parameters
   const token = searchParams.get('token');
   
   useEffect(() => {
