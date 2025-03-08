@@ -1,124 +1,87 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Base Element Styles */
+* {
+  @apply border-border selection:bg-white/10 selection:text-white;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-@layer base {
-  :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --radius: 0.75rem;
-  }
+body {
+  @apply bg-background text-foreground antialiased min-h-screen w-full;
+  font-family: 'Inter', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
 
-  * {
-    @apply border-border selection:bg-white/10 selection:text-white;
-    -webkit-tap-highlight-color: transparent;
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold tracking-tight text-balance m-0;
+}
+
+h1 {
+  @apply text-3xl md:text-4xl;
+}
+
+h2 {
+  @apply text-2xl md:text-3xl;
+}
+
+h3 {
+  @apply text-xl md:text-2xl;
+}
+
+h4 {
+  @apply text-lg md:text-xl;
+}
+
+p {
+  @apply leading-relaxed text-balance;
+}
+
+/* Focus Styles */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary ring-2 ring-primary/50;
+}
+
+/* Responsive Components */
+@media (max-width: 640px) {
+  .responsive-container {
+    @apply px-4;
   }
   
-  body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
-    overscroll-behavior-y: none;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
-  }
-
-  /* Mobile-first responsive design */
-  @media (max-width: 640px) {
-    .container {
-      @apply px-4;
-    }
-
-    h1 {
-      @apply text-2xl;
-    }
-
-    h2 {
-      @apply text-xl;
-    }
-
-    .glass-card {
-      @apply p-4;
-    }
-  }
-
-  /* Tablet and up */
-  @media (min-width: 641px) {
-    .container {
-      @apply px-6;
-    }
-
-    h1 {
-      @apply text-3xl;
-    }
-
-    h2 {
-      @apply text-2xl;
-    }
-
-    .glass-card {
-      @apply p-6;
-    }
-  }
-
-  /* Desktop */
-  @media (min-width: 1024px) {
-    .container {
-      @apply px-8;
-    }
-
-    h1 {
-      @apply text-4xl;
-    }
-
-    h2 {
-      @apply text-3xl;
-    }
-
-    .glass-card {
-      @apply p-8;
-    }
-  }
-
-  /* Touch device optimizations */
-  @media (hover: none) {
-    button, a {
-      @apply active:scale-95 transition-transform;
-    }
-
-    .hover-scale {
-      @apply active:scale-95;
-    }
-
-    .tap-highlight-transparent {
-      -webkit-tap-highlight-color: transparent;
-    }
+  .responsive-card {
+    @apply p-4;
   }
 }
 
-@layer utilities {
-  .touch-pan-y {
-    touch-action: pan-y;
+@media (min-width: 641px) and (max-width: 1024px) {
+  .responsive-container {
+    @apply px-6;
+  }
+  
+  .responsive-card {
+    @apply p-5;
+  }
+}
+
+@media (min-width: 1025px) {
+  .responsive-container {
+    @apply px-8;
+  }
+  
+  .responsive-card {
+    @apply p-6;
+  }
+}
+
+/* Touch Optimizations */
+@media (hover: none) {
+  .touch-button {
+    @apply active:scale-95 transition-transform;
   }
 }
