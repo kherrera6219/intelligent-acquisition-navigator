@@ -11,6 +11,7 @@ import { SecuritySettings } from '@/components/settings/SecuritySettings';
 import { SessionSettings } from '@/components/settings/SessionSettings';
 import { SettingsNav } from '@/components/settings/SettingsNav';
 import { SessionExpiryManager } from '@/components/settings/SessionExpiryManager';
+import { GlassCard } from '@/components/ui/universal/GlassCard';
 
 type SettingsTab = 'profile' | 'security' | 'notifications' | 'display' | 'session';
 
@@ -42,48 +43,52 @@ const SettingsPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             <div className="md:col-span-3">
-              <SettingsNav
-                tabs={settingsTabs}
-                activeTab={activeTab}
-                onChange={handleTabChange}
-              />
+              <GlassCard className="p-4">
+                <SettingsNav
+                  tabs={settingsTabs}
+                  activeTab={activeTab}
+                  onChange={handleTabChange}
+                />
+              </GlassCard>
             </div>
             
             <div className="md:col-span-9">
-              <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                <TabsList className="mb-4 flex md:hidden">
-                  {settingsTabs.map((tab) => (
-                    <TabsTrigger 
-                      key={tab.value} 
-                      value={tab.value}
-                      className="flex items-center gap-1.5"
-                    >
-                      {tab.icon}
-                      <span className="hidden sm:inline">{tab.label}</span>
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-                
-                <TabsContent value="profile">
-                  <ProfileSettings />
-                </TabsContent>
-                
-                <TabsContent value="security">
-                  <SecuritySettings />
-                </TabsContent>
-                
-                <TabsContent value="notifications">
-                  <NotificationSettings />
-                </TabsContent>
-                
-                <TabsContent value="display">
-                  <DisplaySettings />
-                </TabsContent>
-                
-                <TabsContent value="session">
-                  <SessionSettings />
-                </TabsContent>
-              </Tabs>
+              <GlassCard className="p-6">
+                <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                  <TabsList className="mb-4 flex md:hidden">
+                    {settingsTabs.map((tab) => (
+                      <TabsTrigger 
+                        key={tab.value} 
+                        value={tab.value}
+                        className="flex items-center gap-1.5"
+                      >
+                        {tab.icon}
+                        <span className="hidden sm:inline">{tab.label}</span>
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  
+                  <TabsContent value="profile">
+                    <ProfileSettings />
+                  </TabsContent>
+                  
+                  <TabsContent value="security">
+                    <SecuritySettings />
+                  </TabsContent>
+                  
+                  <TabsContent value="notifications">
+                    <NotificationSettings />
+                  </TabsContent>
+                  
+                  <TabsContent value="display">
+                    <DisplaySettings />
+                  </TabsContent>
+                  
+                  <TabsContent value="session">
+                    <SessionSettings />
+                  </TabsContent>
+                </Tabs>
+              </GlassCard>
             </div>
           </div>
         </div>

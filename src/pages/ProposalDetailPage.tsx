@@ -3,6 +3,8 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container } from '@/components/ui/universal/Container';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useOptimisticQuery } from '@/hooks/useOptimisticQuery';
 import ProposalDetailsLoading from '@/components/proposals/ProposalDetailsLoading';
@@ -47,13 +49,20 @@ const ProposalDetailPage: React.FC = () => {
             title="Proposal Details"
             description="View and manage proposal information"
             action={
-              <button 
+              <Button 
+                variant="outline"
+                size="sm"
                 onClick={handleBack}
-                className="text-sm text-primary hover:underline"
+                className="gap-2"
               >
+                <ArrowLeft className="h-4 w-4" />
                 Back to Proposals
-              </button>
+              </Button>
             }
+            breadcrumbs={[
+              { label: "Proposals", href: "/proposals" },
+              { label: "Details", href: `/proposals/${id}` }
+            ]}
           />
           
           {isLoading ? (
