@@ -9,7 +9,8 @@ import { MobileNavigation } from "./navigation/MobileNavigation";
 import { navItems } from "@/components/layout/navigation/navItems";
 import { useAuthState } from "@/hooks/useAuthState";
 import { useAuth } from "@/hooks/useAuth";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
   className?: string;
@@ -22,6 +23,7 @@ export const Header = ({ className }: HeaderProps) => {
   const { pathname } = useLocation();
   const { isAuthenticated, userRole, isAuthorized } = useAuthState();
   const { signOut } = useAuth();
+  const [hasNotifications, setHasNotifications] = useState(true);
 
   // Close the dropdown on location change or outside click
   useEffect(() => {
@@ -108,10 +110,21 @@ export const Header = ({ className }: HeaderProps) => {
               />
             </div>
             
-            <button className="relative p-1.5 text-gray-300 hover:text-white rounded-full hover:bg-gray-800/70 transition-colors">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative p-1.5 text-gray-300 hover:text-white rounded-full hover:bg-gray-800/70 transition-colors"
+              aria-label="Notifications"
+            >
               <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-            </button>
+              {hasNotifications && (
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"
+                />
+              )}
+            </Button>
             
             <HeaderRight 
               userRole={userRole}
@@ -122,18 +135,32 @@ export const Header = ({ className }: HeaderProps) => {
           </div>
           
           <div className="flex items-center md:hidden space-x-3">
-            <button className="relative p-1.5 text-gray-300 hover:text-white rounded-full hover:bg-gray-800/70 transition-colors">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative p-1.5 text-gray-300 hover:text-white rounded-full hover:bg-gray-800/70 transition-colors"
+              aria-label="Notifications"
+            >
               <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-            </button>
+              {hasNotifications && (
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"
+                />
+              )}
+            </Button>
             
-            <button 
+            <Button 
+              variant="ghost"
+              size="icon"
               className="p-1.5 text-gray-300 hover:text-white rounded-full hover:bg-gray-800/70 transition-colors"
               onClick={toggleMobileMenu}
               aria-expanded={isMobileMenuOpen}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
