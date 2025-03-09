@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Menu, X, Search, Bell, User } from "lucide-react";
+import { Menu, X, Search, Bell } from "lucide-react";
 import { HeaderLeft } from "./navigation/HeaderLeft";
 import { HeaderRight } from "./navigation/HeaderRight";
 import { DesktopNavigation } from "./navigation/DesktopNavigation";
@@ -111,11 +111,6 @@ export const Header = ({ className }: HeaderProps) => {
             <button className="relative p-1.5 text-gray-300 hover:text-white rounded-full hover:bg-gray-800/70 transition-colors">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-            </button>
-            
-            <button className="hidden sm:flex items-center space-x-2 px-3 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800/70 rounded-md transition-colors">
-              <User className="h-4 w-4" />
-              <span>Profile</span>
             </button>
             
             <HeaderRight 
