@@ -3,11 +3,13 @@ import React, { Suspense } from 'react';
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Container } from "@/components/ui/universal/Container";
 import { Header } from "./Header";
+import { UniversalInternalHeader } from "./UniversalInternalHeader";
 import { Footer } from "./Footer";
 import { LoadingOverlay } from "@/components/ui/universal/LoadingOverlay";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
+import { useAuthState } from "@/hooks/useAuthState";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -24,6 +26,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   containerSize = "full",
   className
 }) => {
+  const { isAuthenticated } = useAuthState();
+  const isInternalPage = isAuthenticated && showHeader;
+
   return (
     <ThemeProvider>
       <PageErrorBoundary>
@@ -36,13 +41,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             Skip to main content
           </a>
 
-          {showHeader && <Header />}
+          {showHeader && (
+            isInternalPage ? <UniversalInternalHeader /> : <Header />
+          )}
+          
           <VerificationBanner />
           
           <main 
             id="main-content" 
             role="main" 
-            className={`flex-1 w-full py-4 sm:py-6 ${className || ''}`}
+            className={`flex-1 w-full py-4 sm:py-6 ${isInternalPage ? 'mt-16' : ''} ${className || ''}`}
             tabIndex={-1}
           >
             <Container size={containerSize} className="h-full">
