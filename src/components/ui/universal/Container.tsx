@@ -8,6 +8,7 @@ interface ContainerProps {
   as?: keyof JSX.IntrinsicElements;
   size?: "sm" | "md" | "lg" | "xl" | "full";
   padding?: boolean;
+  variant?: "default" | "internal" | "fluid";
 }
 
 const sizeClasses = {
@@ -18,18 +19,26 @@ const sizeClasses = {
   full: "w-full max-w-none"
 } as const;
 
+const variantClasses = {
+  default: "",
+  internal: "rounded-lg overflow-hidden bg-gray-900/30 backdrop-blur-sm border border-gray-800/50",
+  fluid: "px-0 sm:px-0 md:px-0 lg:px-0"
+} as const;
+
 export const Container: React.FC<ContainerProps> = ({
   children,
   className,
   as: Component = "div",
   size = "lg",
   padding = true,
+  variant = "default",
 }) => (
   <Component
     className={cn(
       "mx-auto w-full h-full",
       padding && "px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8",
       sizeClasses[size],
+      variantClasses[variant],
       className
     )}
   >

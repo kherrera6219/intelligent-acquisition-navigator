@@ -35,6 +35,32 @@
   @apply flex-1 w-full max-w-[100vw] overflow-x-hidden;
 }
 
+/* Special Layout Types */
+.dashboard-layout .page-content {
+  @apply grid gap-6 sm:grid-cols-2 xl:grid-cols-3;
+}
+
+.acquisition-layout .section-header {
+  @apply border-b border-gray-800 mb-6 pb-4;
+}
+
+/* Internal app page layouts */
+.internal-app-layout {
+  @apply border-t border-gray-800 pt-6 mt-6;
+}
+
+.internal-link {
+  @apply text-blue-500 hover:text-blue-400 transition-colors;
+}
+
+.internal-card {
+  @apply bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700/50 p-4 hover:border-gray-600/60 transition-colors;
+}
+
+.internal-section {
+  @apply border-b border-gray-800 pb-6 mb-6;
+}
+
 /* Responsive layout adjustments */
 @media (max-width: 639px) {
   .responsive-padding {

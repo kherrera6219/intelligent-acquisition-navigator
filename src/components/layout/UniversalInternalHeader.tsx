@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { HeaderLogo } from './navigation/HeaderLogo';
 import { HeaderNavigation } from './navigation/HeaderNavigation';
 import { HeaderSearch } from './navigation/HeaderSearch';
@@ -8,12 +8,24 @@ import { HeaderNotifications } from './navigation/HeaderNotifications';
 import { HeaderProfile } from './navigation/HeaderProfile';
 import { MobileMenuButton } from './navigation/MobileMenuButton';
 import { MobileMenu } from './navigation/MobileMenu';
+import { GlobeLock, Flag, FileText, BarChart2, BookOpen, ClipboardCheck } from 'lucide-react';
 
 export const UniversalInternalHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>('');
   const menuRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
+
+  // Main sections for quick access
+  const mainSections = [
+    { id: 'federal', label: 'Federal', path: '/federal-acquisition', icon: GlobeLock },
+    { id: 'texas', label: 'Texas', path: '/texas-acquisition', icon: Flag },
+    { id: 'solicitation', label: 'Solicitation', path: '/solicitation-review', icon: FileText },
+    { id: 'analytics', label: 'Analytics', path: '/analytics', icon: BarChart2 },
+    { id: 'knowledge', label: 'Knowledge', path: '/knowledge-base', icon: BookOpen },
+    { id: 'documents', label: 'Documents', path: '/document-control', icon: ClipboardCheck },
+  ];
 
   // Add scroll effect
   useEffect(() => {
@@ -24,6 +36,12 @@ export const UniversalInternalHeader: React.FC = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Set active section based on current path
+  useEffect(() => {
+    const section = mainSections.find(section => pathname.includes(section.id) || pathname === section.path);
+    setActiveSection(section?.id || '');
+  }, [pathname]);
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -60,6 +78,24 @@ export const UniversalInternalHeader: React.FC = () => {
           <div className="flex items-center">
             <HeaderLogo />
             <HeaderNavigation />
+          </div>
+
+          {/* Quick Access Tabs for Main Sections (visible on medium+ screens) */}
+          <div className="hidden md:flex items-center space-x-1 absolute left-1/2 transform -translate-x-1/2">
+            {mainSections.map((section) => (
+              <Link
+                key={section.id}
+                to={section.path}
+                className={`px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-1.5 ${
+                  activeSection === section.id
+                    ? 'text-white bg-gray-800'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                }`}
+              >
+                <section.icon className="h-4 w-4" />
+                <span>{section.label}</span>
+              </Link>
+            ))}
           </div>
 
           {/* Search, Notifications and Profile */}

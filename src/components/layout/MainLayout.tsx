@@ -10,6 +10,7 @@ import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { useAuthState } from "@/hooks/useAuthState";
+import { useLocation } from "react-router-dom";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -27,12 +28,28 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   className
 }) => {
   const { isAuthenticated } = useAuthState();
+  const { pathname } = useLocation();
+  
   const isInternalPage = isAuthenticated && showHeader;
+  const isDashboardPage = pathname === "/dashboard";
+  
+  // Special classes for specific pages
+  const getPageSpecificClasses = () => {
+    if (isDashboardPage) {
+      return "dashboard-layout";
+    }
+    
+    if (pathname.includes("acquisition")) {
+      return "acquisition-layout";
+    }
+    
+    return "";
+  };
 
   return (
     <ThemeProvider>
       <PageErrorBoundary>
-        <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-gray-900 to-black overflow-x-hidden">
+        <div className={`min-h-screen w-full flex flex-col bg-gradient-to-b from-gray-900 to-black overflow-x-hidden ${getPageSpecificClasses()}`}>
           {/* Accessible Skip Link */}
           <a 
             href="#main-content" 

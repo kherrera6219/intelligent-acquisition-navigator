@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
@@ -15,6 +16,7 @@ export const HeaderNavigation: React.FC = () => {
     { label: 'Main Dashboard', href: '/dashboard', icon: Home },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag },
+    { label: 'Solicitation Review', href: '/solicitation-review', icon: FileText },
     { label: 'Sitemap', href: '/sitemap', icon: Map },
     { label: 'Help', href: '/help', icon: HelpCircle }
   ];

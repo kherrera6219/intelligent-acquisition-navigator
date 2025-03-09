@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/universal/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { AlertCircle } from 'lucide-react';
+import { Link } from "react-router-dom";
 
 interface ProtectedPageLayoutProps {
   children: React.ReactNode;
@@ -54,6 +55,22 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
         ) : (
           children
         )}
+        
+        {/* Common footer navigation for internal pages */}
+        <div className="mt-12 pt-6 border-t border-gray-800">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="text-sm text-gray-400">
+              Need to navigate to another section?
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/dashboard" className="text-sm text-gray-300 hover:text-white">Dashboard</Link>
+              <Link to="/knowledge-base" className="text-sm text-gray-300 hover:text-white">Knowledge Base</Link>
+              <Link to="/federal-acquisition" className="text-sm text-gray-300 hover:text-white">Federal Acquisition</Link>
+              <Link to="/texas-acquisition" className="text-sm text-gray-300 hover:text-white">Texas Acquisition</Link>
+              <Link to="/solicitation-review" className="text-sm text-gray-300 hover:text-white">Solicitation Review</Link>
+            </div>
+          </div>
+        </div>
       </div>
     </Container>
   );
