@@ -1,4 +1,3 @@
-
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { TexasChatContainer } from '@/components/texas/TexasChatContainer';
 import { useMutation } from "@tanstack/react-query";
@@ -6,20 +5,13 @@ import { useState } from "react";
 import { AIChatMessage } from "@/types/chat";
 import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
 import { useToast } from "@/hooks/use-toast";
+import { getAzureOpenAICompletion } from "@/services/texas/azureOpenAIService";
 
 interface ChatState {
   messages: TexasMessage[];
   conversationId: string;
   addMessage: (message: Omit<TexasMessage, "id" | "timestamp">) => Promise<boolean>;
   isLoading: boolean;
-}
-
-interface AzureOpenAIResponse {
-  choices: Array<{
-    message: {
-      content: string;
-    };
-  }>;
 }
 
 const TexasAcquisitionPage = () => {
@@ -55,23 +47,7 @@ const TexasAcquisitionPage = () => {
 
   const azureOpenAIMutation = useMutation({
     mutationFn: async (messages: AIChatMessage[]) => {
-      const response = await fetch('https://knowledgedev2443059259.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-08-01-preview', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': 'eMT009c9UQ0DDyYHGyeyotsbX9SyCo1ic3lqeor4h6n1RzMVBhIRJQQJ99AKACLArgHXJ3w3AAAAACOGz4uN'
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o',
-          messages,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Azure OpenAI API returned ${response.status}`);
-      }
-
-      return response.json() as Promise<AzureOpenAIResponse>;
+      return await getAzureOpenAICompletion(messages);
     },
     onSuccess: async (data) => {
       setError(undefined);
