@@ -1,224 +1,214 @@
-
-import { useState } from "react";
-import { SoftwareBuildItem, KnowledgeBaseItemType } from "@/types/knowledge-base";
-import { KnowledgeBaseHeader } from "@/components/knowledge-base/KnowledgeBaseHeader";
-import { KnowledgeBaseFilters } from "@/components/knowledge-base/KnowledgeBaseFilters";
-import { KnowledgeBaseTabs } from "@/components/knowledge-base/KnowledgeBaseTabs";
-import { SoftwareBuildCard } from "@/components/knowledge-base/SoftwareBuildCard";
-import { BuildDetailModal } from "@/components/knowledge-base/BuildDetailModal";
-
-// Sample data - in a real implementation, this would come from a database
-const mockSoftwareBuilds: SoftwareBuildItem[] = [
-  {
-    id: "build-001",
-    title: "ProcurityIQ Core Platform",
-    description: "The main application platform for procurement management including contract tracking, vendor management, and proposal evaluation.",
-    type: "software",
-    createdAt: "2023-10-15T10:00:00Z",
-    updatedAt: "2024-01-20T14:30:00Z",
-    owner: "dev-team",
-    tags: ["react", "typescript", "core-system", "frontend"],
-    version: "2.3.1",
-    buildDate: "2024-01-20T14:30:00Z",
-    buildNumber: "245",
-    repository: "https://github.com/procurity/platform-core",
-    dependencies: ["React 18.3.1", "TypeScript 5.0", "TailwindCSS", "Supabase"],
-    status: "production",
-    platform: ["Web", "Desktop"],
-    requirements: [
-      "Node.js 16.x or higher",
-      "npm 7.x or higher",
-      "Modern browser with ES6 support"
-    ]
-  },
-  {
-    id: "build-002",
-    title: "ProcurityIQ API Service",
-    description: "Backend API service handling data processing, authentication, and third-party integrations for the ProcurityIQ platform.",
-    type: "software",
-    createdAt: "2023-09-05T08:20:00Z",
-    updatedAt: "2024-02-10T11:15:00Z",
-    owner: "backend-team",
-    tags: ["nodejs", "express", "api", "backend", "database"],
-    version: "1.5.0",
-    buildDate: "2024-02-10T11:15:00Z",
-    buildNumber: "137",
-    repository: "https://github.com/procurity/api-service",
-    dependencies: ["Node.js 18", "Express", "Supabase", "JWT", "OpenAI SDK"],
-    status: "production",
-    platform: ["Server", "Docker"],
-    requirements: [
-      "Node.js 18.x",
-      "PostgreSQL 14+",
-      "Redis for caching",
-      "Docker 20.10+ (for containerized deployment)"
-    ]
-  },
-  {
-    id: "build-003",
-    title: "ProcurityIQ Mobile App",
-    description: "Mobile application for accessing procurement data, receiving notifications, and approving requests on the go.",
-    type: "software",
-    createdAt: "2023-11-20T09:45:00Z",
-    updatedAt: "2024-03-05T16:20:00Z",
-    owner: "mobile-team",
-    tags: ["react-native", "mobile", "ios", "android"],
-    version: "1.2.0",
-    buildDate: "2024-03-05T16:20:00Z",
-    buildNumber: "48",
-    repository: "https://github.com/procurity/mobile-app",
-    dependencies: ["React Native 0.72", "Redux", "React Navigation", "Axios"],
-    status: "staging",
-    platform: ["iOS", "Android"],
-    requirements: [
-      "iOS 14+ / Android 10+",
-      "React Native CLI or Expo",
-      "Xcode 13+ (for iOS builds)",
-      "Android Studio (for Android builds)"
-    ]
-  },
-  {
-    id: "build-004",
-    title: "ProcurityIQ Analytics Engine",
-    description: "Data analytics and reporting service for procurement metrics, trend analysis, and business intelligence.",
-    type: "software",
-    createdAt: "2023-08-12T14:10:00Z",
-    updatedAt: "2024-02-28T13:40:00Z",
-    owner: "data-team",
-    tags: ["python", "data", "analytics", "machine-learning"],
-    version: "0.9.5",
-    buildDate: "2024-02-28T13:40:00Z",
-    buildNumber: "72",
-    repository: "https://github.com/procurity/analytics-engine",
-    dependencies: ["Python 3.9", "Pandas", "NumPy", "scikit-learn", "FastAPI"],
-    status: "development",
-    platform: ["Server", "Docker", "AWS Lambda"],
-    requirements: [
-      "Python 3.9+",
-      "PostgreSQL database connection",
-      "Min 4GB RAM for processing",
-      "Docker for containerization"
-    ]
-  },
-  {
-    id: "build-005",
-    title: "ProcurityIQ Document Parser",
-    description: "Service for parsing, extracting, and analyzing information from procurement documents including contracts and RFPs.",
-    type: "software",
-    createdAt: "2023-07-25T11:30:00Z",
-    updatedAt: "2023-12-15T09:50:00Z",
-    owner: "ml-team",
-    tags: ["python", "nlp", "document-processing", "machine-learning"],
-    version: "1.1.2",
-    buildDate: "2023-12-15T09:50:00Z",
-    buildNumber: "94",
-    repository: "https://github.com/procurity/document-parser",
-    dependencies: ["Python 3.8", "spaCy", "PyPDF2", "TensorFlow", "Transformers"],
-    status: "archived",
-    platform: ["Server"],
-    requirements: [
-      "Python 3.8+",
-      "GPU recommended for NLP processing",
-      "Min 8GB RAM",
-      "Document storage service connection"
-    ]
-  }
-];
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { useState } from 'react';
+import { Card } from '@/components/ui/universal/Card';
+import { Grid } from '@/components/ui/universal/Grid';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Search, Book, FileText, Video, Bookmark, Star, Clock, Filter } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
 
 const KnowledgeBasePage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<KnowledgeBaseItemType>("software");
-  const [filters, setFilters] = useState<{
-    types: KnowledgeBaseItemType[];
-    tags: string[];
-  }>({ types: [], tags: [] });
-  
-  const [selectedBuild, setSelectedBuild] = useState<SoftwareBuildItem | null>(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
+  const { toast } = useToast();
 
-  // Extract all unique tags from the builds for the filters
-  const allTags = Array.from(
-    new Set(mockSoftwareBuilds.flatMap(build => build.tags))
-  );
-
-  // Filter builds based on search query and filters
-  const filteredBuilds = mockSoftwareBuilds.filter(build => {
-    // Filter by search query
-    const matchesSearch = searchQuery === "" || 
-      build.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      build.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      build.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    // Filter by selected types (if any)
-    const matchesType = filters.types.length === 0 || 
-      filters.types.includes(build.type);
-    
-    // Filter by selected tags (if any)
-    const matchesTags = filters.tags.length === 0 || 
-      filters.tags.some(tag => build.tags.includes(tag));
-    
-    return matchesSearch && matchesType && matchesTags;
-  });
-
-  const handleBuildClick = (build: SoftwareBuildItem) => {
-    setSelectedBuild(build);
-    setIsDetailModalOpen(true);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Search initiated",
+      description: `Searching for: ${searchQuery}`,
+    });
   };
 
-  const handleCreateNew = () => {
-    // In a real application, this would open a form to create a new knowledge base item
-    console.log("Create new knowledge base item");
+  const handleResourceClick = (resourceName: string) => {
+    toast({
+      title: "Resource selected",
+      description: `Opening ${resourceName}`,
+    });
+  };
+
+  const resources = [
+    { id: 1, title: 'Federal Acquisition Regulation (FAR)', type: 'document', category: 'federal', lastUpdated: '2023-10-15' },
+    { id: 2, title: 'Texas Government Code Chapter 2155', type: 'document', category: 'texas', lastUpdated: '2023-09-22' },
+    { id: 3, title: 'Proposal Writing Best Practices', type: 'guide', category: 'guides', lastUpdated: '2023-11-05' },
+    { id: 4, title: 'Contract Negotiation Strategies', type: 'video', category: 'training', lastUpdated: '2023-08-30' },
+    { id: 5, title: 'Small Business Set-Aside Programs', type: 'document', category: 'federal', lastUpdated: '2023-07-12' },
+    { id: 6, title: 'Texas DIR Cooperative Contracts', type: 'guide', category: 'texas', lastUpdated: '2023-10-28' },
+    { id: 7, title: 'Cost and Price Analysis Techniques', type: 'video', category: 'training', lastUpdated: '2023-09-14' },
+    { id: 8, title: 'DFARS Compliance Checklist', type: 'document', category: 'federal', lastUpdated: '2023-11-10' },
+  ];
+
+  const filteredResources = resources.filter(resource => 
+    (activeTab === 'all' || resource.category === activeTab) &&
+    (searchQuery === '' || resource.title.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const getResourceIcon = (type: string) => {
+    switch (type) {
+      case 'document': return <FileText className="h-5 w-5 text-blue-400" />;
+      case 'guide': return <Book className="h-5 w-5 text-green-400" />;
+      case 'video': return <Video className="h-5 w-5 text-red-400" />;
+      default: return <FileText className="h-5 w-5 text-gray-400" />;
+    }
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <KnowledgeBaseHeader 
-        onSearch={setSearchQuery}
-        onCreateNew={handleCreateNew}
-      />
-      
-      <KnowledgeBaseTabs
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      >
-        <KnowledgeBaseFilters 
-          onFilterChange={setFilters}
-          availableTags={allTags}
-        />
-        
-        {activeTab === "software" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredBuilds.map(build => (
-              <SoftwareBuildCard 
-                key={build.id}
-                build={build}
-                onClick={handleBuildClick}
-              />
+    <ProtectedPageLayout
+      title="Knowledge Base"
+      description="Access and manage acquisition knowledge resources"
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Knowledge Base', href: '/knowledge-base' }
+      ]}
+      action={
+        <Button variant="outline" size="sm" onClick={() => toast({ title: "Coming Soon", description: "Bookmark management will be available soon" })}>
+          <Bookmark className="h-4 w-4 mr-2" />
+          My Bookmarks
+        </Button>
+      }
+    >
+      <div className="min-h-[calc(100vh-200px)]">
+        <Card className="mb-6">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <Input
+              type="text"
+              placeholder="Search knowledge base..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1"
+            />
+            <Button type="submit">
+              <Search className="h-4 w-4 mr-2" />
+              Search
+            </Button>
+          </form>
+        </Card>
+
+        <div className="mb-6">
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+            <div className="flex items-center justify-between mb-4">
+              <TabsList>
+                <TabsTrigger value="all">All Resources</TabsTrigger>
+                <TabsTrigger value="federal">Federal</TabsTrigger>
+                <TabsTrigger value="texas">Texas</TabsTrigger>
+                <TabsTrigger value="guides">Guides</TabsTrigger>
+                <TabsTrigger value="training">Training</TabsTrigger>
+              </TabsList>
+              
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+              </Button>
+            </div>
+
+            <TabsContent value="all" className="mt-0">
+              <Grid columns={3} gap="md">
+                {filteredResources.map(resource => (
+                  <Card 
+                    key={resource.id} 
+                    className="flex flex-col hover:border-primary/50 transition-colors cursor-pointer"
+                    onClick={() => handleResourceClick(resource.title)}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center">
+                        {getResourceIcon(resource.type)}
+                        <span className="ml-2 text-sm text-gray-400 capitalize">{resource.type}</span>
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => {
+                        e.stopPropagation();
+                        toast({ title: "Bookmarked", description: `${resource.title} added to bookmarks` });
+                      }}>
+                        <Bookmark className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <h3 className="text-lg font-medium mb-2">{resource.title}</h3>
+                    <div className="mt-auto pt-4 flex items-center justify-between text-sm text-gray-400">
+                      <div className="flex items-center">
+                        <Clock className="h-4 w-4 mr-1" />
+                        <span>Updated {resource.lastUpdated}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 mr-1 text-amber-400" />
+                        <span>4.8</span>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </Grid>
+              
+              {filteredResources.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-400">No resources found matching your criteria.</p>
+                  <Button 
+                    variant="link" 
+                    onClick={() => {
+                      setSearchQuery('');
+                      setActiveTab('all');
+                    }}
+                  >
+                    Clear filters
+                  </Button>
+                </div>
+              )}
+            </TabsContent>
+
+            {['federal', 'texas', 'guides', 'training'].map(tab => (
+              <TabsContent key={tab} value={tab} className="mt-0">
+                <Grid columns={3} gap="md">
+                  {filteredResources.map(resource => (
+                    <Card 
+                      key={resource.id} 
+                      className="flex flex-col hover:border-primary/50 transition-colors cursor-pointer"
+                      onClick={() => handleResourceClick(resource.title)}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center">
+                          {getResourceIcon(resource.type)}
+                          <span className="ml-2 text-sm text-gray-400 capitalize">{resource.type}</span>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => {
+                          e.stopPropagation();
+                          toast({ title: "Bookmarked", description: `${resource.title} added to bookmarks` });
+                        }}>
+                          <Bookmark className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <h3 className="text-lg font-medium mb-2">{resource.title}</h3>
+                      <div className="mt-auto pt-4 flex items-center justify-between text-sm text-gray-400">
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 mr-1" />
+                          <span>Updated {resource.lastUpdated}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 mr-1 text-amber-400" />
+                          <span>4.8</span>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </Grid>
+                
+                {filteredResources.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400">No resources found matching your criteria.</p>
+                    <Button 
+                      variant="link" 
+                      onClick={() => {
+                        setSearchQuery('');
+                        setActiveTab('all');
+                      }}
+                    >
+                      Clear filters
+                    </Button>
+                  </div>
+                )}
+              </TabsContent>
             ))}
-            
-            {filteredBuilds.length === 0 && (
-              <div className="col-span-full text-center py-12">
-                <p className="text-gray-400">No matching software builds found.</p>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {activeTab !== "software" && (
-          <div className="text-center py-12">
-            <p className="text-gray-400">
-              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} section is under development.
-            </p>
-          </div>
-        )}
-      </KnowledgeBaseTabs>
-      
-      <BuildDetailModal
-        build={selectedBuild}
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-      />
-    </div>
+          </Tabs>
+        </div>
+      </div>
+    </ProtectedPageLayout>
   );
 };
 

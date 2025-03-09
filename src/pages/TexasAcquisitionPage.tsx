@@ -1,32 +1,50 @@
 
-import { useState } from "react";
-import { useAzureAI } from "@/hooks/useAzureAI";
-import { TexasAgencyType, TexasRole, TexasMessage, ResponseLevel, RESPONSE_LEVEL_LABELS } from "@/types/texas-chat";
-import { AIChatMessage } from "@/types/chat";
-import { useTexasConversation } from "@/hooks/useTexasConversation";
-import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
-import { useToast } from "@/hooks/use-toast";
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { TexasChatContainer } from '@/components/texas/TexasChatContainer';
+import { useAzureAI } from "@/hooks/useAzureAI";
+import { useState } from "react";
+import { Message, AIChatMessage } from "@/types/chat";
+import { useToast } from "@/hooks/use-toast";
 
-const TexasAcquisition = () => {
+interface ChatState {
+  messages: Message[];
+  conversationId: string;
+  addMessage: (message: Omit<Message, "id" | "timestamp">) => Promise<boolean>;
+  isLoading: boolean;
+}
+
+const TexasAcquisitionPage = () => {
   const [input, setInput] = useState("");
-  const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
-  const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACTING_OFFICER");
-  const [selectedResponseLevel, setSelectedResponseLevel] = useState<ResponseLevel>("STANDARD");
-  const { messages, conversationId, addMessage } = useTexasConversation();
+  const [error, setError] = useState<string>();
+  const [chatState, setChatState] = useState<ChatState>({
+    messages: [],
+    conversationId: "texas-" + Date.now(),
+    addMessage: async (message) => {
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        timestamp: new Date(),
+        ...message
+      };
+      
+      setChatState(prev => ({
+        ...prev,
+        messages: [...prev.messages, newMessage]
+      }));
+      
+      return true;
+    },
+    isLoading: false
+  });
+
   const { toast } = useToast();
 
-  const aiMutation = useAzureAI(messages, {
+  const aiMutation = useAzureAI(chatState.messages, {
     onSuccess: async (data) => {
-      const success = await addMessage(
-        {
-          role: "assistant",
-          content: data.choices[0].message.content,
-          agencyType: selectedAgency,
-          userRole: selectedRole,
-          responseLevel: selectedResponseLevel
-        }
-      );
+      setError(undefined);
+      const success = await chatState.addMessage({
+        role: "assistant",
+        content: data.choices[0].message.content
+      });
       
       if (!success) {
         toast({
@@ -38,6 +56,7 @@ const TexasAcquisition = () => {
     },
     onError: (error) => {
       console.error('AI Error:', error);
+      setError("Failed to get AI response. Please try again.");
       toast({
         title: "Error",
         description: "Failed to get AI response. Please try again.",
@@ -48,19 +67,16 @@ const TexasAcquisition = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || aiMutation.isPending || !conversationId) return;
+    if (!input.trim() || aiMutation.isPending || !chatState.conversationId) return;
 
-    const success = await addMessage(
-      {
-        role: "user",
-        content: input.trim(),
-        agencyType: selectedAgency,
-        userRole: selectedRole,
-        responseLevel: selectedResponseLevel
-      }
-    );
+    setError(undefined);
+    const success = await chatState.addMessage({
+      role: "user",
+      content: input.trim()
+    });
     
     if (!success) {
+      setError("Failed to save your message. Please try again.");
       toast({
         title: "Error saving message",
         description: "Your message couldn't be saved. Please try again.",
@@ -72,14 +88,13 @@ const TexasAcquisition = () => {
     const currentInput = input;
     setInput("");
     
-    const aiContext = `You are a procurement expert for the ${selectedAgency.replace('_', ' ').toLowerCase()} sector, 
-                      specifically assisting a ${selectedRole.replace('_', ' ').toLowerCase()}. 
-                      Please provide a ${selectedResponseLevel.toLowerCase()} response that is appropriate for a ${RESPONSE_LEVEL_LABELS[selectedResponseLevel].toLowerCase()}.
-                      Provide guidance specific to Texas state regulations and requirements.`;
+    const aiContext = `You are a Texas acquisition expert, specializing in Texas state procurement regulations and processes. 
+                      Provide clear, accurate guidance specific to Texas acquisition regulations and requirements. 
+                      Focus on compliance, best practices, and practical implementation.`;
     
     const aiMessages: AIChatMessage[] = [
       { role: "system", content: aiContext },
-      ...messages.map(msg => ({ 
+      ...chatState.messages.map(msg => ({ 
         role: msg.role as "user" | "assistant", 
         content: msg.content 
       })),
@@ -92,7 +107,7 @@ const TexasAcquisition = () => {
   return (
     <ProtectedPageLayout
       title="Texas Acquisition"
-      description="Get AI assistance for Texas state acquisition regulations and requirements."
+      description="Get AI assistance for Texas state acquisition regulations and requirements"
       breadcrumbs={[
         { label: 'Dashboard', href: '/dashboard' },
         { label: 'Texas Acquisition', href: '/texas-acquisition' }
@@ -100,22 +115,17 @@ const TexasAcquisition = () => {
     >
       <div className="min-h-[calc(100vh-200px)]">
         <TexasChatContainer
-          conversationId={conversationId || ""}
-          messages={messages}
-          isLoading={aiMutation.isPending}
+          conversationId={chatState.conversationId}
+          messages={chatState.messages}
+          isLoading={chatState.isLoading || aiMutation.isPending}
           input={input}
-          selectedAgency={selectedAgency}
-          selectedRole={selectedRole}
-          selectedResponseLevel={selectedResponseLevel}
           onInputChange={setInput}
           onSubmit={handleSubmit}
-          onAgencyChange={setSelectedAgency}
-          onRoleChange={setSelectedRole}
-          onResponseLevelChange={setSelectedResponseLevel}
+          error={error}
         />
       </div>
     </ProtectedPageLayout>
   );
 };
 
-export default TexasAcquisition;
+export default TexasAcquisitionPage;

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Container } from '@/components/ui/universal/Container';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -12,6 +11,7 @@ import { SessionSettings } from '@/components/settings/SessionSettings';
 import { SettingsNav } from '@/components/settings/SettingsNav';
 import { SessionExpiryManager } from '@/components/settings/SessionExpiryManager';
 import { GlassCard } from '@/components/ui/universal/GlassCard';
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 
 type SettingsTab = 'profile' | 'security' | 'notifications' | 'display' | 'session';
 
@@ -31,69 +31,78 @@ const SettingsPage: React.FC = () => {
   ];
   
   return (
-    <main className="flex-grow">
-      <Container>
-        <div className="space-y-6 py-6">
-          <PageHeader
-            title="Settings"
-            description="Manage your account settings and preferences"
-          />
-          
-          <SessionExpiryManager />
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            <div className="md:col-span-3">
-              <GlassCard className="p-4">
-                <SettingsNav
-                  tabs={settingsTabs}
-                  activeTab={activeTab}
-                  onChange={handleTabChange}
-                />
-              </GlassCard>
-            </div>
+    <ProtectedPageLayout
+      title="Settings"
+      description="Configure application settings and preferences"
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Settings', href: '/settings' }
+      ]}
+    >
+      <div className="min-h-[calc(100vh-200px)]">
+        <Container>
+          <div className="space-y-6 py-6">
+            <PageHeader
+              title="Settings"
+              description="Manage your account settings and preferences"
+            />
             
-            <div className="md:col-span-9">
-              <GlassCard className="p-6">
-                <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                  <TabsList className="mb-4 flex md:hidden">
-                    {settingsTabs.map((tab) => (
-                      <TabsTrigger 
-                        key={tab.value} 
-                        value={tab.value}
-                        className="flex items-center gap-1.5"
-                      >
-                        {tab.icon}
-                        <span className="hidden sm:inline">{tab.label}</span>
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                  
-                  <TabsContent value="profile">
-                    <ProfileSettings />
-                  </TabsContent>
-                  
-                  <TabsContent value="security">
-                    <SecuritySettings />
-                  </TabsContent>
-                  
-                  <TabsContent value="notifications">
-                    <NotificationSettings />
-                  </TabsContent>
-                  
-                  <TabsContent value="display">
-                    <DisplaySettings />
-                  </TabsContent>
-                  
-                  <TabsContent value="session">
-                    <SessionSettings />
-                  </TabsContent>
-                </Tabs>
-              </GlassCard>
+            <SessionExpiryManager />
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              <div className="md:col-span-3">
+                <GlassCard className="p-4">
+                  <SettingsNav
+                    tabs={settingsTabs}
+                    activeTab={activeTab}
+                    onChange={handleTabChange}
+                  />
+                </GlassCard>
+              </div>
+              
+              <div className="md:col-span-9">
+                <GlassCard className="p-6">
+                  <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                    <TabsList className="mb-4 flex md:hidden">
+                      {settingsTabs.map((tab) => (
+                        <TabsTrigger 
+                          key={tab.value} 
+                          value={tab.value}
+                          className="flex items-center gap-1.5"
+                        >
+                          {tab.icon}
+                          <span className="hidden sm:inline">{tab.label}</span>
+                        </TabsTrigger>
+                      ))}
+                    </TabsList>
+                    
+                    <TabsContent value="profile">
+                      <ProfileSettings />
+                    </TabsContent>
+                    
+                    <TabsContent value="security">
+                      <SecuritySettings />
+                    </TabsContent>
+                    
+                    <TabsContent value="notifications">
+                      <NotificationSettings />
+                    </TabsContent>
+                    
+                    <TabsContent value="display">
+                      <DisplaySettings />
+                    </TabsContent>
+                    
+                    <TabsContent value="session">
+                      <SessionSettings />
+                    </TabsContent>
+                  </Tabs>
+                </GlassCard>
+              </div>
             </div>
           </div>
-        </div>
-      </Container>
-    </main>
+        </Container>
+      </div>
+    </ProtectedPageLayout>
   );
 };
 

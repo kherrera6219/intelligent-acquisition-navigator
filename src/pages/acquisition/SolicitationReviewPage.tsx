@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Filter, Clock, FileText } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 
 interface Solicitation {
   id: string;
@@ -135,7 +136,7 @@ const KnowledgeGraphBackground = () => {
   );
 };
 
-const SolicitationReview = () => {
+const SolicitationReviewPage = () => {
   const { toast } = useToast();
   const [solicitations, setSolicitations] = useState<Solicitation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -211,7 +212,7 @@ const SolicitationReview = () => {
       <KnowledgeGraphBackground />
       <PageHeader
         title="Solicitation Review"
-        description="Review and approve procurement solicitations"
+        description="Review and analyze solicitation documents"
       />
 
       <Card className="mb-6 sm:mb-8">
@@ -282,4 +283,4 @@ const SolicitationReview = () => {
   );
 };
 
-export default SolicitationReview;
+export default SolicitationReviewPage;
