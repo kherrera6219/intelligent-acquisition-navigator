@@ -26,12 +26,6 @@ describe('TexasChatContainer', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the chat title and description', () => {
-    render(<TexasChatContainer {...defaultProps} />);
-    
-    expect(screen.getByText(/Texas Acquisition Assistant/i)).toBeInTheDocument();
-  });
-
   it('renders settings button', () => {
     render(<TexasChatContainer {...defaultProps} />);
     

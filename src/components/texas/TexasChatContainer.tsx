@@ -3,12 +3,11 @@ import { TexasAgencyType, TexasMessage, TexasRole, ResponseLevel } from "@/types
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { TexasChatSettings } from "@/components/texas/TexasChatSettings";
-import { GradientText } from "@/components/ui/universal/GradientText";
 import { Card } from "@/components/ui/universal/Card";
 import { ChatHistory } from "@/components/chat/ChatHistory";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { History, Settings } from "lucide-react";
+import { History } from "lucide-react";
 
 interface TexasChatContainerProps {
   conversationId: string;
@@ -62,12 +61,6 @@ export const TexasChatContainer = ({
   return (
     <div className="container-module w-full max-w-6xl mx-auto py-4 px-3 sm:px-4 md:px-0">
       <div className="flex flex-col gap-4">
-        <div className="text-center mb-2">
-          <GradientText className="text-2xl sm:text-3xl font-bold">
-            Texas Acquisition Assistant
-          </GradientText>
-        </div>
-
         <div className="flex gap-4">
           {showHistory && (
             <div className="w-60 flex-shrink-0">
