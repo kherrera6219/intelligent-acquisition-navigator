@@ -115,24 +115,48 @@ export const routes: RouteObject[] = [
   
   // Acquisition Management
   {
-    path: "/acquisition/document-control",
-    element: wrapWithLayout(DocumentControlPage, true)
-  },
-  {
-    path: "/acquisition/market-research",
-    element: wrapWithLayout(MarketResearchPage, true)
-  },
-  {
-    path: "/acquisition/solicitation-review",
+    path: "/solicitation-review",
     element: wrapWithLayout(SolicitationReviewPage, true)
   },
   {
-    path: "/acquisition/texas",
+    path: "/document-control",
+    element: wrapWithLayout(DocumentControlPage, true)
+  },
+  {
+    path: "/market-research",
+    element: wrapWithLayout(MarketResearchPage, true)
+  },
+  {
+    path: "/texas-acquisition",
     element: wrapWithLayout(TexasAcquisitionPage, true)
   },
   {
-    path: "/acquisition/federal",
+    path: "/federal-acquisition",
     element: wrapWithLayout(FederalAcquisitionPage, true)
+  },
+  
+  // Compliance Review
+  {
+    path: "/compliance",
+    element: wrapWithLayout(DashboardPage, true) // TODO: Create dedicated compliance page
+  },
+  
+  // Legal Review
+  {
+    path: "/legal-review",
+    element: wrapWithLayout(DashboardPage, true) // TODO: Create dedicated legal review page
+  },
+  
+  // Small Business
+  {
+    path: "/small-business",
+    element: wrapWithLayout(DashboardPage, true) // TODO: Create dedicated small business page
+  },
+  
+  // Quality Assurance
+  {
+    path: "/quality-assurance",
+    element: wrapWithLayout(DashboardPage, true) // TODO: Create dedicated quality assurance page
   },
   
   // Developer Resources

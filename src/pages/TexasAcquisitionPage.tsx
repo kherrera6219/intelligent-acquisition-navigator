@@ -6,6 +6,7 @@ import { AIChatMessage } from "@/types/chat";
 import { useTexasConversation } from "@/hooks/useTexasConversation";
 import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
 import { useToast } from "@/hooks/use-toast";
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 
 const TexasAcquisition = () => {
   const [input, setInput] = useState("");
@@ -89,8 +90,15 @@ const TexasAcquisition = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      <div className="container mx-auto px-4 py-8">
+    <ProtectedPageLayout
+      title="Texas Acquisition"
+      description="Get AI assistance for Texas state acquisition regulations and requirements."
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Texas Acquisition', href: '/texas-acquisition' }
+      ]}
+    >
+      <div className="min-h-[calc(100vh-200px)]">
         <TexasChatContainer
           conversationId={conversationId || ""}
           messages={messages}
@@ -106,7 +114,7 @@ const TexasAcquisition = () => {
           onResponseLevelChange={setSelectedResponseLevel}
         />
       </div>
-    </div>
+    </ProtectedPageLayout>
   );
 };
 

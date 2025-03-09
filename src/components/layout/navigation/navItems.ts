@@ -15,7 +15,9 @@ import {
   ClipboardCheck,
   AlertCircle,
   BookOpen,
-  Flag
+  Flag,
+  FileSearch,
+  Building
 } from 'lucide-react';
 import { NavItem } from './types';
 
@@ -80,6 +82,20 @@ export const navItems: NavItem[] = [
     icon: ClipboardCheck,
     label: 'Quality Assurance',
     href: '/quality-assurance',
+    minRole: 'authenticated',
+    items: undefined
+  },
+  {
+    icon: FileSearch,
+    label: 'Document Control',
+    href: '/document-control',
+    minRole: 'authenticated',
+    items: undefined
+  },
+  {
+    icon: Building,
+    label: 'Market Research',
+    href: '/market-research',
     minRole: 'authenticated',
     items: undefined
   },
