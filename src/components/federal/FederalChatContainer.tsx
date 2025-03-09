@@ -7,6 +7,8 @@ import { GradientText } from "@/components/ui/universal/GradientText";
 import { Card } from "@/components/ui/universal/Card";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { FileUpload } from "@/components/chat/FileUpload";
+import { useState } from "react";
 
 interface FederalChatContainerProps {
   conversationId: string;
@@ -18,6 +20,7 @@ interface FederalChatContainerProps {
   onDocumentCreation: () => void;
   onCodeCreation: () => void;
   onRunEnvironment: () => void;
+  onFileUpload?: (files: FileList) => void;
   error?: string;
 }
 
@@ -31,8 +34,15 @@ export const FederalChatContainer = ({
   onDocumentCreation,
   onCodeCreation,
   onRunEnvironment,
+  onFileUpload,
   error
 }: FederalChatContainerProps) => {
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
+  
+  const toggleVoice = () => {
+    setIsVoiceActive(!isVoiceActive);
+  };
+
   return (
     <div className="container-module-lg py-8">
       <div className="flex flex-col gap-8">
@@ -86,6 +96,9 @@ export const FederalChatContainer = ({
             isLoading={isLoading}
             onInputChange={onInputChange}
             onSubmit={onSubmit}
+            onFileUpload={onFileUpload}
+            isVoiceActive={isVoiceActive}
+            onVoiceToggle={toggleVoice}
             className="animate-in fade-in-50"
           />
         </Card>

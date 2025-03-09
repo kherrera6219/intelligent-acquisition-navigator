@@ -1,10 +1,11 @@
 
 import { useState } from "react";
-import { useAzureAI } from "@/hooks/useAzureAI";
+import { useMutation } from "@tanstack/react-query";
 import { Message, AIChatMessage } from "@/types/chat";
 import { FederalChatContainer } from "@/components/federal/FederalChatContainer";
 import { useToast } from "@/hooks/use-toast";
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { getFederalAzureOpenAICompletion } from "@/services/federal/federalAzureOpenAIService";
 
 interface ChatState {
   messages: Message[];
@@ -38,7 +39,10 @@ const FederalAcquisition = () => {
   
   const { toast } = useToast();
 
-  const aiMutation = useAzureAI(chatState.messages, {
+  const aiMutation = useMutation({
+    mutationFn: async (messages: AIChatMessage[]) => {
+      return await getFederalAzureOpenAICompletion(messages);
+    },
     onSuccess: async (data) => {
       setError(undefined);
       const success = await chatState.addMessage({
@@ -123,6 +127,23 @@ const FederalAcquisition = () => {
       title: "Environment",
       description: "Starting environment...",
     });
+  };
+
+  const handleFileUpload = async (files: FileList) => {
+    // Logic to handle the uploaded file
+    if (files.length > 0) {
+      const file = files[0];
+      console.log("File uploaded:", file.name);
+      
+      // Add a user message indicating file upload
+      await chatState.addMessage({
+        role: "user",
+        content: `I've uploaded a file: ${file.name}`
+      });
+      
+      // In a real implementation, you would upload the file to a storage service
+      // and then process it with the AI
+    }
   };
 
   return (
