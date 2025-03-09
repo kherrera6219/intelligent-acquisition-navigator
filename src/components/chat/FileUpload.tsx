@@ -6,15 +6,15 @@ import { Upload } from "lucide-react";
 interface FileUploadProps {
   onFileUpload: (files: FileList) => void;
   className?: string;
-  conversationId?: string; // Added this prop to match usage in ChatPage.tsx
-  onUploadComplete?: (documentId: any) => void; // Added to match usage in ChatPage.tsx
+  conversationId?: string;
+  onUploadComplete?: (documentId: any) => void;
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({ 
   onFileUpload, 
   className,
-  conversationId, // Add the prop here
-  onUploadComplete // Add the prop here
+  conversationId,
+  onUploadComplete 
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 

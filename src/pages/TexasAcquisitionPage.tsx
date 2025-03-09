@@ -1,7 +1,7 @@
 
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { TexasChatContainer } from '@/components/texas/TexasChatContainer';
-import { useAzureAI } from "@/hooks/useAzureAI";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { AIChatMessage } from "@/types/chat";
 import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
@@ -12,6 +12,14 @@ interface ChatState {
   conversationId: string;
   addMessage: (message: Omit<TexasMessage, "id" | "timestamp">) => Promise<boolean>;
   isLoading: boolean;
+}
+
+interface AzureOpenAIResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
 }
 
 const TexasAcquisitionPage = () => {
@@ -45,7 +53,26 @@ const TexasAcquisitionPage = () => {
 
   const { toast } = useToast();
 
-  const aiMutation = useAzureAI(chatState.messages, {
+  const azureOpenAIMutation = useMutation({
+    mutationFn: async (messages: AIChatMessage[]) => {
+      const response = await fetch('https://knowledgedev2443059259.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-08-01-preview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': 'eMT009c9UQ0DDyYHGyeyotsbX9SyCo1ic3lqeor4h6n1RzMVBhIRJQQJ99AKACLArgHXJ3w3AAAAACOGz4uN'
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Azure OpenAI API returned ${response.status}`);
+      }
+
+      return response.json() as Promise<AzureOpenAIResponse>;
+    },
     onSuccess: async (data) => {
       setError(undefined);
       const success = await chatState.addMessage({
@@ -64,7 +91,7 @@ const TexasAcquisitionPage = () => {
       }
     },
     onError: (error) => {
-      console.error('AI Error:', error);
+      console.error('Azure OpenAI Error:', error);
       setError("Failed to get AI response. Please try again.");
       toast({
         title: "Error",
@@ -76,7 +103,7 @@ const TexasAcquisitionPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || aiMutation.isPending || !chatState.conversationId) return;
+    if (!input.trim() || azureOpenAIMutation.isPending || !chatState.conversationId) return;
 
     setError(undefined);
     const success = await chatState.addMessage({
@@ -112,7 +139,26 @@ const TexasAcquisitionPage = () => {
       { role: "user", content: currentInput.trim() }
     ];
 
-    aiMutation.mutate(aiMessages);
+    azureOpenAIMutation.mutate(aiMessages);
+  };
+
+  const handleFileUpload = async (files: FileList) => {
+    // Logic to handle the uploaded file
+    if (files.length > 0) {
+      const file = files[0];
+      console.log("File uploaded:", file.name);
+      
+      // Add a user message indicating file upload
+      await chatState.addMessage({
+        role: "user",
+        content: `I've uploaded a file: ${file.name}`,
+        agencyType: selectedAgency,
+        userRole: selectedRole
+      });
+      
+      // In a real implementation, you would upload the file to a storage service
+      // and then process it with the AI
+    }
   };
 
   return (
@@ -128,7 +174,7 @@ const TexasAcquisitionPage = () => {
         <TexasChatContainer
           conversationId={chatState.conversationId}
           messages={chatState.messages}
-          isLoading={chatState.isLoading || aiMutation.isPending}
+          isLoading={chatState.isLoading || azureOpenAIMutation.isPending}
           input={input}
           selectedAgency={selectedAgency}
           selectedRole={selectedRole}
