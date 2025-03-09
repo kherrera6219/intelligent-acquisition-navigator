@@ -3,9 +3,14 @@ import { TexasAgencyType, TexasMessage, TexasRole, ResponseLevel } from "@/types
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatToolbar } from "@/components/chat/ChatToolbar";
-import { TexasChatSelectors } from "@/components/texas/TexasChatSelectors"; // Updated import
+import { TexasChatSelectors } from "@/components/texas/TexasChatSelectors";
 import { GradientText } from "@/components/ui/universal/GradientText";
 import { Card } from "@/components/ui/universal/Card";
+import { ChatHistory } from "@/components/chat/ChatHistory";
+import { FileUpload } from "@/components/chat/FileUpload";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Mic, MicOff } from "lucide-react";
 
 interface TexasChatContainerProps {
   conversationId: string;
@@ -38,6 +43,24 @@ export const TexasChatContainer = ({
   onResponseLevelChange = () => {},
   error,
 }: TexasChatContainerProps) => {
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [showHistory, setShowHistory] = useState(true);
+
+  const toggleVoice = () => {
+    // In a real implementation, this would start/stop voice recording
+    setIsVoiceActive(!isVoiceActive);
+  };
+
+  const handleFileUpload = async (files: FileList) => {
+    // Logic to handle the uploaded file
+    if (files.length > 0) {
+      const file = files[0];
+      console.log("File uploaded:", file.name);
+      // Here you would typically upload the file to a storage service
+      // Then add a message to the chat indicating a file was uploaded
+    }
+  };
+
   return (
     <div className="container-module-lg py-8">
       <div className="flex flex-col gap-8">
@@ -50,37 +73,78 @@ export const TexasChatContainer = ({
           </p>
         </div>
 
-        <Card className="p-6 space-y-6">
-          <TexasChatSelectors
-            selectedRole={selectedRole}
-            selectedAgency={selectedAgency}
-            selectedDetailLevel={selectedResponseLevel}
-            onRoleChange={onRoleChange}
-            onAgencyChange={onAgencyChange}
-            onDetailLevelChange={onResponseLevelChange}
-          />
+        <div className="flex gap-4">
+          {showHistory && (
+            <div className="w-64 flex-shrink-0">
+              <Card className="p-4 h-[650px] overflow-y-auto">
+                <h3 className="text-lg font-medium mb-4">Chat History</h3>
+                <ChatHistory 
+                  conversations={[
+                    { id: conversationId, preview: "Current conversation", timestamp: new Date() },
+                    // In a real implementation, you would fetch previous conversations from backend
+                  ]} 
+                  currentConversationId={conversationId}
+                  onSelectConversation={(id) => console.log("Selected conversation:", id)}
+                />
+              </Card>
+            </div>
+          )}
+
+          <Card className="p-6 space-y-6 flex-grow">
+            <div className="flex justify-between items-center">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowHistory(!showHistory)}
+                className="mb-2"
+              >
+                {showHistory ? "Hide History" : "Show History"}
+              </Button>
+              
+              <Button
+                variant={isVoiceActive ? "destructive" : "outline"}
+                size="sm"
+                onClick={toggleVoice}
+                className="mb-2"
+              >
+                {isVoiceActive ? <MicOff className="h-4 w-4 mr-2" /> : <Mic className="h-4 w-4 mr-2" />}
+                {isVoiceActive ? "Stop Voice" : "Start Voice"}
+              </Button>
+            </div>
           
-          <ChatToolbar
-            onDocumentCreation={() => console.log('Document creation clicked')}
-            onCodeCreation={() => console.log('Code creation clicked')}
-            onRunEnvironment={() => console.log('Run environment clicked')}
-          />
-          
-          <div className="h-[600px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-4">
-            <ChatMessages
-              messages={messages}
-              isLoading={isLoading}
-              error={error}
+            <TexasChatSelectors
+              selectedRole={selectedRole}
+              selectedAgency={selectedAgency}
+              selectedDetailLevel={selectedResponseLevel}
+              onRoleChange={onRoleChange}
+              onAgencyChange={onAgencyChange}
+              onDetailLevelChange={onResponseLevelChange}
             />
-          </div>
-          
-          <ChatInput
-            input={input}
-            isLoading={isLoading}
-            onInputChange={onInputChange}
-            onSubmit={onSubmit}
-          />
-        </Card>
+            
+            <ChatToolbar
+              onDocumentCreation={() => console.log('Document creation clicked')}
+              onCodeCreation={() => console.log('Code creation clicked')}
+              onRunEnvironment={() => console.log('Run environment clicked')}
+            />
+            
+            <div className="h-[500px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-4">
+              <ChatMessages
+                messages={messages}
+                isLoading={isLoading}
+                error={error}
+              />
+            </div>
+            
+            <FileUpload onFileUpload={handleFileUpload} />
+            
+            <ChatInput
+              input={input}
+              isLoading={isLoading}
+              onInputChange={onInputChange}
+              onSubmit={onSubmit}
+            />
+          </Card>
+        </div>
       </div>
     </div>
   );

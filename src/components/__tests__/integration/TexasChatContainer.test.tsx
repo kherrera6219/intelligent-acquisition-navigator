@@ -98,4 +98,41 @@ describe('TexasChatContainer', () => {
     
     expect(screen.getByText('Test error message')).toBeInTheDocument();
   });
+
+  it('renders file upload button', () => {
+    render(<TexasChatContainer {...defaultProps} />);
+    
+    expect(screen.getByText('Upload Document')).toBeInTheDocument();
+  });
+
+  it('renders chat history section', () => {
+    render(<TexasChatContainer {...defaultProps} />);
+    
+    expect(screen.getByText('Chat History')).toBeInTheDocument();
+  });
+
+  it('renders voice control button', () => {
+    render(<TexasChatContainer {...defaultProps} />);
+    
+    expect(screen.getByText('Start Voice')).toBeInTheDocument();
+  });
+
+  it('toggles voice control button state when clicked', async () => {
+    render(<TexasChatContainer {...defaultProps} />);
+    
+    const voiceButton = screen.getByText('Start Voice');
+    await userEvent.click(voiceButton);
+    
+    expect(screen.getByText('Stop Voice')).toBeInTheDocument();
+  });
+
+  it('toggles chat history visibility when clicked', async () => {
+    render(<TexasChatContainer {...defaultProps} />);
+    
+    const historyToggleButton = screen.getByText('Hide History');
+    await userEvent.click(historyToggleButton);
+    
+    expect(screen.getByText('Show History')).toBeInTheDocument();
+    expect(screen.queryByText('Chat History')).not.toBeInTheDocument();
+  });
 });

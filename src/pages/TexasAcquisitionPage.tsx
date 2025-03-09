@@ -16,7 +16,7 @@ interface ChatState {
 
 const TexasAcquisitionPage = () => {
   const [input, setInput] = useState("");
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<string | undefined>();
   const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
   const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACTING_OFFICER");
   const [selectedResponseLevel, setSelectedResponseLevel] = useState<ResponseLevel>("STANDARD");
