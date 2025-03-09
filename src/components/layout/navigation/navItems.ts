@@ -17,7 +17,8 @@ import {
   BookOpen,
   Flag,
   FileSearch,
-  Building
+  Building,
+  GlobeLock
 } from 'lucide-react';
 import { NavItem } from './types';
 
@@ -106,6 +107,20 @@ export const navItems: NavItem[] = [
     minRole: 'manager',
     items: undefined
   },
+  {
+    icon: GlobeLock,
+    label: 'Federal Acquisition',
+    href: '/federal-acquisition',
+    minRole: null,
+    items: undefined
+  },
+  { 
+    icon: Flag, 
+    label: 'Texas Acquisition', 
+    href: '/texas-acquisition',
+    minRole: null,
+    items: undefined
+  },
   { 
     icon: Settings, 
     label: 'Settings', 
@@ -124,13 +139,6 @@ export const navItems: NavItem[] = [
     icon: Map,
     label: 'Sitemap',
     href: '/sitemap',
-    minRole: null,
-    items: undefined
-  },
-  { 
-    icon: Flag, 
-    label: 'Texas Acquisition', 
-    href: '/texas-acquisition',
     minRole: null,
     items: undefined
   }

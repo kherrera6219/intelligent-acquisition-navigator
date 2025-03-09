@@ -4,6 +4,7 @@ import { useAzureAI } from "@/hooks/useAzureAI";
 import { Message, AIChatMessage } from "@/types/chat";
 import { FederalChatContainer } from "@/components/federal/FederalChatContainer";
 import { useToast } from "@/hooks/use-toast";
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 
 interface ChatState {
   messages: Message[];
@@ -125,18 +126,29 @@ const FederalAcquisition = () => {
   };
 
   return (
-    <FederalChatContainer
-      conversationId={chatState.conversationId}
-      messages={chatState.messages}
-      isLoading={chatState.isLoading || aiMutation.isPending}
-      input={input}
-      onInputChange={setInput}
-      onSubmit={handleSubmit}
-      onDocumentCreation={handleDocumentCreation}
-      onCodeCreation={handleCodeCreation}
-      onRunEnvironment={handleRunEnvironment}
-      error={error}
-    />
+    <ProtectedPageLayout
+      title="Federal Acquisition"
+      description="Get AI assistance for federal acquisition regulations and requirements."
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Federal Acquisition', href: '/federal-acquisition' }
+      ]}
+    >
+      <div className="min-h-[calc(100vh-200px)]">
+        <FederalChatContainer
+          conversationId={chatState.conversationId}
+          messages={chatState.messages}
+          isLoading={chatState.isLoading || aiMutation.isPending}
+          input={input}
+          onInputChange={setInput}
+          onSubmit={handleSubmit}
+          onDocumentCreation={handleDocumentCreation}
+          onCodeCreation={handleCodeCreation}
+          onRunEnvironment={handleRunEnvironment}
+          error={error}
+        />
+      </div>
+    </ProtectedPageLayout>
   );
 };
 
