@@ -4,12 +4,13 @@ import { TexasChatContainer } from '@/components/texas/TexasChatContainer';
 import { useAzureAI } from "@/hooks/useAzureAI";
 import { useState } from "react";
 import { Message, AIChatMessage } from "@/types/chat";
+import { TexasMessage, TexasAgencyType } from "@/types/texas-chat";
 import { useToast } from "@/hooks/use-toast";
 
 interface ChatState {
-  messages: Message[];
+  messages: TexasMessage[];
   conversationId: string;
-  addMessage: (message: Omit<Message, "id" | "timestamp">) => Promise<boolean>;
+  addMessage: (message: Omit<TexasMessage, "id" | "timestamp">) => Promise<boolean>;
   isLoading: boolean;
 }
 
@@ -20,9 +21,11 @@ const TexasAcquisitionPage = () => {
     messages: [],
     conversationId: "texas-" + Date.now(),
     addMessage: async (message) => {
-      const newMessage: Message = {
+      const newMessage: TexasMessage = {
         id: Date.now().toString(),
         timestamp: new Date(),
+        agencyType: "TEXAS_GOVERNMENT" as TexasAgencyType,
+        userRole: message.userRole || "CONTRACTING_OFFICER",
         ...message
       };
       
@@ -43,7 +46,9 @@ const TexasAcquisitionPage = () => {
       setError(undefined);
       const success = await chatState.addMessage({
         role: "assistant",
-        content: data.choices[0].message.content
+        content: data.choices[0].message.content,
+        agencyType: "TEXAS_GOVERNMENT" as TexasAgencyType,
+        userRole: "CONTRACTING_OFFICER"
       });
       
       if (!success) {
@@ -72,7 +77,9 @@ const TexasAcquisitionPage = () => {
     setError(undefined);
     const success = await chatState.addMessage({
       role: "user",
-      content: input.trim()
+      content: input.trim(),
+      agencyType: "TEXAS_GOVERNMENT" as TexasAgencyType,
+      userRole: "CONTRACTING_OFFICER"
     });
     
     if (!success) {

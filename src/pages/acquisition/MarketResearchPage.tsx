@@ -1,6 +1,46 @@
+
+import { useState } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { Container } from '@/components/ui/universal/Container';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { Grid } from '@/components/ui/universal/Grid';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  Search, 
+  Filter, 
+  Building2, 
+  BarChart2, 
+  TrendingUp 
+} from 'lucide-react';
+
+// Mock data for the page
+const mockData = [
+  { name: 'Jan', value: 120 },
+  { name: 'Feb', value: 150 },
+  { name: 'Mar', value: 180 },
+  { name: 'Apr', value: 170 },
+  { name: 'May', value: 200 },
+  { name: 'Jun', value: 250 },
+];
+
+const mockVendors = [
+  { id: 1, name: "Acme Technologies", category: "IT Services", rating: "4.8", contracts: 24, performance: 95 },
+  { id: 2, name: "Global Innovations", category: "Research & Development", rating: "4.6", contracts: 18, performance: 92 },
+  { id: 3, name: "SecureTech Solutions", category: "Cybersecurity", rating: "4.7", contracts: 15, performance: 94 },
+];
+
+// Mock components for demonstration purposes (in production, you would implement or import these)
+const MetricsChart = ({ data, type }: { data: any[], type: string }) => (
+  <div className="h-64 w-full bg-gray-800/50 rounded flex items-center justify-center">
+    <p className="text-gray-400">Chart showing {type} data with {data.length} data points</p>
+  </div>
+);
 
 const MarketResearchPage = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
   return (
     <ProtectedPageLayout
       title="Market Research"
