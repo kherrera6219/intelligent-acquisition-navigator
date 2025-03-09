@@ -166,6 +166,7 @@ const FederalAcquisition = () => {
           onDocumentCreation={handleDocumentCreation}
           onCodeCreation={handleCodeCreation}
           onRunEnvironment={handleRunEnvironment}
+          onFileUpload={handleFileUpload}
           error={error}
         />
       </div>

@@ -13,7 +13,9 @@ import {
   AlertCircle,
   BookOpen,
   FileSearch,
-  Building
+  Building,
+  GlobeLock,
+  Flag
 } from 'lucide-react';
 import { NavItem } from './types';
 
@@ -85,6 +87,20 @@ export const navItems: NavItem[] = [
     icon: Building,
     label: 'Market Research',
     href: '/market-research',
+    minRole: 'authenticated',
+    items: undefined
+  },
+  {
+    icon: GlobeLock,
+    label: 'Federal Acquisition',
+    href: '/federal-acquisition',
+    minRole: 'authenticated',
+    items: undefined
+  },
+  {
+    icon: Flag,
+    label: 'Texas Acquisition',
+    href: '/texas-acquisition',
     minRole: 'authenticated',
     items: undefined
   },

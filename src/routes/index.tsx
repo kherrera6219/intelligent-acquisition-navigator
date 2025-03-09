@@ -1,3 +1,4 @@
+
 import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
 import {
@@ -156,6 +157,18 @@ export const routes: RouteObject[] = [
   {
     path: "/quality-assurance",
     element: wrapWithLayout(DashboardPage, true) // TODO: Create dedicated quality assurance page
+  },
+  
+  // Source Selection
+  {
+    path: "/source-selection",
+    element: wrapWithLayout(DashboardPage, true) // TODO: Create dedicated source selection page
+  },
+  
+  // Contract Management
+  {
+    path: "/contract-management",
+    element: wrapWithLayout(DashboardPage, true) // TODO: Create dedicated contract management page
   },
   
   // Developer Resources
