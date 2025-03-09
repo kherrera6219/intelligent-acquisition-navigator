@@ -2,15 +2,13 @@
 import { TexasAgencyType, TexasMessage, TexasRole, ResponseLevel } from "@/types/texas-chat";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatMessages } from "@/components/chat/ChatMessages";
-import { ChatToolbar } from "@/components/chat/ChatToolbar";
 import { TexasChatSettings } from "@/components/texas/TexasChatSettings";
 import { GradientText } from "@/components/ui/universal/GradientText";
 import { Card } from "@/components/ui/universal/Card";
 import { ChatHistory } from "@/components/chat/ChatHistory";
-import { FileUpload } from "@/components/chat/FileUpload";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, History, Code, Play, Palette } from "lucide-react";
+import { History, Code, Play, Palette } from "lucide-react";
 
 interface TexasChatContainerProps {
   conversationId: string;
@@ -142,16 +140,6 @@ export const TexasChatContainer = ({
                   Run Environment
                 </Button>
               </div>
-              
-              <Button
-                variant={isVoiceActive ? "destructive" : "outline"}
-                size="sm"
-                title={isVoiceActive ? "Stop Voice Recording" : "Start Voice Recording"}
-                onClick={toggleVoice}
-              >
-                {isVoiceActive ? <MicOff className="h-4 w-4 mr-2" /> : <Mic className="h-4 w-4 mr-2" />}
-                {isVoiceActive ? "Stop Voice" : "Start Voice"}
-              </Button>
             </div>
             
             <div className="h-[500px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-4">
@@ -163,15 +151,14 @@ export const TexasChatContainer = ({
             </div>
             
             <div className="relative">
-              <div className="absolute bottom-4 left-4 z-10">
-                <FileUpload onFileUpload={handleFileUpload} className="inline-block" />
-              </div>
               <ChatInput
                 input={input}
                 isLoading={isLoading}
                 onInputChange={onInputChange}
                 onSubmit={onSubmit}
-                className="pl-14" // Add left padding to accommodate the upload button
+                onFileUpload={handleFileUpload}
+                isVoiceActive={isVoiceActive}
+                onVoiceToggle={toggleVoice}
               />
             </div>
           </Card>

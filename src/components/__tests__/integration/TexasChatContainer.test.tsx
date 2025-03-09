@@ -101,16 +101,16 @@ describe('TexasChatContainer', () => {
   it('renders voice control button', () => {
     render(<TexasChatContainer {...defaultProps} />);
     
-    expect(screen.getByText('Start Voice')).toBeInTheDocument();
+    expect(screen.getByTitle('Start Voice Recording')).toBeInTheDocument();
   });
 
   it('toggles voice control button state when clicked', async () => {
     render(<TexasChatContainer {...defaultProps} />);
     
-    const voiceButton = screen.getByText('Start Voice');
+    const voiceButton = screen.getByTitle('Start Voice Recording');
     await userEvent.click(voiceButton);
     
-    expect(screen.getByText('Stop Voice')).toBeInTheDocument();
+    expect(screen.getByTitle('Stop Voice Recording')).toBeInTheDocument();
   });
 
   it('toggles chat history visibility when clicked', async () => {
