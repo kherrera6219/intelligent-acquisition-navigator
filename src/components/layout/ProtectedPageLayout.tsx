@@ -6,6 +6,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card } from "@/components/ui/universal/Card";
 import { AlertCircle } from 'lucide-react';
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils"; // Add the missing import for cn
 
 interface ProtectedPageLayoutProps {
   children: React.ReactNode;

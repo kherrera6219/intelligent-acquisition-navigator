@@ -8,22 +8,23 @@ import { HeaderNotifications } from './navigation/HeaderNotifications';
 import { HeaderProfile } from './navigation/HeaderProfile';
 import { MobileMenuButton } from './navigation/MobileMenuButton';
 import { MobileMenu } from './navigation/MobileMenu';
-import { GlobeLock, Flag, FileText, BarChart2, BookOpen, ClipboardCheck } from 'lucide-react';
+import { GlobeLock, Flag, FileText, BarChart2, BookOpen, ClipboardCheck, Menu, ChevronDown } from 'lucide-react';
 
 export const UniversalInternalHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
 
-  // Main sections for quick access
+  // Main sections for quick access in dropdown
   const mainSections = [
-    { id: 'federal', label: 'Federal', path: '/federal-acquisition', icon: GlobeLock },
-    { id: 'texas', label: 'Texas', path: '/texas-acquisition', icon: Flag },
-    { id: 'solicitation', label: 'Solicitation', path: '/solicitation-review', icon: FileText },
+    { id: 'federal', label: 'Federal Acquisition', path: '/federal-acquisition', icon: GlobeLock },
+    { id: 'texas', label: 'Texas Acquisition', path: '/texas-acquisition', icon: Flag },
+    { id: 'solicitation', label: 'Solicitation Review', path: '/solicitation-review', icon: FileText },
     { id: 'analytics', label: 'Analytics', path: '/analytics', icon: BarChart2 },
-    { id: 'knowledge', label: 'Knowledge', path: '/knowledge-base', icon: BookOpen },
+    { id: 'knowledge', label: 'Knowledge Base', path: '/knowledge-base', icon: BookOpen },
     { id: 'documents', label: 'Documents', path: '/document-control', icon: ClipboardCheck },
   ];
 
@@ -37,17 +38,14 @@ export const UniversalInternalHeader: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Set active section based on current path
-  useEffect(() => {
-    const section = mainSections.find(section => pathname.includes(section.id) || pathname === section.path);
-    setActiveSection(section?.id || '');
-  }, [pathname]);
-
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
       }
     };
 
@@ -58,10 +56,15 @@ export const UniversalInternalHeader: React.FC = () => {
   // Close the menu on location change
   useEffect(() => {
     setIsMobileMenuOpen(false);
+    setIsDropdownOpen(false);
   }, [pathname]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -80,22 +83,42 @@ export const UniversalInternalHeader: React.FC = () => {
             <HeaderNavigation />
           </div>
 
-          {/* Quick Access Tabs for Main Sections (visible on medium+ screens) */}
-          <div className="hidden md:flex items-center space-x-1 absolute left-1/2 transform -translate-x-1/2">
-            {mainSections.map((section) => (
-              <Link
-                key={section.id}
-                to={section.path}
-                className={`px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-1.5 ${
-                  activeSection === section.id
-                    ? 'text-white bg-black/20'
-                    : 'text-gray-300 hover:text-white hover:bg-black/10'
+          {/* Central Navigation Dropdown */}
+          <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={toggleDropdown}
+                className={`flex items-center gap-2 px-4 py-2 text-sm rounded-md transition-colors ${
+                  isDropdownOpen ? 'bg-black/20 text-white' : 'text-gray-300 hover:text-white hover:bg-black/10'
                 }`}
+                aria-expanded={isDropdownOpen}
               >
-                <section.icon className="h-4 w-4" />
-                <span>{section.label}</span>
-              </Link>
-            ))}
+                <span>Navigation</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isDropdownOpen && (
+                <div className="absolute top-full mt-1 left-0 bg-gray-900 border border-gray-800 rounded-md shadow-lg overflow-hidden w-64 z-50">
+                  <div className="py-1">
+                    {mainSections.map((section) => (
+                      <Link
+                        key={section.id}
+                        to={section.path}
+                        className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                          pathname.includes(section.id) || pathname === section.path
+                            ? 'bg-gray-800 text-white'
+                            : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                        }`}
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        <section.icon className="h-4 w-4 flex-shrink-0" />
+                        <span>{section.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Search, Notifications and Profile */}
