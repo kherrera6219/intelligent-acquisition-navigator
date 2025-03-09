@@ -27,13 +27,13 @@ export const PageHeader = ({
   return (
     <div className={cn("mb-8 space-y-4", className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="flex items-center space-x-2 text-sm text-gray-400">
+        <nav className="flex items-center flex-wrap text-sm text-muted-foreground">
           {breadcrumbs.map((crumb, index) => (
             <div key={crumb.href} className="flex items-center">
-              {index > 0 && <ChevronRight className="h-4 w-4 mx-2" />}
+              {index > 0 && <ChevronRight className="h-4 w-4 mx-2 flex-shrink-0" />}
               <Link
                 to={crumb.href}
-                className="hover:text-white transition-colors"
+                className="hover:text-white transition-colors whitespace-nowrap"
               >
                 {crumb.label}
               </Link>
@@ -42,19 +42,19 @@ export const PageHeader = ({
         </nav>
       )}
       
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-white">
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white">
             {title}
           </h1>
           {description && (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-muted-foreground">
               {description}
             </p>
           )}
         </div>
         {action && (
-          <div className="flex items-center gap-4">
+          <div className="flex-shrink-0">
             {action}
           </div>
         )}

@@ -35,18 +35,31 @@
   @apply flex-1 w-full max-w-[100vw] overflow-x-hidden;
 }
 
+/* Page layouts */
+.page-layout {
+  @apply max-w-screen-2xl mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8;
+}
+
+.page-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.section-container {
+  @apply py-6 sm:py-8 md:py-12;
+}
+
 /* Special Layout Types */
 .dashboard-layout .page-content {
-  @apply grid gap-6 sm:grid-cols-2 xl:grid-cols-3;
+  @apply grid gap-6;
 }
 
 .acquisition-layout .section-header {
-  @apply border-b border-gray-800 mb-6 pb-4;
+  @apply border-b border-border mb-6 pb-4;
 }
 
 /* Internal app page layouts */
 .internal-app-layout {
-  @apply border-t border-gray-800 pt-6 mt-6;
+  @apply border-t border-border pt-6 mt-6;
 }
 
 .internal-link {
@@ -54,11 +67,65 @@
 }
 
 .internal-card {
-  @apply bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700/50 p-4 hover:border-gray-600/60 transition-colors;
+  @apply bg-secondary/50 backdrop-blur-sm rounded-lg border border-border p-4 hover:border-border/60 transition-colors;
 }
 
 .internal-section {
-  @apply border-b border-gray-800 pb-6 mb-6;
+  @apply border-b border-border pb-6 mb-6;
+}
+
+/* Sidebar layout */
+.sidebar-layout {
+  @apply grid grid-cols-1 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr] gap-6;
+}
+
+.sidebar-container {
+  @apply hidden md:flex flex-col gap-2 sticky top-20 self-start h-[calc(100vh-theme(spacing.40))] overflow-y-auto pb-10;
+}
+
+.sidebar-section {
+  @apply mb-4;
+}
+
+.sidebar-heading {
+  @apply text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3;
+}
+
+.sidebar-link {
+  @apply flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors;
+}
+
+.sidebar-link-active {
+  @apply bg-secondary text-white font-medium;
+}
+
+.sidebar-link-inactive {
+  @apply text-muted-foreground hover:text-white hover:bg-secondary/50;
+}
+
+/* App layout with header sidebar and content */
+.app-layout {
+  @apply grid min-h-screen;
+  grid-template-areas: 
+    "header header"
+    "sidebar main";
+  grid-template-columns: auto 1fr;
+  grid-template-rows: var(--header-height) 1fr;
+}
+
+.app-header {
+  @apply fixed top-0 left-0 right-0 h-[var(--header-height)] z-40;
+  grid-area: header;
+}
+
+.app-sidebar {
+  @apply w-[var(--sidebar-width)] border-r border-border overflow-y-auto fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))] hidden md:block;
+  grid-area: sidebar;
+}
+
+.app-main {
+  @apply pt-[var(--header-height)] md:pl-[var(--sidebar-width)];
+  grid-area: main;
 }
 
 /* Responsive layout adjustments */

@@ -57,9 +57,9 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
         )}
         
         {/* Common footer navigation for internal pages */}
-        <div className="mt-12 pt-6 border-t border-gray-800">
+        <div className="mt-12 pt-6 border-t border-border">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-muted-foreground">
               Need to navigate to another section?
             </div>
             <div className="flex flex-wrap gap-3">
