@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { LogOut, Menu, User, X } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HeaderRightProps {
@@ -40,19 +40,6 @@ export const HeaderRight = ({
           </Button>
         </div>
       )}
-
-      {/* Mobile Menu Button */}
-      <button
-        className="md:hidden text-gray-400 hover:text-white"
-        onClick={toggleMobileMenu}
-        aria-label="Toggle menu"
-      >
-        {isMobileMenuOpen ? (
-          <X className="h-6 w-6" />
-        ) : (
-          <Menu className="h-6 w-6" />
-        )}
-      </button>
     </div>
   );
 };

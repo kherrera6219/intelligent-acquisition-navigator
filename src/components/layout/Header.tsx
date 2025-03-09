@@ -6,8 +6,9 @@ import { HeaderLeft } from "./navigation/HeaderLeft";
 import { HeaderRight } from "./navigation/HeaderRight";
 import { DesktopNavigation } from "./navigation/DesktopNavigation";
 import { MobileNavigation } from "./navigation/MobileNavigation";
-import { navItems } from "@/config/navigationItems";
+import { navItems } from "@/components/layout/navigation/navItems";
 import { useAuthState } from "@/hooks/useAuthState";
+import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence } from "framer-motion";
 
 interface HeaderProps {
@@ -19,7 +20,8 @@ export const Header = ({ className }: HeaderProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const { pathname } = useLocation();
-  const { isAuthenticated, role } = useAuthState();
+  const { isAuthenticated, userRole, isAuthorized } = useAuthState();
+  const { signOut } = useAuth();
 
   // Close the dropdown on location change or outside click
   useEffect(() => {
@@ -53,23 +55,8 @@ export const Header = ({ className }: HeaderProps) => {
     setOpenDropdown(prevState => prevState === label ? null : label);
   };
 
-  const isAuthorized = (minRole?: string): boolean => {
-    if (!minRole) return true;
-    if (!isAuthenticated) return false;
-    
-    if (minRole === "authenticated") return isAuthenticated;
-    
-    const roleHierarchy = {
-      admin: 3,
-      manager: 2, 
-      user: 1,
-      authenticated: 0
-    };
-    
-    const userRoleValue = roleHierarchy[role as keyof typeof roleHierarchy] || 0;
-    const requiredRoleValue = roleHierarchy[minRole as keyof typeof roleHierarchy] || 0;
-    
-    return userRoleValue >= requiredRoleValue;
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const isActiveRoute = (href: string, items?: typeof navItems): boolean => {
@@ -131,7 +118,12 @@ export const Header = ({ className }: HeaderProps) => {
               <span>Profile</span>
             </button>
             
-            <HeaderRight />
+            <HeaderRight 
+              userRole={userRole}
+              signOut={signOut}
+              isMobileMenuOpen={isMobileMenuOpen}
+              toggleMobileMenu={toggleMobileMenu}
+            />
           </div>
           
           <div className="flex items-center md:hidden space-x-3">
@@ -142,7 +134,7 @@ export const Header = ({ className }: HeaderProps) => {
             
             <button 
               className="p-1.5 text-gray-300 hover:text-white rounded-full hover:bg-gray-800/70 transition-colors"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={toggleMobileMenu}
               aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
