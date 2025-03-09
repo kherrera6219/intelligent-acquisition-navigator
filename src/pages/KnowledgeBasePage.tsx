@@ -1,16 +1,21 @@
+
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { useState } from 'react';
 import { Card } from '@/components/ui/universal/Card';
 import { Grid } from '@/components/ui/universal/Grid';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Book, FileText, Video, Bookmark, Star, Clock, Filter } from 'lucide-react';
+import { Search, Book, FileText, Video, Bookmark, Star, Clock, Filter, Upload, Database } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { DocumentUploader } from '@/components/knowledge-base/DocumentUploader';
+import { KnowledgeSearch } from '@/components/knowledge-base/KnowledgeSearch';
 
 const KnowledgeBasePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const [showUploader, setShowUploader] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const { toast } = useToast();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -26,6 +31,15 @@ const KnowledgeBasePage = () => {
       title: "Resource selected",
       description: `Opening ${resourceName}`,
     });
+  };
+
+  const handleDocumentUploadComplete = (documentId: string) => {
+    toast({
+      title: "Document uploaded",
+      description: "Your document has been added to the knowledge base",
+    });
+    setShowUploader(false);
+    setShowSearch(true);
   };
 
   const resources = [
@@ -62,13 +76,49 @@ const KnowledgeBasePage = () => {
         { label: 'Knowledge Base', href: '/knowledge-base' }
       ]}
       action={
-        <Button variant="outline" size="sm" onClick={() => toast({ title: "Coming Soon", description: "Bookmark management will be available soon" })}>
-          <Bookmark className="h-4 w-4 mr-2" />
-          My Bookmarks
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => {
+              setShowUploader(!showUploader);
+              if (showUploader) setShowSearch(false);
+            }}
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            {showUploader ? "Hide Uploader" : "Upload Document"}
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => {
+              setShowSearch(!showSearch);
+              if (showSearch) setShowUploader(false);
+            }}
+          >
+            <Database className="h-4 w-4 mr-2" />
+            {showSearch ? "Hide Search" : "AI Search"}
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => toast({ title: "Coming Soon", description: "Bookmark management will be available soon" })}>
+            <Bookmark className="h-4 w-4 mr-2" />
+            My Bookmarks
+          </Button>
+        </div>
       }
     >
       <div className="min-h-[calc(100vh-200px)]">
+        {showUploader && (
+          <div className="mb-6">
+            <DocumentUploader onUploadComplete={handleDocumentUploadComplete} />
+          </div>
+        )}
+        
+        {showSearch && (
+          <div className="mb-6">
+            <KnowledgeSearch />
+          </div>
+        )}
+        
         <Card className="mb-6">
           <form onSubmit={handleSearch} className="flex gap-2">
             <Input
