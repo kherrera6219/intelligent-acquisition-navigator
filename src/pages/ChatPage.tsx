@@ -142,6 +142,11 @@ const Chat = () => {
     aiMutation.mutate(aiMessages);
   };
 
+  const handleFileUpload = (files: FileList) => {
+    console.log("File uploaded:", files[0].name);
+    // Process the file as needed
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -165,6 +170,7 @@ const Chat = () => {
                 {conversationId && (
                   <FileUpload 
                     conversationId={conversationId}
+                    onFileUpload={handleFileUpload}
                     onUploadComplete={(documentId) => {
                       toast({
                         title: "Document uploaded",
