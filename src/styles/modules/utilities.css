@@ -1,16 +1,16 @@
 
 /* Responsive Typography */
 .text-responsive {
-  @apply text-sm sm:text-base md:text-lg lg:text-xl;
+  @apply text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl;
 }
 
 .heading-responsive {
-  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+  @apply text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl;
 }
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
-  @apply w-2;
+  @apply w-1.5 sm:w-2;
 }
 
 ::-webkit-scrollbar-track {
@@ -25,12 +25,38 @@
 /* Touch Device Optimizations */
 @media (hover: none) {
   .touch-target {
-    @apply min-h-[44px] min-w-[44px];
+    @apply min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px];
   }
   
   .touch-feedback {
     @apply active:scale-95 transition-transform;
   }
+}
+
+/* Screen Size Adaptive Padding */
+.adaptive-p {
+  @apply p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6;
+}
+
+.adaptive-px {
+  @apply px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6;
+}
+
+.adaptive-py {
+  @apply py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6;
+}
+
+/* Adaptive Margins */
+.adaptive-m {
+  @apply m-2 xs:m-3 sm:m-4 md:m-5 lg:m-6;
+}
+
+.adaptive-mx {
+  @apply mx-2 xs:mx-3 sm:mx-4 md:mx-5 lg:mx-6;
+}
+
+.adaptive-my {
+  @apply my-2 xs:my-3 sm:my-4 md:my-5 lg:my-6;
 }
 
 /* Screen Size Debug Helper */
@@ -40,5 +66,5 @@
 
 .debug-screen::after {
   content: 'xs';
-  @apply sm:content-['sm'] md:content-['md'] lg:content-['lg'] xl:content-['xl'] 2xl:content-['2xl'];
+  @apply xs:content-['xs'] sm:content-['sm'] md:content-['md'] lg:content-['lg'] xl:content-['xl'] 2xl:content-['2xl'];
 }

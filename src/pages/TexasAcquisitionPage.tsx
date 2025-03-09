@@ -124,7 +124,7 @@ const TexasAcquisitionPage = () => {
         { label: 'Texas Acquisition', href: '/texas-acquisition' }
       ]}
     >
-      <div className="min-h-[calc(100vh-200px)]">
+      <div className="min-h-[calc(100vh-200px)] max-w-full">
         <TexasChatContainer
           conversationId={chatState.conversationId}
           messages={chatState.messages}

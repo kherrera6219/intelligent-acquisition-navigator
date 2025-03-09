@@ -50,7 +50,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           <main 
             id="main-content" 
             role="main" 
-            className={`flex-1 w-full py-4 sm:py-6 ${isInternalPage ? 'mt-16' : ''} ${className || ''}`}
+            className={`flex-1 w-full py-3 sm:py-4 md:py-6 ${isInternalPage ? 'mt-16' : ''} ${className || ''}`}
             tabIndex={-1}
           >
             <Container size={containerSize} className="h-full">

@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
@@ -43,7 +44,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           transition={{ duration: 0.2 }}
           className="md:hidden bg-gray-900 border-t border-gray-800"
         >
-          <div className="px-4 pt-2 pb-3 space-y-1">
+          <div className="px-3 pt-2 pb-3 space-y-1">
             <div>
               <button
                 onClick={() => setIsMainDropdownOpen(!isMainDropdownOpen)}
@@ -57,7 +58,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
               </button>
               
               {isMainDropdownOpen && (
-                <div className="pl-4 mt-1 space-y-1">
+                <div className="pl-3 mt-1 space-y-1">
                   {mainMenuItems.map((item) => (
                     <Link
                       key={item.label}

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -13,6 +14,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        'xs': '475px',
+      },
       colors: {
         // Main Brand Colors
         primary: {
@@ -109,7 +113,7 @@ export default {
         "scale-in": "scale-in 0.2s ease-out",
       },
       gridTemplateColumns: {
-        'auto-fit': 'repeat(auto-fit, minmax(250px, 1fr))',
+        'auto-fit': 'repeat(auto-fit, minmax(220px, 1fr))',
       },
       backgroundImage: {
         'noise': "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39ra2uRkZGZmZlpaWmXl5dvb29xcXGTk5NnZ2c4S8BAAAAAXklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlAAAAAElFTkSuQmCC')",

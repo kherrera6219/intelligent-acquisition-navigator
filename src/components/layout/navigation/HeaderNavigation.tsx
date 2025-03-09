@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,6 +9,7 @@ export const HeaderNavigation: React.FC = () => {
   const { pathname } = useLocation();
   const { userRole } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   // Main menu items for our dropdown
   const mainMenuItems = [
@@ -23,18 +25,33 @@ export const HeaderNavigation: React.FC = () => {
     !mainMenuItems.some(menuItem => menuItem.href === item.href)
   );
   
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
   return (
-    <nav className="hidden md:ml-8 md:flex space-x-6">
+    <nav className="hidden md:ml-4 lg:ml-8 md:flex space-x-2 lg:space-x-4 xl:space-x-6">
       {/* Main dropdown menu */}
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className={`px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-800 transition-colors flex items-center text-gray-300 hover:text-white`}
+          className={`px-2 sm:px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-800 transition-colors flex items-center text-gray-300 hover:text-white ${isDropdownOpen ? 'bg-gray-800 text-white' : ''}`}
           aria-haspopup="true"
           aria-expanded={isDropdownOpen}
+          title="Main Menu"
         >
           <span>Main</span>
-          <ChevronDown className="ml-1 h-4 w-4" />
+          <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
         </button>
         
         {isDropdownOpen && (
@@ -49,6 +66,7 @@ export const HeaderNavigation: React.FC = () => {
                   }`}
                   onClick={() => setIsDropdownOpen(false)}
                   role="menuitem"
+                  title={item.label}
                 >
                   <div className="flex items-center">
                     <item.icon className="h-4 w-4 mr-2" />
@@ -67,12 +85,13 @@ export const HeaderNavigation: React.FC = () => {
           <Link 
             key={item.label}
             to={item.href}
-            className={`px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-800 transition-colors 
+            className={`px-2 sm:px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-800 transition-colors 
               ${pathname === item.href ? 'text-white bg-gray-800' : 'text-gray-300'}`}
+            title={item.label}
           >
             <div className="flex items-center">
               <item.icon className="h-4 w-4 mr-2" />
-              {item.label}
+              <span className="hidden sm:inline">{item.label}</span>
             </div>
           </Link>
         ) : null
