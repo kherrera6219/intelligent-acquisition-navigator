@@ -1,12 +1,9 @@
 
 import { 
-  Home, 
   FileText, 
   Shield, 
   BarChart2, 
   Settings, 
-  HelpCircle,
-  Map,
   FileCheck,
   Users,
   Book,
@@ -15,21 +12,12 @@ import {
   ClipboardCheck,
   AlertCircle,
   BookOpen,
-  Flag,
   FileSearch,
-  Building,
-  GlobeLock
+  Building
 } from 'lucide-react';
 import { NavItem } from './types';
 
 export const navItems: NavItem[] = [
-  { 
-    icon: Home, 
-    label: 'Dashboard', 
-    href: '/dashboard',
-    minRole: null,
-    items: undefined
-  },
   { 
     icon: BookOpen,
     label: 'Knowledge Base',
@@ -107,39 +95,11 @@ export const navItems: NavItem[] = [
     minRole: 'manager',
     items: undefined
   },
-  {
-    icon: GlobeLock,
-    label: 'Federal Acquisition',
-    href: '/federal-acquisition',
-    minRole: null,
-    items: undefined
-  },
-  { 
-    icon: Flag, 
-    label: 'Texas Acquisition', 
-    href: '/texas-acquisition',
-    minRole: null,
-    items: undefined
-  },
   { 
     icon: Settings, 
     label: 'Settings', 
     href: '/settings',
     minRole: 'authenticated',
-    items: undefined
-  },
-  { 
-    icon: HelpCircle, 
-    label: 'Help', 
-    href: '/help',
-    minRole: null,
-    items: undefined
-  },
-  {
-    icon: Map,
-    label: 'Sitemap',
-    href: '/sitemap',
-    minRole: null,
     items: undefined
   }
 ];
