@@ -3,6 +3,7 @@ import React from 'react';
 import { Container } from "@/components/ui/universal/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Card } from "@/components/ui/universal/Card";
 import { AlertCircle } from 'lucide-react';
 import { Link } from "react-router-dom";
 
@@ -14,6 +15,11 @@ interface ProtectedPageLayoutProps {
   error?: Error | null;
   breadcrumbs?: { label: string; href: string }[];
   action?: React.ReactNode;
+  backLink?: { label: string; href: string };
+  tags?: { label: string; color?: string }[];
+  contentClassName?: string;
+  fullWidth?: boolean;
+  withCard?: boolean;
 }
 
 export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
@@ -24,36 +30,51 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   error = null,
   breadcrumbs,
   action,
+  backLink,
+  tags,
+  contentClassName,
+  fullWidth = false,
+  withCard = false,
 }) => {
   return (
-    <Container>
+    <Container size={fullWidth ? "full" : "lg"}>
       <div className="py-6 animate-fade-in">
         <PageHeader
           title={title}
           description={description}
           breadcrumbs={breadcrumbs}
           action={action}
+          backLink={backLink}
+          tags={tags}
+          className="mb-6"
         />
 
+        {/* Content Area */}
         {isLoading ? (
           <div className="flex justify-center items-center min-h-[200px]">
             <LoadingSpinner size="lg" />
             <span className="sr-only">Loading content</span>
           </div>
         ) : error ? (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 my-6">
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 my-6">
             <div className="flex gap-3 items-start">
-              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
               <div>
-                <h3 className="text-lg font-semibold text-red-500">Error Loading Data</h3>
+                <h3 className="text-lg font-semibold text-destructive">Error Loading Data</h3>
                 <p className="text-gray-300 mt-1">
                   {error.message || "An unexpected error occurred. Please try again."}
                 </p>
               </div>
             </div>
           </div>
+        ) : withCard ? (
+          <Card className={cn("p-6", contentClassName)}>
+            {children}
+          </Card>
         ) : (
-          children
+          <div className={contentClassName}>
+            {children}
+          </div>
         )}
         
         {/* Common footer navigation for internal pages */}

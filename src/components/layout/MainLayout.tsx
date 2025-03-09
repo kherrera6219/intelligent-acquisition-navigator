@@ -70,13 +70,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             className={`flex-1 w-full py-3 sm:py-4 md:py-6 ${isInternalPage ? 'mt-16' : ''} ${className || ''}`}
             tabIndex={-1}
           >
-            <Container size={containerSize} className="h-full">
-              <div className="w-full h-full min-h-[calc(100vh-theme(spacing.40))] overflow-hidden animate-fade-in">
-                <Suspense fallback={<LoadingOverlay />}>
-                  {children}
-                </Suspense>
-              </div>
-            </Container>
+            <div className="w-full h-full min-h-[calc(100vh-theme(spacing.40))] overflow-hidden animate-fade-in">
+              <Suspense fallback={<LoadingOverlay />}>
+                {children}
+              </Suspense>
+            </div>
           </main>
 
           {showFooter && <Footer />}
