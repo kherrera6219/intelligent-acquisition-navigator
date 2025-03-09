@@ -29,22 +29,13 @@ describe('TexasChatContainer', () => {
   it('renders the chat title and description', () => {
     render(<TexasChatContainer {...defaultProps} />);
     
-    expect(screen.getByText(/Texas Acquisition Chat Assistant/i)).toBeInTheDocument();
-    expect(screen.getByText(/Get expert guidance/i)).toBeInTheDocument();
+    expect(screen.getByText(/Texas Acquisition Assistant/i)).toBeInTheDocument();
   });
 
   it('renders settings button', () => {
     render(<TexasChatContainer {...defaultProps} />);
     
-    expect(screen.getByTitle('Chat Settings')).toBeInTheDocument();
-  });
-
-  it('renders tool buttons', () => {
-    render(<TexasChatContainer {...defaultProps} />);
-    
-    expect(screen.getByTitle('Canvas Tool')).toBeInTheDocument();
-    expect(screen.getByTitle('Code Editor')).toBeInTheDocument();
-    expect(screen.getByTitle('Run Environment')).toBeInTheDocument();
+    expect(screen.getByText('Settings')).toBeInTheDocument();
   });
 
   it('disables input when loading', () => {
@@ -92,10 +83,10 @@ describe('TexasChatContainer', () => {
     expect(screen.getByTitle('Upload Document')).toBeInTheDocument();
   });
 
-  it('renders chat history section', () => {
+  it('renders chat history toggle button', () => {
     render(<TexasChatContainer {...defaultProps} />);
     
-    expect(screen.getByText('Chat History')).toBeInTheDocument();
+    expect(screen.getByText('Show History')).toBeInTheDocument();
   });
 
   it('renders voice control button', () => {
@@ -116,10 +107,10 @@ describe('TexasChatContainer', () => {
   it('toggles chat history visibility when clicked', async () => {
     render(<TexasChatContainer {...defaultProps} />);
     
-    const historyToggleButton = screen.getByText('Hide History');
+    const historyToggleButton = screen.getByText('Show History');
     await userEvent.click(historyToggleButton);
     
-    expect(screen.getByText('Show History')).toBeInTheDocument();
-    expect(screen.queryByText('Chat History')).not.toBeInTheDocument();
+    expect(screen.getByText('Hide History')).toBeInTheDocument();
+    expect(screen.getByText('Chat History')).toBeInTheDocument();
   });
 });

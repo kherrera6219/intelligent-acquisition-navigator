@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/universal/Card";
 import { ChatHistory } from "@/components/chat/ChatHistory";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { History, Code, Play, Palette } from "lucide-react";
+import { History, Settings } from "lucide-react";
 
 interface TexasChatContainerProps {
   conversationId: string;
@@ -42,7 +42,7 @@ export const TexasChatContainer = ({
   error,
 }: TexasChatContainerProps) => {
   const [isVoiceActive, setIsVoiceActive] = useState(false);
-  const [showHistory, setShowHistory] = useState(true);
+  const [showHistory, setShowHistory] = useState(false);
 
   const toggleVoice = () => {
     // In a real implementation, this would start/stop voice recording
@@ -60,20 +60,17 @@ export const TexasChatContainer = ({
   };
 
   return (
-    <div className="container-module-lg py-8">
-      <div className="flex flex-col gap-8">
-        <div className="text-center">
-          <GradientText className="text-3xl font-bold">
-            Texas Acquisition Chat Assistant
+    <div className="container-module w-full max-w-6xl mx-auto py-4 px-3 sm:px-4 md:px-0">
+      <div className="flex flex-col gap-4">
+        <div className="text-center mb-2">
+          <GradientText className="text-2xl sm:text-3xl font-bold">
+            Texas Acquisition Assistant
           </GradientText>
-          <p className="text-muted-foreground mt-2">
-            Get expert guidance on Texas state procurement regulations and requirements
-          </p>
         </div>
 
         <div className="flex gap-4">
           {showHistory && (
-            <div className="w-64 flex-shrink-0">
+            <div className="w-60 flex-shrink-0">
               <Card className="p-4 h-[650px] overflow-y-auto">
                 <h3 className="text-lg font-medium mb-4">Chat History</h3>
                 <ChatHistory 
@@ -88,9 +85,9 @@ export const TexasChatContainer = ({
             </div>
           )}
 
-          <Card className="p-6 space-y-6 flex-grow">
-            <div className="flex justify-between items-center">
-              <div className="flex gap-2">
+          <Card className="p-4 sm:p-6 space-y-4 flex-grow">
+            <div className="flex justify-between items-center gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap">
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -109,40 +106,10 @@ export const TexasChatContainer = ({
                   onAgencyChange={onAgencyChange}
                   onResponseLevelChange={onResponseLevelChange}
                 />
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  title="Canvas Tool"
-                  onClick={() => console.log('Document creation clicked')}
-                >
-                  <Palette className="h-4 w-4 mr-2" />
-                  Canvas Tool
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  title="Code Editor"
-                  onClick={() => console.log('Code creation clicked')}
-                >
-                  <Code className="h-4 w-4 mr-2" />
-                  Code Editor
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  title="Run Environment"
-                  onClick={() => console.log('Run environment clicked')}
-                >
-                  <Play className="h-4 w-4 mr-2" />
-                  Run Environment
-                </Button>
               </div>
             </div>
             
-            <div className="h-[500px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-4">
+            <div className="h-[500px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-3 sm:p-4">
               <ChatMessages
                 messages={messages}
                 isLoading={isLoading}
