@@ -3,7 +3,7 @@ import { TexasAgencyType, TexasMessage, TexasRole, ResponseLevel } from "@/types
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatToolbar } from "@/components/chat/ChatToolbar";
-import { TexasChatSelectors } from "@/components/texas/TexasChatSelectors";
+import { TexasChatSettings } from "@/components/texas/TexasChatSettings";
 import { GradientText } from "@/components/ui/universal/GradientText";
 import { Card } from "@/components/ui/universal/Card";
 import { ChatHistory } from "@/components/chat/ChatHistory";
@@ -92,34 +92,34 @@ export const TexasChatContainer = ({
 
           <Card className="p-6 space-y-6 flex-grow">
             <div className="flex justify-between items-center">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowHistory(!showHistory)}
-                className="mb-2"
-              >
-                {showHistory ? "Hide History" : "Show History"}
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowHistory(!showHistory)}
+                >
+                  {showHistory ? "Hide History" : "Show History"}
+                </Button>
+                
+                <TexasChatSettings
+                  selectedRole={selectedRole}
+                  selectedAgency={selectedAgency}
+                  selectedResponseLevel={selectedResponseLevel}
+                  onRoleChange={onRoleChange}
+                  onAgencyChange={onAgencyChange}
+                  onResponseLevelChange={onResponseLevelChange}
+                />
+              </div>
               
               <Button
                 variant={isVoiceActive ? "destructive" : "outline"}
                 size="sm"
                 onClick={toggleVoice}
-                className="mb-2"
               >
                 {isVoiceActive ? <MicOff className="h-4 w-4 mr-2" /> : <Mic className="h-4 w-4 mr-2" />}
                 {isVoiceActive ? "Stop Voice" : "Start Voice"}
               </Button>
             </div>
-          
-            <TexasChatSelectors
-              selectedRole={selectedRole}
-              selectedAgency={selectedAgency}
-              selectedDetailLevel={selectedResponseLevel}
-              onRoleChange={onRoleChange}
-              onAgencyChange={onAgencyChange}
-              onDetailLevelChange={onResponseLevelChange}
-            />
             
             <ChatToolbar
               onDocumentCreation={() => console.log('Document creation clicked')}

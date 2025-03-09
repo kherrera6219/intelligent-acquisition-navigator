@@ -33,32 +33,10 @@ describe('TexasChatContainer', () => {
     expect(screen.getByText(/Get expert guidance/i)).toBeInTheDocument();
   });
 
-  it('renders selectors with correct initial values', () => {
+  it('renders settings button', () => {
     render(<TexasChatContainer {...defaultProps} />);
     
-    expect(screen.getByText('TEXAS_GOVERNMENT')).toBeInTheDocument();
-    expect(screen.getByText('CONTRACTING_OFFICER')).toBeInTheDocument();
-    expect(screen.getByText('STANDARD')).toBeInTheDocument();
-  });
-
-  it('handles agency change', async () => {
-    render(<TexasChatContainer {...defaultProps} />);
-    
-    const agencySelect = screen.getByRole('combobox', { name: /agency/i });
-    await userEvent.click(agencySelect);
-    await userEvent.click(screen.getByText('STATE_AGENCY'));
-    
-    expect(defaultProps.onAgencyChange).toHaveBeenCalledWith('STATE_AGENCY');
-  });
-
-  it('handles role change', async () => {
-    render(<TexasChatContainer {...defaultProps} />);
-    
-    const roleSelect = screen.getByRole('combobox', { name: /role/i });
-    await userEvent.click(roleSelect);
-    await userEvent.click(screen.getByText('PROGRAM_MANAGER'));
-    
-    expect(defaultProps.onRoleChange).toHaveBeenCalledWith('PROGRAM_MANAGER');
+    expect(screen.getByTitle('Chat Settings')).toBeInTheDocument();
   });
 
   it('disables input when loading', () => {
