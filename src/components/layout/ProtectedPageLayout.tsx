@@ -73,7 +73,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
             {children}
           </Card>
         ) : (
-          <div className={contentClassName}>
+          <div className={cn("glass-panel p-6 rounded-lg", contentClassName)}>
             {children}
           </div>
         )}
