@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Container } from "@/components/ui/universal/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -68,7 +69,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
             </div>
           </div>
         ) : withCard ? (
-          <Card className={cn("p-6", contentClassName)}>
+          <Card variant="metal" className={cn("p-6", contentClassName)}>
             {children}
           </Card>
         ) : (

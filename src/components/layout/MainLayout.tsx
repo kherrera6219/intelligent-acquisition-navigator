@@ -49,7 +49,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <ThemeProvider>
       <PageErrorBoundary>
-        <div className={`min-h-screen w-full flex flex-col bg-gradient-to-b from-background to-background/80 overflow-x-hidden ${getPageSpecificClasses()}`}>
+        <div className={`min-h-screen w-full flex flex-col bg-background overflow-x-hidden ${getPageSpecificClasses()}`}>
           {/* Accessible Skip Link */}
           <a 
             href="#main-content" 

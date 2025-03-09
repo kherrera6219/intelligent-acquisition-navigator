@@ -48,7 +48,7 @@ export default {
           hover: "#AD2D28",
           foreground: "hsl(var(--destructive-foreground))",
         },
-        // UI Colors
+        // UI Colors - Updated with gunmetal grays
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -65,14 +65,16 @@ export default {
           foreground: "#666666",
         },
         // Border & Input Colors
-        border: "#E5E5E5",
-        input: "#F0F0F0",
-        ring: "#0066CC",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
       },
       fontFamily: {
-        heading: ['Roboto', 'sans-serif'],
-        sans: ['Open Sans', 'sans-serif'],
+        // Updated font families for sharper look
+        heading: ['Montserrat', 'Roboto', 'sans-serif'],
+        sans: ['Roboto', 'Open Sans', 'sans-serif'],
         mono: ['Roboto Mono', 'monospace'],
+        body: ['Roboto', 'Inter', 'sans-serif'],
       },
       fontSize: {
         xs: ['0.75rem', { lineHeight: '1rem' }],
@@ -117,6 +119,7 @@ export default {
       },
       backgroundImage: {
         'noise': "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39ra2uRkZGZmZlpaWmXl5dvb29xcXGTk5NnZ2c4S8BAAAAAXklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlAAAAAElFTkSuQmCC')",
+        'metal-gradient': "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.1) 100%)",
       }
     },
   },
