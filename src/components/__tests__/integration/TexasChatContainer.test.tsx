@@ -39,6 +39,14 @@ describe('TexasChatContainer', () => {
     expect(screen.getByTitle('Chat Settings')).toBeInTheDocument();
   });
 
+  it('renders tool buttons', () => {
+    render(<TexasChatContainer {...defaultProps} />);
+    
+    expect(screen.getByTitle('Canvas Tool')).toBeInTheDocument();
+    expect(screen.getByTitle('Code Editor')).toBeInTheDocument();
+    expect(screen.getByTitle('Run Environment')).toBeInTheDocument();
+  });
+
   it('disables input when loading', () => {
     render(<TexasChatContainer {...defaultProps} isLoading={true} />);
     

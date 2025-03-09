@@ -10,7 +10,7 @@ import { ChatHistory } from "@/components/chat/ChatHistory";
 import { FileUpload } from "@/components/chat/FileUpload";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff } from "lucide-react";
+import { Mic, MicOff, History, Code, Play, Palette } from "lucide-react";
 
 interface TexasChatContainerProps {
   conversationId: string;
@@ -96,8 +96,10 @@ export const TexasChatContainer = ({
                 <Button 
                   variant="outline" 
                   size="sm"
+                  title="Toggle Chat History"
                   onClick={() => setShowHistory(!showHistory)}
                 >
+                  <History className="h-4 w-4 mr-2" />
                   {showHistory ? "Hide History" : "Show History"}
                 </Button>
                 
@@ -109,23 +111,48 @@ export const TexasChatContainer = ({
                   onAgencyChange={onAgencyChange}
                   onResponseLevelChange={onResponseLevelChange}
                 />
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  title="Canvas Tool"
+                  onClick={() => console.log('Document creation clicked')}
+                >
+                  <Palette className="h-4 w-4 mr-2" />
+                  Canvas Tool
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  title="Code Editor"
+                  onClick={() => console.log('Code creation clicked')}
+                >
+                  <Code className="h-4 w-4 mr-2" />
+                  Code Editor
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  title="Run Environment"
+                  onClick={() => console.log('Run environment clicked')}
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Run Environment
+                </Button>
               </div>
               
               <Button
                 variant={isVoiceActive ? "destructive" : "outline"}
                 size="sm"
+                title={isVoiceActive ? "Stop Voice Recording" : "Start Voice Recording"}
                 onClick={toggleVoice}
               >
                 {isVoiceActive ? <MicOff className="h-4 w-4 mr-2" /> : <Mic className="h-4 w-4 mr-2" />}
                 {isVoiceActive ? "Stop Voice" : "Start Voice"}
               </Button>
             </div>
-            
-            <ChatToolbar
-              onDocumentCreation={() => console.log('Document creation clicked')}
-              onCodeCreation={() => console.log('Code creation clicked')}
-              onRunEnvironment={() => console.log('Run environment clicked')}
-            />
             
             <div className="h-[500px] overflow-y-auto bg-gradient-to-b from-background to-background/50 rounded-lg p-4">
               <ChatMessages

@@ -25,9 +25,9 @@ export const TexasChatSettings: React.FC<TexasChatSettingsProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" title="Chat Settings">
-          <Settings className="h-4 w-4" />
-          <span className="sr-only">Chat Settings</span>
+        <Button variant="outline" size="sm" title="Chat Settings">
+          <Settings className="h-4 w-4 mr-2" />
+          Settings
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
