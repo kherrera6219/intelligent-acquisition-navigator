@@ -1,16 +1,17 @@
 
 import { Message } from "@/types/chat";
 import { cn } from "@/lib/utils";
-import { UserRound, ArrowDown } from "lucide-react";
+import { UserRound, ArrowDown, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChatMessagesProps {
   messages: Message[];
   isLoading: boolean;
   className?: string;
+  error?: string;
 }
 
-export const ChatMessages = ({ messages, isLoading, className }: ChatMessagesProps) => {
+export const ChatMessages = ({ messages, isLoading, error, className }: ChatMessagesProps) => {
   return (
     <div className={cn("space-y-4", className)}>
       {messages.map((message, index) => (
@@ -50,6 +51,20 @@ export const ChatMessages = ({ messages, isLoading, className }: ChatMessagesPro
           </div>
         </div>
       ))}
+      
+      {error && (
+        <div className="flex gap-3 p-4 glass-card mr-auto max-w-[80%] bg-red-500/10 border border-red-500/20">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+            <AlertCircle className="w-5 h-5 text-red-400" />
+          </div>
+          <div className="flex-1 space-y-2">
+            <p className="text-sm font-medium text-red-400">Error</p>
+            <div className="text-sm leading-relaxed text-foreground">
+              {error}
+            </div>
+          </div>
+        </div>
+      )}
       
       {isLoading && (
         <div className="flex gap-3 p-4 glass-card mr-auto max-w-[80%] animate-pulse">

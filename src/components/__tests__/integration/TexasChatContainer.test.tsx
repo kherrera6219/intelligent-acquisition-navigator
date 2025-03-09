@@ -96,7 +96,6 @@ describe('TexasChatContainer', () => {
   it('displays error message when provided', () => {
     render(<TexasChatContainer {...defaultProps} error="Test error message" />);
     
-    // This test will need to be adjusted based on how errors are displayed in ChatMessages
-    // For now, we're assuming the error is passed to ChatMessages which handles the display
+    expect(screen.getByText('Test error message')).toBeInTheDocument();
   });
 });
