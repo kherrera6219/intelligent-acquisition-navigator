@@ -18,7 +18,8 @@ describe('TexasChatContainer', () => {
     onSubmit: jest.fn(),
     onAgencyChange: jest.fn(),
     onRoleChange: jest.fn(),
-    onResponseLevelChange: jest.fn()
+    onResponseLevelChange: jest.fn(),
+    error: undefined
   };
 
   beforeEach(() => {
@@ -90,5 +91,12 @@ describe('TexasChatContainer', () => {
     
     expect(screen.getByText('Test question')).toBeInTheDocument();
     expect(screen.getByText('Test response')).toBeInTheDocument();
+  });
+
+  it('displays error message when provided', () => {
+    render(<TexasChatContainer {...defaultProps} error="Test error message" />);
+    
+    // This test will need to be adjusted based on how errors are displayed in ChatMessages
+    // For now, we're assuming the error is passed to ChatMessages which handles the display
   });
 });

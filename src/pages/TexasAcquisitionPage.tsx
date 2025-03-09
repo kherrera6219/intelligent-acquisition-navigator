@@ -3,8 +3,8 @@ import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { TexasChatContainer } from '@/components/texas/TexasChatContainer';
 import { useAzureAI } from "@/hooks/useAzureAI";
 import { useState } from "react";
-import { Message, AIChatMessage } from "@/types/chat";
-import { TexasMessage, TexasAgencyType } from "@/types/texas-chat";
+import { AIChatMessage } from "@/types/chat";
+import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
 import { useToast } from "@/hooks/use-toast";
 
 interface ChatState {
@@ -17,6 +17,10 @@ interface ChatState {
 const TexasAcquisitionPage = () => {
   const [input, setInput] = useState("");
   const [error, setError] = useState<string>();
+  const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
+  const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACTING_OFFICER");
+  const [selectedResponseLevel, setSelectedResponseLevel] = useState<ResponseLevel>("STANDARD");
+  
   const [chatState, setChatState] = useState<ChatState>({
     messages: [],
     conversationId: "texas-" + Date.now(),
@@ -24,8 +28,8 @@ const TexasAcquisitionPage = () => {
       const newMessage: TexasMessage = {
         id: Date.now().toString(),
         timestamp: new Date(),
-        agencyType: "TEXAS_GOVERNMENT" as TexasAgencyType,
-        userRole: message.userRole || "CONTRACTING_OFFICER",
+        agencyType: message.agencyType || selectedAgency,
+        userRole: message.userRole || selectedRole,
         ...message
       };
       
@@ -47,8 +51,8 @@ const TexasAcquisitionPage = () => {
       const success = await chatState.addMessage({
         role: "assistant",
         content: data.choices[0].message.content,
-        agencyType: "TEXAS_GOVERNMENT" as TexasAgencyType,
-        userRole: "CONTRACTING_OFFICER"
+        agencyType: selectedAgency,
+        userRole: selectedRole
       });
       
       if (!success) {
@@ -78,8 +82,8 @@ const TexasAcquisitionPage = () => {
     const success = await chatState.addMessage({
       role: "user",
       content: input.trim(),
-      agencyType: "TEXAS_GOVERNMENT" as TexasAgencyType,
-      userRole: "CONTRACTING_OFFICER"
+      agencyType: selectedAgency,
+      userRole: selectedRole
     });
     
     if (!success) {
@@ -126,8 +130,14 @@ const TexasAcquisitionPage = () => {
           messages={chatState.messages}
           isLoading={chatState.isLoading || aiMutation.isPending}
           input={input}
+          selectedAgency={selectedAgency}
+          selectedRole={selectedRole}
+          selectedResponseLevel={selectedResponseLevel}
           onInputChange={setInput}
           onSubmit={handleSubmit}
+          onAgencyChange={setSelectedAgency}
+          onRoleChange={setSelectedRole}
+          onResponseLevelChange={setSelectedResponseLevel}
           error={error}
         />
       </div>

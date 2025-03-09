@@ -12,14 +12,15 @@ interface TexasChatContainerProps {
   messages: TexasMessage[];
   isLoading: boolean;
   input: string;
-  selectedAgency: TexasAgencyType;
-  selectedRole: TexasRole;
-  selectedResponseLevel: ResponseLevel;
+  selectedAgency?: TexasAgencyType;
+  selectedRole?: TexasRole;
+  selectedResponseLevel?: ResponseLevel;
   onInputChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
-  onAgencyChange: (value: TexasAgencyType) => void;
-  onRoleChange: (value: TexasRole) => void;
-  onResponseLevelChange: (value: ResponseLevel) => void;
+  onAgencyChange?: (value: TexasAgencyType) => void;
+  onRoleChange?: (value: TexasRole) => void;
+  onResponseLevelChange?: (value: ResponseLevel) => void;
+  error?: string;
 }
 
 export const TexasChatContainer = ({
@@ -27,14 +28,15 @@ export const TexasChatContainer = ({
   messages,
   isLoading,
   input,
-  selectedAgency,
-  selectedRole,
-  selectedResponseLevel,
+  selectedAgency = "TEXAS_GOVERNMENT" as TexasAgencyType,
+  selectedRole = "CONTRACTING_OFFICER" as TexasRole,
+  selectedResponseLevel = "STANDARD" as ResponseLevel,
   onInputChange,
   onSubmit,
-  onAgencyChange,
-  onRoleChange,
-  onResponseLevelChange,
+  onAgencyChange = () => {},
+  onRoleChange = () => {},
+  onResponseLevelChange = () => {},
+  error,
 }: TexasChatContainerProps) => {
   return (
     <div className="container-module-lg py-8">
@@ -68,6 +70,7 @@ export const TexasChatContainer = ({
             <ChatMessages
               messages={messages}
               isLoading={isLoading}
+              error={error}
             />
           </div>
           
