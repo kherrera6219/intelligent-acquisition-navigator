@@ -102,7 +102,8 @@ describe('TexasChatContainer', () => {
   it('renders file upload button', () => {
     render(<TexasChatContainer {...defaultProps} />);
     
-    expect(screen.getByText('Upload Document')).toBeInTheDocument();
+    // The upload button now has a title instead of text content
+    expect(screen.getByTitle('Upload Document')).toBeInTheDocument();
   });
 
   it('renders chat history section', () => {

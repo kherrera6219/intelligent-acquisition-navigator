@@ -135,14 +135,18 @@ export const TexasChatContainer = ({
               />
             </div>
             
-            <FileUpload onFileUpload={handleFileUpload} />
-            
-            <ChatInput
-              input={input}
-              isLoading={isLoading}
-              onInputChange={onInputChange}
-              onSubmit={onSubmit}
-            />
+            <div className="relative">
+              <div className="absolute bottom-4 left-4 z-10">
+                <FileUpload onFileUpload={handleFileUpload} className="inline-block" />
+              </div>
+              <ChatInput
+                input={input}
+                isLoading={isLoading}
+                onInputChange={onInputChange}
+                onSubmit={onSubmit}
+                className="pl-14" // Add left padding to accommodate the upload button
+              />
+            </div>
           </Card>
         </div>
       </div>

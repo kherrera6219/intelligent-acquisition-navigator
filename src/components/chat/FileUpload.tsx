@@ -5,9 +5,10 @@ import { Upload } from "lucide-react";
 
 interface FileUploadProps {
   onFileUpload: (files: FileList) => void;
+  className?: string;
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
+export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, className }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +29,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
   };
 
   return (
-    <div className="mt-4">
+    <div className={className}>
       <input
         type="file"
         ref={fileInputRef}
@@ -38,12 +39,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
       />
       <Button
         type="button"
-        variant="outline"
+        variant="ghost"
+        size="icon"
         onClick={handleButtonClick}
-        className="w-full border-dashed border-2 hover:bg-background/50"
+        className="hover:bg-background/50"
+        title="Upload Document"
       >
-        <Upload className="w-4 h-4 mr-2" />
-        Upload Document
+        <Upload className="w-4 h-4" />
+        <span className="sr-only">Upload Document</span>
       </Button>
     </div>
   );
