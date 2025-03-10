@@ -90,6 +90,9 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
               <Link to="/federal-acquisition" className="text-sm text-gray-300 hover:text-white">Federal Acquisition</Link>
               <Link to="/texas-acquisition" className="text-sm text-gray-300 hover:text-white">Texas Acquisition</Link>
               <Link to="/solicitation-review" className="text-sm text-gray-300 hover:text-white">Solicitation Review</Link>
+              <Link to="/document-control" className="text-sm text-gray-300 hover:text-white">Document Control</Link>
+              <Link to="/market-research" className="text-sm text-gray-300 hover:text-white">Market Research</Link>
+              <Link to="/sitemap" className="text-sm text-gray-300 hover:text-white">Sitemap</Link>
             </div>
           </div>
         </div>

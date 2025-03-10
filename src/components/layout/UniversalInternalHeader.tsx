@@ -8,7 +8,7 @@ import { HeaderNotifications } from './navigation/HeaderNotifications';
 import { HeaderProfile } from './navigation/HeaderProfile';
 import { MobileMenuButton } from './navigation/MobileMenuButton';
 import { MobileMenu } from './navigation/MobileMenu';
-import { GlobeLock, Flag, FileText, BarChart2, BookOpen, ClipboardCheck, Menu, ChevronDown } from 'lucide-react';
+import { GlobeLock, Flag, FileText, BarChart2, BookOpen, ClipboardCheck, Menu, ChevronDown, FileSearch, Shield, Scale, Users, Building2, Building } from 'lucide-react';
 
 export const UniversalInternalHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,12 +20,20 @@ export const UniversalInternalHeader: React.FC = () => {
 
   // Main sections for quick access in dropdown
   const mainSections = [
+    { id: 'dashboard', label: 'Dashboard', path: '/dashboard', icon: BarChart2 },
     { id: 'federal', label: 'Federal Acquisition', path: '/federal-acquisition', icon: GlobeLock },
     { id: 'texas', label: 'Texas Acquisition', path: '/texas-acquisition', icon: Flag },
     { id: 'solicitation', label: 'Solicitation Review', path: '/solicitation-review', icon: FileText },
-    { id: 'analytics', label: 'Analytics', path: '/analytics', icon: BarChart2 },
+    { id: 'documents', label: 'Document Control', path: '/document-control', icon: FileSearch },
+    { id: 'market', label: 'Market Research', path: '/market-research', icon: Building },
     { id: 'knowledge', label: 'Knowledge Base', path: '/knowledge-base', icon: BookOpen },
-    { id: 'documents', label: 'Documents', path: '/document-control', icon: ClipboardCheck },
+    { id: 'compliance', label: 'Compliance', path: '/compliance', icon: Shield },
+    { id: 'legal', label: 'Legal Review', path: '/legal-review', icon: Scale },
+    { id: 'small', label: 'Small Business', path: '/small-business', icon: Users },
+    { id: 'quality', label: 'Quality Assurance', path: '/quality-assurance', icon: ClipboardCheck },
+    { id: 'contract', label: 'Contract Management', path: '/contract-management', icon: Building2 },
+    { id: 'analytics', label: 'Analytics', path: '/analytics', icon: BarChart2 },
+    { id: 'sitemap', label: 'Sitemap', path: '/sitemap', icon: Menu },
   ];
 
   // Add scroll effect
@@ -98,7 +106,7 @@ export const UniversalInternalHeader: React.FC = () => {
               </button>
               
               {isDropdownOpen && (
-                <div className="absolute top-full mt-1 left-0 bg-gray-900 border border-gray-800 rounded-md shadow-lg overflow-hidden w-64 z-50">
+                <div className="absolute top-full mt-1 left-0 bg-gray-900 border border-gray-800 rounded-md shadow-lg overflow-hidden w-64 z-50 max-h-[calc(100vh-100px)] overflow-y-auto">
                   <div className="py-1">
                     {mainSections.map((section) => (
                       <Link

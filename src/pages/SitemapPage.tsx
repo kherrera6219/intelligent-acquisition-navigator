@@ -10,7 +10,7 @@ import { Card } from '@/components/ui/universal/Card';
 const SitemapPage: React.FC = () => {
   // Categorize routes
   const marketingRoutes = routes.filter(route => 
-    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy"].includes(route.path || "")
+    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap"].includes(route.path || "")
   );
   
   const authRoutes = routes.filter(route => 
@@ -26,10 +26,17 @@ const SitemapPage: React.FC = () => {
   );
   
   const acquisitionRoutes = routes.filter(route => 
-    route.path?.includes("acquisition") || 
+    (route.path?.includes("acquisition") || 
     route.path?.startsWith("/solicitation") || 
     route.path?.startsWith("/document-control") || 
-    route.path?.startsWith("/market-research")
+    route.path?.startsWith("/market-research") || 
+    route.path?.startsWith("/contract-management") ||
+    route.path?.startsWith("/source-selection") ||
+    route.path?.startsWith("/legal-review") ||
+    route.path?.startsWith("/small-business") ||
+    route.path?.startsWith("/quality-assurance") ||
+    route.path?.startsWith("/compliance") ||
+    route.path?.startsWith("/knowledge-base"))
   );
 
   return (
@@ -41,7 +48,8 @@ const SitemapPage: React.FC = () => {
               linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
               radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
             `,
-            backgroundAttachment: 'fixed'
+            backgroundAttachment: 'fixed',
+            backgroundColor: 'var(--background)'
           }}
         >
           <PageHeader

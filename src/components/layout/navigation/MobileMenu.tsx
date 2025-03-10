@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Home, FileText, Map, HelpCircle, GlobeLock, Flag } from 'lucide-react';
+import { ChevronDown, Home, FileText, Map, HelpCircle, GlobeLock, Flag, BookOpen, ClipboardCheck, FileSearch, Building, Shield, Scale, Users, Building2, BarChart2, Settings } from 'lucide-react';
 
 interface MobileMenuProps {
   isMobileMenuOpen: boolean;
@@ -20,16 +20,23 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   const [isMainDropdownOpen, setIsMainDropdownOpen] = useState(false);
   
   const mainMenuItems = [
-    { label: 'Main Dashboard', href: '/dashboard', icon: Home },
+    { label: 'Dashboard', href: '/dashboard', icon: BarChart2 },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag },
+    { label: 'Solicitation Review', href: '/solicitation-review', icon: FileText },
+    { label: 'Document Control', href: '/document-control', icon: FileSearch },
+    { label: 'Market Research', href: '/market-research', icon: Building },
+    { label: 'Knowledge Base', href: '/knowledge-base', icon: BookOpen },
+    { label: 'Compliance', href: '/compliance', icon: Shield },
+    { label: 'Legal Review', href: '/legal-review', icon: Scale },
+    { label: 'Small Business', href: '/small-business', icon: Users },
+    { label: 'Quality Assurance', href: '/quality-assurance', icon: ClipboardCheck },
+    { label: 'Contract Management', href: '/contract-management', icon: Building2 },
+    { label: 'Analytics', href: '/analytics', icon: BarChart2 },
+    { label: 'Settings', href: '/settings', icon: Settings },
     { label: 'Sitemap', href: '/sitemap', icon: Map },
     { label: 'Help', href: '/help', icon: HelpCircle }
   ];
-  
-  const filteredNavItems = navItems.filter(item => 
-    !mainMenuItems.some(menuItem => menuItem.href === item.href)
-  );
   
   if (!isMobileMenuOpen) return null;
   
@@ -42,7 +49,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
           transition={{ duration: 0.2 }}
-          className="md:hidden bg-gray-900 border-t border-gray-800"
+          className="md:hidden bg-gray-900 border-t border-gray-800 max-h-[70vh] overflow-y-auto"
         >
           <div className="px-3 pt-2 pb-3 space-y-1">
             <div>
@@ -53,7 +60,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 }`}
                 aria-expanded={isMainDropdownOpen}
               >
-                <span>Main</span>
+                <span>Main Navigation</span>
                 <ChevronDown className={`w-5 h-5 transition-transform ${isMainDropdownOpen ? 'transform rotate-180' : ''}`} />
               </button>
               
@@ -78,25 +85,6 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 </div>
               )}
             </div>
-            
-            {filteredNavItems.map((item) => (
-              item.minRole === null || (userRole && item.minRole === 'authenticated') ? (
-                <Link
-                  key={item.label}
-                  to={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    pathname === item.href
-                      ? 'bg-gray-800 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <item.icon className="h-5 w-5 mr-3" />
-                    {item.label}
-                  </div>
-                </Link>
-              ) : null
-            ))}
           </div>
         </motion.div>
       )}

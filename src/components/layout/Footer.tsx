@@ -21,8 +21,11 @@ export const Footer = () => {
 
   const appRoutes = [
     { path: "/dashboard", label: "Dashboard" },
-    { path: "/acquisition/federal-acquisition", label: "Federal Acquisition" },
-    { path: "/acquisition/texas-acquisition", label: "Texas Acquisition" },
+    { path: "/federal-acquisition", label: "Federal Acquisition" },
+    { path: "/texas-acquisition", label: "Texas Acquisition" },
+    { path: "/solicitation-review", label: "Solicitation Review" },
+    { path: "/document-control", label: "Document Control" },
+    { path: "/market-research", label: "Market Research" },
     { path: "/sitemap", label: "Sitemap" },
   ];
 
