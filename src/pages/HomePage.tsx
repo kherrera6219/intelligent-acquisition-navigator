@@ -76,8 +76,15 @@ const Index = () => {
       </a>
 
       <div 
-        className="relative min-h-screen bg-[#1A1720] overflow-x-hidden"
+        className="relative min-h-screen bg-background overflow-x-hidden bg-noise"
         role="main"
+        style={{
+          backgroundImage: `
+            linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+            radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+          `,
+          backgroundAttachment: 'fixed'
+        }}
       >
         {showPrivacyNotice && (
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
@@ -96,7 +103,7 @@ const Index = () => {
             <div className="space-y-24 py-24">
               <SectionErrorBoundary>
                 <Suspense fallback={<SectionLoader />}>
-                  <div className="glass-morphism">
+                  <div className="glass-panel rounded-lg">
                     <FeaturesSection />
                   </div>
                 </Suspense>
@@ -104,7 +111,7 @@ const Index = () => {
 
               <SectionErrorBoundary>
                 <Suspense fallback={<SectionLoader />}>
-                  <div className="glass-morphism">
+                  <div className="glass-panel rounded-lg">
                     <TestimonialsSection />
                   </div>
                 </Suspense>
@@ -112,7 +119,7 @@ const Index = () => {
 
               <SectionErrorBoundary>
                 <Suspense fallback={<SectionLoader />}>
-                  <div className="glass-morphism">
+                  <div className="glass-panel rounded-lg">
                     <CTASection />
                   </div>
                 </Suspense>

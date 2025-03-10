@@ -126,6 +126,18 @@
 .app-main {
   @apply pt-[var(--header-height)] md:pl-[var(--sidebar-width)];
   grid-area: main;
+  background-image: 
+    linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+    radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%);
+  background-attachment: fixed;
+}
+
+/* Global background for all major content areas */
+.content-area, .main-content-area, .page-content {
+  background-image: 
+    linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+    radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%);
+  background-attachment: fixed;
 }
 
 /* Responsive layout adjustments */

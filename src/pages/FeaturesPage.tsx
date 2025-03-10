@@ -1,6 +1,6 @@
 
 import { GradientText } from "@/components/ui/universal/GradientText";
-import { GlassCard } from "@/components/ui/universal/GlassCard";
+import { Card } from "@/components/ui/universal/Card";
 import { GradientButton } from "@/components/ui/universal/GradientButton";
 import { Brain, Shield, Zap, BarChart } from "lucide-react";
 
@@ -29,7 +29,15 @@ const features = [
 
 const Features = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <div className="min-h-screen bg-noise"
+      style={{
+        backgroundImage: `
+          linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+          radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+        `,
+        backgroundAttachment: 'fixed'
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
@@ -42,9 +50,11 @@ const Features = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <GlassCard 
+            <Card 
               key={index}
-              clickable
+              variant="metal"
+              className="p-6"
+              hoverable
             >
               <div className="h-12 w-12 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 
                              rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 
@@ -53,7 +63,7 @@ const Features = () => {
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
               <p className="text-gray-400">{feature.description}</p>
-            </GlassCard>
+            </Card>
           ))}
         </div>
 

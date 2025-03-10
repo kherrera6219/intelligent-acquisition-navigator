@@ -7,7 +7,7 @@ import { Container } from '@/components/ui/universal/Container';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/universal/Card';
 
 export default function AuthenticationPage() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -49,7 +49,10 @@ export default function AuthenticationPage() {
           }
         />
         
-        <Card className="max-w-md mx-auto mt-8 p-6 border-white/10 bg-black/30 backdrop-blur-md">
+        <Card 
+          variant="metal" 
+          className="max-w-md mx-auto mt-8 p-6"
+        >
           <AuthForm mode={mode} />
           
           <div className="mt-6 text-center">

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Container } from '@/components/ui/universal/Container';
 import { Link } from "react-router-dom";
-import { GlassCard } from '@/components/ui/universal/GlassCard';
+import { Card } from '@/components/ui/universal/Card';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Home, Map, HelpCircle } from 'lucide-react';
 
@@ -11,14 +11,25 @@ const NotFoundPage: React.FC = () => {
   return (
     <main className="flex-grow">
       <Container>
-        <div className="py-6">
+        <div className="py-6 bg-noise"
+          style={{
+            backgroundImage: `
+              linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+              radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+            `,
+            backgroundAttachment: 'fixed'
+          }}
+        >
           <PageHeader
             title="Page Not Found"
             description="We couldn't find the page you're looking for"
           />
           
           <div className="flex items-center justify-center mt-12">
-            <GlassCard className="max-w-md w-full text-center p-8 sm:p-12 space-y-6 animate-fade-in">
+            <Card 
+              variant="metal" 
+              className="max-w-md w-full text-center p-8 sm:p-12 space-y-6 animate-fade-in"
+            >
               <h2 className="text-4xl sm:text-5xl font-bold text-white">404</h2>
               <p className="text-lg sm:text-xl text-gray-400 mb-8">
                 The page you're looking for doesn't exist or has been moved
@@ -52,7 +63,7 @@ const NotFoundPage: React.FC = () => {
                   <span>Need help?</span>
                 </Link>
               </div>
-            </GlassCard>
+            </Card>
           </div>
         </div>
       </Container>
