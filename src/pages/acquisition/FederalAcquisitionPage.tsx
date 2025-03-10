@@ -1,16 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
-import { FederalChatContainer } from '@/components/federal/FederalChatContainer';
+import { FederalChatContainer, FederalChatMessage } from '@/components/federal/FederalChatContainer';
 import { FederalReportCardGrid } from '@/components/federal/FederalReportCardGrid';
 import { Button } from '@/components/ui/button';
 import { Plus, Filter } from 'lucide-react';
 import { ReportCardProps } from '@/components/federal/FederalReportCard';
 import { useToast } from '@/components/ui/use-toast';
+import { v4 as uuidv4 } from 'uuid';
 
 const FederalAcquisitionPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'reports' | 'chat'>('reports');
+  const [chatMessages, setChatMessages] = useState<FederalChatMessage[]>([]);
+  const [messageInput, setMessageInput] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
   
   // Example report data
@@ -77,6 +81,38 @@ const FederalAcquisitionPage = () => {
     // In a real app, navigate to report creation page or open a modal
   };
 
+  const handleSendMessage = (message: string) => {
+    // Add user message
+    const userMessage: FederalChatMessage = {
+      id: uuidv4(),
+      content: message,
+      role: 'user',
+      timestamp: new Date()
+    };
+    setChatMessages(prev => [...prev, userMessage]);
+    
+    // Simulate AI response
+    setIsSending(true);
+    setTimeout(() => {
+      const aiMessage: FederalChatMessage = {
+        id: uuidv4(),
+        content: `This is a simulated response to your query: "${message}". In a real application, this would come from an AI service.`,
+        role: 'assistant',
+        timestamp: new Date()
+      };
+      setChatMessages(prev => [...prev, aiMessage]);
+      setIsSending(false);
+    }, 1500);
+  };
+
+  const handleClearChat = () => {
+    setChatMessages([]);
+    toast({
+      title: "Chat cleared",
+      description: "Conversation history has been cleared.",
+    });
+  };
+
   return (
     <ProtectedPageLayout
       title="Federal Acquisition Management"
@@ -121,7 +157,20 @@ const FederalAcquisitionPage = () => {
           />
         ) : (
           <div className="bg-black/10 backdrop-blur-sm border border-white/10 rounded-lg p-4">
-            <FederalChatContainer />
+            <FederalChatContainer 
+              messages={chatMessages}
+              isLoading={isSending}
+              input={messageInput}
+              onInputChange={setMessageInput}
+              onSendMessage={handleSendMessage}
+              onClearChat={handleClearChat}
+              onFileUpload={(file) => {
+                toast({
+                  title: "File uploaded",
+                  description: `File "${file.name}" has been uploaded. This is a placeholder for actual file processing.`,
+                });
+              }}
+            />
           </div>
         )}
       </div>
