@@ -27,7 +27,15 @@ export default function Help() {
 
   return (
     <Container>
-      <div className="py-6 animate-fade-in bg-noise">
+      <div className="py-6 animate-fade-in bg-noise"
+        style={{
+          backgroundImage: `
+            linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+            radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+          `,
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <PageHeader
           title="Help Center"
           description="Find answers and support for your questions"

@@ -1,80 +1,135 @@
 
-/* Responsive Typography */
-.text-responsive {
-  @apply text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl;
+/* Utility Styles */
+.text-balance {
+  text-wrap: balance;
 }
 
-.heading-responsive {
-  @apply text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+.text-pretty {
+  text-wrap: pretty;
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  @apply w-1.5 sm:w-2;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-black/20;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full;
-  @apply hover:bg-white/20;
-}
-
-/* Scrollbar Utilities */
 .scrollbar-none {
-  -ms-overflow-style: none;
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
 
-/* Touch Device Optimizations */
-@media (hover: none) {
-  .touch-target {
-    @apply min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px];
+/* Page layout utilities */
+.full-bleed {
+  box-shadow: 0 0 0 100vmax var(--bg-color);
+  clip-path: inset(0 -100vmax);
+}
+
+.content-grid {
+  --padding-inline: 1rem;
+  --content-max-width: 1440px;
+  --breakout-max-width: 1600px;
+
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--padding-inline), 1fr)
+    [breakout-start] minmax(0, calc((var(--breakout-max-width) - var(--content-max-width)) / 2))
+    [content-start] min(100% - (var(--padding-inline) * 2), var(--content-max-width))
+    [content-end] minmax(0, calc((var(--breakout-max-width) - var(--content-max-width)) / 2))
+    [breakout-end] minmax(var(--padding-inline), 1fr)
+    [full-end];
+}
+
+.content-grid > :not(.breakout, .full-bleed),
+.full-bleed > .content-grid > :not(.breakout, .full-bleed) {
+  grid-column: content;
+}
+
+.content-grid > .breakout {
+  grid-column: breakout;
+}
+
+.content-grid > .full-bleed {
+  grid-column: full;
+  width: 100%;
+}
+
+/* Color utilities */
+.text-gradient-primary {
+  @apply bg-gradient-to-br from-primary to-blue-400 bg-clip-text text-transparent;
+}
+
+.text-gradient-secondary {
+  @apply bg-gradient-to-br from-purple-500 to-pink-500 bg-clip-text text-transparent;
+}
+
+/* Background pattern */
+.bg-grid {
+  --grid-size: 60px;
+  --grid-strength: 1%;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, var(--grid-strength)) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, var(--grid-strength)) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
+    linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+    radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%);
+  background-blend-mode: overlay, normal;
+  background-attachment: fixed;
+}
+
+/* Background patterns */
+.bg-dot-pattern {
+  --dot-bg: currentColor;
+  --dot-color: transparent;
+  --dot-size: 1px;
+  --dot-space: 22px;
+  background:
+    linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+    linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+    var(--dot-color);
+}
+
+/* Glass and metal morphism */
+.glass-card {
+  @apply bg-black/20 backdrop-blur-md border border-white/10 shadow-lg;
+  background-image: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+}
+
+.metal-card {
+  @apply bg-gray-900/90 border border-gray-800 shadow-lg;
+  background-image: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255,255,255,0.05),
+    0 2px 8px rgba(0,0,0,0.2);
+}
+
+.glossy-metal {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 0 rgba(0,0,0,0.5),
+    0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+  .sm-only {
+    display: none;
   }
-  
-  .touch-feedback {
-    @apply active:scale-95 transition-transform;
+}
+
+@media (min-width: 641px) {
+  .xs-only {
+    display: none;
   }
 }
 
-/* Screen Size Adaptive Padding */
-.adaptive-p {
-  @apply p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6;
-}
-
-.adaptive-px {
-  @apply px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6;
-}
-
-.adaptive-py {
-  @apply py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6;
-}
-
-/* Adaptive Margins */
-.adaptive-m {
-  @apply m-2 xs:m-3 sm:m-4 md:m-5 lg:m-6;
-}
-
-.adaptive-mx {
-  @apply mx-2 xs:mx-3 sm:mx-4 md:mx-5 lg:mx-6;
-}
-
-.adaptive-my {
-  @apply my-2 xs:my-3 sm:my-4 md:my-5 lg:my-6;
-}
-
-/* Screen Size Debug Helper */
-.debug-screen {
-  @apply fixed bottom-1 right-1 px-2 py-1 bg-gray-800 text-white text-xs rounded-full z-50;
-}
-
-.debug-screen::after {
-  content: 'xs';
-  @apply xs:content-['xs'] sm:content-['sm'] md:content-['md'] lg:content-['lg'] xl:content-['xl'] 2xl:content-['2xl'];
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

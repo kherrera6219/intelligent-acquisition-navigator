@@ -1,107 +1,110 @@
 
-import { Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/universal/Container";
-import { PageHeader } from "@/components/layout/PageHeader";
-import { 
-  ArrowRight, Shield, BarChart2, Home, FileText, Map, FileCheck, 
-  Users, Building2, Scale, BookOpen, 
-  HelpCircle, Settings, Database, Layers,
-  FileSearch, User, Webhook
-} from 'lucide-react';
+import React from 'react';
+import { Container } from '@/components/ui/universal/Container';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { GradientText } from '@/components/ui/universal/GradientText';
+import { Link } from 'react-router-dom';
+import { routes } from '@/routes';
+import { Card } from '@/components/ui/universal/Card';
 
-const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
-  <Card className="p-6 glass-card">
-    <h2 className="text-xl font-semibold mb-4 text-gradient">{title}</h2>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {links.map(({ path, label, icon: Icon }) => (
-        <Link 
-          key={path} 
-          to={path}
-          className="flex items-center p-3 rounded-lg hover:bg-white/5 transition-colors gap-3
-                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        >
-          <Icon className="w-5 h-5 text-primary/60" />
-          <span>{label}</span>
-        </Link>
-      ))}
-    </div>
-  </Card>
-);
-
-const Sitemap = () => {
-  const sections = {
-    main: [
-      { path: "/", label: "Home", icon: Home },
-      { path: "/features", label: "Features", icon: BookOpen },
-      { path: "/pricing", label: "Pricing", icon: Scale },
-      { path: "/about", label: "About", icon: Users },
-      { path: "/contact", label: "Contact", icon: Users },
-      { path: "/privacy", label: "Privacy Policy", icon: Shield }
-    ],
-    auth: [
-      { path: "/auth", label: "Sign In / Sign Up", icon: Users },
-      { path: "/auth/reset-password", label: "Reset Password", icon: Shield },
-      { path: "/settings", label: "User Settings", icon: Settings },
-      { path: "/profile", label: "User Profile", icon: User },
-    ],
-    core: [
-      { path: "/dashboard", label: "Dashboard", icon: Home },
-      { path: "/analytics", label: "Analytics", icon: BarChart2 },
-      { path: "/knowledge-base", label: "Knowledge Base", icon: Database },
-    ],
-    proposals: [
-      { path: "/proposals", label: "Proposals", icon: FileText },
-      { path: "/proposals/1", label: "Proposal Details Example", icon: Layers },
-    ],
-    acquisition: [
-      { path: "/acquisition/document-control", label: "Document Control", icon: FileText },
-      { path: "/acquisition/market-research", label: "Market Research", icon: FileSearch },
-      { path: "/acquisition/solicitation-review", label: "Solicitation Review", icon: FileCheck },
-      { path: "/acquisition/texas", label: "Texas Acquisition", icon: Building2 },
-      { path: "/acquisition/federal", label: "Federal Acquisition", icon: Database }
-    ],
-    system: [
-      { path: "/help", label: "Help Center", icon: HelpCircle },
-      { path: "/sitemap", label: "Sitemap", icon: Map }
-    ],
-    development: [
-      { path: "/api-docs", label: "API Documentation", icon: Webhook },
-      { path: "/component-library", label: "Component Library", icon: Layers }
-    ]
-  };
+const SitemapPage: React.FC = () => {
+  // Categorize routes
+  const marketingRoutes = routes.filter(route => 
+    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy"].includes(route.path || "")
+  );
+  
+  const authRoutes = routes.filter(route => 
+    ["/auth", "/auth/reset-password", "/auth/reset-password/confirm"].includes(route.path || "")
+  );
+  
+  const appRoutes = routes.filter(route => 
+    route.path?.startsWith("/dashboard") || 
+    route.path?.startsWith("/analytics") || 
+    route.path?.startsWith("/profile") || 
+    route.path?.startsWith("/settings") ||
+    route.path?.startsWith("/proposals")
+  );
+  
+  const acquisitionRoutes = routes.filter(route => 
+    route.path?.includes("acquisition") || 
+    route.path?.startsWith("/solicitation") || 
+    route.path?.startsWith("/document-control") || 
+    route.path?.startsWith("/market-research")
+  );
 
   return (
     <main className="flex-grow">
       <Container>
-        <div className="space-y-6 py-6">
+        <div className="space-y-8 py-6 bg-noise"
+          style={{
+            backgroundImage: `
+              linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+              radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+            `,
+            backgroundAttachment: 'fixed'
+          }}
+        >
           <PageHeader
-            title="Application Map"
-            description="Complete overview of ProcurityIQ's structure and navigation"
+            title={<GradientText>Sitemap</GradientText>}
+            description="Find and navigate to all pages of our application"
           />
-
-          <div className="space-y-8">
-            <SitemapSection title="Main Navigation" links={sections.main} />
-            <SitemapSection title="Authentication & User" links={sections.auth} />
-            <SitemapSection title="Core Features" links={sections.core} />
-            <SitemapSection title="Proposal Management" links={sections.proposals} />
-            <SitemapSection title="Acquisition Management" links={sections.acquisition} />
-            <SitemapSection title="System & Support" links={sections.system} />
-            <SitemapSection title="Developer Resources" links={sections.development} />
-          </div>
-
-          <div className="mt-12 flex justify-center gap-4">
-            <Button 
-              className="enterprise-gradient"
-              size="lg"
-              asChild
-            >
-              <Link to="/dashboard">
-                Go to Dashboard
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Marketing Pages */}
+            <Card variant="metal" className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Marketing Pages</h2>
+              <ul className="space-y-2">
+                {marketingRoutes.map((route, index) => (
+                  <li key={`marketing-${index}`} className="hover:bg-gray-800/50 rounded">
+                    <Link to={route.path || "#"} className="block px-3 py-2 transition-colors">
+                      {route.path}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+            
+            {/* Auth Pages */}
+            <Card variant="metal" className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Authentication</h2>
+              <ul className="space-y-2">
+                {authRoutes.map((route, index) => (
+                  <li key={`auth-${index}`} className="hover:bg-gray-800/50 rounded">
+                    <Link to={route.path || "#"} className="block px-3 py-2 transition-colors">
+                      {route.path}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+            
+            {/* Application Pages */}
+            <Card variant="metal" className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Application</h2>
+              <ul className="space-y-2">
+                {appRoutes.map((route, index) => (
+                  <li key={`app-${index}`} className="hover:bg-gray-800/50 rounded">
+                    <Link to={route.path || "#"} className="block px-3 py-2 transition-colors">
+                      {route.path}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+            
+            {/* Acquisition Pages */}
+            <Card variant="metal" className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Acquisition</h2>
+              <ul className="space-y-2">
+                {acquisitionRoutes.map((route, index) => (
+                  <li key={`acquisition-${index}`} className="hover:bg-gray-800/50 rounded">
+                    <Link to={route.path || "#"} className="block px-3 py-2 transition-colors">
+                      {route.path}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card>
           </div>
         </div>
       </Container>
@@ -109,4 +112,4 @@ const Sitemap = () => {
   );
 };
 
-export default Sitemap;
+export default SitemapPage;

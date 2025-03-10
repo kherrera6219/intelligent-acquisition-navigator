@@ -3,6 +3,7 @@ import { GradientText } from "@/components/ui/universal/GradientText";
 import { Card } from "@/components/ui/universal/Card";
 import { GradientButton } from "@/components/ui/universal/GradientButton";
 import { Brain, Shield, Zap, BarChart } from "lucide-react";
+import { Container } from "@/components/ui/universal/Container";
 
 const features = [
   {
@@ -29,16 +30,16 @@ const features = [
 
 const Features = () => {
   return (
-    <div className="min-h-screen bg-noise"
-      style={{
-        backgroundImage: `
-          linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
-          radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
-        `,
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <Container>
+      <div className="py-12 bg-noise"
+        style={{
+          backgroundImage: `
+            linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+            radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+          `,
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             <GradientText>Powerful Features for Modern Acquisition</GradientText>
@@ -76,7 +77,7 @@ const Features = () => {
           </GradientButton>
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

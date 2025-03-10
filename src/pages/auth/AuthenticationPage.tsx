@@ -40,7 +40,15 @@ export default function AuthenticationPage() {
 
   return (
     <MainLayout containerSize="sm">
-      <div className="py-8 animate-fade-in">
+      <div className="py-8 animate-fade-in bg-noise"
+        style={{
+          backgroundImage: `
+            linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+            radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+          `,
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <PageHeader
           title={mode === 'login' ? "Sign In" : "Create Account"}
           description={mode === 'login' 
