@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Home, FileText, Map, HelpCircle, GlobeLock, Flag, BookOpen, ClipboardCheck, FileSearch, Building, Shield, Scale, Users, Building2, BarChart2, Settings } from 'lucide-react';
+import { ChevronDown, BarChart2, FileText, Map, HelpCircle, GlobeLock, Flag, BookOpen, ClipboardCheck, FileSearch, Building, Shield, Scale, Users, Building2, Settings } from 'lucide-react';
 
 interface MobileMenuProps {
   isMobileMenuOpen: boolean;
@@ -32,10 +32,16 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
     { label: 'Small Business', href: '/small-business', icon: Users },
     { label: 'Quality Assurance', href: '/quality-assurance', icon: ClipboardCheck },
     { label: 'Contract Management', href: '/contract-management', icon: Building2 },
+    { label: 'Source Selection', href: '/source-selection', icon: FileText },
     { label: 'Analytics', href: '/analytics', icon: BarChart2 },
+    { label: 'Features', href: '/features', icon: BookOpen },
+    { label: 'Pricing', href: '/pricing', icon: BookOpen },
+    { label: 'About', href: '/about', icon: BookOpen },
+    { label: 'Contact', href: '/contact', icon: BookOpen },
     { label: 'Settings', href: '/settings', icon: Settings },
     { label: 'Sitemap', href: '/sitemap', icon: Map },
-    { label: 'Help', href: '/help', icon: HelpCircle }
+    { label: 'Help', href: '/help', icon: HelpCircle },
+    { label: 'Privacy', href: '/privacy', icon: Shield }
   ];
   
   if (!isMobileMenuOpen) return null;

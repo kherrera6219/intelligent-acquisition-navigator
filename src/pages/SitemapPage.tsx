@@ -10,7 +10,7 @@ import { Card } from '@/components/ui/universal/Card';
 const SitemapPage: React.FC = () => {
   // Categorize routes
   const marketingRoutes = routes.filter(route => 
-    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap"].includes(route.path || "")
+    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap", "/api-docs", "/component-library"].includes(route.path || "")
   );
   
   const authRoutes = routes.filter(route => 

@@ -92,6 +92,12 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
               <Link to="/solicitation-review" className="text-sm text-gray-300 hover:text-white">Solicitation Review</Link>
               <Link to="/document-control" className="text-sm text-gray-300 hover:text-white">Document Control</Link>
               <Link to="/market-research" className="text-sm text-gray-300 hover:text-white">Market Research</Link>
+              <Link to="/compliance" className="text-sm text-gray-300 hover:text-white">Compliance</Link>
+              <Link to="/legal-review" className="text-sm text-gray-300 hover:text-white">Legal Review</Link>
+              <Link to="/small-business" className="text-sm text-gray-300 hover:text-white">Small Business</Link>
+              <Link to="/quality-assurance" className="text-sm text-gray-300 hover:text-white">Quality Assurance</Link>
+              <Link to="/source-selection" className="text-sm text-gray-300 hover:text-white">Source Selection</Link>
+              <Link to="/contract-management" className="text-sm text-gray-300 hover:text-white">Contract Management</Link>
               <Link to="/sitemap" className="text-sm text-gray-300 hover:text-white">Sitemap</Link>
             </div>
           </div>

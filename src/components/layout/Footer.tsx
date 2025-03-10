@@ -10,13 +10,16 @@ export const Footer = () => {
     { path: "/features", label: "Features" },
     { path: "/pricing", label: "Pricing" },
     { path: "/about", label: "About" },
+    { path: "/contact", label: "Contact" },
   ];
 
   const resourceRoutes = [
     { path: "/help", label: "Help Center" },
     { path: "/knowledge-base", label: "Knowledge Base" },
     { path: "/privacy", label: "Privacy Policy" },
-    { path: "/contact", label: "Contact Support" },
+    { path: "/sitemap", label: "Sitemap" },
+    { path: "/api-docs", label: "API Documentation" },
+    { path: "/component-library", label: "Component Library" },
   ];
 
   const appRoutes = [
@@ -26,7 +29,12 @@ export const Footer = () => {
     { path: "/solicitation-review", label: "Solicitation Review" },
     { path: "/document-control", label: "Document Control" },
     { path: "/market-research", label: "Market Research" },
-    { path: "/sitemap", label: "Sitemap" },
+    { path: "/compliance", label: "Compliance" },
+    { path: "/legal-review", label: "Legal Review" },
+    { path: "/small-business", label: "Small Business" },
+    { path: "/quality-assurance", label: "Quality Assurance" },
+    { path: "/source-selection", label: "Source Selection" },
+    { path: "/contract-management", label: "Contract Management" },
   ];
 
   // Get current year
