@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Menu, X, Search, Bell } from "lucide-react";
 import { HeaderLeft } from "./navigation/HeaderLeft";
 import { HeaderRight } from "./navigation/HeaderRight";
@@ -126,15 +126,39 @@ export const Header = ({ className }: HeaderProps) => {
               )}
             </Button>
             
-            <HeaderRight 
-              userRole={userRole}
-              signOut={signOut}
-              isMobileMenuOpen={isMobileMenuOpen}
-              toggleMobileMenu={toggleMobileMenu}
-            />
+            {isAuthenticated ? (
+              <HeaderRight 
+                userRole={userRole}
+                signOut={signOut}
+                isMobileMenuOpen={isMobileMenuOpen}
+                toggleMobileMenu={toggleMobileMenu}
+              />
+            ) : (
+              <Link to="/auth">
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  className="bg-primary hover:bg-primary/90 text-white"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
           
           <div className="flex items-center md:hidden space-x-3">
+            {!isAuthenticated && (
+              <Link to="/auth">
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  className="bg-primary hover:bg-primary/90 text-white mr-2"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            )}
+            
             <Button 
               variant="ghost" 
               size="icon" 

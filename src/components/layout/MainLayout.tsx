@@ -46,6 +46,28 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     return "";
   };
 
+  // Determine background styles for internal pages
+  const getBackgroundStyles = () => {
+    if (isInternalPage) {
+      return {
+        backgroundImage: `
+          linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+          radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+        `,
+        backgroundAttachment: 'fixed',
+        backgroundColor: 'var(--background)'
+      };
+    }
+    
+    return {
+      backgroundImage: `
+        linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
+        radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+      `,
+      backgroundAttachment: 'fixed'
+    };
+  };
+
   return (
     <ThemeProvider>
       <PageErrorBoundary>
@@ -69,13 +91,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             role="main" 
             className={`flex-1 w-full py-3 sm:py-4 md:py-6 ${isInternalPage ? 'mt-16' : ''} ${className || ''} bg-noise`}
             tabIndex={-1}
-            style={{
-              backgroundImage: `
-                linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
-                radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
-              `,
-              backgroundAttachment: 'fixed'
-            }}
+            style={getBackgroundStyles()}
           >
             <div className="w-full h-full min-h-[calc(100vh-theme(spacing.40))] overflow-hidden animate-fade-in">
               <Suspense fallback={<LoadingOverlay />}>
