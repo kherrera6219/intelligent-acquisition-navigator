@@ -69,11 +69,11 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
             </div>
           </div>
         ) : withCard ? (
-          <Card variant="metal" className={cn("p-6", contentClassName)}>
+          <Card variant="metal" className={cn("p-6", contentClassName)} textColor="black">
             {children}
           </Card>
         ) : (
-          <div className={cn("glass-panel p-6 rounded-lg", contentClassName)}>
+          <div className={cn("glass-panel p-6 rounded-lg on-gunmetal", contentClassName)}>
             {children}
           </div>
         )}

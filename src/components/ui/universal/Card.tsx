@@ -11,6 +11,7 @@ interface CardProps {
   noShadow?: boolean;
   variant?: 'default' | 'glass' | 'outline' | 'accent' | 'primary' | 'flat' | 'metal';
   padding?: 'none' | 'sm' | 'md' | 'lg' | boolean;
+  textColor?: 'default' | 'black';
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -22,6 +23,7 @@ export const Card: React.FC<CardProps> = ({
   noShadow = false,
   variant = 'default',
   padding = 'md',
+  textColor = 'default',
 }) => {
   const variantClasses = {
     default: "bg-secondary/50 border-border",
@@ -40,6 +42,11 @@ export const Card: React.FC<CardProps> = ({
     lg: "p-6 sm:p-8"
   };
 
+  const textClasses = {
+    default: "",
+    black: "text-black"
+  };
+
   const getPaddingClass = () => {
     if (padding === false) return "";
     if (padding === true) return paddingClasses.md;
@@ -52,6 +59,8 @@ export const Card: React.FC<CardProps> = ({
         "rounded-lg border",
         getPaddingClass(),
         variantClasses[variant],
+        textClasses[textColor],
+        variant === 'metal' && "on-gunmetal",
         !noShadow && variant === 'metal' 
           ? "shadow-lg shadow-black/30 glossy-metal"
           : !noShadow && "shadow-lg shadow-black/5",
