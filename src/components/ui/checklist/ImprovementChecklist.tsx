@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useImprovement } from "@/contexts/ImprovementContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -36,7 +35,6 @@ export const ImprovementChecklist: React.FC = () => {
     pendingUpdatesCount 
   } = useOfflineChecklistData(checklist, isLoading, error);
 
-  // Filter checklist items based on search query and filter options
   const filteredChecklist = offlineChecklist.filter(item => {
     const searchRegex = new RegExp(searchQuery, 'i');
     const matchesSearch = searchRegex.test(item.title) || searchRegex.test(item.description);
@@ -51,13 +49,11 @@ export const ImprovementChecklist: React.FC = () => {
     return matchesSearch;
   });
 
-  // Get current page items
   const paginatedChecklist = filteredChecklist.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Reset to first page when search query or filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, filter]);
