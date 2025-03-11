@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Container } from "@/components/ui/universal/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -9,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { PageNetworkWrapper } from "@/components/ui/universal/PageNetworkWrapper";
 import { NavigationSidebar } from './NavigationSidebar';
 import { BackButton } from '@/components/navigation/BackButton';
+import { useEffect, useState } from 'react';
 
 interface ProtectedPageLayoutProps {
   children: React.ReactNode;
@@ -45,13 +47,32 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   hideFooterNav = false,
   hideSidebar = false,
 }) => {
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+  
+  useEffect(() => {
+    const checkSidebarState = () => {
+      const minimizedState = localStorage.getItem('sidebar-minimized');
+      setIsSidebarMinimized(minimizedState === 'true');
+    };
+    
+    // Check on mount
+    checkSidebarState();
+    
+    // Setup listener for changes
+    window.addEventListener('storage', checkSidebarState);
+    
+    return () => {
+      window.removeEventListener('storage', checkSidebarState);
+    };
+  }, []);
+  
   const content = (
     <div className="flex min-h-screen bg-background">
       {/* Navigation sidebar */}
       {!hideSidebar && <NavigationSidebar />}
       
       {/* Main content area with padding to accommodate sidebar */}
-      <div className="flex-1 md:ml-64">
+      <div className={cn("flex-1", !hideSidebar && (isSidebarMinimized ? "md:ml-16" : "md:ml-64"), "transition-all duration-300")}>
         <Container size={fullWidth ? "full" : "lg"} variant="ms-fluent">
           <div className="py-6 ms-motion-fadeIn">
             {/* Back button - Show either custom backLink or automatic back button */}

@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useNetworkOperation } from '@/hooks/useNetworkOperation';
 import { FederalTabNavigation } from '@/components/federal/FederalTabNavigation';
 import { FederalTabContent } from '@/components/federal/FederalTabContent';
+import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
+import { InternalFooter } from '@/components/layout/InternalFooter';
 
 const FederalAcquisitionPage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -140,39 +142,43 @@ const FederalAcquisitionPage = () => {
   };
 
   return (
-    <ProtectedPageLayout
-      title="Federal Acquisition Management"
-      description="Manage and monitor federal acquisition compliance, documentation, and procedures."
-      isLoading={isLoading}
-      error={null}
-      withCard={false}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Federal Acquisition', href: '/federal-acquisition' }
-      ]}
-    >
-      <div className="flex flex-col gap-6">
-        <FederalTabNavigation
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          onNewReport={handleNewReportClick}
-        />
-        
-        <FederalTabContent
-          activeTab={activeTab}
-          reports={reports}
-          chatMessages={chatMessages}
-          isSending={isSending}
-          messageInput={messageInput}
-          onInputChange={setMessageInput}
-          onSendMessage={handleSendMessage}
-          onClearChat={handleClearChat}
-          onCardClick={handleReportCardClick}
-          onNetworkErrorReset={handleNetworkErrorReset}
-          onFileUpload={handleFileUpload}
-        />
-      </div>
-    </ProtectedPageLayout>
+    <>
+      <UniversalInternalHeader />
+      <ProtectedPageLayout
+        title="Federal Acquisition Management"
+        description="Manage and monitor federal acquisition compliance, documentation, and procedures."
+        isLoading={isLoading}
+        error={null}
+        withCard={false}
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Federal Acquisition', href: '/federal-acquisition' }
+        ]}
+      >
+        <div className="flex flex-col gap-6">
+          <FederalTabNavigation
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            onNewReport={handleNewReportClick}
+          />
+          
+          <FederalTabContent
+            activeTab={activeTab}
+            reports={reports}
+            chatMessages={chatMessages}
+            isSending={isSending}
+            messageInput={messageInput}
+            onInputChange={setMessageInput}
+            onSendMessage={handleSendMessage}
+            onClearChat={handleClearChat}
+            onCardClick={handleReportCardClick}
+            onNetworkErrorReset={handleNetworkErrorReset}
+            onFileUpload={handleFileUpload}
+          />
+        </div>
+      </ProtectedPageLayout>
+      <InternalFooter />
+    </>
   );
 };
 

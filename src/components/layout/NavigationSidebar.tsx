@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, ChevronRight, Menu, X } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Menu, X, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,21 @@ interface NavigationSidebarProps {
 
 export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const location = useLocation();
+  
+  // Check if user has previously minimized the sidebar
+  useEffect(() => {
+    const minimizedState = localStorage.getItem('sidebar-minimized');
+    if (minimizedState === 'true') {
+      setIsMinimized(true);
+    }
+  }, []);
+  
+  // Save minimized state to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebar-minimized', isMinimized.toString());
+  }, [isMinimized]);
   
   const navItems = [
     { name: 'Dashboard', href: '/dashboard' },
@@ -32,6 +46,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ className 
   ];
   
   const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleMinimize = () => setIsMinimized(!isMinimized);
   
   return (
     <>
@@ -49,35 +64,61 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ className 
       {/* Sidebar navigation */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 bg-card/90 backdrop-blur-sm border-r border-border w-64 transition-transform duration-300 ease-in-out z-30 p-4 flex flex-col",
+          "fixed inset-y-0 left-0 bg-card/90 backdrop-blur-sm border-r border-border transition-all duration-300 ease-in-out z-30 p-4 flex flex-col",
+          isMinimized ? "w-16" : "w-64",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
           className
         )}
       >
-        <div className="pt-12 md:pt-4">
-          <h2 className="text-xl font-semibold mb-6 px-2">Navigation</h2>
+        <div className="pt-12 md:pt-4 flex flex-col h-full">
+          <div className="flex items-center justify-between mb-6 px-2">
+            <h2 className={cn("text-xl font-semibold", isMinimized && "hidden")}>Navigation</h2>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleMinimize}
+              className="hidden md:flex"
+              aria-label={isMinimized ? "Expand sidebar" : "Minimize sidebar"}
+            >
+              {isMinimized ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+            </Button>
+          </div>
           
-          <nav className="space-y-1">
+          <nav className="space-y-1 overflow-y-auto flex-grow">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors group hover:bg-white/10",
-                  location.pathname === item.href ? "bg-primary/20 text-primary font-medium" : "text-muted-foreground"
+                  "flex items-center px-3 py-2 text-sm rounded-md transition-colors group hover:bg-white/10",
+                  location.pathname === item.href ? "bg-primary/20 text-primary font-medium" : "text-muted-foreground",
+                  isMinimized && "justify-center"
                 )}
                 onClick={() => setIsOpen(false)}
+                title={isMinimized ? item.name : undefined}
               >
-                <span>{item.name}</span>
-                <ChevronRight className="h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                <span className={cn(!isMinimized && "flex-1")}>{isMinimized ? item.name.charAt(0) : item.name}</span>
+                {!isMinimized && <ChevronRight className="h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity" />}
               </Link>
             ))}
           </nav>
         </div>
         
-        <div className="mt-auto pt-4 border-t border-border/40">
-          <Link to="/help" className="text-sm px-3 py-2 block hover:text-white">Help & Support</Link>
-          <Link to="/settings" className="text-sm px-3 py-2 block hover:text-white">Settings</Link>
+        <div className={cn("mt-auto pt-4 border-t border-border/40", isMinimized && "flex flex-col items-center")}>
+          <Link 
+            to="/help" 
+            className={cn("text-sm px-3 py-2 block hover:text-white", isMinimized && "px-0")} 
+            title={isMinimized ? "Help & Support" : undefined}
+          >
+            {isMinimized ? "H" : "Help & Support"}
+          </Link>
+          <Link 
+            to="/settings" 
+            className={cn("text-sm px-3 py-2 block hover:text-white", isMinimized && "px-0")} 
+            title={isMinimized ? "Settings" : undefined}
+          >
+            {isMinimized ? "S" : "Settings"}
+          </Link>
         </div>
       </div>
       
