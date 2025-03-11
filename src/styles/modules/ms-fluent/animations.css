@@ -25,7 +25,11 @@
 }
 
 .ms-motion-slideInBottom {
-  animation: msSlideInBottom 0.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation: msSlideInBottom 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.ms-motion-slideInTop {
+  animation: msSlideInTop 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
 .ms-motion-fadeInStagger > *:nth-child(1) { animation-delay: 0ms; }
@@ -70,7 +74,12 @@
 }
 
 @keyframes msSlideInBottom {
-  from { opacity: 0; transform: translateY(100%); }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes msSlideInTop {
+  from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -126,6 +135,7 @@
   .ms-motion-fadeInUp,
   .ms-motion-fadeInLeft,
   .ms-motion-slideInBottom,
+  .ms-motion-slideInTop,
   .ms-motion-fadeInStagger > *,
   .ms-card-entrance {
     animation: none !important;
