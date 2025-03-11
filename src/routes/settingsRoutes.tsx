@@ -14,7 +14,7 @@ const routes: RouteObject[] = [
   },
   {
     path: "/knowledge-base",
-    element: wrapWithLayout(KnowledgeBasePage, false)
+    element: wrapWithLayout(KnowledgeBasePage)
   },
   {
     path: "/federal-knowledge-base",

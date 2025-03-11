@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { PageErrorBoundary } from '@/components/ui/universal/PageErrorBoundary';
 import { Container, Row, Col } from '@/components/ui/universal/Grid';
 import { Button } from '@/components/ui/button';
@@ -9,12 +9,23 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
 import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
+import { useKnowledgeBase } from '@/hooks/useKnowledgeBase';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 const KnowledgeBasePage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const { entries, isLoading } = useKnowledgeBase();
+  const { isOnline } = useNetworkMonitor();
+
+  const filteredEntries = entries.filter(entry => 
+    entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    entry.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <PageErrorBoundary>
       <ProtectedPageLayout 
@@ -25,12 +36,14 @@ const KnowledgeBasePage = () => {
           <Row>
             <Col>
               <Card className="mb-6">
-                <div className="flex items-center">
+                <div className="flex items-center p-4">
                   <Search className="h-5 w-5 mr-2 text-muted-foreground" />
                   <input
                     type="text"
                     placeholder="Search the knowledge base..."
                     className="flex-1 border-none outline-none bg-transparent text-sm"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                   />
                   <Button variant="outline" size="sm">Search</Button>
                 </div>
@@ -39,32 +52,20 @@ const KnowledgeBasePage = () => {
           </Row>
           <Row>
             <Col>
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="item-1">
-                  <AccordionTrigger>How do I create a new proposal?</AccordionTrigger>
-                  <AccordionContent>
-                    To create a new proposal, navigate to the <Link to="/proposals" className="text-primary hover:text-primary/90">Proposals page</Link> and click on the "Create Proposal" button. Fill out the required fields and submit the form.
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-2">
-                  <AccordionTrigger>How do I reset my password?</AccordionTrigger>
-                  <AccordionContent>
-                    To reset your password, go to the <Link to="/auth/forgot-password" className="text-primary hover:text-primary/90">Forgot Password</Link> page and follow the instructions.
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-3">
-                  <AccordionTrigger>What are the system requirements?</AccordionTrigger>
-                  <AccordionContent>
-                    The system requires a modern web browser with JavaScript enabled. We recommend using the latest version of Chrome, Firefox, Safari, or Edge.
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-4">
-                  <AccordionTrigger>How do I contact support?</AccordionTrigger>
-                  <AccordionContent>
-                    You can contact our support team by visiting the <Link to="/contact" className="text-primary hover:text-primary/90">Contact Us</Link> page and submitting the form.
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+              {isLoading ? (
+                <div className="text-center py-4">Loading knowledge base entries...</div>
+              ) : (
+                <Accordion type="single" collapsible className="w-full">
+                  {filteredEntries.map(entry => (
+                    <AccordionItem key={entry.id} value={entry.id}>
+                      <AccordionTrigger>{entry.title}</AccordionTrigger>
+                      <AccordionContent>
+                        {entry.content}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              )}
             </Col>
           </Row>
         </Container>
