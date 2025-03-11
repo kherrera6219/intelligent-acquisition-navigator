@@ -11,7 +11,7 @@ export const SupabaseStatus: React.FC = () => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Badge variant={isOnline ? "success" : "destructive"} className="h-2 w-2 rounded-full p-0">
+          <Badge variant={isOnline ? "default" : "destructive"} className="h-2 w-2 rounded-full p-0">
             <span className="sr-only">{isOnline ? 'Supabase Connected' : 'Supabase Disconnected'}</span>
           </Badge>
         </TooltipTrigger>
