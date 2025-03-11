@@ -7,16 +7,25 @@ import { Button } from '@/components/ui/button';
 interface BackButtonProps {
   fallbackPath?: string;
   label?: string;
+  onClick?: () => void;
+  className?: string;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({ 
   fallbackPath = '/dashboard', 
-  label = 'Back'
+  label = 'Back',
+  onClick,
+  className
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
   
   const handleBack = () => {
+    if (onClick) {
+      onClick();
+      return;
+    }
+    
     if (window.history.length > 2) {
       navigate(-1); // Go back in history if possible
     } else {
@@ -33,7 +42,7 @@ export const BackButton: React.FC<BackButtonProps> = ({
     <Button
       variant="ghost"
       size="sm"
-      className="mb-4 pl-0 flex items-center text-muted-foreground hover:text-primary group"
+      className={`mb-4 pl-0 flex items-center text-muted-foreground hover:text-primary group ${className || ''}`}
       onClick={handleBack}
     >
       <ArrowLeft className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" aria-hidden="true" />

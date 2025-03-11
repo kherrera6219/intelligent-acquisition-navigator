@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { FederalChatMessage } from '@/components/federal/FederalChatContainer';
@@ -145,6 +146,10 @@ const FederalAcquisitionPage = () => {
       isLoading={isLoading}
       error={null}
       withCard={false}
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Federal Acquisition', href: '/federal-acquisition' }
+      ]}
     >
       <div className="flex flex-col gap-6">
         <FederalTabNavigation

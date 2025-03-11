@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PageErrorBoundary } from '@/components/ui/universal/PageErrorBoundary';
 import { Container, Row, Col } from '@/components/ui/universal/Grid';
@@ -57,7 +58,14 @@ const MarketResearchPage = () => {
 
   return (
     <PageErrorBoundary>
-      <ProtectedPageLayout title="Market Research" description="Analyze market trends and identify potential opportunities.">
+      <ProtectedPageLayout 
+        title="Market Research" 
+        description="Analyze market trends and identify potential opportunities."
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Market Research', href: '/market-research' }
+        ]}
+      >
         <Container>
           <Row>
             <Col>

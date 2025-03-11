@@ -1,9 +1,7 @@
 
 import React, { useState } from 'react';
-import { Container } from '@/components/ui/universal/Container';
-import { PageHeader } from '@/components/layout/PageHeader';
-import { GradientText } from '@/components/ui/universal/GradientText';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { GradientText } from '@/components/ui/universal/GradientText';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -106,6 +104,10 @@ const CompliancePage: React.FC = () => {
         </Button>
       }
       fullWidth={true}
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Compliance', href: '/compliance' }
+      ]}
     >
       <GradientText className="text-3xl font-bold mb-4">{pageTitle}</GradientText>
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">

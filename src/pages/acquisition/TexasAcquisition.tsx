@@ -6,6 +6,7 @@ import { AIChatMessage } from "@/types/chat";
 import { useTexasConversation } from "@/hooks/useTexasConversation";
 import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
 import { useToast } from "@/hooks/use-toast";
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 
 const TexasAcquisition = () => {
   const [input, setInput] = useState("");
@@ -85,20 +86,29 @@ const TexasAcquisition = () => {
   };
 
   return (
-    <TexasChatContainer
-      conversationId={conversationId || ""}
-      messages={messages}
-      isLoading={isInitializing || aiMutation.isPending}
-      input={input}
-      selectedAgency={selectedAgency}
-      selectedRole={selectedRole}
-      selectedResponseLevel={selectedResponseLevel}
-      onInputChange={setInput}
-      onSubmit={handleSubmit}
-      onAgencyChange={setSelectedAgency}
-      onRoleChange={setSelectedRole}
-      onResponseLevelChange={setSelectedResponseLevel}
-    />
+    <ProtectedPageLayout
+      title="Texas Acquisition Management"
+      description="Manage and monitor Texas state acquisition compliance and procedures."
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Texas Acquisition', href: '/texas-acquisition' }
+      ]}
+    >
+      <TexasChatContainer
+        conversationId={conversationId || ""}
+        messages={messages}
+        isLoading={isInitializing || aiMutation.isPending}
+        input={input}
+        selectedAgency={selectedAgency}
+        selectedRole={selectedRole}
+        selectedResponseLevel={selectedResponseLevel}
+        onInputChange={setInput}
+        onSubmit={handleSubmit}
+        onAgencyChange={setSelectedAgency}
+        onRoleChange={setSelectedRole}
+        onResponseLevelChange={setSelectedResponseLevel}
+      />
+    </ProtectedPageLayout>
   );
 };
 

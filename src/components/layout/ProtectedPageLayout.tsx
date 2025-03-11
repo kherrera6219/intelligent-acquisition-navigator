@@ -61,8 +61,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
                   to={backLink.href}
                   className="text-muted-foreground hover:text-primary flex items-center group"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-1 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
-                  <span>{backLink.label}</span>
+                  <BackButton label={backLink.label} />
                 </Link>
               </div>
             ) : (
