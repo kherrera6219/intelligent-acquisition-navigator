@@ -18,7 +18,7 @@ const initialChecklist: ChecklistItem[] = [
     id: 1,
     title: "TypeScript Configuration",
     description: "Implement strict TypeScript settings and proper type definitions",
-    completed: false
+    completed: true
   },
   {
     id: 2,
@@ -42,7 +42,7 @@ const initialChecklist: ChecklistItem[] = [
     id: 5,
     title: "Code Quality",
     description: "Set up ESLint, Prettier, and consistent code formatting",
-    completed: false
+    completed: true
   },
   {
     id: 6,
@@ -52,12 +52,24 @@ const initialChecklist: ChecklistItem[] = [
   },
   {
     id: 7,
-    title: "CSS Best Practices",
-    description: "Implement CSS Modules or Styled Components with proper organization",
-    completed: false
+    title: "Error Handling",
+    description: "Implement comprehensive error boundaries and error recovery mechanisms",
+    completed: true
   },
   {
     id: 8,
+    title: "Form Validation",
+    description: "Add client-side input validation with helpful feedback",
+    completed: true
+  },
+  {
+    id: 9,
+    title: "Responsive Design",
+    description: "Ensure proper display on all device sizes with adaptive layouts",
+    completed: true
+  },
+  {
+    id: 10,
     title: "API Integration",
     description: "Set up React Query for efficient API data fetching and caching",
     completed: false
@@ -72,9 +84,9 @@ export const ImprovementChecklist: React.FC = () => {
 
   const completedCount = checklist.filter(item => item.completed).length;
 
-  // Effect to show feedback dialog after every 7 completed items
+  // Effect to show feedback dialog after every third item completed
   useEffect(() => {
-    if (completedCount > 0 && completedCount % 7 === 0) {
+    if (completedCount > 0 && completedCount % 3 === 0) {
       setShowFeedback(true);
     }
   }, [completedCount]);
@@ -132,7 +144,7 @@ export const ImprovementChecklist: React.FC = () => {
   };
 
   return (
-    <div className="w-full -m-6 px-4 md:px-6 py-6">
+    <div className="w-full px-4 md:px-6 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-6">
         <h2 className="text-xl sm:text-2xl font-bold">Improvement Checklist</h2>
         <div className="text-sm text-gray-400">

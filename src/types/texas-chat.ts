@@ -1,5 +1,4 @@
 
-import { AIChatMessage } from "./chat";
 import { Json } from "@/integrations/supabase/types";
 
 export type TexasAgencyType = 

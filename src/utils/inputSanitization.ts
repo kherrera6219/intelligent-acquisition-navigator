@@ -81,8 +81,8 @@ export function createSanitizedSchema<T extends z.ZodTypeAny>(schema: T): z.ZodT
     }, {} as any);
   });
   
-  // Return the transformed schema
-  return transformedSchema;
+  // Return the transformed schema - fixing the type conversion issue
+  return transformedSchema as unknown as T;
 }
 
 /**

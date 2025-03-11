@@ -13,6 +13,8 @@ import { generateCsrfToken } from '@/utils/csrfProtection';
 import { sanitizeHtml } from '@/utils/inputSanitization';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 const TexasAcquisitionPage: React.FC = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
@@ -28,17 +30,33 @@ const TexasAcquisitionPage: React.FC = () => {
   });
   const { user } = useAuth();
   const { toast } = useToast();
+  const [inputError, setInputError] = useState<string | null>(null);
   
   // Initialize CSRF token on mount
   useEffect(() => {
     generateCsrfToken();
   }, []);
+
+  const validateInput = (value: string): boolean => {
+    if (!value.trim()) {
+      setInputError('Please enter a message');
+      return false;
+    }
+    
+    if (value.length > 2000) {
+      setInputError('Message is too long (maximum 2000 characters)');
+      return false;
+    }
+    
+    setInputError(null);
+    return true;
+  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Don't submit empty messages
-    if (!input.trim()) return;
+    if (!validateInput(input)) return;
     
     // Sanitize input
     const sanitizedInput = sanitizeHtml(input);
@@ -50,7 +68,8 @@ const TexasAcquisitionPage: React.FC = () => {
       role: 'user',
       timestamp: new Date(),
       agencyType: selectedAgency,
-      userRole: selectedRole
+      userRole: selectedRole,
+      responseLevel: selectedResponseLevel
     };
     
     // Add user message to chat
@@ -71,9 +90,9 @@ const TexasAcquisitionPage: React.FC = () => {
     const apiMessages: AIChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...messages.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'assistant',
+        role: msg.role,
         content: msg.content
-      } as AIChatMessage)),
+      })),
       { role: 'user', content: sanitizedInput }
     ];
     
@@ -89,13 +108,21 @@ const TexasAcquisitionPage: React.FC = () => {
             role: 'assistant',
             timestamp: new Date(),
             agencyType: selectedAgency,
-            userRole: selectedRole
+            userRole: selectedRole,
+            responseLevel: selectedResponseLevel
           };
           
           setMessages(prevMessages => [...prevMessages, aiMessage]);
         }
       } catch (error) {
         console.error('Error getting AI response:', error);
+        
+        toast({
+          title: "Error",
+          description: "Failed to get response. Please try again later.",
+          variant: "destructive",
+        });
+        
         throw error;
       }
     });
@@ -103,7 +130,7 @@ const TexasAcquisitionPage: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background-900">
-      <div className="container mx-auto py-6">
+      <div className="container mx-auto px-4 sm:px-6 py-6">
         <PageHeader
           title="Texas Acquisition Assistant"
           description="Get help with Texas government acquisition regulations and procurement requirements"
@@ -112,6 +139,14 @@ const TexasAcquisitionPage: React.FC = () => {
         <div className="mt-4 mb-6">
           <OfflineSyncStatus />
         </div>
+        
+        {inputError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{inputError}</AlertDescription>
+          </Alert>
+        )}
         
         <NetworkErrorHandler 
           errorMessage={error?.message}
@@ -127,7 +162,10 @@ const TexasAcquisitionPage: React.FC = () => {
             selectedAgency={selectedAgency}
             selectedRole={selectedRole}
             selectedResponseLevel={selectedResponseLevel}
-            onInputChange={setInput}
+            onInputChange={(value) => {
+              setInput(value);
+              if (inputError) validateInput(value);
+            }}
             onSubmit={handleSubmit}
             onAgencyChange={setSelectedAgency}
             onRoleChange={setSelectedRole}
