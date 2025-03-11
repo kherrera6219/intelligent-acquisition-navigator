@@ -16,31 +16,32 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  line-height: 1.5;
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  @apply font-bold tracking-tight text-balance m-0;
+  @apply font-bold tracking-tight text-balance m-0 text-foreground;
 }
 
 h1 {
-  @apply text-3xl md:text-4xl;
+  @apply text-3xl md:text-4xl lg:text-5xl;
 }
 
 h2 {
-  @apply text-2xl md:text-3xl;
+  @apply text-2xl md:text-3xl lg:text-4xl;
 }
 
 h3 {
-  @apply text-xl md:text-2xl;
+  @apply text-xl md:text-2xl lg:text-3xl;
 }
 
 h4 {
-  @apply text-lg md:text-xl;
+  @apply text-lg md:text-xl lg:text-2xl;
 }
 
 p {
-  @apply leading-relaxed text-balance;
+  @apply leading-relaxed text-balance text-muted-foreground;
 }
 
 /* Focus Styles */
@@ -48,40 +49,28 @@ p {
   @apply outline-2 outline-offset-2 outline-primary ring-2 ring-primary/50;
 }
 
-/* Responsive Components */
-@media (max-width: 640px) {
-  .responsive-container {
-    @apply px-4;
-  }
-  
-  .responsive-card {
-    @apply p-4;
-  }
-}
-
-@media (min-width: 641px) and (max-width: 1024px) {
-  .responsive-container {
-    @apply px-6;
-  }
-  
-  .responsive-card {
-    @apply p-5;
-  }
-}
-
-@media (min-width: 1025px) {
-  .responsive-container {
-    @apply px-8;
-  }
-  
-  .responsive-card {
-    @apply p-6;
-  }
-}
-
 /* Touch Optimizations */
 @media (hover: none) {
   .touch-button {
     @apply active:scale-95 transition-transform;
   }
+}
+
+/* Responsive Layout */
+.responsive-container {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.responsive-card {
+  @apply p-4 sm:p-5 lg:p-6;
+}
+
+/* Motion Animation Performance */
+.ms-motion-fadeIn {
+  @apply opacity-0 animate-in fade-in duration-500;
+  will-change: opacity;
+}
+
+.ms-layout-container {
+  @apply relative flex flex-col min-h-screen;
 }

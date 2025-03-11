@@ -18,14 +18,6 @@ const HomePage = () => {
     error
   } = useHomePageInit();
   
-  if (error) {
-    return <HomeError error={error} />;
-  }
-
-  if (!isLoaded) {
-    return <HomeLoading />;
-  }
-
   return (
     <PageErrorBoundary>
       <MsFluentDashboardLayout
@@ -33,15 +25,23 @@ const HomePage = () => {
         description="Advanced procurement intelligence platform that streamlines acquisition processes across federal, state, and local levels."
         fullWidth={true}
       >
-        <div className="ms-motion-fadeIn">
-          <HomeContent 
-            showPrivacyNotice={showPrivacyNotice}
-            setShowPrivacyNotice={setShowPrivacyNotice}
-            showBackToTop={showBackToTop}
-            isFirstVisit={isFirstVisit}
-            scrollToTop={scrollToTop}
-          />
-        </div>
+        <Suspense fallback={<HomeLoading />}>
+          {error ? (
+            <HomeError error={error} />
+          ) : !isLoaded ? (
+            <HomeLoading />
+          ) : (
+            <div className="ms-motion-fadeIn">
+              <HomeContent 
+                showPrivacyNotice={showPrivacyNotice}
+                setShowPrivacyNotice={setShowPrivacyNotice}
+                showBackToTop={showBackToTop}
+                isFirstVisit={isFirstVisit}
+                scrollToTop={scrollToTop}
+              />
+            </div>
+          )}
+        </Suspense>
       </MsFluentDashboardLayout>
     </PageErrorBoundary>
   );
