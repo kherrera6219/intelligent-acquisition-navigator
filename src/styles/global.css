@@ -7,6 +7,7 @@
 @import './modules/utilities.css';
 @import './modules/accessibility.css';
 @import './modules/fluent.css';
+@import './modules/microsoft-fluent.css';
 @import './modules/scrollbar.css';
 
 /* Network status indicators */

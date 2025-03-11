@@ -39,7 +39,13 @@ const Index = () => {
 
 const HomePage = () => (
   <PageErrorBoundary>
-    <MainLayout showHeader={true} showFooter={true} forceExternalHeader={true} containerSize="xl">
+    <MainLayout 
+      showHeader={true} 
+      showFooter={true} 
+      forceExternalHeader={true} 
+      containerSize="full"
+      className="ms-motion-fadeIn"
+    >
       <Index />
     </MainLayout>
   </PageErrorBoundary>

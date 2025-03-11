@@ -49,12 +49,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     return "";
   };
 
-  // Determine background styles
+  // Determine background styles based on fluent design principles
   const getBackgroundStyles = () => {
     return {
       backgroundImage: `
-        linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.12) 100%),
-        radial-gradient(at 50% 0%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.15) 75%)
+        linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.1) 100%),
+        radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 75%)
       `,
       backgroundAttachment: 'fixed',
       backgroundColor: 'var(--background)'
@@ -64,7 +64,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <ThemeProvider>
       <PageErrorBoundary>
-        <div className="min-h-screen w-full flex flex-col bg-background overflow-x-hidden relative" style={{ minHeight: '100vh', maxWidth: '100vw' }}>
+        <div className="min-h-screen w-full flex flex-col bg-background overflow-x-hidden relative">
           {/* Accessible Skip Link */}
           <a 
             href="#main-content" 
@@ -86,12 +86,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             tabIndex={-1}
             style={{
               ...getBackgroundStyles(),
-              minHeight: useInternalHeader ? 'calc(100vh - 4rem)' : '100vh',
-              maxWidth: '100vw'
+              minHeight: useInternalHeader ? 'calc(100vh - 4rem)' : 'min(100vh, 100%)',
             }}
           >
             <div className="w-full h-full min-h-full overflow-hidden animate-fade-in">
-              <Container size={containerSize} className={`h-full ${containerSize === "full" ? "px-0 sm:px-0 md:px-4 lg:px-8 xl:px-12" : ""}`}>
+              <Container size={containerSize} className={`h-full ${containerSize === "full" ? "px-0 sm:px-0 md:px-4 lg:px-8 xl:px-12 2xl:px-16" : ""}`}>
                 <Suspense fallback={<LoadingOverlay />}>
                   {children}
                 </Suspense>

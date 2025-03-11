@@ -31,7 +31,7 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
         </Tooltip>
       )}
       
-      {refreshSession && <SessionTimeoutTimer className="flex items-center gap-1 px-3 py-1.5 bg-gray-800 rounded text-sm" />}
+      {refreshSession && <SessionTimeoutTimer className="hidden lg:flex items-center gap-1 px-3 py-1.5 bg-gray-800/80 backdrop-blur-md rounded-lg text-sm" />}
       
       <Tooltip content="Help">
         <Link 

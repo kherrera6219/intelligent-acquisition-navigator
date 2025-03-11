@@ -23,7 +23,7 @@ export const HeaderContent: React.FC<HeaderContentProps> = ({
       <div className={cn(
         "flex items-center gap-4",
         isMobile && !mobileMenuOpen && "hidden md:flex",
-        mobileMenuOpen && "absolute top-14 right-4 bg-gray-800 p-3 rounded-md border border-gray-700 flex-col items-start shadow-lg z-50 fluent-scale-in"
+        mobileMenuOpen && "absolute top-14 right-4 bg-gray-800/90 backdrop-blur-md p-4 rounded-xl border border-gray-700 flex-col items-start shadow-lg z-50 fluent-scale-in"
       )}>
         <HeaderActionButtons 
           refreshSession={refreshSession} 

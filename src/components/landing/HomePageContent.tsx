@@ -59,30 +59,30 @@ export const HomePageContent = ({
         </SectionErrorBoundary>
 
         <div className="space-y-24 py-12 md:py-24">
-          <Container>
+          <Container size="xl">
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <div className="fluent-panel rounded-lg p-6 md:p-8">
+                <div className="fluent-panel rounded-xl p-6 md:p-8 lg:p-10">
                   <FeaturesSection />
                 </div>
               </Suspense>
             </SectionErrorBoundary>
           </Container>
 
-          <Container>
+          <Container size="xl">
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <div className="fluent-panel rounded-lg p-6 md:p-8">
+                <div className="fluent-panel rounded-xl p-6 md:p-8 lg:p-10">
                   <TestimonialsSection />
                 </div>
               </Suspense>
             </SectionErrorBoundary>
           </Container>
 
-          <Container>
+          <Container size="xl">
             <SectionErrorBoundary>
               <Suspense fallback={<SectionLoader />}>
-                <div className="fluent-panel rounded-lg p-6 md:p-8">
+                <div className="fluent-panel rounded-xl p-6 md:p-8 lg:p-10">
                   <CTASection />
                 </div>
               </Suspense>

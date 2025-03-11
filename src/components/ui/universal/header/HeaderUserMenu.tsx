@@ -20,7 +20,7 @@ export const HeaderUserMenu: React.FC<HeaderUserMenuProps> = ({ user, mobileMenu
       <Tooltip content="View Profile">
         <Link 
           to="/profile" 
-          className="flex items-center gap-3 text-sm"
+          className="flex items-center gap-3 text-sm rounded-lg px-3 py-1.5 hover:bg-gray-800/70 transition-colors"
           aria-label="View profile"
         >
           <div className="h-8 w-8 rounded-full bg-primary/20 text-primary ring-1 ring-gray-700 flex items-center justify-center text-sm font-medium">
