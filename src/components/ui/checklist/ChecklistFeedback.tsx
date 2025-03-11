@@ -37,7 +37,7 @@ export const ChecklistFeedback: React.FC<ChecklistFeedbackProps> = ({ onClose, o
             <StarRating 
               value={rating} 
               onChange={setRating} 
-              size="medium" 
+              size="md" 
               color="primary" 
             />
           </div>
