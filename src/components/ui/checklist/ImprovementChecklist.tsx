@@ -5,6 +5,7 @@ import { CheckCircle, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChecklistFeedback } from "./ChecklistFeedback";
 import { useImprovement, ChecklistItem } from "@/contexts/ImprovementContext";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 // Memoized checklist item component for performance optimization
 const ChecklistItemComponent = memo(({ 
@@ -59,8 +60,27 @@ export const ImprovementChecklist: React.FC = () => {
     currentItem, 
     showFeedback, 
     setShowFeedback, 
-    handleFeedbackSubmit 
+    handleFeedbackSubmit,
+    isLoading,
+    error
   } = useImprovement();
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-64 flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full p-6 text-center">
+        <p className="text-red-500 mb-2">Error loading checklist</p>
+        <p className="text-sm text-gray-400">{error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-4 md:px-6 py-6">

@@ -2,93 +2,90 @@
 import { supabase } from '@/integrations/supabase/client';
 import { ChecklistItem } from '@/contexts/ImprovementContext';
 
+const TABLE_NAME = 'checklist_items';
+const FEEDBACK_TABLE = 'user_feedback';
+
+// Type for feedback data
 export interface FeedbackData {
-  userId?: string;
+  feedback: string;
   rating: number;
-  comments: string;
   timestamp: string;
+  completedCount: number;
 }
 
-// Function to fetch checklist items from the API
+// Function to fetch checklist items from Supabase
 export const fetchChecklistItems = async (): Promise<ChecklistItem[]> => {
-  try {
-    // First try to fetch from Supabase if available
-    const { data, error } = await supabase
-      .from('checklist_items')
-      .select('*')
-      .order('id');
-    
-    if (error) throw error;
-    
-    if (data && data.length > 0) {
-      return data as ChecklistItem[];
-    } else {
-      // Fallback to local data if no data in Supabase or other error
-      throw new Error('No data found');
-    }
-  } catch (error) {
-    console.log('Failed to fetch from API, using local data', error);
-    // Return default items from localStorage or just return an empty array
-    const storedItems = localStorage.getItem('checklist_items');
-    return storedItems ? JSON.parse(storedItems) : [];
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .order('id');
+
+  if (error) {
+    console.error('Error fetching checklist items:', error);
+    throw new Error(`Failed to fetch checklist items: ${error.message}`);
   }
+
+  return data || [];
 };
 
 // Function to update a checklist item
 export const updateChecklistItem = async (
-  id: number, 
+  id: number,
   updates: Partial<ChecklistItem>
 ): Promise<ChecklistItem> => {
-  try {
-    // Try to update in Supabase
-    const { data, error } = await supabase
-      .from('checklist_items')
-      .update(updates)
-      .eq('id', id)
-      .select('*')
-      .single();
-    
-    if (error) throw error;
-    return data as ChecklistItem;
-  } catch (error) {
-    console.log('Failed to update in API, updating local storage', error);
-    
-    // Fallback to localStorage
-    const storedItems = localStorage.getItem('checklist_items');
-    let items: ChecklistItem[] = storedItems ? JSON.parse(storedItems) : [];
-    
-    items = items.map(item => 
-      item.id === id ? { ...item, ...updates } : item
-    );
-    
-    localStorage.setItem('checklist_items', JSON.stringify(items));
-    const updatedItem = items.find(item => item.id === id);
-    
-    if (!updatedItem) {
-      throw new Error(`Item with id ${id} not found`);
-    }
-    
-    return updatedItem;
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating checklist item:', error);
+    throw new Error(`Failed to update checklist item: ${error.message}`);
   }
+
+  return data;
 };
 
 // Function to submit feedback
-export const submitFeedback = async (feedbackData: FeedbackData): Promise<void> => {
-  try {
-    // Try to submit to Supabase
-    const { error } = await supabase
-      .from('user_feedback')
-      .insert([feedbackData]);
-    
-    if (error) throw error;
-  } catch (error) {
-    console.log('Failed to submit feedback to API, storing locally', error);
-    
-    // Fallback to localStorage
-    const storedFeedback = localStorage.getItem('user_feedback');
-    const feedbackItems: FeedbackData[] = storedFeedback ? JSON.parse(storedFeedback) : [];
-    
-    feedbackItems.push(feedbackData);
-    localStorage.setItem('user_feedback', JSON.stringify(feedbackItems));
+export const submitFeedback = async (
+  feedbackData: FeedbackData
+): Promise<void> => {
+  const { error } = await supabase
+    .from(FEEDBACK_TABLE)
+    .insert([feedbackData]);
+
+  if (error) {
+    console.error('Error submitting feedback:', error);
+    throw new Error(`Failed to submit feedback: ${error.message}`);
+  }
+};
+
+// Initialize checklist items if they don't exist
+export const initializeChecklist = async (
+  initialItems: ChecklistItem[]
+): Promise<void> => {
+  // First check if items already exist
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('id')
+    .limit(1);
+
+  if (error) {
+    console.error('Error checking for existing checklist items:', error);
+    throw new Error(`Failed to check for existing items: ${error.message}`);
+  }
+
+  // If no items exist, insert the initial items
+  if (data.length === 0) {
+    const { error: insertError } = await supabase
+      .from(TABLE_NAME)
+      .insert(initialItems);
+
+    if (insertError) {
+      console.error('Error initializing checklist items:', insertError);
+      throw new Error(`Failed to initialize checklist: ${insertError.message}`);
+    }
   }
 };
