@@ -3,13 +3,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { processPendingRequests, getPendingRequests } from '@/utils/offlineStorage';
 import { useToast } from '@/hooks/use-toast';
+import { setLastSyncTime } from '@/utils/supabaseHelper';
 
 export function useOfflineSync() {
-  const { isOnline } = useNetworkMonitor();
+  const { isOnline, supabaseConnected } = useNetworkMonitor();
   const [pendingCount, setPendingCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
-  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [lastSyncTime, setLastSyncTimeState] = useState<Date | null>(null);
   const { toast } = useToast();
 
   // Fetch the count of pending requests
@@ -24,7 +25,7 @@ export function useOfflineSync() {
 
   // Sync offline data when back online
   const syncOfflineData = useCallback(async () => {
-    if (!isOnline || isSyncing) return;
+    if (!isOnline || !supabaseConnected || isSyncing) return;
 
     try {
       setIsSyncing(true);
@@ -35,23 +36,28 @@ export function useOfflineSync() {
         setSyncProgress(progress);
       });
 
-      if (result.successful > 0) {
-        toast({
-          title: "Sync Complete",
-          description: `Successfully processed ${result.successful} offline ${result.successful === 1 ? 'action' : 'actions'}.`,
-          variant: "default",
-        });
+      if (result.successful > 0 || result.failed > 0) {
+        if (result.successful > 0) {
+          toast({
+            title: "Sync Complete",
+            description: `Successfully processed ${result.successful} offline ${result.successful === 1 ? 'action' : 'actions'}.`,
+            variant: "default",
+          });
+        }
+
+        if (result.failed > 0) {
+          toast({
+            title: "Sync Issues",
+            description: `Failed to process ${result.failed} offline ${result.failed === 1 ? 'action' : 'actions'}. Some changes may need to be redone.`,
+            variant: "destructive",
+          });
+        }
       }
 
-      if (result.failed > 0) {
-        toast({
-          title: "Sync Issues",
-          description: `Failed to process ${result.failed} offline ${result.failed === 1 ? 'action' : 'actions'}. Some changes may need to be redone.`,
-          variant: "destructive",
-        });
-      }
-
-      setLastSyncTime(new Date());
+      const now = new Date();
+      setLastSyncTimeState(now);
+      // Update global last sync time
+      setLastSyncTime(now);
       
       // Re-fetch pending count after sync
       await fetchPendingCount();
@@ -65,17 +71,22 @@ export function useOfflineSync() {
     } finally {
       setIsSyncing(false);
       setSyncProgress(100);
+
+      // Reset progress after a short delay
+      setTimeout(() => {
+        setSyncProgress(0);
+      }, 1000);
     }
-  }, [isOnline, isSyncing, toast, fetchPendingCount]);
+  }, [isOnline, supabaseConnected, isSyncing, toast, fetchPendingCount]);
 
   // Auto-sync when coming back online
   useEffect(() => {
-    if (isOnline && pendingCount > 0 && !isSyncing) {
+    if (isOnline && supabaseConnected && pendingCount > 0 && !isSyncing) {
       syncOfflineData();
     }
-  }, [isOnline, pendingCount, isSyncing, syncOfflineData]);
+  }, [isOnline, supabaseConnected, pendingCount, isSyncing, syncOfflineData]);
 
-  // Fetch pending count on mount and when online status changes
+  // Fetch pending count on mount and when connection status changes
   useEffect(() => {
     fetchPendingCount();
     
@@ -83,10 +94,11 @@ export function useOfflineSync() {
     const intervalId = setInterval(fetchPendingCount, 30000); // every 30 seconds
     
     return () => clearInterval(intervalId);
-  }, [fetchPendingCount, isOnline]);
+  }, [fetchPendingCount, isOnline, supabaseConnected]);
 
   return {
     isOnline,
+    supabaseConnected,
     pendingCount,
     isSyncing,
     syncProgress,

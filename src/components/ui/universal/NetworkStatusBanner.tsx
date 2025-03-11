@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
-import { WifiOff, Wifi, RefreshCw, Database, DatabaseOff } from 'lucide-react';
+import { WifiOff, Wifi, RefreshCw, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { Progress } from '@/components/ui/progress';
@@ -37,7 +37,7 @@ export function NetworkStatusBanner() {
       {isOnline && !supabaseConnected && (
         <div className="bg-orange-500 text-white py-1 px-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <DatabaseOff className="h-4 w-4" />
+            <Database className="h-4 w-4 opacity-50" />
             <span className="text-sm font-medium">Database connection issue. Some data may not sync.</span>
           </div>
           <Button 

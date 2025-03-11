@@ -8,7 +8,7 @@ import { useNetworkMonitor } from './NetworkMonitorProvider';
  * about the application's connectivity state without rendering any UI
  */
 export const NetworkStatusMonitor: React.FC = () => {
-  const { isOnline, reconnecting } = useNetworkMonitor();
+  const { isOnline, reconnecting, supabaseConnected } = useNetworkMonitor();
   const { toast } = useToast();
   
   // Show toast notifications on network status changes
@@ -21,18 +21,15 @@ export const NetworkStatusMonitor: React.FC = () => {
     if (hasReconnected) {
       toast({
         title: "You're back online",
-        description: "Your connection has been restored. Syncing data...",
+        description: supabaseConnected 
+          ? "Your connection has been restored. Syncing data..." 
+          : "Your network is connected, but database access is still limited.",
         variant: "default",
         duration: 3000,
       });
     }
     
-    return () => {
-      // Cleanup function to prevent memory leaks
-      // This will be called when the component unmounts
-      // or when the dependencies change
-    };
-  }, [isOnline, reconnecting, toast]);
+  }, [isOnline, reconnecting, supabaseConnected, toast]);
 
   // This component doesn't render any UI directly
   return null;

@@ -8,13 +8,14 @@ import { offlineFetch } from './offlineStorage';
  */
 export async function checkSupabaseConnection(): Promise<boolean> {
   try {
-    // Try to select from a simple table
+    // Try to select from health_check table
     const { data, error } = await supabase
       .from('health_check')
-      .select('count')
+      .select('id')
       .limit(1);
     
-    // If no error or if we get a specific table not found error (which means the server is reachable),
+    // If there's no error or we get a specific "table does not exist" error
+    // (which means the server is reachable but the table might not exist),
     // consider it connected
     return !error || (error.code === 'PGRST116');
   } catch (error) {

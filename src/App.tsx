@@ -15,6 +15,7 @@ import { initOfflineDB, clearExpiredCache } from '@/utils/offlineStorage';
 import { generateCsrfToken } from '@/utils/csrfProtection';
 import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 import { supabase } from '@/integrations/supabase/client';
+import { checkSupabaseConnection } from '@/utils/supabaseHelper';
 
 function App() {
   // Initialize security and storage features on app load
@@ -28,6 +29,10 @@ function App() {
         await initOfflineDB();
         // Clear expired cache items
         await clearExpiredCache();
+        
+        // Check Supabase connection status
+        const isConnected = await checkSupabaseConnection();
+        console.log('Supabase connection:', isConnected ? 'Connected' : 'Disconnected');
       } catch (error) {
         console.error('Error initializing offline storage:', error);
       }

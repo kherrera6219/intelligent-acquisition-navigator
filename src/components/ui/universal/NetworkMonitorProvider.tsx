@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNetworkErrorMonitor } from '@/hooks/useNetworkErrorMonitor';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { checkSupabaseConnection } from '@/utils/supabaseHelper';
+import { checkSupabaseConnection, getLastSyncTime, setLastSyncTime } from '@/utils/supabaseHelper';
 
 // Create context
 interface NetworkContextType {
@@ -24,7 +24,7 @@ const NetworkContext = createContext<NetworkContextType>({
 export const NetworkMonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const networkState = useNetworkErrorMonitor();
   const [supabaseConnected, setSupabaseConnected] = useState(false);
-  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [lastSyncTime, setLastSyncTimeState] = useState<Date | null>(getLastSyncTime());
   const { toast } = useToast();
   
   // Check Supabase connection on mount and when online status changes
@@ -36,7 +36,10 @@ export const NetworkMonitorProvider: React.FC<{ children: React.ReactNode }> = (
           setSupabaseConnected(isConnected);
           
           if (isConnected) {
-            setLastSyncTime(new Date());
+            // Update and persist the last sync time
+            const currentTime = new Date();
+            setLastSyncTimeState(currentTime);
+            setLastSyncTime(currentTime);
           }
         } catch (error) {
           console.warn('Supabase connection check failed:', error);
