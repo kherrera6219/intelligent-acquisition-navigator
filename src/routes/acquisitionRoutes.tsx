@@ -81,8 +81,8 @@ export const acquisitionRoutes: RouteObject[] = [
   {
     path: "/source-selection",
     element: (
-      <ProtectedRoute>
-        <MainLayout requiredRole="manager">
+      <ProtectedRoute requiredRole="manager">
+        <MainLayout>
           <SourceSelectionPage />
         </MainLayout>
       </ProtectedRoute>
