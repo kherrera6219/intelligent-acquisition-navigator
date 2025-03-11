@@ -1,147 +1,66 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Card } from "@/components/ui/card";
 import { CheckCircle, Circle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { ChecklistFeedback } from "./ChecklistFeedback";
+import { useImprovement, ChecklistItem } from "@/contexts/ImprovementContext";
 
-interface ChecklistItem {
-  id: number;
-  title: string;
-  description: string;
-  completed: boolean;
-}
+// Memoized checklist item component for performance optimization
+const ChecklistItemComponent = memo(({ 
+  item, 
+  isCurrentItem, 
+  onToggle 
+}: { 
+  item: ChecklistItem; 
+  isCurrentItem: boolean; 
+  onToggle: () => void 
+}) => (
+  <Card 
+    key={item.id}
+    className={cn(
+      "p-3 sm:p-4 transition-all duration-200 cursor-pointer hover:bg-white/5",
+      "transform hover:-translate-y-0.5 hover:shadow-lg",
+      item.completed && "bg-white/5",
+      isCurrentItem && "border-primary"
+    )}
+    onClick={onToggle}
+  >
+    <div className="flex items-start gap-3 sm:gap-4">
+      <div className="text-primary pt-1">
+        {item.completed ? (
+          <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+        ) : (
+          <Circle className="h-4 w-4 sm:h-5 sm:w-5" />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3 className={cn(
+          "font-medium text-sm sm:text-base break-words",
+          item.completed && "line-through text-gray-400"
+        )}>
+          {item.title}
+        </h3>
+        <p className="text-xs sm:text-sm text-gray-400 mt-1 break-words">
+          {item.description}
+        </p>
+      </div>
+    </div>
+  </Card>
+));
 
-const initialChecklist: ChecklistItem[] = [
-  {
-    id: 1,
-    title: "TypeScript Configuration",
-    description: "Implement strict TypeScript settings and proper type definitions",
-    completed: true
-  },
-  {
-    id: 2,
-    title: "Component Architecture",
-    description: "Follow component-driven development with proper file structure",
-    completed: true
-  },
-  {
-    id: 3,
-    title: "State Management",
-    description: "Optimize React state management and Context API usage",
-    completed: false
-  },
-  {
-    id: 4,
-    title: "Performance Optimization",
-    description: "Implement React.memo, useCallback, and useMemo where needed",
-    completed: false
-  },
-  {
-    id: 5,
-    title: "Code Quality",
-    description: "Set up ESLint, Prettier, and consistent code formatting",
-    completed: true
-  },
-  {
-    id: 6,
-    title: "Testing Infrastructure",
-    description: "Configure Jest and React Testing Library with proper test coverage",
-    completed: true
-  },
-  {
-    id: 7,
-    title: "Error Handling",
-    description: "Implement comprehensive error boundaries and error recovery mechanisms",
-    completed: true
-  },
-  {
-    id: 8,
-    title: "Form Validation",
-    description: "Add client-side input validation with helpful feedback",
-    completed: true
-  },
-  {
-    id: 9,
-    title: "Responsive Design",
-    description: "Ensure proper display on all device sizes with adaptive layouts",
-    completed: true
-  },
-  {
-    id: 10,
-    title: "API Integration",
-    description: "Set up React Query for efficient API data fetching and caching",
-    completed: false
-  }
-];
+ChecklistItemComponent.displayName = 'ChecklistItemComponent';
 
 export const ImprovementChecklist: React.FC = () => {
-  const [checklist, setChecklist] = useState<ChecklistItem[]>(initialChecklist);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [currentItem, setCurrentItem] = useState(0);
-  const { toast } = useToast();
-
-  const completedCount = checklist.filter(item => item.completed).length;
-
-  // Effect to show feedback dialog after every third item completed
-  useEffect(() => {
-    if (completedCount > 0 && completedCount % 3 === 0) {
-      setShowFeedback(true);
-    }
-  }, [completedCount]);
-
-  // Effect to handle automatic progression to next uncompleted item
-  useEffect(() => {
-    const findNextIncomplete = () => {
-      const nextIncomplete = checklist.findIndex(item => !item.completed);
-      if (nextIncomplete !== -1) {
-        setCurrentItem(nextIncomplete);
-      }
-    };
-    findNextIncomplete();
-  }, [checklist]);
-
-  const toggleItem = (id: number) => {
-    try {
-      setChecklist(prev => prev.map(item => 
-        item.id === id ? { ...item, completed: !item.completed } : item
-      ));
-
-      toast({
-        title: "Task Updated",
-        description: "Progress has been saved",
-      });
-    } catch (error) {
-      console.error("Error toggling item:", error);
-      setTimeout(() => toggleItem(id), 1000);
-      
-      toast({
-        title: "Error Updating Task",
-        description: "Automatically retrying...",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleFeedbackSubmit = (feedback: string) => {
-    try {
-      toast({
-        title: "Feedback Received",
-        description: "Thank you for your feedback! We'll use it to improve further.",
-      });
-      setShowFeedback(false);
-    } catch (error) {
-      console.error("Error submitting feedback:", error);
-      setTimeout(() => handleFeedbackSubmit(feedback), 1000);
-      
-      toast({
-        title: "Error Submitting Feedback",
-        description: "Automatically retrying...",
-        variant: "destructive",
-      });
-    }
-  };
+  const { 
+    checklist, 
+    toggleItem, 
+    completedCount, 
+    currentItem, 
+    showFeedback, 
+    setShowFeedback, 
+    handleFeedbackSubmit 
+  } = useImprovement();
 
   return (
     <div className="w-full px-4 md:px-6 py-6">
@@ -154,37 +73,12 @@ export const ImprovementChecklist: React.FC = () => {
 
       <div className="grid gap-3 sm:gap-4">
         {checklist.map((item) => (
-          <Card 
+          <ChecklistItemComponent 
             key={item.id}
-            className={cn(
-              "p-3 sm:p-4 transition-all duration-200 cursor-pointer hover:bg-white/5",
-              "transform hover:-translate-y-0.5 hover:shadow-lg",
-              item.completed && "bg-white/5",
-              currentItem === item.id - 1 && "border-primary"
-            )}
-            onClick={() => toggleItem(item.id)}
-          >
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="text-primary pt-1">
-                {item.completed ? (
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
-                ) : (
-                  <Circle className="h-4 w-4 sm:h-5 sm:w-5" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className={cn(
-                  "font-medium text-sm sm:text-base break-words",
-                  item.completed && "line-through text-gray-400"
-                )}>
-                  {item.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-gray-400 mt-1 break-words">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          </Card>
+            item={item} 
+            isCurrentItem={currentItem === item.id - 1}
+            onToggle={() => toggleItem(item.id)}
+          />
         ))}
       </div>
 

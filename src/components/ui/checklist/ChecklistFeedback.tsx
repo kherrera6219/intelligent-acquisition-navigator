@@ -4,10 +4,11 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { StarRating } from '@/components/ui/universal/StarRating';
+import { sanitizeHtml } from '@/utils/inputSanitization';
 
 interface ChecklistFeedbackProps {
   onClose: () => void;
-  onSubmit: (feedback: string) => void;
+  onSubmit: (feedback: string, rating: number) => void;
 }
 
 export const ChecklistFeedback: React.FC<ChecklistFeedbackProps> = ({ onClose, onSubmit }) => {
@@ -16,10 +17,15 @@ export const ChecklistFeedback: React.FC<ChecklistFeedbackProps> = ({ onClose, o
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = () => {
+    if (isSubmitting) return;
+    
     setIsSubmitting(true);
+    // Sanitize input before submission
+    const sanitizedFeedback = sanitizeHtml(feedback);
+    
     // Add a small delay to show loading state
     setTimeout(() => {
-      onSubmit(`Rating: ${rating}/5, Feedback: ${feedback}`);
+      onSubmit(sanitizedFeedback, rating);
       setIsSubmitting(false);
     }, 500);
   };

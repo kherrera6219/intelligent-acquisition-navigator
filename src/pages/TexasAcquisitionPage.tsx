@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { TexasChatContainer } from '@/components/texas/TexasChatContainer';
 import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
@@ -32,7 +31,6 @@ const TexasAcquisitionPage: React.FC = () => {
   const { toast } = useToast();
   const [inputError, setInputError] = useState<string | null>(null);
   
-  // Initialize CSRF token on mount
   useEffect(() => {
     generateCsrfToken();
   }, []);
@@ -55,13 +53,10 @@ const TexasAcquisitionPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Don't submit empty messages
     if (!validateInput(input)) return;
     
-    // Sanitize input
     const sanitizedInput = sanitizeHtml(input);
     
-    // Prepare user message
     const userMessage: TexasMessage = {
       id: uuidv4(),
       content: sanitizedInput,
@@ -72,31 +67,25 @@ const TexasAcquisitionPage: React.FC = () => {
       responseLevel: selectedResponseLevel
     };
     
-    // Add user message to chat
     setMessages(prevMessages => [...prevMessages, userMessage]);
     
-    // Clear input field
     setInput('');
     
-    // Reset any previous error
     reset();
     
-    // Generate system prompt based on selected options
     const systemPrompt = `You are an AI assistant specializing in Texas government acquisition regulations. 
       You are currently working with a ${selectedRole} at a ${selectedAgency} agency. 
       Provide ${selectedResponseLevel.toLowerCase()} responses focused on procurement requirements.`;
     
-    // Prepare messages for API
     const apiMessages: AIChatMessage[] = [
-      { role: "system", content: systemPrompt },
+      { role: "system" as const, content: systemPrompt },
       ...messages.map(msg => ({
-        role: msg.role === 'user' ? "user" : "assistant" as "user" | "assistant",
+        role: (msg.role === 'user' ? "user" : "assistant") as "user" | "assistant" | "system",
         content: msg.content
       })),
-      { role: "user", content: sanitizedInput }
+      { role: "user" as const, content: sanitizedInput }
     ];
     
-    // Execute the API call with retry mechanism
     executeOperation(async () => {
       try {
         const response = await getAzureOpenAICompletion(apiMessages);
