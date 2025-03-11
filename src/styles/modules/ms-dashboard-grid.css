@@ -1,0 +1,54 @@
+
+/* Microsoft Dashboard Grid */
+.ms-dashboard-grid {
+  @apply grid gap-4 sm:gap-6;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.ms-dashboard-grid-2 {
+  @apply grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2;
+}
+
+.ms-dashboard-grid-3 {
+  @apply grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.ms-dashboard-grid-4 {
+  @apply grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+/* Microsoft Stack - Horizontal */
+.ms-stack-horizontal {
+  @apply flex flex-row items-center space-x-2;
+}
+
+/* Microsoft Stack - Vertical */
+.ms-stack-vertical {
+  @apply flex flex-col space-y-2;
+}
+
+/* Microsoft Page Content */
+.ms-page-content {
+  @apply p-4 sm:p-6 rounded-lg bg-card/20 border border-border/30 backdrop-blur-sm;
+}
+
+/* Responsive Table */
+.ms-table-container {
+  @apply w-full overflow-x-auto;
+}
+
+.ms-table {
+  @apply w-full border-collapse;
+}
+
+.ms-table th {
+  @apply bg-secondary/30 text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider;
+}
+
+.ms-table td {
+  @apply border-t border-border/30 py-3 px-4 text-sm;
+}
+
+.ms-table tr:hover td {
+  @apply bg-accent/10;
+}

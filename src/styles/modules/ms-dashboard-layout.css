@@ -1,0 +1,66 @@
+
+/* Microsoft Dashboard Layout Styles */
+.ms-dashboard-layout {
+  @apply min-h-screen bg-background flex flex-col;
+}
+
+.ms-dashboard-container {
+  @apply container mx-auto px-4 lg:px-8 py-6;
+}
+
+.ms-dashboard-header {
+  @apply mb-6 pb-4 border-b border-border;
+}
+
+.ms-dashboard-section {
+  @apply mb-8;
+}
+
+.ms-dashboard-title {
+  @apply text-2xl font-semibold tracking-tight mb-1;
+}
+
+.ms-dashboard-subtitle {
+  @apply text-sm text-muted-foreground mb-4;
+}
+
+/* Microsoft Fluent Panel */
+.ms-fluent-panel {
+  @apply bg-card/50 border border-border/50 rounded-lg shadow-md backdrop-blur-sm;
+  transition: all 0.2s ease-in-out;
+}
+
+.ms-fluent-panel:hover {
+  @apply border-border/70 shadow-lg;
+}
+
+/* Microsoft Content Card */
+.ms-content-card {
+  @apply bg-card/30 rounded-lg border border-border/40 p-6 backdrop-blur-sm transition-all;
+}
+
+.ms-content-card:hover {
+  @apply border-border/60 shadow-md;
+}
+
+/* Microsoft Stats Card */
+.ms-stats-card {
+  @apply bg-card/40 border border-border/30 rounded-lg p-4 transition-all;
+}
+
+.ms-stats-card:hover {
+  @apply border-border/60 shadow-md;
+  transform: translateY(-2px);
+}
+
+.ms-stats-card-title {
+  @apply text-sm font-medium text-muted-foreground mb-1;
+}
+
+.ms-stats-card-value {
+  @apply text-xl font-semibold;
+}
+
+.ms-stats-card-desc {
+  @apply text-xs text-muted-foreground mt-1;
+}
