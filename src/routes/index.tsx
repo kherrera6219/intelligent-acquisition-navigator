@@ -1,5 +1,5 @@
 
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouteObject } from "react-router-dom";
 import appRoutes, { AppRoutes } from "./AppRoutes";
 import authRoutes from "./authRoutes";
 import dashboardRoutes from "./dashboardRoutes";
@@ -18,14 +18,14 @@ const withFluentLoading = (Component: React.ComponentType) => () => (
   </Suspense>
 );
 
-// New route for Microsoft Fluent Dashboard example
-const msFluentRoute = {
+// New route for Microsoft Fluent Dashboard example - explicitly typed as RouteObject
+const msFluentRoute: RouteObject = {
   path: "/ms-fluent-dashboard",
-  element: withFluentLoading(MsFluentDashboardExample)
+  element: withFluentLoading(MsFluentDashboardExample)()
 };
 
 // All routes
-const allRoutes = [
+const allRoutes: RouteObject[] = [
   msFluentRoute,
   ...appRoutes,
   ...authRoutes,

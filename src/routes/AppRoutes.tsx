@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, RouteObject } from 'react-router-dom';
 import { wrapWithLayout } from "./routeTypes";
@@ -101,5 +100,4 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ routes }) => {
   );
 };
 
-export { AppRoutes };
 export default appRoutes;
