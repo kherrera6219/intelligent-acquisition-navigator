@@ -1,101 +1,81 @@
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from "@/components/ui/dialog";
-import { X, Cookie } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { Alert } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Cookie, Check } from 'lucide-react';
 
-const CookieConsent = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const { toast } = useToast();
-
+const CookieConsent: React.FC = () => {
+  const [accepted, setAccepted] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
+  
   useEffect(() => {
-    const consent = localStorage.getItem("cookieConsent");
-    if (!consent) {
-      setTimeout(() => {
-        setIsVisible(true);
-      }, 1500); // Delay to prevent overwhelming the user on initial load
+    // Check if consent was previously given
+    const hasConsent = localStorage.getItem('cookie-consent') === 'true';
+    
+    if (!hasConsent) {
+      // Show banner after a short delay
+      const timer = setTimeout(() => {
+        setVisible(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
     }
+    
+    setAccepted(hasConsent);
   }, []);
-
+  
   const handleAccept = () => {
-    localStorage.setItem("cookieConsent", "accepted");
-    setIsVisible(false);
-    toast({
-      title: "Preferences Saved",
-      description: "Your cookie preferences have been saved.",
-    });
+    localStorage.setItem('cookie-consent', 'true');
+    setAccepted(true);
+    setVisible(false);
   };
-
-  const handleReject = () => {
-    localStorage.setItem("cookieConsent", "rejected");
-    setIsVisible(false);
-    toast({
-      title: "Preferences Saved",
-      description: "You've chosen to reject optional cookies.",
-    });
+  
+  const handleDecline = () => {
+    localStorage.setItem('cookie-consent', 'false');
+    setVisible(false);
   };
-
-  // If using banner style
-  if (!isVisible) return null;
-
+  
+  if (!visible || accepted) {
+    return null;
+  }
+  
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6 animate-slide-up">
-      <div className="max-w-4xl mx-auto">
-        <Card className="bg-gray-900 border border-gray-800 shadow-xl rounded-lg overflow-hidden p-0">
-          <div className="flex flex-col md:flex-row">
-            <div className="p-5 md:p-6 flex-1">
-              <div className="flex items-center gap-2 mb-4">
-                <Cookie className="h-5 w-5 text-blue-400" />
-                <h3 className="text-lg font-semibold text-white">Cookie Settings</h3>
-              </div>
-              
-              <p className="text-gray-300 text-sm mb-4">
-                We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. 
-                By clicking "Accept All", you consent to our use of cookies as described in our Cookie Policy.
-              </p>
-              
-              <div className="flex flex-wrap gap-3">
-                <Button 
-                  onClick={handleAccept}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Accept All
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={handleReject}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
-                >
-                  Reject Optional
-                </Button>
-                <a 
-                  href="/privacy" 
-                  className="text-blue-400 hover:text-blue-300 transition-colors text-sm inline-flex items-center mt-1"
-                >
-                  Learn more about our cookies
-                </a>
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6">
+      <div className="container mx-auto max-w-3xl">
+        <Alert className="bg-secondary/95 backdrop-blur-md shadow-lg border border-border/50 p-4">
+          <div className="flex flex-col space-y-4">
+            <div className="flex items-start gap-3">
+              <Cookie className="h-5 w-5 text-primary shrink-0 mt-1" />
+              <div>
+                <h4 className="text-base font-medium mb-1">Cookie Consent</h4>
+                <p className="text-sm text-gray-300">
+                  We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. 
+                  By clicking "Accept," you consent to our use of cookies as described in our Privacy Policy.
+                </p>
               </div>
             </div>
             
-            {/* Close button (visible only on larger screens) */}
-            <button 
-              onClick={() => setIsVisible(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-white p-1 rounded-full"
-              aria-label="Close cookie banner"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="flex flex-col xs:flex-row gap-3 justify-end">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleDecline}
+                className="order-2 xs:order-1"
+              >
+                Decline
+              </Button>
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={handleAccept}
+                className="order-1 xs:order-2"
+              >
+                <Check className="mr-1 h-4 w-4" />
+                Accept
+              </Button>
+            </div>
           </div>
-        </Card>
+        </Alert>
       </div>
     </div>
   );

@@ -4,6 +4,11 @@ import { Footer } from './Footer';
 import { ExternalFooter } from './ExternalFooter';
 import { InternalFooter } from './InternalFooter';
 import { NetworkStatusBanner } from '../ui/universal/NetworkStatusBanner';
+import { EnhancedNetworkBanner } from '../ui/universal/EnhancedNetworkBanner';
+import { PrivacyBanner } from '../ui/universal/PrivacyBanner';
+import NetworkErrorBoundary from '../ui/universal/NetworkErrorBoundary';
+import CookieConsent from '../CookieConsent';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
 

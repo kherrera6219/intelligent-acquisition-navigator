@@ -1,0 +1,59 @@
+
+/* Marketplace-Ready Adjustments */
+@layer base {
+  * {
+    @apply border-border selection:bg-primary/10 selection:text-white;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Roboto', 'Inter', sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
+    background-image: 
+      linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 75%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-balance m-0;
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    letter-spacing: -0.025em;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+
+  h4 {
+    @apply text-lg md:text-xl;
+  }
+
+  p {
+    @apply leading-relaxed text-balance;
+    font-family: 'Roboto', 'Inter', sans-serif;
+  }
+  
+  /* Focus Styles */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary ring-2 ring-primary/50;
+  }
+}

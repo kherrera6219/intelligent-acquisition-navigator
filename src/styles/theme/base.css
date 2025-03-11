@@ -1,0 +1,77 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Primary Theme Variables */
+:root {
+  /* Color Palette - Updated with gunmetal gray */
+  --primary-hue: 222;
+  --primary-saturation: 84%;
+  --primary-lightness: 51%;
+  
+  --primary: var(--primary-hue) var(--primary-saturation) var(--primary-lightness);
+  --primary-100: var(--primary-hue) var(--primary-saturation) 95%;
+  --primary-200: var(--primary-hue) var(--primary-saturation) 90%;
+  --primary-300: var(--primary-hue) var(--primary-saturation) 80%;
+  --primary-400: var(--primary-hue) var(--primary-saturation) 70%;
+  --primary-500: var(--primary-hue) var(--primary-saturation) var(--primary-lightness);
+  --primary-600: var(--primary-hue) var(--primary-saturation) 41%;
+  --primary-700: var(--primary-hue) var(--primary-saturation) 31%;
+  --primary-800: var(--primary-hue) var(--primary-saturation) 21%;
+  --primary-900: var(--primary-hue) var(--primary-saturation) 11%;
+  
+  /* System UI Colors - Updated to industry standards */
+  --success: 142 76% 36%;
+  --warning: 38 92% 50%;
+  --error: 0 84% 60%;
+  --info: 217 91% 60%;
+  
+  /* Updated with Gunmetal Gray */
+  --background: 220 10% 15%; /* Gunmetal gray base */
+  --foreground: 0 0% 100%;
+  --card: 220 12% 18%; /* Slightly lighter gunmetal for cards */
+  --card-foreground: 0 0% 100%;
+  --popover: 220 12% 18%;
+  --popover-foreground: 0 0% 100%;
+  --secondary: 222 14% 22%; /* Darker gunmetal for secondary elements */
+  --secondary-foreground: 0 0% 100%;
+  --muted: 222 14% 22%;
+  --muted-foreground: 218 11% 65%;
+  --accent: 222 14% 24%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 222 15% 28%;
+  --input: 222 14% 24%;
+  --ring: var(--primary);
+  
+  /* UI Dimensions */
+  --radius: 0.5rem;
+  --header-height: 4rem;
+  --sidebar-width: 16rem;
+  --content-max-width: 1400px;
+  
+  /* Animation Speeds */
+  --transition-slow: 500ms;
+  --transition-medium: 300ms;
+  --transition-fast: 150ms;
+  
+  /* Z-Index Layers */
+  --z-background: -10;
+  --z-default: 1;
+  --z-floating: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-drawer: 300;
+  --z-modal: 400;
+  --z-popover: 500;
+  --z-toast: 600;
+  --z-tooltip: 700;
+  --z-highest: 9999;
+}
+
+/* Light Mode Variables - To be implemented later */
+.light-theme {
+  /* Will contain light mode overrides */
+}

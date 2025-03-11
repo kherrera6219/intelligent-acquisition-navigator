@@ -1,5 +1,5 @@
 
-@import './theme.css';
+@import './theme/index.css';
 @import './modules/base.css';
 @import './modules/components.css';
 @import './modules/animations.css';
