@@ -1,61 +1,13 @@
 
-/* Container Modules */
+/* Container System */
 .container-module {
-  @apply max-w-7xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 xl:px-10;
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
 .container-module-sm {
-  @apply max-w-3xl mx-auto px-3 xs:px-4 sm:px-5 md:px-6;
+  @apply max-w-3xl mx-auto px-4 sm:px-6;
 }
 
 .container-module-lg {
-  @apply max-w-[1600px] mx-auto px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 xl:px-10;
-}
-
-/* Responsive Containers */
-.container-responsive {
-  @apply w-full px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 xl:px-10;
-  max-width: min(100%, 1600px);
-  margin: 0 auto;
-}
-
-.container-responsive-sm {
-  @apply w-full px-3 xs:px-4 sm:px-5;
-  max-width: min(100%, 640px);
-  margin: 0 auto;
-}
-
-.container-responsive-md {
-  @apply w-full px-3 xs:px-4 sm:px-5 md:px-6;
-  max-width: min(100%, 960px);
-  margin: 0 auto;
-}
-
-/* Container with adaptive padding */
-.container-adaptive {
-  @apply w-full mx-auto;
-  padding: clamp(0.5rem, 5vw, 2rem);
-  max-width: min(100%, 1600px);
-}
-
-/* Responsive sections */
-.section-responsive {
-  @apply py-4 xs:py-6 sm:py-8 md:py-10 lg:py-12 xl:py-16;
-}
-
-/* Desktop optimized containers */
-.container-desktop {
-  @apply w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12;
-  max-width: min(100%, 1920px);
-}
-
-/* Fluid containers for full-width sections */
-.container-fluid {
-  @apply w-full;
-}
-
-/* Content area with max-width */
-.content-area {
-  @apply w-full mx-auto;
-  max-width: min(100%, 1600px);
+  @apply max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
 }

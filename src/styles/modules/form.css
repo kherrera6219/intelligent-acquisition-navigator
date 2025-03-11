@@ -1,0 +1,25 @@
+
+/* Form Controls */
+.form-input {
+  @apply bg-black/20 border border-white/10 rounded-md px-4 py-2
+         placeholder:text-gray-500 text-white w-full
+         focus:outline-none focus:ring-2 focus:ring-primary/50;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-300 mb-1;
+}
+
+.form-button {
+  @apply py-2 px-4 rounded-md font-medium transition-colors duration-200
+         focus:outline-none focus:ring-2 focus:ring-primary/50
+         disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.form-button-primary {
+  @apply bg-primary hover:bg-primary/90 text-black;
+}
+
+.form-button-secondary {
+  @apply bg-white/10 hover:bg-white/20 text-white;
+}
