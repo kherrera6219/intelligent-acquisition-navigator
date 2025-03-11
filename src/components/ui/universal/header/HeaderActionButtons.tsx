@@ -23,23 +23,23 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
         <Tooltip content="Refresh Session">
           <button 
             onClick={() => refreshSession()} 
-            className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800"
+            className="text-gray-400 hover:text-white transition p-2 rounded-full hover:bg-gray-800"
             aria-label="Refresh session"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-5 w-5" />
           </button>
         </Tooltip>
       )}
       
-      {refreshSession && <SessionTimeoutTimer className="flex items-center gap-1 px-2 py-1 bg-gray-800 rounded text-xs" />}
+      {refreshSession && <SessionTimeoutTimer className="flex items-center gap-1 px-3 py-1.5 bg-gray-800 rounded text-sm" />}
       
       <Tooltip content="Help">
         <Link 
           to="/help" 
-          className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800"
+          className="text-gray-400 hover:text-white transition p-2 rounded-full hover:bg-gray-800"
           aria-label="Help"
         >
-          <HelpCircle className="h-4 w-4" />
+          <HelpCircle className="h-5 w-5" />
         </Link>
       </Tooltip>
       
@@ -47,19 +47,19 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
         <Tooltip content="Notifications">
           <Link 
             to="/notifications" 
-            className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800 relative"
+            className="text-gray-400 hover:text-white transition p-2 rounded-full hover:bg-gray-800 relative"
             aria-label="Notifications"
           >
-            <Bell className="h-4 w-4" />
+            <Bell className="h-5 w-5" />
             <span 
-              className="absolute -top-0.5 -right-0.5 bg-red-500 text-[10px] flex items-center justify-center rounded-full h-3.5 w-3.5 font-medium"
+              className="absolute -top-0.5 -right-0.5 bg-red-500 text-xs flex items-center justify-center rounded-full h-4 w-4 font-medium"
               aria-label="3 unread notifications"
             >3</span>
           </Link>
         </Tooltip>
       )}
       
-      <div className={cn("h-4 border-r border-gray-600", mobileMenuOpen && "hidden")} />
+      <div className={cn("h-5 border-r border-gray-600", mobileMenuOpen && "hidden")} />
     </>
   );
 };

@@ -39,7 +39,7 @@ export const Container: React.FC<ContainerProps> = ({
   <Component
     className={cn(
       "mx-auto w-full h-full",
-      padding && "px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8",
+      padding && "px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 xl:px-10",
       sizeClasses[size],
       variantClasses[variant],
       className

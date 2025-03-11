@@ -20,15 +20,15 @@ export const HeaderUserMenu: React.FC<HeaderUserMenuProps> = ({ user, mobileMenu
       <Tooltip content="View Profile">
         <Link 
           to="/profile" 
-          className="flex items-center gap-2 text-sm"
+          className="flex items-center gap-3 text-sm"
           aria-label="View profile"
         >
-          <div className="h-6 w-6 rounded-full bg-primary/20 text-primary ring-1 ring-gray-700 flex items-center justify-center text-xs font-medium">
+          <div className="h-8 w-8 rounded-full bg-primary/20 text-primary ring-1 ring-gray-700 flex items-center justify-center text-sm font-medium">
             {userInitial}
           </div>
           <div className="hidden md:block text-left">
-            <div className="text-xs font-medium">{displayName}</div>
-            <div className="text-[10px] text-gray-400">{userRole}</div>
+            <div className="text-sm font-medium">{displayName}</div>
+            <div className="text-xs text-gray-400">{userRole}</div>
           </div>
         </Link>
       </Tooltip>

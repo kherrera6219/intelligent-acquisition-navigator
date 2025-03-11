@@ -64,7 +64,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <ThemeProvider>
       <PageErrorBoundary>
-        <div className="min-h-screen w-full flex flex-col bg-background overflow-x-hidden relative" style={{ minHeight: '100vh' }}>
+        <div className="min-h-screen w-full flex flex-col bg-background overflow-x-hidden relative" style={{ minHeight: '100vh', maxWidth: '100vw' }}>
           {/* Accessible Skip Link */}
           <a 
             href="#main-content" 
@@ -86,11 +86,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             tabIndex={-1}
             style={{
               ...getBackgroundStyles(),
-              minHeight: useInternalHeader ? 'calc(100vh - 4rem)' : '100vh'
+              minHeight: useInternalHeader ? 'calc(100vh - 4rem)' : '100vh',
+              maxWidth: '100vw'
             }}
           >
             <div className="w-full h-full min-h-full overflow-hidden animate-fade-in">
-              <Container size={containerSize} className={`h-full ${containerSize === "full" ? "px-0 sm:px-0" : ""}`}>
+              <Container size={containerSize} className={`h-full ${containerSize === "full" ? "px-0 sm:px-0 md:px-4 lg:px-8 xl:px-12" : ""}`}>
                 <Suspense fallback={<LoadingOverlay />}>
                   {children}
                 </Suspense>

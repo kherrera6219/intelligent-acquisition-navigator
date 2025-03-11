@@ -39,7 +39,7 @@ const Index = () => {
 
 const HomePage = () => (
   <PageErrorBoundary>
-    <MainLayout showHeader={true} showFooter={true} forceExternalHeader={true}>
+    <MainLayout showHeader={true} showFooter={true} forceExternalHeader={true} containerSize="xl">
       <Index />
     </MainLayout>
   </PageErrorBoundary>
