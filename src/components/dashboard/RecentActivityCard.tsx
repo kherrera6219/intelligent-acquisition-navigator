@@ -1,46 +1,69 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { MsDashboardCard } from '@/components/layout/MsDashboardCard';
 import { Link } from 'react-router-dom';
 import { MoveRight, AlertCircle, ClipboardList, Clock, Filter } from 'lucide-react';
-import { recentActivities } from '@/data/dashboardMockData';
+import { recentActivities as mockActivities } from '@/data/dashboardMockData';
 import type { RecentActivity } from '@/types/dashboard';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
 import { TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { fetchRecentActivities } from '@/services/activityService';
+import { useAuth } from '@/hooks/useAuth';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 export const RecentActivityCard: React.FC = (): JSX.Element => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string | null>(null);
+  const [activities, setActivities] = useState<RecentActivity[]>([]);
+  const { isAuthenticated } = useAuth();
+  const { isOnline } = useNetworkMonitor();
   
-  // Sort activities by time (most recent first)
-  const sortedActivities = useMemo(() => {
-    // Create a copy to avoid mutating the original data
-    return [...recentActivities].sort((a, b) => {
-      const dateA = new Date(a.timestamp);
-      const dateB = new Date(b.timestamp);
-      return dateB.getTime() - dateA.getTime();
-    });
-  }, []);
+  // Fetch activities from Supabase when component mounts
+  useEffect(() => {
+    const loadActivities = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // If offline or not authenticated, use mock data
+        if (!isOnline || !isAuthenticated) {
+          setActivities(mockActivities);
+          return;
+        }
+        
+        const data = await fetchRecentActivities();
+        setActivities(data.length > 0 ? data : mockActivities);
+      } catch (error) {
+        console.error('Error loading activities:', error);
+        setError("Unable to load activities. Please try again.");
+        setActivities(mockActivities); // Fallback to mock data
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadActivities();
+  }, [isOnline, isAuthenticated]);
 
   // Apply category filtering if active
   const filteredActivities = useMemo(() => {
-    if (!filter) return sortedActivities;
-    return sortedActivities.filter(activity => activity.category === filter);
-  }, [sortedActivities, filter]);
+    if (!filter) return activities;
+    return activities.filter(activity => activity.category === filter);
+  }, [activities, filter]);
   
   // Extract unique categories for filter dropdown
   const categories = useMemo(() => {
     const uniqueCategories = new Set<string>();
-    sortedActivities.forEach(activity => {
+    activities.forEach(activity => {
       if (activity.category) {
         uniqueCategories.add(activity.category);
       }
     });
     return Array.from(uniqueCategories);
-  }, [sortedActivities]);
+  }, [activities]);
 
   // Format relative time with tooltip showing exact time
   const formatActivityTime = (timestamp: string): { relative: string, exact: string } => {
@@ -51,23 +74,29 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
     };
   };
 
-  // This could be replaced with a real data fetch in the future
-  const handleRefresh = (): void => {
+  // Refresh activities from Supabase
+  const handleRefresh = async (): void => {
     setIsLoading(true);
     setError(null);
     
-    // Simulate API call
-    setTimeout(() => {
-      // Randomly succeed or fail to demonstrate error handling
-      const success = Math.random() > 0.2;
-      
-      if (success) {
-        setIsLoading(false);
-      } else {
-        setError("Unable to refresh activities. Please try again.");
-        setIsLoading(false);
+    try {
+      if (!isOnline || !isAuthenticated) {
+        // If offline or not authenticated, simulate delay and use mock data
+        setTimeout(() => {
+          setActivities(mockActivities);
+          setIsLoading(false);
+        }, 1000);
+        return;
       }
-    }, 1000);
+      
+      const data = await fetchRecentActivities();
+      setActivities(data.length > 0 ? data : mockActivities);
+    } catch (error) {
+      console.error('Error refreshing activities:', error);
+      setError("Unable to refresh activities. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleFilterChange = (category: string | null): void => {
