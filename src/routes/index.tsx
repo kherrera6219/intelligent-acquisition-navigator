@@ -6,6 +6,8 @@ import { authRoutes } from './authRoutes';
 import { dashboardRoutes } from './dashboardRoutes';
 import { settingsRoutes } from './settingsRoutes'; 
 import HomePage from '@/pages/HomePage';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 // Lazily load routes that aren't essential for initial render
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));

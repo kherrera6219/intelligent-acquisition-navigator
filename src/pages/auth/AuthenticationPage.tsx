@@ -15,8 +15,8 @@ export default function AuthenticationPage() {
   const location = useLocation();
   const mode = searchParams.get('mode') === 'register' ? 'register' : 'login';
   
-  // Get the return URL from location state or default to dashboard
-  const from = location.state?.from?.pathname || '/dashboard';
+  // Get the return URL from searchParams, location state, or default to dashboard
+  const returnUrl = searchParams.get('returnUrl') || (location.state?.from?.pathname || '/dashboard');
 
   // Page title based on mode
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function AuthenticationPage() {
   }
 
   if (isAuthenticated) {
-    return <Navigate to={from} replace />;
+    return <Navigate to={returnUrl} replace />;
   }
 
   return (
@@ -61,7 +61,7 @@ export default function AuthenticationPage() {
           variant="metal" 
           className="max-w-md mx-auto mt-8 p-6"
         >
-          <AuthForm mode={mode} />
+          <AuthForm mode={mode} returnUrl={returnUrl} />
           
           <div className="mt-6 text-center">
             {mode === 'login' ? (

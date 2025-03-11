@@ -11,6 +11,7 @@ import { AlertCircle } from 'lucide-react';
 
 interface AuthFormProps {
   mode: 'login' | 'register';
+  returnUrl?: string;
 }
 
 interface FormData {
@@ -19,7 +20,7 @@ interface FormData {
   confirmPassword?: string;
 }
 
-const AuthForm = ({ mode }: AuthFormProps) => {
+const AuthForm = ({ mode, returnUrl = '/dashboard' }: AuthFormProps) => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
   const [isLoading, setIsLoading] = useState(false);
   const { login, signup } = useAuth();
@@ -42,7 +43,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
           description: "You have been logged in successfully.",
         });
       }
-      navigate('/dashboard');
+      navigate(returnUrl);
     } catch (error) {
       // Error is already handled in useAuthActions, showing toast there
       console.error('Authentication error:', error);

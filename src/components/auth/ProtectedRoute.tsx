@@ -21,7 +21,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth?returnUrl=${encodeURIComponent(location.pathname)}" state={{ from: location }} replace />;
+    return <Navigate to={`/auth?returnUrl=${encodeURIComponent(location.pathname)}`} state={{ from: location }} replace />;
   }
 
   if (user && !user.email_confirmed_at) {
@@ -39,7 +39,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
       description: "You don't have permission to access this resource.",
       variant: "destructive",
     });
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (

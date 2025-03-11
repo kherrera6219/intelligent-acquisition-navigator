@@ -9,7 +9,7 @@ const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
 
 export const dashboardRoutes: RouteObject[] = [
   {
-    path: "/",
+    path: "/dashboard",
     element: (
       <ProtectedRoute>
         <MainLayout>
