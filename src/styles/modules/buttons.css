@@ -1,0 +1,28 @@
+
+/* Buttons */
+.ms-button-primary {
+  @apply bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md
+         transition-all duration-200 font-medium shadow-md hover:shadow-lg;
+}
+
+.ms-button-secondary {
+  @apply bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-2 rounded-md
+         transition-all duration-200 font-medium shadow-md hover:shadow-lg;
+}
+
+.ms-button-outline {
+  @apply border border-primary/30 hover:border-primary/60 text-primary hover:text-primary/90
+         px-4 py-2 rounded-md transition-all duration-200 font-medium;
+}
+
+.ms-button-ghost {
+  @apply text-primary hover:text-primary/90 hover:bg-primary/10
+         px-4 py-2 rounded-md transition-all duration-200 font-medium;
+}
+
+/* Inputs */
+.ms-input-field {
+  @apply bg-secondary/20 border border-white/10 rounded-md px-4 py-2
+         focus:outline-none focus:ring-2 focus:ring-primary/30
+         placeholder:text-gray-500 text-white;
+}

@@ -1,0 +1,30 @@
+
+/* Sections */
+.ms-hero-section {
+  @apply relative py-12 md:py-20 lg:py-24 overflow-hidden;
+  background: linear-gradient(135deg, rgba(22, 22, 30, 0.9) 0%, rgba(16, 16, 24, 0.95) 100%);
+}
+
+.ms-features-section {
+  @apply py-12 md:py-20 relative;
+  background-image: radial-gradient(circle at 50% 50%, rgba(30, 30, 40, 0.3) 0%, rgba(10, 10, 15, 0) 70%);
+}
+
+.ms-testimonials-section {
+  @apply py-12 md:py-20 relative;
+  background: linear-gradient(180deg, rgba(30, 30, 40, 0.2) 0%, rgba(20, 20, 30, 0.3) 100%);
+}
+
+.ms-cta-section {
+  @apply py-12 md:py-20 relative;
+  background: linear-gradient(135deg, rgba(40, 40, 60, 0.3) 0%, rgba(20, 20, 30, 0.4) 100%);
+}
+
+/* Headers */
+.ms-section-header {
+  @apply text-2xl md:text-3xl font-bold mb-4 md:mb-6;
+}
+
+.ms-panel-header {
+  @apply text-xl font-semibold mb-4;
+}

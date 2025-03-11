@@ -1,0 +1,31 @@
+
+/* MS Stacks */
+.ms-stack-horizontal {
+  @apply flex flex-row flex-wrap items-center gap-2;
+}
+
+.ms-stack-vertical {
+  @apply flex flex-col items-start gap-2;
+}
+
+/* Microsoft Specific Grid Classes */
+.ms-grid-responsive {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+}
+
+.ms-grid-dashboard {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+}
+
+.ms-grid-sidebar {
+  @apply grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6;
+}
+
+/* Microsoft Specific Container Classes */
+.ms-container {
+  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ms-container-fluid {
+  @apply w-full px-4 sm:px-6 lg:px-8;
+}
