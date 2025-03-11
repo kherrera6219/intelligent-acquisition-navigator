@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activities: {
+        Row: {
+          category: string | null
+          description: string | null
+          icon_name: string
+          id: string
+          timestamp: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          description?: string | null
+          icon_name?: string
+          id?: string
+          timestamp?: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          description?: string | null
+          icon_name?: string
+          id?: string
+          timestamp?: string
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_analysis_records: {
         Row: {
           confidence_score: number

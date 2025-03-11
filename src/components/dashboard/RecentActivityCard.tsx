@@ -7,7 +7,7 @@ import { recentActivities as mockActivities } from '@/data/dashboardMockData';
 import type { RecentActivity } from '@/types/dashboard';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
-import { TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { TooltipProvider, TooltipContent, TooltipTrigger, Tooltip } from '@/components/ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { fetchRecentActivities } from '@/services/activityService';
 import { useAuth } from '@/hooks/useAuth';
@@ -75,7 +75,7 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
   };
 
   // Refresh activities from Supabase
-  const handleRefresh = async (): void => {
+  const handleRefresh = async () => {
     setIsLoading(true);
     setError(null);
     
