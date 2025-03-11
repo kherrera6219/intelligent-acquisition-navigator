@@ -1,0 +1,34 @@
+
+/* Interactive Components */
+.ms-button {
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2;
+  @apply disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.ms-button-primary {
+  @apply bg-primary text-white hover:bg-primary/90;
+}
+
+.ms-button-secondary {
+  @apply bg-secondary text-white hover:bg-secondary/90;
+}
+
+.ms-button-outline {
+  @apply border border-gray-600 bg-transparent hover:bg-white/5;
+}
+
+.ms-button-ghost {
+  @apply text-gray-300 hover:text-white hover:bg-white/5;
+}
+
+/* Inputs */
+.ms-input {
+  @apply bg-gray-900/50 border border-gray-700 rounded-md px-3 py-2 text-sm;
+  @apply placeholder:text-gray-500 focus:ring-1 focus:ring-primary/30 focus:border-primary;
+}
+
+.ms-checkbox {
+  @apply h-4 w-4 rounded border-gray-600 bg-gray-900/50 text-primary;
+  @apply focus:ring-primary/30 focus:ring-offset-gray-900;
+}

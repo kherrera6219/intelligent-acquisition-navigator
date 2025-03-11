@@ -1,0 +1,25 @@
+
+/* Typography System */
+.ms-title-large {
+  @apply text-3xl font-semibold leading-tight tracking-tight;
+}
+
+.ms-title {
+  @apply text-2xl font-semibold leading-tight tracking-tight;
+}
+
+.ms-subtitle {
+  @apply text-xl font-medium leading-tight;
+}
+
+.ms-body-large {
+  @apply text-base leading-relaxed;
+}
+
+.ms-body {
+  @apply text-sm leading-relaxed;
+}
+
+.ms-caption {
+  @apply text-xs leading-normal;
+}

@@ -1,0 +1,17 @@
+
+/* Responsive Utilities */
+.ms-hide-mobile {
+  @apply hidden md:block;
+}
+
+.ms-show-mobile {
+  @apply block md:hidden;
+}
+
+.ms-responsive-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+}
+
+.ms-responsive-flex {
+  @apply flex flex-col md:flex-row md:items-center;
+}

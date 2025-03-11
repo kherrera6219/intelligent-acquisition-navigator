@@ -1,0 +1,25 @@
+
+/* Layout Components */
+.ms-container {
+  @apply w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ms-section {
+  @apply py-6 sm:py-8 md:py-12;
+}
+
+.ms-grid {
+  @apply grid gap-6;
+}
+
+.ms-flex {
+  @apply flex items-center;
+}
+
+.ms-stack-horizontal {
+  @apply flex space-x-4;
+}
+
+.ms-stack-vertical {
+  @apply flex flex-col space-y-4;
+}
