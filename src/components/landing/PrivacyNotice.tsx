@@ -1,12 +1,12 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 
 export interface PrivacyNoticeProps {
   onLearnMore: () => void;
   onClose: () => void;
 }
 
-export const PrivacyNotice = ({ onLearnMore, onClose }: PrivacyNoticeProps) => {
+export const PrivacyNotice = memo(function PrivacyNotice({ onLearnMore, onClose }: PrivacyNoticeProps) {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 border-t border-gray-800 p-4 z-50 backdrop-blur-md">
       <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between">
@@ -33,4 +33,4 @@ export const PrivacyNotice = ({ onLearnMore, onClose }: PrivacyNoticeProps) => {
       </div>
     </div>
   );
-};
+});

@@ -1,5 +1,5 @@
 
-import React, { memo } from 'react';
+import React from 'react';
 import { PrivacyNotice } from './PrivacyNotice';
 
 interface MemoizedPrivacyNoticeProps {
@@ -7,7 +7,7 @@ interface MemoizedPrivacyNoticeProps {
   onClose: () => void;
 }
 
-export const MemoizedPrivacyNotice = memo(
+export const MemoizedPrivacyNotice = React.memo(
   function MemoizedPrivacyNotice({ onLearnMore, onClose }: MemoizedPrivacyNoticeProps) {
     return (
       <PrivacyNotice

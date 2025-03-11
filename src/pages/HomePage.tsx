@@ -1,5 +1,5 @@
 
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
 import { HomeError } from "@/components/home/HomeError";

@@ -49,34 +49,12 @@ p {
 }
 
 /* Responsive Components */
-@media (max-width: 640px) {
-  .responsive-container {
-    @apply px-4;
-  }
-  
-  .responsive-card {
-    @apply p-4;
-  }
+.responsive-container {
+  @apply px-4 sm:px-6 lg:px-8;
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
-  .responsive-container {
-    @apply px-6;
-  }
-  
-  .responsive-card {
-    @apply p-5;
-  }
-}
-
-@media (min-width: 1025px) {
-  .responsive-container {
-    @apply px-8;
-  }
-  
-  .responsive-card {
-    @apply p-6;
-  }
+.responsive-card {
+  @apply p-4 sm:p-5 lg:p-6;
 }
 
 /* Touch Optimizations */

@@ -1,6 +1,6 @@
 
 import React, { useCallback } from 'react';
-import { MemoizedPrivacyNotice } from '../landing/MemoizedPrivacyNotice';
+import { PrivacyNotice } from '../landing/PrivacyNotice';
 import { BackToTopButton } from '@/components/ui/navigation/BackToTopButton';
 import { HelpButton } from '@/components/ui/navigation/HelpButton';
 import { HomeHero } from './sections/HomeHero';
@@ -37,7 +37,7 @@ export const HomeContent: React.FC<HomeContentProps> = ({
       <HomeCta />
 
       {showPrivacyNotice && (
-        <MemoizedPrivacyNotice
+        <PrivacyNotice
           onLearnMore={handleLearnMore}
           onClose={handleClose}
         />
