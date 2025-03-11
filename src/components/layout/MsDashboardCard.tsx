@@ -3,23 +3,9 @@ import React from 'react';
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useNavigate } from 'react-router-dom';
+import type { DashboardCardProps } from '@/types/dashboard';
 
-export interface MsDashboardCardProps {
-  title: string;
-  subtitle?: string;
-  icon?: React.ReactNode;
-  href?: string;
-  children?: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-  badge?: {
-    text: string;
-    variant: string;
-  };
-  footer?: React.ReactNode;
-}
-
-export const MsDashboardCard: React.FC<MsDashboardCardProps> = ({
+export const MsDashboardCard: React.FC<DashboardCardProps> = ({
   title,
   subtitle,
   icon,
@@ -29,10 +15,10 @@ export const MsDashboardCard: React.FC<MsDashboardCardProps> = ({
   onClick,
   badge,
   footer
-}) => {
+}): JSX.Element => {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     if (onClick) {
       onClick();
     } else if (href) {
@@ -40,18 +26,29 @@ export const MsDashboardCard: React.FC<MsDashboardCardProps> = ({
     }
   };
 
+  const isClickable = !!onClick || !!href;
+
   return (
     <Card 
       className={cn(
         "p-4 transition-all border border-border/40 bg-card/50 backdrop-blur-sm",
-        "hover:bg-card/80 hover:shadow-lg cursor-pointer",
+        isClickable && "hover:bg-card/80 hover:shadow-lg cursor-pointer",
         className
       )}
-      onClick={handleClick}
+      onClick={isClickable ? handleClick : undefined}
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-label={isClickable ? `Open ${title}` : undefined}
+      onKeyDown={isClickable ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick();
+        }
+      } : undefined}
     >
       <div className="flex items-start gap-4">
         {icon && (
-          <div className="flex-shrink-0 p-2 bg-primary/10 rounded-md text-primary">
+          <div className="flex-shrink-0 p-2 bg-primary/10 rounded-md text-primary" aria-hidden="true">
             {icon}
           </div>
         )}

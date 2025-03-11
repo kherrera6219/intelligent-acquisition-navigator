@@ -10,7 +10,12 @@ export interface RecentActivity {
 export interface DashboardCardProps {
   children: React.ReactNode;
   title: string;
+  subtitle?: string;
   footer?: React.ReactNode;
+  badge?: {
+    text: string;
+    variant: string;
+  };
 }
 
 export interface StatisticsCardProps {
@@ -18,4 +23,20 @@ export interface StatisticsCardProps {
   value: string | number;
   change?: number;
   trend?: 'up' | 'down' | 'neutral';
+  icon?: React.ReactNode;
+}
+
+export interface Deadline {
+  id: number;
+  title: string;
+  daysRemaining: number;
+}
+
+export interface UserProfile {
+  displayName: string;
+  role: string;
+  tasks: number;
+  projects: number;
+  loginTime: string;
+  isPremium: boolean;
 }

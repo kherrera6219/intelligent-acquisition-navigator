@@ -72,13 +72,13 @@
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* Microsoft Timeline */
+/* Microsoft Timeline - Improved styling */
 .ms-timeline {
   @apply relative ml-6;
 }
 
 .ms-timeline-item {
-  @apply relative pb-8;
+  @apply relative pb-6 last:pb-0;
 }
 
 .ms-timeline-item::before {
@@ -86,16 +86,24 @@
   @apply absolute top-0 bottom-0 -left-6 w-px bg-border/50;
 }
 
-.ms-timeline-marker {
-  @apply absolute -left-8 w-4 h-4 rounded-full bg-primary/20 border-2 border-primary/80;
+.ms-timeline-item:last-child::before {
+  @apply bottom-1/2;
+}
+
+.ms-timeline-icon {
+  @apply absolute -left-9 flex items-center justify-center w-6 h-6 rounded-full bg-white/5 z-10;
+}
+
+.ms-timeline-content {
+  @apply pl-2;
 }
 
 .ms-timeline-title {
-  @apply font-medium;
+  @apply text-sm font-medium leading-tight;
 }
 
-.ms-timeline-date {
-  @apply text-xs text-muted-foreground;
+.ms-timeline-time {
+  @apply text-xs text-muted-foreground mt-0.5;
 }
 
 /* Microsoft Form Elements */
