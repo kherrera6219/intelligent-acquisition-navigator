@@ -142,43 +142,50 @@ const FederalAcquisitionPage = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
+      {/* Header outside of main content */}
       <UniversalInternalHeader />
-      <ProtectedPageLayout
-        title="Federal Acquisition Management"
-        description="Manage and monitor federal acquisition compliance, documentation, and procedures."
-        isLoading={isLoading}
-        error={null}
-        withCard={false}
-        breadcrumbs={[
-          { label: 'Dashboard', href: '/dashboard' },
-          { label: 'Federal Acquisition', href: '/federal-acquisition' }
-        ]}
-      >
-        <div className="flex flex-col gap-6">
-          <FederalTabNavigation
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            onNewReport={handleNewReportClick}
-          />
-          
-          <FederalTabContent
-            activeTab={activeTab}
-            reports={reports}
-            chatMessages={chatMessages}
-            isSending={isSending}
-            messageInput={messageInput}
-            onInputChange={setMessageInput}
-            onSendMessage={handleSendMessage}
-            onClearChat={handleClearChat}
-            onCardClick={handleReportCardClick}
-            onNetworkErrorReset={handleNetworkErrorReset}
-            onFileUpload={handleFileUpload}
-          />
-        </div>
-      </ProtectedPageLayout>
+      
+      {/* Main content with sidebar and page content */}
+      <div className="flex-1 flex">
+        <ProtectedPageLayout
+          title="Federal Acquisition Management"
+          description="Manage and monitor federal acquisition compliance, documentation, and procedures."
+          isLoading={isLoading}
+          error={null}
+          withCard={false}
+          breadcrumbs={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Federal Acquisition', href: '/federal-acquisition' }
+          ]}
+        >
+          <div className="flex flex-col gap-6">
+            <FederalTabNavigation
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              onNewReport={handleNewReportClick}
+            />
+            
+            <FederalTabContent
+              activeTab={activeTab}
+              reports={reports}
+              chatMessages={chatMessages}
+              isSending={isSending}
+              messageInput={messageInput}
+              onInputChange={setMessageInput}
+              onSendMessage={handleSendMessage}
+              onClearChat={handleClearChat}
+              onCardClick={handleReportCardClick}
+              onNetworkErrorReset={handleNetworkErrorReset}
+              onFileUpload={handleFileUpload}
+            />
+          </div>
+        </ProtectedPageLayout>
+      </div>
+      
+      {/* Footer outside of main content */}
       <InternalFooter />
-    </>
+    </div>
   );
 };
 

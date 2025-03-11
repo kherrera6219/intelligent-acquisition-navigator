@@ -67,8 +67,8 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   }, []);
   
   const content = (
-    <div className="flex min-h-screen bg-background">
-      <div className="flex-1 flex">
+    <div className="min-h-screen bg-background">
+      <div className="flex flex-1">
         {/* Navigation sidebar - now inside the main content area */}
         {!hideSidebar && (
           <div className="h-screen sticky top-0">
