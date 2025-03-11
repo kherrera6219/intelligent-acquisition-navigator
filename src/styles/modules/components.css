@@ -1,153 +1,132 @@
 
-/* Base component styling */
-.form-group {
-  @apply mb-4;
+/* Navigation */
+.nav-link {
+  @apply text-gray-300 hover:text-white transition-colors;
 }
 
-.form-label {
-  @apply block text-sm font-medium text-gray-300 mb-1;
+.nav-link-active {
+  @apply text-white font-medium;
 }
 
-.form-input {
-  @apply w-full rounded-md border border-border bg-secondary/80 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-colors;
+/* Cards */
+.content-card {
+  @apply bg-secondary/40 backdrop-blur-sm border border-white/5 rounded-lg p-4 sm:p-6 
+         shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-secondary/50;
 }
 
-.form-error {
-  @apply mt-1 text-sm text-red-500;
+.dashboard-card {
+  @apply bg-secondary/30 backdrop-blur-sm border border-white/10 rounded-lg p-4 sm:p-6 
+         shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-secondary/40;
 }
 
-/* Button Variants */
-.btn {
-  @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50;
-}
-
-.btn-primary {
-  @apply bg-primary text-white hover:bg-primary/90;
-}
-
-.btn-secondary {
-  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
-}
-
-.btn-ghost {
-  @apply hover:bg-accent hover:text-accent-foreground;
-}
-
-.btn-destructive {
-  @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
-}
-
-.btn-outline {
-  @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground;
-}
-
-.btn-link {
-  @apply text-primary underline-offset-4 hover:underline;
-}
-
-/* Card variants */
-.card {
-  @apply rounded-lg border border-border bg-secondary text-card-foreground shadow;
-}
-
-.card-header {
-  @apply flex flex-col space-y-1.5 p-6;
-}
-
-.card-title {
-  @apply font-semibold leading-none tracking-tight;
-}
-
-.card-description {
-  @apply text-sm text-muted-foreground;
-}
-
-.card-content {
-  @apply p-6 pt-0;
-}
-
-.card-footer {
-  @apply flex items-center p-6 pt-0;
-}
-
-/* Internal app specific components */
-.internal-navigation {
-  @apply flex space-x-1 sm:space-x-2 overflow-x-auto pb-2 scrollbar-none;
-}
-
-.internal-nav-item {
-  @apply px-3 py-1.5 text-sm rounded-md transition-colors whitespace-nowrap;
-}
-
-.internal-nav-item-active {
-  @apply bg-secondary text-white;
-}
-
-.internal-nav-item-inactive {
-  @apply text-muted-foreground hover:text-white hover:bg-secondary/50;
-}
-
-.internal-badge {
-  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
-}
-
-.internal-badge-primary {
-  @apply border-transparent bg-primary text-primary-foreground hover:bg-primary/80;
-}
-
-.internal-badge-secondary {
-  @apply border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80;
-}
-
-.internal-badge-outline {
-  @apply border-current text-foreground;
-}
-
-.internal-section-divider {
-  @apply border-t border-border my-6;
-}
-
-.internal-info-box {
-  @apply bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-sm;
-}
-
-.internal-warning-box {
-  @apply bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-sm;
-}
-
-.internal-error-box {
-  @apply bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-sm;
-}
-
-.internal-success-box {
-  @apply bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-sm;
-}
-
-/* Modern SaaS components */
 .feature-card {
-  @apply rounded-lg p-6 border border-border bg-secondary/20 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:bg-secondary/40;
+  @apply bg-secondary/20 backdrop-blur-sm border border-white/5 rounded-lg p-4 sm:p-6 
+         shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-secondary/30
+         hover:translate-y-[-2px];
 }
 
-.stat-card {
-  @apply rounded-lg p-4 border border-border bg-secondary/30 backdrop-blur-sm;
+.testimonial-card {
+  @apply bg-secondary/30 backdrop-blur-sm border border-white/5 rounded-lg p-4 sm:p-6 
+         shadow-lg transition-all duration-300;
 }
 
-.avatar-stack {
-  @apply flex overflow-hidden -space-x-2;
+.cta-card {
+  @apply bg-secondary/40 backdrop-blur-sm border border-white/10 rounded-lg p-6 sm:p-8 
+         shadow-lg transition-all duration-300;
 }
 
-.avatar-stack-item {
-  @apply w-8 h-8 rounded-full border-2 border-background;
+/* Sections */
+.hero-section {
+  @apply relative py-12 md:py-20 lg:py-24 overflow-hidden;
+  background: linear-gradient(135deg, rgba(22, 22, 30, 0.9) 0%, rgba(16, 16, 24, 0.95) 100%);
 }
 
-.pill-badge {
-  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors;
+.features-section {
+  @apply py-12 md:py-20 relative;
+  background-image: radial-gradient(circle at 50% 50%, rgba(30, 30, 40, 0.3) 0%, rgba(10, 10, 15, 0) 70%);
 }
 
-.glass-panel {
-  @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg shadow-lg;
+.testimonials-section {
+  @apply py-12 md:py-20 relative;
+  background: linear-gradient(180deg, rgba(30, 30, 40, 0.2) 0%, rgba(20, 20, 30, 0.3) 100%);
 }
 
-.gradient-border {
-  @apply border border-transparent bg-gradient-to-r from-primary/50 to-blue-400/50 bg-origin-border;
+.cta-section {
+  @apply py-12 md:py-20 relative;
+  background: linear-gradient(135deg, rgba(40, 40, 60, 0.3) 0%, rgba(20, 20, 30, 0.4) 100%);
+}
+
+/* Buttons */
+.button-primary {
+  @apply bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md
+         transition-all duration-200 font-medium shadow-md hover:shadow-lg;
+}
+
+.button-secondary {
+  @apply bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-2 rounded-md
+         transition-all duration-200 font-medium shadow-md hover:shadow-lg;
+}
+
+.button-outline {
+  @apply border border-primary/30 hover:border-primary/60 text-primary hover:text-primary/90
+         px-4 py-2 rounded-md transition-all duration-200 font-medium;
+}
+
+.button-ghost {
+  @apply text-primary hover:text-primary/90 hover:bg-primary/10
+         px-4 py-2 rounded-md transition-all duration-200 font-medium;
+}
+
+/* Inputs */
+.input-field {
+  @apply bg-secondary/20 border border-white/10 rounded-md px-4 py-2
+         focus:outline-none focus:ring-2 focus:ring-primary/30
+         placeholder:text-gray-500 text-white;
+}
+
+/* Headers */
+.section-header {
+  @apply text-2xl md:text-3xl font-bold mb-4 md:mb-6;
+}
+
+.panel-header {
+  @apply text-xl font-semibold mb-4;
+}
+
+/* Fluent design enhancements */
+.fluent-panel {
+  @apply bg-card/40 backdrop-blur-sm border border-primary/5 rounded-lg p-4 sm:p-6
+         shadow-lg transition-all duration-300;
+  background-image: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.1) 100%);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255,255,255,0.05),
+    0 4px 20px rgba(0,0,0,0.2);
+}
+
+/* Metallic effects */
+.metallic-card {
+  @apply relative overflow-hidden rounded-xl;
+  background: linear-gradient(145deg, rgba(40, 40, 60, 0.3) 0%, rgba(20, 20, 30, 0.4) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.metallic-card:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  transform: skewX(-15deg);
+  animation: shine 8s infinite;
+}
+
+@keyframes shine {
+  0% { left: -50%; }
+  20% { left: 100%; }
+  100% { left: 100%; }
 }

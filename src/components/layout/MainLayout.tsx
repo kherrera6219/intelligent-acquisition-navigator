@@ -1,3 +1,4 @@
+
 import React, { PropsWithChildren, useState, useEffect } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -5,7 +6,7 @@ import { NetworkStatusBanner } from '../ui/universal/NetworkStatusBanner';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
 import { NetworkErrorBoundary } from '../ui/universal/NetworkErrorBoundary';
-import { CookieConsent } from '../CookieConsent';
+import CookieConsent from '../CookieConsent';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { PrivacyBanner } from '../landing/PrivacyBanner';
 import { EnhancedNetworkBanner } from '../ui/universal/EnhancedNetworkBanner';
@@ -17,6 +18,19 @@ interface MainLayoutProps extends PropsWithChildren {
   showNetworkStatus?: boolean;
   showPrivacyBanner?: boolean;
   showCookieConsent?: boolean;
+  className?: string;
+  // Add missing props that were causing errors
+  containerSize?: string;
+  forceExternalHeader?: boolean;
+}
+
+export interface EnhancedNetworkBannerProps {
+  isOnline: boolean;
+}
+
+export interface PrivacyBannerProps {
+  onLearnMore: () => void;
+  onClose: () => void;
 }
 
 const headerRoutes = [
@@ -50,6 +64,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   showNetworkStatus = true,
   showPrivacyBanner = true,
   showCookieConsent = true,
+  className = '',
+  containerSize,
+  forceExternalHeader,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -80,9 +97,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   const shouldShowHeader = showHeader && (isHeaderRoute || isHomePage);
   
   const contentClassNames = {
-    default: 'container mx-auto py-12 px-4 sm:px-6 lg:px-8',
-    fluent: 'container mx-auto py-12 px-4 sm:px-6 lg:px-8',
-    minimal: 'container mx-auto py-12 px-4 sm:px-6 lg:px-8',
+    default: 'container mx-auto py-8 px-4 sm:px-6 lg:px-8',
+    fluent: 'container mx-auto py-8 px-4 sm:px-6 lg:px-8',
+    minimal: 'container mx-auto py-6 px-4 sm:px-6 lg:px-8',
   };
   
   const containerClasses = {
@@ -91,22 +108,53 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     minimal: 'min-h-screen flex flex-col bg-background',
   };
   
+  // Network status for the banner
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+  
+  // Privacy banner handlers
+  const [showPrivacyNotice, setShowPrivacyNotice] = useState(showPrivacyBanner);
+  
+  const handleLearnMore = () => {
+    // Navigate to privacy page or open modal
+    console.log('Learn more about privacy');
+  };
+  
+  const handleClosePrivacy = () => {
+    setShowPrivacyNotice(false);
+  };
+  
   return (
-    <div className={containerClasses[variant]}>
+    <div className={cn(containerClasses[variant], className)}>
       <NetworkErrorBoundary>
-        {shouldShowHeader && (
-          <Header
-            variant={headerVariant}
-            isScrolled={isScrolled}
-            isHomePage={isHomePage}
+        {shouldShowHeader && !forceExternalHeader && (
+          <Header />
+        )}
+        
+        {showNetworkStatus && (
+          <EnhancedNetworkBanner isOnline={isOnline} />
+        )}
+        
+        {showPrivacyNotice && (
+          <PrivacyBanner 
+            onLearnMore={handleLearnMore}
+            onClose={handleClosePrivacy}
           />
         )}
         
-        {showNetworkStatus && <EnhancedNetworkBanner />}
-        
-        {showPrivacyBanner && <PrivacyBanner />}
-        
-        <main className={cn("flex-grow", contentClassNames)}>
+        <main className={cn("flex-grow", contentClassNames[variant])}>
           {children}
         </main>
         

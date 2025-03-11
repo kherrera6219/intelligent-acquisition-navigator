@@ -42,8 +42,7 @@ const HomePage = () => (
     <MainLayout 
       showHeader={true} 
       showFooter={true} 
-      forceExternalHeader={true} 
-      containerSize="full"
+      variant="default"
       className="ms-motion-fadeIn"
     >
       <Index />

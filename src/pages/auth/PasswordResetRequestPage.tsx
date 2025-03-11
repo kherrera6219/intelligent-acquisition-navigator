@@ -1,163 +1,61 @@
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Container } from '@/components/ui/universal/Container';
-import { PageHeader } from '@/components/layout/PageHeader';
-import { Card } from '@/components/ui/card';
-import { AlertCircle, Mail, ArrowLeft } from 'lucide-react';
+import React, { useState } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { PageErrorBoundary } from '@/components/ui/universal/PageErrorBoundary';
+import { PasswordResetRequest } from '@/components/auth/PasswordResetRequest';
+import { Card } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
-export default function PasswordResetRequestPage() {
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const PasswordResetRequestContent = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const { resetPassword } = useAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
-
-  // Update page title
-  useEffect(() => {
-    document.title = 'Reset Password | ProcurityIQ';
-  }, []);
-
-  const validateEmail = () => {
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    
-    if (!email) {
-      setEmailError('Please enter your email address');
-      return false;
-    }
-    
-    if (!emailRegex.test(email)) {
-      setEmailError('Please enter a valid email address');
-      return false;
-    }
-    
-    setEmailError(null);
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateEmail()) {
-      return;
-    }
-    
-    try {
-      setIsSubmitting(true);
-      await resetPassword(email);
-      setIsSubmitted(true);
-      toast({
-        title: "Reset Email Sent",
-        description: "If an account exists with that email, we've sent password reset instructions.",
-      });
-    } catch (error) {
-      console.error('Reset password error:', error);
-      // Error message is shown in useAuthActions already
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
-    <MainLayout containerSize="sm">
-      <div className="py-6 animate-fade-in">
-        <PageHeader
-          title="Reset Your Password"
-          description="Enter your email to receive password reset instructions"
-          breadcrumbs={[
-            { label: 'Authentication', href: '/auth' },
-            { label: 'Reset Password', href: '/auth/reset-password' }
-          ]}
-        />
-        
-        <div className="max-w-md mx-auto mt-8">
-          {isSubmitted ? (
-            <Card className="p-6 text-center space-y-6 border-white/10 bg-black/30">
-              <div className="mx-auto bg-blue-500/20 p-3 rounded-full w-fit">
-                <Mail className="h-8 w-8 text-blue-500" />
-              </div>
-              <h2 className="text-2xl font-bold">Check Your Email</h2>
-              <p className="text-gray-400">
-                We've sent password reset instructions to <span className="font-medium text-gray-300">{email}</span>. Please check your inbox and spam folder.
-              </p>
-              <div className="flex flex-col gap-4">
-                <Button onClick={() => setIsSubmitted(false)}>
-                  Try Another Email
-                </Button>
-                <Button variant="outline" onClick={() => navigate('/auth')}>
-                  Return to Login
-                </Button>
-              </div>
-            </Card>
-          ) : (
-            <Card className="p-6 border-white/10 bg-black/30">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@example.com"
-                      className="bg-white/5"
-                      disabled={isSubmitting}
-                      required
-                      autoFocus
-                      aria-invalid={emailError ? "true" : "false"}
-                      aria-describedby={emailError ? "email-error" : undefined}
-                    />
-                  </div>
-
-                  {emailError && (
-                    <div id="email-error" className="bg-red-500/10 p-3 rounded-md flex items-start gap-2">
-                      <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-red-500" role="alert">
-                        {emailError}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full"
-                  disabled={isSubmitting}
-                  aria-busy={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span className="animate-spin">⟳</span>
-                      Sending...
-                    </span>
-                  ) : (
-                    'Send Reset Instructions'
-                  )}
-                </Button>
-
-                <div className="text-center">
-                  <Link 
-                    to="/auth" 
-                    className="inline-flex items-center text-primary hover:underline text-sm gap-1"
-                  >
-                    <ArrowLeft className="h-3 w-3" />
-                    Return to login
-                  </Link>
-                </div>
-              </form>
-            </Card>
-          )}
-        </div>
-      </div>
-    </MainLayout>
+    <div className="flex items-center justify-center min-h-[80vh] px-4">
+      <Card className="w-full max-w-md p-6 shadow-xl bg-card/80 backdrop-blur-sm border border-white/10">
+        {!isSubmitted ? (
+          <>
+            <h2 className="text-2xl font-bold mb-6">Reset Password</h2>
+            <p className="text-muted-foreground mb-6">
+              Enter your email address below and we'll send you a link to reset your password.
+            </p>
+            
+            <PasswordResetRequest onSuccess={() => setIsSubmitted(true)} />
+            
+            <div className="mt-6 text-center">
+              <Link to="/auth" className="text-primary hover:underline">
+                Return to login
+              </Link>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-6">
+            <h2 className="text-2xl font-bold mb-4">Email Sent</h2>
+            <p className="text-muted-foreground mb-6">
+              If an account exists with that email, we've sent password reset instructions.
+            </p>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/auth">Return to Login</Link>
+            </Button>
+          </div>
+        )}
+      </Card>
+    </div>
   );
-}
+};
+
+const PasswordResetRequestPage = () => {
+  return (
+    <PageErrorBoundary>
+      <MainLayout 
+        showHeader={true} 
+        showFooter={true} 
+        variant="minimal"
+      >
+        <PasswordResetRequestContent />
+      </MainLayout>
+    </PageErrorBoundary>
+  );
+};
+
+export default PasswordResetRequestPage;

@@ -6,7 +6,17 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { Wifi, WifiOff } from 'lucide-react';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  variant?: string;
+  isScrolled?: boolean;
+  isHomePage?: boolean;
+}
+
+export const Header: React.FC<HeaderProps> = ({ 
+  variant = 'default',
+  isScrolled = false,
+  isHomePage = false
+}) => {
   const { isAuthenticated, user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -16,8 +26,15 @@ export const Header: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Apply conditional styling based on variant and scroll state
+  const headerClasses = isScrolled 
+    ? "bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm shadow-md"
+    : isHomePage && variant === 'default'
+    ? "bg-transparent border-b border-gray-800/30"
+    : "bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm";
+
   return (
-    <header className="bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm sticky top-0 z-50 shadow-md">
+    <header className={`sticky top-0 z-50 ${headerClasses} transition-all duration-300`}>
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
