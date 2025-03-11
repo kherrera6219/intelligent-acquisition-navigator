@@ -19,7 +19,6 @@ interface MainLayoutProps extends PropsWithChildren {
   showPrivacyBanner?: boolean;
   showCookieConsent?: boolean;
   className?: string;
-  // Add missing props that were causing errors
   containerSize?: string;
   forceExternalHeader?: boolean;
 }

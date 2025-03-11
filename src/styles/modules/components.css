@@ -130,3 +130,17 @@
   20% { left: 100%; }
   100% { left: 100%; }
 }
+
+/* MS Navigation */
+.ms-nav-item {
+  @apply text-sm text-gray-400 hover:text-white transition-colors py-1 px-2 rounded hover:bg-white/5;
+}
+
+/* MS Stacks */
+.ms-stack-horizontal {
+  @apply flex flex-row flex-wrap items-center gap-2;
+}
+
+.ms-stack-vertical {
+  @apply flex flex-col items-start gap-2;
+}

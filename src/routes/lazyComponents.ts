@@ -1,5 +1,5 @@
 
-import { lazy, ComponentType, Suspense } from "react";
+import { lazy, ComponentType, Suspense, ReactNode } from "react";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { PageLoader } from "@/components/ui/universal/PageLoader";
 
@@ -8,7 +8,7 @@ interface LazyComponentProps {
 }
 
 // Enhanced LazyComponent with error boundary and suspense
-export const LazyComponent: React.FC<LazyComponentProps> = ({ Component }) => {
+export const LazyComponent = ({ Component }: LazyComponentProps): ReactNode => {
   return (
     <PageErrorBoundary>
       <Suspense fallback={<PageLoader />}>
