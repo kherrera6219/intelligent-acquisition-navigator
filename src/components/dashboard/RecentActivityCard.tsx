@@ -7,7 +7,7 @@ import { recentActivities } from '@/data/dashboardMockData';
 import type { RecentActivity } from '@/types/dashboard';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export const RecentActivityCard: React.FC = (): JSX.Element => {
@@ -151,9 +151,9 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
             
             return (
               <TooltipProvider key={index}>
-                <Tooltip>
+                <div className="ms-timeline-item group" role="listitem">
                   <TooltipTrigger asChild>
-                    <div className="ms-timeline-item group" role="listitem">
+                    <div className="ms-timeline-content-wrapper">
                       <div className="ms-timeline-icon">
                         <Icon className="h-4 w-4 text-blue-400" aria-hidden="true" />
                       </div>
@@ -178,7 +178,7 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
                       {activity.description && <p className="mt-1 text-gray-300">{activity.description}</p>}
                     </div>
                   </TooltipContent>
-                </Tooltip>
+                </div>
               </TooltipProvider>
             );
           })

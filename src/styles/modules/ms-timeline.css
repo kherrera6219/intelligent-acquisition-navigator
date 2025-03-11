@@ -34,6 +34,10 @@
   transition: transform 0.2s ease;
 }
 
+.ms-timeline-content-wrapper {
+  @apply relative flex cursor-pointer;
+}
+
 .ms-timeline-item:hover .ms-timeline-content,
 .ms-timeline-item.group:hover .ms-timeline-content {
   @apply transform translate-x-1;
