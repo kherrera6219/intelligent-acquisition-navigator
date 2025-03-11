@@ -18,6 +18,7 @@ const SitemapPage = lazy(() => import('@/pages/SitemapPage'));
 const HelpPage = lazy(() => import('@/pages/HelpPage'));
 const ImproveApp = lazy(() => import('@/pages/ImproveApp'));
 const ApiDocsPage = lazy(() => import('@/pages/developer/ApiDocsPage'));
+const FederalKnowledgeBasePage = lazy(() => import('@/pages/FederalKnowledgeBasePage'));
 
 export const routes: RouteObject[] = [
   {
@@ -86,6 +87,14 @@ export const routes: RouteObject[] = [
     element: (
       <MainLayout containerSize="lg">
         <ApiDocsPage />
+      </MainLayout>
+    ),
+  },
+  {
+    path: '/federal-knowledge-base',
+    element: (
+      <MainLayout containerSize="lg">
+        <FederalKnowledgeBasePage />
       </MainLayout>
     ),
   },

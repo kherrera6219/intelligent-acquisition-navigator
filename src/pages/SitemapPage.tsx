@@ -12,7 +12,7 @@ import { NetworkErrorHandler } from '@/components/ui/universal/NetworkErrorHandl
 const SitemapPage: React.FC = () => {
   // Categorize routes
   const marketingRoutes = routes.filter(route => 
-    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap", "/improve"].includes(route.path || "")
+    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap", "/improve", "/api-docs"].includes(route.path || "")
   );
   
   const authRoutes = routes.filter(route => 
@@ -28,6 +28,7 @@ const SitemapPage: React.FC = () => {
   
   const acquisitionRoutes = routes.filter(route => 
     (route.path?.includes("federal-acquisition") || 
+    route.path?.includes("federal-knowledge-base") ||
     route.path?.includes("texas-acquisition") ||
     route.path === "/solicitation-review" || 
     route.path === "/document-control" || 

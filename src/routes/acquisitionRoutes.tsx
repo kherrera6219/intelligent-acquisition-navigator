@@ -16,6 +16,7 @@ const LegalReviewPage = lazy(() => import("@/pages/acquisition/LegalReviewPage")
 const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPage"));
 const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
 const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
+const FederalKnowledgeBasePage = lazy(() => import("@/pages/FederalKnowledgeBasePage"));
 
 export const acquisitionRoutes: RouteObject[] = [
   {
@@ -54,6 +55,16 @@ export const acquisitionRoutes: RouteObject[] = [
       <ProtectedRoute>
         <MainLayout>
           <FederalAcquisitionPage />
+        </MainLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/federal-knowledge-base",
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <FederalKnowledgeBasePage />
         </MainLayout>
       </ProtectedRoute>
     )
