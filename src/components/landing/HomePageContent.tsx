@@ -162,7 +162,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
 
       {/* Navigation Controls */}
       <div className="fixed bottom-6 right-6 flex flex-col gap-3">
-        {showBackToTop && <BackToTopButton onClick={scrollToTop} />}
+        {showBackToTop && <BackToTopButton onClick={scrollToTop} visible={showBackToTop} />}
         <HelpButton />
       </div>
     </div>

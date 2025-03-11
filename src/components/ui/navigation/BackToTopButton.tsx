@@ -1,29 +1,25 @@
 
-import { Button } from "@/components/ui/button";
-import { ArrowUp } from "lucide-react";
-import { Tooltip } from "@/components/ui/tooltip";
+import React from 'react';
+import { ArrowUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-interface BackToTopButtonProps {
-  visible: boolean;
+export interface BackToTopButtonProps {
   onClick: () => void;
+  visible?: boolean;
 }
 
-export const BackToTopButton = ({ visible, onClick }: BackToTopButtonProps) => {
+export const BackToTopButton = ({ onClick, visible = true }: BackToTopButtonProps) => {
   if (!visible) return null;
-
+  
   return (
-    <div className="fixed bottom-8 right-4 z-50 animate-fade-in">
-      <Tooltip content="Scroll back to top">
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-primary/10 backdrop-blur-sm hover:bg-primary/20 transition-colors duration-200"
-          onClick={onClick}
-          aria-label="Scroll back to top"
-        >
-          <ArrowUp className="h-5 w-5" aria-hidden="true" />
-        </Button>
-      </Tooltip>
-    </div>
+    <Button
+      variant="secondary"
+      size="icon"
+      className="rounded-full shadow-lg"
+      onClick={onClick}
+      aria-label="Scroll to top"
+    >
+      <ArrowUp className="h-4 w-4" />
+    </Button>
   );
 };

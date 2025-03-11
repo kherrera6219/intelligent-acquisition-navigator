@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { AuthForm } from '@/components/auth/AuthForm';
+import AuthForm from '@/components/auth/AuthForm';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageErrorBoundary } from '@/components/ui/universal/PageErrorBoundary';

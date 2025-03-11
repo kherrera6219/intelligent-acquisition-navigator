@@ -1,100 +1,37 @@
-
 import React from 'react';
-import { Container } from "@/components/ui/universal/Container";
-import { Card } from "@/components/ui/universal/Card";
-import { PageHeader } from "@/components/layout/PageHeader";
-import { Grid } from "@/components/ui/universal/Grid";
-import { GradientText } from '@/components/ui/universal/GradientText';
-import { Link } from 'react-router-dom';
-import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { NetworkErrorHandler } from '@/components/ui/universal/NetworkErrorHandler';
+import { PageErrorBoundary } from '@/components/ui/universal/PageErrorBoundary';
+import { Container, Row, Col } from '@/components/ui/universal/Grid';
+import { Button } from '@/components/ui/button';
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 
-export default function Help() {
-  const helpSections = [
-    {
-      title: "Getting Started",
-      content: "Learn the basics of using our acquisition workflow management system."
-    },
-    {
-      title: "Documentation",
-      content: "Access detailed documentation about features and processes."
-    },
-    {
-      title: "FAQs",
-      content: "Find answers to commonly asked questions about the system."
-    },
-    {
-      title: "Support",
-      content: "Get help from our support team when you need it."
-    }
-  ];
-
-  const { isOnline } = useNetworkMonitor();
-
+const HelpPage = () => {
   return (
-    <Container>
-      <NetworkErrorHandler
-        errorMessage={!isOnline ? "You are currently offline. Some features may be limited." : undefined}
-      >
-        <div className="py-6 animate-fade-in bg-noise"
-          style={{
-            backgroundImage: `
-              linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
-              radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
-            `,
-            backgroundAttachment: 'fixed',
-            backgroundColor: 'var(--background)'
-          }}
-        >
-          <PageHeader
-            title={<GradientText>Help Center</GradientText>}
-            description="Find answers and support for your questions"
-            className="mb-4 sm:mb-6 md:mb-8"
-          />
-
-          <Grid columns={2} gap="lg" className="mb-4 sm:mb-6 md:mb-8">
-            {helpSections.map((section, index) => (
-              <Card 
-                key={index} 
-                variant="metal"
-                className="p-4 sm:p-5 md:p-6"
-                hoverable
-              >
-                <h2 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">
-                  {section.title}
-                </h2>
-                <p className="text-sm sm:text-base text-gray-400">
-                  {section.content}
+    <PageErrorBoundary>
+      <ProtectedPageLayout title="Help & Support" description="Find answers to common questions and get support.">
+        <Container>
+          <Row>
+            <Col>
+              <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
+              
+              <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2">How do I reset my password?</h3>
+                <p>
+                  To reset your password, go to the <Button variant="link" asChild><a href="/auth/forgot-password">Forgot Password</a></Button> page and follow the instructions.
                 </p>
-              </Card>
-            ))}
-          </Grid>
-
-          <Card variant="metal" className="p-4 sm:p-5 md:p-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">
-              Contact Support
-            </h2>
-            <p className="text-sm sm:text-base text-gray-400 mb-4">
-              Need additional help? Our support team is available during business hours.
-            </p>
-            <div className="space-y-2 sm:space-y-3">
-              <p className="text-sm sm:text-base text-gray-400">
-                Email: support@example.com
-              </p>
-              <p className="text-sm sm:text-base text-gray-400">
-                Hours: Monday - Friday, 9:00 AM - 5:00 PM EST
-              </p>
-              <div className="pt-4">
-                <Link to="/contact">
-                  <button className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded">
-                    Contact Us
-                  </button>
-                </Link>
               </div>
-            </div>
-          </Card>
-        </div>
-      </NetworkErrorHandler>
-    </Container>
+
+              <div className="mb-4">
+                <h3 className="text-lg font-medium mb-2">How do I contact support?</h3>
+                <p>
+                  You can contact our support team by sending an email to <a href="mailto:support@example.com">support@example.com</a>.
+                </p>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </ProtectedPageLayout>
+    </PageErrorBoundary>
   );
-}
+};
+
+export default HelpPage;
