@@ -8,7 +8,7 @@ interface ContainerProps {
   as?: keyof JSX.IntrinsicElements;
   size?: "sm" | "md" | "lg" | "xl" | "full";
   padding?: boolean;
-  variant?: "default" | "internal" | "fluid" | "glass" | "card" | "fluent";
+  variant?: "default" | "internal" | "fluid" | "glass" | "card" | "fluent" | "ms-fluent";
 }
 
 const sizeClasses = {
@@ -25,7 +25,8 @@ const variantClasses = {
   fluid: "px-0 sm:px-0 md:px-0 lg:px-0",
   glass: "rounded-lg overflow-hidden bg-white/5 backdrop-blur-sm border border-white/10",
   card: "rounded-lg overflow-hidden bg-secondary/20 backdrop-blur-sm border border-border shadow-xl",
-  fluent: "rounded-xl overflow-hidden fluent-panel"
+  fluent: "rounded-xl overflow-hidden fluent-panel",
+  "ms-fluent": "rounded-xl overflow-hidden ms-fluent-panel"
 } as const;
 
 export const Container: React.FC<ContainerProps> = ({

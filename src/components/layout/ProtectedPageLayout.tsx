@@ -38,8 +38,8 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   withCard = false,
 }) => {
   return (
-    <Container size={fullWidth ? "full" : "lg"} variant="fluent">
-      <div className="py-6 animate-fade-in">
+    <Container size={fullWidth ? "full" : "lg"} variant="ms-fluent">
+      <div className="py-6 ms-motion-fadeIn">
         <PageHeader
           title={title}
           description={description}
@@ -69,11 +69,11 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
             </div>
           </div>
         ) : withCard ? (
-          <Card variant="metal" className={cn("p-6", contentClassName)} textColor="black">
+          <Card variant="ms-fluent" className={cn("p-6", contentClassName)} hoverable>
             {children}
           </Card>
         ) : (
-          <div className={cn("fluent-panel p-6 rounded-lg", contentClassName)}>
+          <div className={cn("ms-content-card", contentClassName)}>
             {children}
           </div>
         )}
@@ -84,7 +84,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
             <div className="text-sm text-muted-foreground">
               Need to navigate to another section?
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="ms-stack-horizontal flex-wrap gap-3">
               <Link to="/dashboard" className="text-sm text-gray-300 hover:text-white">Dashboard</Link>
               <Link to="/knowledge-base" className="text-sm text-gray-300 hover:text-white">Knowledge Base</Link>
               <Link to="/federal-acquisition" className="text-sm text-gray-300 hover:text-white">Federal Acquisition</Link>

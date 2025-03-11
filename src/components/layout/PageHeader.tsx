@@ -30,7 +30,7 @@ export const PageHeader = ({
   tags,
 }: PageHeaderProps) => {
   return (
-    <div className={cn("fluent-page-header space-y-4", className)}>
+    <div className={cn("ms-page-header space-y-4", className)}>
       {/* Breadcrumbs navigation */}
       {breadcrumbs && breadcrumbs.length > 0 && (
         <nav className="flex items-center flex-wrap text-sm text-muted-foreground mb-2" aria-label="Breadcrumb">
@@ -68,8 +68,8 @@ export const PageHeader = ({
       
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h1 className="fluent-typography-title text-2xl sm:text-3xl font-semibold tracking-tight text-white flex items-center gap-2">
+          <div className="ms-page-title">
+            <h1 className="ms-title-large text-2xl sm:text-3xl font-semibold tracking-tight text-white flex items-center gap-2">
               <Heading className="h-6 w-6 text-primary hidden sm:inline-block" aria-hidden="true" />
               {title}
             </h1>
@@ -81,12 +81,12 @@ export const PageHeader = ({
                   <span 
                     key={index} 
                     className={cn(
-                      "fluent-badge",
-                      tag.color === "blue" && "fluent-badge-info",
-                      tag.color === "green" && "fluent-badge-success",
-                      tag.color === "amber" && "fluent-badge-warning",
-                      tag.color === "red" && "fluent-badge-danger",
-                      !tag.color && "fluent-badge-info"
+                      "ms-badge",
+                      tag.color === "blue" && "ms-badge-primary",
+                      tag.color === "green" && "ms-badge-success",
+                      tag.color === "amber" && "ms-badge-warning",
+                      tag.color === "red" && "ms-badge-danger",
+                      !tag.color && "ms-badge-primary"
                     )}
                   >
                     {tag.label}
@@ -97,7 +97,7 @@ export const PageHeader = ({
           </div>
           
           {description && (
-            <p className="fluent-typography-subtitle text-sm text-muted-foreground max-w-3xl">
+            <p className="ms-subtitle text-sm text-muted-foreground max-w-3xl">
               {description}
             </p>
           )}

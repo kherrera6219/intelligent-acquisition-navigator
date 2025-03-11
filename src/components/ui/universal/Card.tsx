@@ -9,7 +9,7 @@ interface CardProps {
   hoverable?: boolean;
   onClick?: () => void;
   noShadow?: boolean;
-  variant?: 'default' | 'glass' | 'outline' | 'accent' | 'primary' | 'flat' | 'metal';
+  variant?: 'default' | 'glass' | 'outline' | 'accent' | 'primary' | 'flat' | 'metal' | 'fluent' | 'ms-fluent';
   padding?: 'none' | 'sm' | 'md' | 'lg' | boolean;
   textColor?: 'default' | 'black';
 }
@@ -32,7 +32,9 @@ export const Card: React.FC<CardProps> = ({
     accent: "bg-primary/10 border-primary/20",
     primary: "bg-primary/10 border-primary/20 text-primary-foreground",
     flat: "bg-secondary/20 border-transparent",
-    metal: "bg-black/20 backdrop-blur-sm border-white/5 bg-metal-gradient"
+    metal: "bg-black/20 backdrop-blur-sm border-white/5 bg-metal-gradient",
+    fluent: "bg-gray-900/70 backdrop-blur-md border-gray-700/50 fluent-panel",
+    'ms-fluent': "ms-fluent-card"
   };
 
   const paddingClasses = {
@@ -67,6 +69,8 @@ export const Card: React.FC<CardProps> = ({
         interactive && "cursor-pointer transition-transform active:scale-[0.98]",
         hoverable && variant === 'metal'
           ? "transition-all duration-200 hover:border-white/10 hover:shadow-xl hover:shadow-black/40"
+          : hoverable && variant === 'ms-fluent'
+          ? "transition-all duration-200 hover:shadow-xl hover:scale-[1.01]"
           : hoverable && "transition-all duration-200 hover:border-border/60 hover:shadow-xl",
         className
       )}

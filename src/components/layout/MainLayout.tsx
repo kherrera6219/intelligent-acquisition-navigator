@@ -18,7 +18,7 @@ interface MainLayoutProps {
   showFooter?: boolean;
   containerSize?: "sm" | "md" | "lg" | "xl" | "full";
   className?: string;
-  forceExternalHeader?: boolean; // New prop to force external header even when authenticated
+  forceExternalHeader?: boolean; // Prop to force external header even when authenticated
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ 
@@ -82,14 +82,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           <main 
             id="main-content" 
             role="main" 
-            className={`flex-1 w-full pb-3 sm:pb-4 md:pb-6 ${useInternalHeader ? 'mt-16' : ''} ${getPageSpecificClasses()} ${className || ''} bg-noise`}
+            className={`flex-1 w-full pb-3 sm:pb-4 md:pb-6 ${useInternalHeader ? 'mt-16' : ''} ${getPageSpecificClasses()} ${className || ''} bg-noise ms-motion-fadeIn`}
             tabIndex={-1}
             style={{
               ...getBackgroundStyles(),
               minHeight: useInternalHeader ? 'calc(100vh - 4rem)' : 'min(100vh, 100%)',
             }}
           >
-            <div className="w-full h-full min-h-full overflow-hidden animate-fade-in">
+            <div className="w-full h-full min-h-full overflow-hidden">
               <Container size={containerSize} className={`h-full ${containerSize === "full" ? "px-0 sm:px-0 md:px-4 lg:px-8 xl:px-12 2xl:px-16" : ""}`}>
                 <Suspense fallback={<LoadingOverlay />}>
                   {children}
