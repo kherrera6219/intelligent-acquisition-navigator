@@ -4,7 +4,7 @@ import { Suspense, lazy, ComponentType } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
-import { PageLoader } from "./PageLoader";
+import { PageLoader } from "@/components/ui/universal/PageLoader";
 
 interface LazyComponentProps {
   Component: ComponentType;

@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { SessionTimeoutWarning } from "@/components/auth/SessionTimeoutWarning";
-import { PageLoader } from "@/components/ui/universal/PageLoader";
+import { PageLoader } from "../ui/universal/PageLoader";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
