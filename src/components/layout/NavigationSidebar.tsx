@@ -63,7 +63,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ className 
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  "ms-nav-link flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors group hover:bg-white/10",
+                  "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors group hover:bg-white/10",
                   location.pathname === item.href ? "bg-primary/20 text-primary font-medium" : "text-muted-foreground"
                 )}
                 onClick={() => setIsOpen(false)}
@@ -76,8 +76,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ className 
         </div>
         
         <div className="mt-auto pt-4 border-t border-border/40">
-          <Link to="/help" className="ms-nav-link text-sm px-3 py-2 block hover:text-white">Help & Support</Link>
-          <Link to="/settings" className="ms-nav-link text-sm px-3 py-2 block hover:text-white">Settings</Link>
+          <Link to="/help" className="text-sm px-3 py-2 block hover:text-white">Help & Support</Link>
+          <Link to="/settings" className="text-sm px-3 py-2 block hover:text-white">Settings</Link>
         </div>
       </div>
       
