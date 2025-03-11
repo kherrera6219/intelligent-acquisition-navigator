@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { WifiOff, Wifi, WifiAlert } from 'lucide-react';
+import { WifiOff, Wifi } from 'lucide-react';
 import { Alert } from '@/components/ui/alert';
 
 export interface EnhancedNetworkBannerProps {

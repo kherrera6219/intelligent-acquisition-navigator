@@ -6,6 +6,7 @@ import { RefreshCw } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
+  onReset?: () => void;
 }
 
 interface State {
@@ -20,7 +21,6 @@ export class NetworkErrorBoundary extends Component<Props, State> {
   };
 
   public static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI.
     return { hasError: true, error };
   }
 
@@ -32,8 +32,13 @@ export class NetworkErrorBoundary extends Component<Props, State> {
     // Reset the error boundary state
     this.setState({ hasError: false, error: null });
     
-    // Try to refresh the page content
-    window.location.reload();
+    // Call the onReset prop if provided
+    if (this.props.onReset) {
+      this.props.onReset();
+    } else {
+      // Default behavior
+      window.location.reload();
+    }
   };
 
   public render() {
