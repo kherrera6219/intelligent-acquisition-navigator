@@ -12,6 +12,11 @@ export interface MsDashboardCardProps {
   children?: React.ReactNode;
   className?: string;
   onClick?: () => void;
+  badge?: {
+    text: string;
+    variant: string;
+  };
+  footer?: React.ReactNode;
 }
 
 export const MsDashboardCard: React.FC<MsDashboardCardProps> = ({
@@ -21,7 +26,9 @@ export const MsDashboardCard: React.FC<MsDashboardCardProps> = ({
   href,
   children,
   className,
-  onClick
+  onClick,
+  badge,
+  footer
 }) => {
   const navigate = useNavigate();
 
@@ -49,13 +56,32 @@ export const MsDashboardCard: React.FC<MsDashboardCardProps> = ({
           </div>
         )}
         <div className="flex-grow">
-          <h3 className="text-lg font-semibold">{title}</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">{title}</h3>
+            {badge && (
+              <span className={cn(
+                "px-2 py-0.5 text-xs rounded-full",
+                badge.variant === "success" ? "bg-green-500/20 text-green-500" : 
+                badge.variant === "warning" ? "bg-amber-500/20 text-amber-500" :
+                badge.variant === "error" ? "bg-red-500/20 text-red-500" :
+                badge.variant === "primary" ? "bg-primary/20 text-primary" :
+                "bg-blue-500/20 text-blue-500"
+              )}>
+                {badge.text}
+              </span>
+            )}
+          </div>
           {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
         </div>
       </div>
       {children && (
         <div className="mt-4">
           {children}
+        </div>
+      )}
+      {footer && (
+        <div className="mt-4 pt-4 border-t border-border/20">
+          {footer}
         </div>
       )}
     </Card>
