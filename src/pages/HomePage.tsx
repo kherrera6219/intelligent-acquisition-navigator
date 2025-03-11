@@ -4,7 +4,6 @@ import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection"; 
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 import { CTASection } from "@/components/landing/CTASection";
-import { PrivacyNotice } from "@/components/landing/PrivacyNotice";
 import CookieConsent from "@/components/CookieConsent";
 import { LoadingState } from "@/components/ui/universal/LoadingState";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -18,10 +17,10 @@ import { useHomePageInit } from "@/hooks/useHomePageInit";
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const {
@@ -134,7 +133,7 @@ const Index = () => {
         </Dialog>
         
         {showPrivacyNotice && (
-          <div className="bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border-b border-white/10 sticky top-0 z-50">
+          <div className="bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border-b border-white/10 w-full">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
               <div className="flex items-center justify-between flex-wrap">
                 <div className="flex-1 flex items-center">

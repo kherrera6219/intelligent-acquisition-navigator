@@ -76,7 +76,7 @@ export const Header = ({ className }: HeaderProps) => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      className={`w-full z-40 transition-all duration-300 ${
         isScrolled 
           ? "bg-gray-900/90 backdrop-blur-md shadow-md" 
           : "bg-gray-900"
