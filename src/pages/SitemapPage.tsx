@@ -10,33 +10,33 @@ import { Card } from '@/components/ui/universal/Card';
 const SitemapPage: React.FC = () => {
   // Categorize routes
   const marketingRoutes = routes.filter(route => 
-    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap", "/api-docs", "/component-library"].includes(route.path || "")
+    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap", "/api-docs", "/component-library", "/improve"].includes(route.path || "")
   );
   
   const authRoutes = routes.filter(route => 
-    ["/auth", "/auth/reset-password", "/auth/reset-password/confirm"].includes(route.path || "")
+    ["/auth", "/auth/forgot-password", "/auth/reset-password"].includes(route.path || "")
   );
   
   const appRoutes = routes.filter(route => 
     route.path?.startsWith("/dashboard") || 
     route.path?.startsWith("/analytics") || 
     route.path?.startsWith("/profile") || 
-    route.path?.startsWith("/settings") ||
-    route.path?.startsWith("/proposals")
+    route.path?.startsWith("/settings")
   );
   
   const acquisitionRoutes = routes.filter(route => 
-    (route.path?.includes("acquisition") || 
-    route.path?.startsWith("/solicitation") || 
-    route.path?.startsWith("/document-control") || 
-    route.path?.startsWith("/market-research") || 
-    route.path?.startsWith("/contract-management") ||
-    route.path?.startsWith("/source-selection") ||
-    route.path?.startsWith("/legal-review") ||
-    route.path?.startsWith("/small-business") ||
-    route.path?.startsWith("/quality-assurance") ||
-    route.path?.startsWith("/compliance") ||
-    route.path?.startsWith("/knowledge-base"))
+    (route.path?.includes("federal-acquisition") || 
+    route.path?.includes("texas-acquisition") ||
+    route.path === "/solicitation-review" || 
+    route.path === "/document-control" || 
+    route.path === "/market-research" || 
+    route.path === "/contract-management" ||
+    route.path === "/source-selection" ||
+    route.path === "/legal-review" ||
+    route.path === "/small-business" ||
+    route.path === "/quality-assurance" ||
+    route.path === "/compliance" ||
+    route.path === "/knowledge-base")
   );
 
   return (

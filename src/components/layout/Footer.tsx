@@ -1,7 +1,5 @@
-
 import { Link } from "react-router-dom";
 import { Container } from "@/components/ui/universal/Container";
-import { routes } from "@/routes";
 import { 
   Github, 
   Twitter, 

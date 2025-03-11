@@ -22,21 +22,17 @@ export const settingsRoutes: RouteObject[] = [
   {
     path: "/help",
     element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <HelpPage />
-        </MainLayout>
-      </ProtectedRoute>
+      <MainLayout>
+        <HelpPage />
+      </MainLayout>
     )
   },
   {
     path: "/sitemap",
     element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <SitemapPage />
-        </MainLayout>
-      </ProtectedRoute>
+      <MainLayout>
+        <SitemapPage />
+      </MainLayout>
     )
   }
 ];
