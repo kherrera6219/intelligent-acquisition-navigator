@@ -72,14 +72,17 @@ export function createSanitizedSchema<T extends z.ZodTypeAny>(schema: T): T {
     typeof input === 'string' ? sanitizeHtml(input) : input;
   
   // Apply sanitization transform to all string fields
-  return schema.transform((data) => {
+  const transformedSchema = schema.transform((data) => {
     if (typeof data !== 'object' || data === null) return data;
     
     return Object.entries(data).reduce((acc, [key, value]) => {
       acc[key] = sanitizeTransform(value);
       return acc;
     }, {} as any);
-  }) as T;
+  });
+  
+  // Type assertion to maintain the original type
+  return transformedSchema as T;
 }
 
 /**

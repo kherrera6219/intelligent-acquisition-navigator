@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { TexasChatContainer } from '@/components/texas/TexasChatContainer';
 import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
+import { AIChatMessage } from "@/types/chat";
 import { getAzureOpenAICompletion } from '@/services/texas/azureOpenAIService';
 import { v4 as uuidv4 } from 'uuid';
 import { useNetworkOperation } from '@/hooks/useNetworkOperation';
@@ -45,9 +46,11 @@ const TexasAcquisitionPage: React.FC = () => {
     // Prepare user message
     const userMessage: TexasMessage = {
       id: uuidv4(),
-      text: sanitizedInput,
+      content: sanitizedInput,
       role: 'user',
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
+      agencyType: selectedAgency,
+      userRole: selectedRole
     };
     
     // Add user message to chat
@@ -65,11 +68,11 @@ const TexasAcquisitionPage: React.FC = () => {
       Provide ${selectedResponseLevel.toLowerCase()} responses focused on procurement requirements.`;
     
     // Prepare messages for API
-    const apiMessages = [
+    const apiMessages: AIChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...messages.map(msg => ({
         role: msg.role === 'user' ? 'user' : 'assistant',
-        content: msg.text
+        content: msg.content
       })),
       { role: 'user', content: sanitizedInput }
     ];
@@ -82,9 +85,11 @@ const TexasAcquisitionPage: React.FC = () => {
         if (response.choices && response.choices.length > 0) {
           const aiMessage: TexasMessage = {
             id: uuidv4(),
-            text: response.choices[0].message.content,
+            content: response.choices[0].message.content,
             role: 'assistant',
-            timestamp: new Date().toISOString(),
+            timestamp: new Date(),
+            agencyType: selectedAgency,
+            userRole: selectedRole
           };
           
           setMessages(prevMessages => [...prevMessages, aiMessage]);

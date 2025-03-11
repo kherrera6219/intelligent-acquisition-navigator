@@ -6,7 +6,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { SessionTimeoutTimer } from '@/components/settings/SessionTimeoutTimer';
 
-interface HeaderActionButtonsProps {
+export interface HeaderActionButtonsProps {
   refreshSession: () => Promise<void>;
   mobileMenuOpen: boolean;
   isMobile: boolean;

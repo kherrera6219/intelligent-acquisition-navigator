@@ -4,7 +4,7 @@
  * Provides functionality for caching data and handling offline operations
  */
 
-import { idb } from 'idb';
+import { openDB } from 'idb';
 
 // Database name and version
 const DB_NAME = 'app_offline_db';
@@ -17,7 +17,7 @@ const USER_DATA_STORE = 'user_data';
 
 // Initialize the database
 export async function initOfflineDB() {
-  return idb.openDB(DB_NAME, DB_VERSION, {
+  return openDB(DB_NAME, DB_VERSION, {
     upgrade(db) {
       // Store for pending API requests that will be sent when back online
       if (!db.objectStoreNames.contains(REQUESTS_STORE)) {

@@ -3,7 +3,7 @@ import React, { Suspense } from 'react';
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Container } from "@/components/ui/universal/Container";
 import { Header } from "./Header";
-import { UniversalInternalHeader } from "./UniversalInternalHeader";
+import UniversalInternalHeader from "./UniversalInternalHeader";
 import { Footer } from "./Footer";
 import { LoadingOverlay } from "@/components/ui/universal/LoadingOverlay";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";

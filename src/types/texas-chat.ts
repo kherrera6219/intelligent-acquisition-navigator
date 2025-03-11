@@ -1,5 +1,5 @@
 
-import { AIChatMessage, Message } from "./chat";
+import { AIChatMessage } from "./chat";
 import { Json } from "@/integrations/supabase/types";
 
 export type TexasAgencyType = 
@@ -23,7 +23,11 @@ export type ResponseLevel =
   | "STANDARD"
   | "COMPREHENSIVE";
 
-export interface TexasMessage extends Message {
+export interface TexasMessage {
+  id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  timestamp: Date;
   agencyType: TexasAgencyType;
   userRole: TexasRole;
 }

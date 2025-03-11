@@ -16,16 +16,17 @@ export function NetworkStatusMonitor() {
   
   useEffect(() => {
     let hasBeenOffline = false;
-    let toastId: string | null = null;
+    let toastId: string | undefined = undefined;
     
     const handleOffline = () => {
       hasBeenOffline = true;
-      toastId = toast({
+      const result = toast({
         title: "You're offline",
         description: "Your changes will be saved and synced when your connection is restored.",
         duration: 5000,
         variant: "destructive"
-      }).id;
+      });
+      toastId = result?.id;
     };
     
     const handleOnline = async () => {
@@ -33,12 +34,11 @@ export function NetworkStatusMonitor() {
         if (toastId) {
           // Dismiss the offline toast if it's still visible
           toast({
-            id: toastId,
             title: "Connection restored",
             description: "You're back online. Syncing your data...",
             duration: 3000,
           });
-          toastId = null;
+          toastId = undefined;
         } else {
           toast({
             title: "Connection restored",

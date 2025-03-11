@@ -5,7 +5,7 @@ import { Settings } from 'lucide-react';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-interface HeaderUserMenuProps {
+export interface HeaderUserMenuProps {
   user: any;
   mobileMenuOpen: boolean;
 }
