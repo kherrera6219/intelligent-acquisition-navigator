@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { TexasChatContainer } from '@/components/texas/TexasChatContainer';
 import { TexasMessage, TexasAgencyType, TexasRole, ResponseLevel } from "@/types/texas-chat";
@@ -14,6 +15,8 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
+import { InternalFooter } from '@/components/layout/InternalFooter';
 
 const TexasAcquisitionPage: React.FC = () => {
   const [messages, setMessages] = useState<TexasMessage[]>([]);
@@ -118,51 +121,60 @@ const TexasAcquisitionPage: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background-900">
-      <div className="container mx-auto px-4 sm:px-6 py-6">
-        <PageHeader
-          title="Texas Acquisition Assistant"
-          description="Get help with Texas government acquisition regulations and procurement requirements"
-        />
-        
-        <div className="mt-4 mb-6">
-          <OfflineSyncStatus />
-        </div>
-        
-        {inputError && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{inputError}</AlertDescription>
-          </Alert>
-        )}
-        
-        <NetworkErrorHandler 
-          errorMessage={error?.message}
-          onRetry={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
-          isLoading={isLoading}
-          autoRetry={true}
-        >
-          <TexasChatContainer
-            conversationId={conversationId}
-            messages={messages}
-            isLoading={isLoading}
-            input={input}
-            selectedAgency={selectedAgency}
-            selectedRole={selectedRole}
-            selectedResponseLevel={selectedResponseLevel}
-            onInputChange={(value) => {
-              setInput(value);
-              if (inputError) validateInput(value);
-            }}
-            onSubmit={handleSubmit}
-            onAgencyChange={setSelectedAgency}
-            onRoleChange={setSelectedRole}
-            onResponseLevelChange={setSelectedResponseLevel}
-            error={error?.message}
+    <div className="flex flex-col min-h-screen">
+      {/* Header outside of main content */}
+      <UniversalInternalHeader />
+      
+      {/* Main content area */}
+      <div className="flex-1">
+        <div className="container mx-auto px-4 sm:px-6 py-6">
+          <PageHeader
+            title="Texas Acquisition Assistant"
+            description="Get help with Texas government acquisition regulations and procurement requirements"
           />
-        </NetworkErrorHandler>
+          
+          <div className="mt-4 mb-6">
+            <OfflineSyncStatus />
+          </div>
+          
+          {inputError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{inputError}</AlertDescription>
+            </Alert>
+          )}
+          
+          <NetworkErrorHandler 
+            errorMessage={error?.message}
+            onRetry={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+            isLoading={isLoading}
+            autoRetry={true}
+          >
+            <TexasChatContainer
+              conversationId={conversationId}
+              messages={messages}
+              isLoading={isLoading}
+              input={input}
+              selectedAgency={selectedAgency}
+              selectedRole={selectedRole}
+              selectedResponseLevel={selectedResponseLevel}
+              onInputChange={(value) => {
+                setInput(value);
+                if (inputError) validateInput(value);
+              }}
+              onSubmit={handleSubmit}
+              onAgencyChange={setSelectedAgency}
+              onRoleChange={setSelectedRole}
+              onResponseLevelChange={setSelectedResponseLevel}
+              error={error?.message}
+            />
+          </NetworkErrorHandler>
+        </div>
       </div>
+      
+      {/* Footer outside of main content */}
+      <InternalFooter />
     </div>
   );
 };
