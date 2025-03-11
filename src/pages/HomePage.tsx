@@ -27,7 +27,7 @@ const Index = () => {
   }
 
   return (
-    <ScrollArea className="min-h-screen neo-blur">
+    <ScrollArea className="min-h-screen h-full w-full overflow-hidden">
       <HomePageContent 
         showPrivacyNotice={showPrivacyNotice}
         setShowPrivacyNotice={setShowPrivacyNotice}

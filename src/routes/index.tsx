@@ -27,31 +27,59 @@ export const routes: RouteObject[] = [
   },
   {
     path: '/about',
-    element: <AboutPage />,
+    element: (
+      <MainLayout containerSize="lg">
+        <AboutPage />
+      </MainLayout>
+    ),
   },
   {
     path: '/contact',
-    element: <ContactPage />,
+    element: (
+      <MainLayout containerSize="lg">
+        <ContactPage />
+      </MainLayout>
+    ),
   },
   {
     path: '/pricing',
-    element: <PricingPage />,
+    element: (
+      <MainLayout containerSize="lg">
+        <PricingPage />
+      </MainLayout>
+    ),
   },
   {
     path: '/privacy',
-    element: <PrivacyPage />,
+    element: (
+      <MainLayout containerSize="lg">
+        <PrivacyPage />
+      </MainLayout>
+    ),
   },
   {
     path: '/sitemap',
-    element: <SitemapPage />,
+    element: (
+      <MainLayout containerSize="lg">
+        <SitemapPage />
+      </MainLayout>
+    ),
   },
   {
     path: '/help',
-    element: <HelpPage />,
+    element: (
+      <MainLayout containerSize="lg">
+        <HelpPage />
+      </MainLayout>
+    ),
   },
   {
     path: '/improve',
-    element: <ImproveApp />,
+    element: (
+      <MainLayout containerSize="lg">
+        <ImproveApp />
+      </MainLayout>
+    ),
   },
   ...authRoutes,
   ...dashboardRoutes,
@@ -59,6 +87,10 @@ export const routes: RouteObject[] = [
   ...settingsRoutes,
   {
     path: '*',
-    element: <NotFoundPage />,
+    element: (
+      <MainLayout>
+        <NotFoundPage />
+      </MainLayout>
+    ),
   },
 ];

@@ -16,6 +16,7 @@ import { FirstVisitGuide } from "@/components/ui/guide/FirstVisitGuide";
 import CookieConsent from "@/components/CookieConsent";
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { useEffect, useState } from "react";
+import { Container } from "@/components/ui/universal/Container";
 
 interface HomePageContentProps {
   showPrivacyNotice: boolean;
@@ -43,7 +44,7 @@ export const HomePageContent = ({
 
   return (
     <div 
-      className="relative min-h-screen bg-background overflow-x-hidden bg-noise flex flex-col"
+      className="relative min-h-screen h-full w-full bg-background overflow-x-hidden bg-noise flex flex-col"
       style={{
         backgroundImage: `
           linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
@@ -59,9 +60,6 @@ export const HomePageContent = ({
       >
         Skip to main content
       </a>
-
-      {/* Include Header explicitly for the home page */}
-      <Header />
       
       {/* Privacy Notice Dialog */}
       <PrivacyDialog 
@@ -82,44 +80,47 @@ export const HomePageContent = ({
       
       <VerificationBanner />
       
-      <main id="main-content" tabIndex={-1} className="relative w-full flex-grow">
-        <div className="flex flex-col animate-fade-in">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
+        <div className="flex flex-col animate-fade-in h-full">
           <SectionErrorBoundary>
             <Suspense fallback={<SectionLoader />}>
               <HeroSection />
             </Suspense>
           </SectionErrorBoundary>
 
-          <div className="space-y-24 py-24">
-            <SectionErrorBoundary>
-              <Suspense fallback={<SectionLoader />}>
-                <div className="glass-panel rounded-lg">
-                  <FeaturesSection />
-                </div>
-              </Suspense>
-            </SectionErrorBoundary>
+          <div className="space-y-24 py-12 md:py-24">
+            <Container>
+              <SectionErrorBoundary>
+                <Suspense fallback={<SectionLoader />}>
+                  <div className="fluent-panel rounded-lg p-6 md:p-8">
+                    <FeaturesSection />
+                  </div>
+                </Suspense>
+              </SectionErrorBoundary>
+            </Container>
 
-            <SectionErrorBoundary>
-              <Suspense fallback={<SectionLoader />}>
-                <div className="glass-panel rounded-lg">
-                  <TestimonialsSection />
-                </div>
-              </Suspense>
-            </SectionErrorBoundary>
+            <Container>
+              <SectionErrorBoundary>
+                <Suspense fallback={<SectionLoader />}>
+                  <div className="fluent-panel rounded-lg p-6 md:p-8">
+                    <TestimonialsSection />
+                  </div>
+                </Suspense>
+              </SectionErrorBoundary>
+            </Container>
 
-            <SectionErrorBoundary>
-              <Suspense fallback={<SectionLoader />}>
-                <div className="glass-panel rounded-lg">
-                  <CTASection />
-                </div>
-              </Suspense>
-            </SectionErrorBoundary>
+            <Container>
+              <SectionErrorBoundary>
+                <Suspense fallback={<SectionLoader />}>
+                  <div className="fluent-panel rounded-lg p-6 md:p-8">
+                    <CTASection />
+                  </div>
+                </Suspense>
+              </SectionErrorBoundary>
+            </Container>
           </div>
         </div>
       </main>
-
-      {/* Add the Footer component */}
-      <Footer />
 
       <div className="fixed bottom-8 right-8 space-y-4 z-50">
         <HelpButton />
