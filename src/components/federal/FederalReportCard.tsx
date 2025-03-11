@@ -59,11 +59,10 @@ export const FederalReportCard: React.FC<ReportCardProps> = ({
       hoverable={!!onClick} 
       onClick={onClick} 
       className={cn("p-4", className)}
-      textColor="black"
     >
       <div className="flex justify-between items-start mb-3">
-        <h3 className="text-lg font-semibold line-clamp-2">{title}</h3>
-        <div className="flex items-center gap-1 text-sm text-gray-500">
+        <h3 className="text-lg font-semibold line-clamp-2 text-white">{title}</h3>
+        <div className="flex items-center gap-1 text-sm text-gray-300">
           {statusIcons[status]}
           <span>{statusText[status]}</span>
         </div>
@@ -71,7 +70,7 @@ export const FederalReportCard: React.FC<ReportCardProps> = ({
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
-          <span className="text-sm font-medium text-gray-600">Score</span>
+          <span className="text-sm font-medium text-gray-400">Score</span>
           <span className={cn("text-2xl font-bold", getScoreColor(score))}>
             {score}%
           </span>
@@ -79,22 +78,22 @@ export const FederalReportCard: React.FC<ReportCardProps> = ({
 
         {confidenceScore > 0 && (
           <div className="flex flex-col items-end">
-            <span className="text-sm font-medium text-gray-600">AI Confidence</span>
+            <span className="text-sm font-medium text-gray-400">AI Confidence</span>
             <div className="flex items-center gap-2">
-              <div className="w-16 h-2 bg-gray-200 rounded-full">
+              <div className="w-16 h-2 bg-gray-700 rounded-full">
                 <div 
                   className={cn("h-2 rounded-full", getConfidenceIndicator(confidenceScore))}
                   style={{ width: `${confidenceScore}%` }}
                 />
               </div>
-              <span className="text-sm font-medium">{confidenceScore}%</span>
+              <span className="text-sm font-medium text-gray-300">{confidenceScore}%</span>
             </div>
           </div>
         )}
       </div>
 
       {lastUpdated && (
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-gray-400">
           Last updated: {lastUpdated}
         </div>
       )}

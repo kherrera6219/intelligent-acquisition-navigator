@@ -17,6 +17,7 @@ const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'));
 const SitemapPage = lazy(() => import('@/pages/SitemapPage'));
 const HelpPage = lazy(() => import('@/pages/HelpPage'));
 const ImproveApp = lazy(() => import('@/pages/ImproveApp'));
+const ApiDocsPage = lazy(() => import('@/pages/developer/ApiDocsPage'));
 
 export const routes: RouteObject[] = [
   {
@@ -77,6 +78,14 @@ export const routes: RouteObject[] = [
     element: (
       <MainLayout containerSize="lg">
         <ImproveApp />
+      </MainLayout>
+    ),
+  },
+  {
+    path: '/api-docs',
+    element: (
+      <MainLayout containerSize="lg">
+        <ApiDocsPage />
       </MainLayout>
     ),
   },

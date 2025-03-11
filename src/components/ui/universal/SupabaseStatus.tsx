@@ -1,40 +1,38 @@
 
-import { useState } from 'react';
-import { Database } from 'lucide-react';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
+import React from 'react';
+import { Database, DatabaseOff } from 'lucide-react';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
-import { format } from 'date-fns';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-export function SupabaseStatus() {
-  const { supabaseConnected, lastSyncTime } = useNetworkMonitor();
+export const SupabaseStatus: React.FC = () => {
+  const { supabaseConnected, isOnline } = useNetworkMonitor();
+  
+  const getStatusColor = () => {
+    if (!isOnline) return 'text-red-500';
+    return supabaseConnected ? 'text-green-500' : 'text-yellow-500';
+  };
+  
+  const getStatusText = () => {
+    if (!isOnline) return 'Offline';
+    return supabaseConnected ? 'Connected to Database' : 'Database Connection Issue';
+  };
   
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-2 cursor-help">
-            <div className={`h-2 w-2 rounded-full ${supabaseConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            <Database className="h-4 w-4 text-gray-400" />
+          <div className="flex items-center space-x-1 cursor-help">
+            {supabaseConnected && isOnline ? (
+              <Database className={`h-4 w-4 ${getStatusColor()}`} />
+            ) : (
+              <DatabaseOff className={`h-4 w-4 ${getStatusColor()}`} />
+            )}
           </div>
         </TooltipTrigger>
         <TooltipContent>
-          <div className="p-1">
-            <p className="font-medium text-sm">
-              Database Status: {supabaseConnected ? 'Connected' : 'Disconnected'}
-            </p>
-            {lastSyncTime && (
-              <p className="text-xs text-gray-400 mt-1">
-                Last synced: {format(lastSyncTime, 'MMM d, yyyy h:mm a')}
-              </p>
-            )}
-          </div>
+          <p>{getStatusText()}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
-}
+};

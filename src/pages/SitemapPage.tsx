@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Container } from '@/components/ui/universal/Container';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -11,7 +12,7 @@ import { NetworkErrorHandler } from '@/components/ui/universal/NetworkErrorHandl
 const SitemapPage: React.FC = () => {
   // Categorize routes
   const marketingRoutes = routes.filter(route => 
-    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap", "/api-docs", "/component-library", "/improve"].includes(route.path || "")
+    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap", "/improve"].includes(route.path || "")
   );
   
   const authRoutes = routes.filter(route => 
