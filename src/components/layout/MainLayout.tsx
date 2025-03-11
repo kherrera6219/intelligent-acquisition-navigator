@@ -147,6 +147,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     setShowPrivacyNotice(false);
   };
   
+  // Only show cookie consent on the homepage (/)
+  const shouldShowCookieConsent = showCookieConsent && isHomePage;
+  
   return (
     <div className={cn(containerClasses[variant], className)}>
       <NetworkErrorBoundary>
@@ -173,7 +176,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           forceExternalFooter ? <ExternalFooter /> : (isExternalRoute ? <ExternalFooter /> : <InternalFooter />)
         )}
         
-        {showCookieConsent && <CookieConsent />}
+        {shouldShowCookieConsent && <CookieConsent />}
       </NetworkErrorBoundary>
     </div>
   );

@@ -9,8 +9,6 @@ import { MsFluentDashboardLayout } from "@/components/layout/MsFluentDashboardLa
 
 const HomePage = () => {
   const {
-    showPrivacyNotice,
-    setShowPrivacyNotice,
     isLoaded,
     showBackToTop,
     isFirstVisit,
@@ -33,8 +31,6 @@ const HomePage = () => {
           ) : (
             <div className="ms-motion-fadeIn">
               <HomeContent 
-                showPrivacyNotice={showPrivacyNotice}
-                setShowPrivacyNotice={setShowPrivacyNotice}
                 showBackToTop={showBackToTop}
                 isFirstVisit={isFirstVisit}
                 scrollToTop={scrollToTop}

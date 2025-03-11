@@ -5,8 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { RealtimeChannel } from '@supabase/supabase-js';
 
 interface HomePageInitState {
-  showPrivacyNotice: boolean;
-  setShowPrivacyNotice: (show: boolean) => void;
   isLoaded: boolean;
   showBackToTop: boolean;
   isFirstVisit: boolean;
@@ -15,7 +13,6 @@ interface HomePageInitState {
 }
 
 export const useHomePageInit = (): HomePageInitState => {
-  const [showPrivacyNotice, setShowPrivacyNotice] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
@@ -126,8 +123,6 @@ export const useHomePageInit = (): HomePageInitState => {
   }, [toast, handleScroll, channels]); 
 
   return {
-    showPrivacyNotice,
-    setShowPrivacyNotice,
     isLoaded,
     showBackToTop,
     isFirstVisit,

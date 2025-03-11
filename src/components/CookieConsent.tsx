@@ -3,12 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Cookie, Check } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const CookieConsent: React.FC = () => {
   const [accepted, setAccepted] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
+  const location = useLocation();
   
   useEffect(() => {
+    // Only show on main landing page
+    if (location.pathname !== '/') {
+      setVisible(false);
+      return;
+    }
+    
     // Check if consent was previously given
     const hasConsent = localStorage.getItem('cookie-consent') === 'true';
     
@@ -22,7 +30,7 @@ const CookieConsent: React.FC = () => {
     }
     
     setAccepted(hasConsent);
-  }, []);
+  }, [location.pathname]);
   
   const handleAccept = () => {
     localStorage.setItem('cookie-consent', 'true');
