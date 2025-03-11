@@ -66,29 +66,24 @@ export function SessionTimeoutTimer({
 
   return (
     <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            className={cn(
-              "flex items-center gap-1.5 text-sm font-medium transition-colors",
-              "hover:opacity-80 cursor-pointer rounded py-1 px-1.5",
-              getStatusColor(),
-              className
-            )}
-            onClick={handleClick}
-            aria-label="Session time remaining"
-          >
-            {showIcon && (
-              status === 'critical' 
-                ? <Shield className="h-3.5 w-3.5" /> 
-                : <Clock className="h-3.5 w-3.5" />
-            )}
-            <span>{timeDisplay}</span>
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{tooltipContent}</p>
-        </TooltipContent>
+      <Tooltip content={tooltipContent}>
+        <button
+          className={cn(
+            "flex items-center gap-1.5 text-sm font-medium transition-colors",
+            "hover:opacity-80 cursor-pointer rounded py-1 px-1.5",
+            getStatusColor(),
+            className
+          )}
+          onClick={handleClick}
+          aria-label="Session time remaining"
+        >
+          {showIcon && (
+            status === 'critical' 
+              ? <Shield className="h-3.5 w-3.5" /> 
+              : <Clock className="h-3.5 w-3.5" />
+          )}
+          <span>{timeDisplay}</span>
+        </button>
       </Tooltip>
     </TooltipProvider>
   );
