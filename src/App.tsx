@@ -2,8 +2,8 @@
 import React, { useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { routes } from './routes'; // Changed from default import to named import
-import AppRoutes from './routes/AppRoutes'; // Created a new file for the routes component
+import { routes } from './routes'; // Fixed import
+import AppRoutes from './routes/AppRoutes'; 
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/providers/AuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';

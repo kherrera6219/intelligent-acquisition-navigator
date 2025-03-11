@@ -24,7 +24,7 @@ const initialChecklist: ChecklistItem[] = [
     id: 2,
     title: "Component Architecture",
     description: "Follow component-driven development with proper file structure",
-    completed: false
+    completed: true
   },
   {
     id: 3,
@@ -48,7 +48,7 @@ const initialChecklist: ChecklistItem[] = [
     id: 6,
     title: "Testing Infrastructure",
     description: "Configure Jest and React Testing Library with proper test coverage",
-    completed: false
+    completed: true
   },
   {
     id: 7,
