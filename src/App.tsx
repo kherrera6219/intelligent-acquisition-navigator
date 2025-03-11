@@ -1,26 +1,51 @@
 
-import { BrowserRouter as Router, useRoutes } from "react-router-dom";
+import React, { useEffect } from 'react';
+import './App.css';
+import { BrowserRouter as Router } from 'react-router-dom';
+import AppRoutes from './routes';
 import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/providers/AuthProvider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { routes } from "./routes";
+import { AuthProvider } from '@/providers/AuthProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
+import { QueryProvider } from '@/providers/QueryProvider';
+import CookieConsent from '@/components/CookieConsent';
+import { NetworkStatusMonitor } from '@/components/ui/universal/NetworkStatusMonitor';
+import { initOfflineDB, clearExpiredCache } from '@/utils/offlineStorage';
+import { generateCsrfToken } from '@/utils/csrfProtection';
 
-// Create a client
-const queryClient = new QueryClient();
-
-const AppRoutes = () => {
-  return useRoutes(routes);
-};
-
-export default function App() {
+function App() {
+  // Initialize security and storage features on app load
+  useEffect(() => {
+    // Initialize CSRF token
+    generateCsrfToken();
+    
+    // Initialize offline database
+    const setupOfflineStorage = async () => {
+      try {
+        await initOfflineDB();
+        // Clear expired cache items
+        await clearExpiredCache();
+      } catch (error) {
+        console.error('Error initializing offline storage:', error);
+      }
+    };
+    
+    setupOfflineStorage();
+  }, []);
+  
   return (
-    <Router>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <AppRoutes />
-          <Toaster />
-        </QueryClientProvider>
-      </AuthProvider>
-    </Router>
+    <QueryProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Router>
+            <NetworkStatusMonitor />
+            <AppRoutes />
+            <CookieConsent />
+            <Toaster />
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryProvider>
   );
 }
+
+export default App;
