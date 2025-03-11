@@ -88,12 +88,12 @@ const TexasAcquisitionPage: React.FC = () => {
     
     // Prepare messages for API
     const apiMessages: AIChatMessage[] = [
-      { role: 'system', content: systemPrompt },
+      { role: "system", content: systemPrompt },
       ...messages.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'assistant',
+        role: msg.role === 'user' ? "user" : "assistant",
         content: msg.content
       })),
-      { role: 'user', content: sanitizedInput }
+      { role: "user", content: sanitizedInput }
     ];
     
     // Execute the API call with retry mechanism

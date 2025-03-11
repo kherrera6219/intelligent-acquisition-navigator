@@ -38,7 +38,6 @@ export const ChecklistFeedback: React.FC<ChecklistFeedbackProps> = ({ onClose, o
               value={rating} 
               onChange={setRating} 
               size="md" 
-              color="primary" 
             />
           </div>
           
