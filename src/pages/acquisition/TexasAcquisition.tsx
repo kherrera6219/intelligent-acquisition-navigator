@@ -7,6 +7,7 @@ import { useTexasConversation } from "@/hooks/useTexasConversation";
 import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
 import { useToast } from "@/hooks/use-toast";
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { BackButton } from "@/components/navigation/BackButton";
 
 const TexasAcquisition = () => {
   const [input, setInput] = useState("");
