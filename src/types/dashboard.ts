@@ -8,7 +8,7 @@ export interface RecentActivity {
 }
 
 export interface DashboardCardProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   title: string;
   subtitle?: string;
   footer?: React.ReactNode;
@@ -16,6 +16,11 @@ export interface DashboardCardProps {
     text: string;
     variant: string;
   };
+  // Add missing props
+  icon?: React.ReactNode;
+  href?: string;
+  className?: string;
+  onClick?: () => void;
 }
 
 export interface StatisticsCardProps {

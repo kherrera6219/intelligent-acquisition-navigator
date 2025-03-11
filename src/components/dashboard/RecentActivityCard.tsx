@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import { MsDashboardCard } from '@/components/layout/MsDashboardCard';
 import { Link } from 'react-router-dom';
-import { MoveRight, AlertCircle } from 'lucide-react';
+import { MoveRight, AlertCircle, ClipboardList } from 'lucide-react';
 import { recentActivities } from '@/data/dashboardMockData';
 import type { RecentActivity } from '@/types/dashboard';
+import { Button } from '@/components/ui/button';
 
 export const RecentActivityCard: React.FC = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,19 +34,30 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
     <MsDashboardCard
       title="Recent Activity"
       footer={
-        <Link 
-          to="/activity" 
-          className="text-primary text-sm flex items-center hover:underline"
-          aria-label="View all activities"
-        >
-          View All Activity
-          <MoveRight className="ml-1 h-4 w-4" aria-hidden="true" />
-        </Link>
+        <div className="flex items-center justify-between w-full">
+          <Link 
+            to="/activity" 
+            className="text-primary text-sm flex items-center hover:underline"
+            aria-label="View all activities"
+          >
+            View All Activity
+            <MoveRight className="ml-1 h-4 w-4" aria-hidden="true" />
+          </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isLoading}
+            aria-label="Refresh activities"
+          >
+            Refresh
+          </Button>
+        </div>
       }
     >
       {error && (
-        <div className="bg-red-500/10 text-red-500 p-2 rounded-md mb-3 text-sm flex items-center">
-          <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+        <div className="bg-red-500/10 text-red-500 p-2 rounded-md mb-3 text-sm flex items-center" role="alert">
+          <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" aria-hidden="true" />
           <span>{error}</span>
         </div>
       )}
@@ -53,13 +65,13 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
       <div className="ms-timeline" role="list" aria-label="Recent activities">
         {isLoading ? (
           Array(3).fill(0).map((_, index) => (
-            <div key={`skeleton-${index}`} className="ms-timeline-item animate-pulse" role="listitem">
+            <div key={`skeleton-${index}`} className="ms-timeline-item ms-timeline-skeleton" role="listitem">
               <div className="ms-timeline-icon">
                 <div className="h-4 w-4 bg-white/20 rounded-full" />
               </div>
               <div className="ms-timeline-content">
-                <div className="h-4 w-2/3 bg-white/20 rounded mb-1" />
-                <div className="h-3 w-1/3 bg-white/10 rounded" />
+                <div className="ms-timeline-title" />
+                <div className="ms-timeline-time" />
               </div>
             </div>
           ))
@@ -79,8 +91,9 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
             );
           })
         ) : (
-          <div className="py-6 text-center text-muted-foreground text-sm">
-            No recent activity to display.
+          <div className="ms-timeline-empty">
+            <ClipboardList className="h-10 w-10 ms-timeline-empty-icon" aria-hidden="true" />
+            <p>No recent activity to display.</p>
           </div>
         )}
       </div>
