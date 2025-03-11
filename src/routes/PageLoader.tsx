@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/universal/Container";
 interface PageLoaderProps {
   component?: React.ComponentType<any>;
   message?: string;
-  variant?: 'default' | 'minimal' | 'fullscreen' | 'fluent';
+  variant?: 'default' | 'minimal' | 'fullscreen' | 'fluent' | 'ms-fluent' | 'shimmer';
 }
 
 export const PageLoader: React.FC<PageLoaderProps> = ({ 
@@ -46,6 +46,39 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
           <p className="text-lg font-semibold text-foreground mt-4 ms-loading-dots">{message}</p>
         </div>
       </div>
+    );
+  }
+  
+  if (variant === 'ms-fluent') {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-background/95 backdrop-blur-md z-50">
+        <div className="text-center loading-scale-in max-w-md w-full">
+          <div className="ms-fluent-panel py-12 px-8 flex flex-col items-center">
+            <div className="mb-4 relative w-[220px] h-2 bg-white/10 rounded-full overflow-hidden">
+              <div className="ms-loading-progress-bar absolute inset-0 w-full h-full"></div>
+            </div>
+            <p className="text-xl font-medium text-foreground mt-4">{message}</p>
+            <p className="text-sm text-muted-foreground mt-2 ms-loading-dots">Please wait</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (variant === 'shimmer') {
+    return (
+      <Container className="py-8">
+        <Card className="w-full p-6 flex flex-col space-y-6 min-h-[400px]">
+          <div className="loading-skeleton h-8 w-[70%] rounded-md"></div>
+          <div className="loading-skeleton h-4 w-[90%] rounded-md"></div>
+          <div className="loading-skeleton h-4 w-[60%] rounded-md"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            <div className="loading-skeleton h-32 rounded-md"></div>
+            <div className="loading-skeleton h-32 rounded-md"></div>
+            <div className="loading-skeleton h-32 rounded-md"></div>
+          </div>
+        </Card>
+      </Container>
     );
   }
   

@@ -9,7 +9,7 @@ import { routes } from '@/routes';
 import { RouteObject } from 'react-router-dom';
 
 const SitemapPage: React.FC = () => {
-  // Cast routes to RouteObject[] to ensure TypeScript knows it's an array
+  // Explicitly cast routes to RouteObject[] to ensure TypeScript knows it's an array
   const routeObjects = routes as RouteObject[];
   
   // Group routes by section

@@ -11,6 +11,7 @@ import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBann
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { useAuthState } from "@/hooks/useAuthState";
 import { useLocation } from "react-router-dom";
+import { PageLoader } from "@/routes/PageLoader";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -34,16 +35,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   
   // Use internal header for authenticated users, unless specifically forcing external header
   const useInternalHeader = isAuthenticated && !forceExternalHeader && showHeader;
-  const isDashboardPage = pathname === "/dashboard";
+  const isDashboardPage = pathname === "/dashboard" || pathname === "/ms-fluent-dashboard";
   
   // Special classes for specific pages
   const getPageSpecificClasses = () => {
     if (isDashboardPage) {
-      return "dashboard-layout";
+      return "ms-dashboard-layout";
     }
     
     if (pathname.includes("acquisition")) {
-      return "acquisition-layout";
+      return "ms-acquisition-layout";
     }
     
     return "";
@@ -91,7 +92,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           >
             <div className="w-full h-full min-h-full overflow-hidden">
               <Container size={containerSize} className={`h-full ${containerSize === "full" ? "px-0 sm:px-0 md:px-4 lg:px-8 xl:px-12 2xl:px-16" : ""}`}>
-                <Suspense fallback={<LoadingOverlay />}>
+                <Suspense fallback={<PageLoader variant="ms-fluent" message="Loading content" />}>
                   {children}
                 </Suspense>
               </Container>
