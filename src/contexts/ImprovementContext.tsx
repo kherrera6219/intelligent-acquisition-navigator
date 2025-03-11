@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, ReactNode } from 'react';
 import { initialChecklist } from '@/data/initialChecklist';
 import { useImprovementActions } from '@/hooks/useImprovementActions';
-import { ImprovementContextType, ChecklistItem } from '@/types/checklist';
+import type { ImprovementContextType, ChecklistItem } from '@/types/checklist';
 
 const ImprovementContext = createContext<ImprovementContextType | undefined>(undefined);
 
@@ -62,5 +62,6 @@ export const useImprovement = (): ImprovementContextType => {
   return context;
 };
 
+// Use 'export type' when re-exporting types with isolatedModules enabled
 export { ChecklistItem };
 export type { ImprovementContextType };

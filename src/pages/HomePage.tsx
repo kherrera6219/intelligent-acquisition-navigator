@@ -16,6 +16,7 @@ import { HelpButton } from "@/components/ui/navigation/HelpButton";
 import { FirstVisitGuide } from "@/components/ui/guide/FirstVisitGuide";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
+import { Header } from "@/components/layout/Header";
 
 const Index = () => {
   const {
@@ -86,6 +87,9 @@ const Index = () => {
           backgroundAttachment: 'fixed'
         }}
       >
+        {/* Include Header explicitly for the home page */}
+        <Header />
+        
         {showPrivacyNotice && (
           <PrivacyNotice onClose={() => setShowPrivacyNotice(false)} />
         )}
