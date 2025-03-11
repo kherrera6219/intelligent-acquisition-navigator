@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
-import { FederalChatContainer, FederalChatMessage } from '@/components/federal/FederalChatContainer';
-import { FederalReportCardGrid } from '@/components/federal/FederalReportCardGrid';
-import { Button } from '@/components/ui/button';
-import { Plus, Filter } from 'lucide-react';
+import { FederalChatMessage } from '@/components/federal/FederalChatContainer';
 import { ReportCardProps } from '@/components/federal/FederalReportCard';
 import { useToast } from '@/hooks/use-toast';
 import { v4 as uuidv4 } from 'uuid';
-import { NetworkErrorBoundary } from '@/components/ui/universal/NetworkErrorBoundary';
 import { useNetworkOperation } from '@/hooks/useNetworkOperation';
-import { getAzureOpenAICompletion } from '@/services/texas/azureOpenAIService';
+import { FederalTabNavigation } from '@/components/federal/FederalTabNavigation';
+import { FederalTabContent } from '@/components/federal/FederalTabContent';
 
 const FederalAcquisitionPage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +16,7 @@ const FederalAcquisitionPage = () => {
   const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
   
-  const { executeOperation, error: networkError } = useNetworkOperation({
+  const { executeOperation } = useNetworkOperation({
     maxRetries: 2,
     onError: (error) => {
       console.error('Failed to get AI response:', error);
@@ -134,6 +131,13 @@ const FederalAcquisitionPage = () => {
     window.location.reload();
   };
 
+  const handleFileUpload = (file: File) => {
+    toast({
+      title: "File uploaded",
+      description: `File "${file.name}" has been uploaded. This is a placeholder for actual file processing.`,
+    });
+  };
+
   return (
     <ProtectedPageLayout
       title="Federal Acquisition Management"
@@ -143,61 +147,25 @@ const FederalAcquisitionPage = () => {
       withCard={false}
     >
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex gap-4">
-            <Button
-              variant={activeTab === 'reports' ? 'default' : 'outline'}
-              onClick={() => setActiveTab('reports')}
-            >
-              Reports
-            </Button>
-            <Button
-              variant={activeTab === 'chat' ? 'default' : 'outline'}
-              onClick={() => setActiveTab('chat')}
-            >
-              AI Assistant
-            </Button>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button size="sm" onClick={handleNewReportClick}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Report
-            </Button>
-          </div>
-        </div>
+        <FederalTabNavigation
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onNewReport={handleNewReportClick}
+        />
         
-        {activeTab === 'reports' ? (
-          <NetworkErrorBoundary onReset={handleNetworkErrorReset}>
-            <FederalReportCardGrid
-              reports={reports}
-              onCardClick={handleReportCardClick}
-            />
-          </NetworkErrorBoundary>
-        ) : (
-          <NetworkErrorBoundary onReset={handleNetworkErrorReset}>
-            <div className="bg-black/10 backdrop-blur-sm border border-white/10 rounded-lg p-4">
-              <FederalChatContainer 
-                messages={chatMessages}
-                isLoading={isSending}
-                input={messageInput}
-                onInputChange={setMessageInput}
-                onSendMessage={handleSendMessage}
-                onClearChat={handleClearChat}
-                onFileUpload={(file) => {
-                  toast({
-                    title: "File uploaded",
-                    description: `File "${file.name}" has been uploaded. This is a placeholder for actual file processing.`,
-                  });
-                }}
-              />
-            </div>
-          </NetworkErrorBoundary>
-        )}
+        <FederalTabContent
+          activeTab={activeTab}
+          reports={reports}
+          chatMessages={chatMessages}
+          isSending={isSending}
+          messageInput={messageInput}
+          onInputChange={setMessageInput}
+          onSendMessage={handleSendMessage}
+          onClearChat={handleClearChat}
+          onCardClick={handleReportCardClick}
+          onNetworkErrorReset={handleNetworkErrorReset}
+          onFileUpload={handleFileUpload}
+        />
       </div>
     </ProtectedPageLayout>
   );
