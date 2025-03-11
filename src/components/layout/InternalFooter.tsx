@@ -19,6 +19,8 @@ export const InternalFooter = () => {
             <div className="flex flex-wrap gap-4 justify-start md:justify-end">
               <Link to="/help" className="text-sm text-gray-400 hover:text-white transition-colors">Help</Link>
               <Link to="/support" className="text-sm text-gray-400 hover:text-white transition-colors">Support</Link>
+              <Link to="/knowledge-base" className="text-sm text-gray-400 hover:text-white transition-colors">Knowledge Base</Link>
+              <Link to="/federal-knowledge-base" className="text-sm text-gray-400 hover:text-white transition-colors">Federal Knowledge Base</Link>
               <Link to="/documentation" className="text-sm text-gray-400 hover:text-white transition-colors">Documentation</Link>
               <Link to="/terms" className="text-sm text-gray-400 hover:text-white transition-colors">Terms</Link>
               <Link to="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors">Privacy</Link>

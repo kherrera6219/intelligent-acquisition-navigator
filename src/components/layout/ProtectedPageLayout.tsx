@@ -23,6 +23,7 @@ interface ProtectedPageLayoutProps {
   fullWidth?: boolean;
   withCard?: boolean;
   withNetwork?: boolean;
+  hideFooterNav?: boolean;
 }
 
 export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
@@ -39,6 +40,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   fullWidth = false,
   withCard = false,
   withNetwork = true,
+  hideFooterNav = false,
 }) => {
   const content = (
     <Container size={fullWidth ? "full" : "lg"} variant="ms-fluent">
@@ -85,29 +87,32 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
         )}
         
         {/* Common footer navigation for internal pages */}
-        <div className="mt-12 pt-6 border-t border-border">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              Need to navigate to another section?
-            </div>
-            <div className="ms-stack-horizontal flex-wrap gap-3">
-              <Link to="/dashboard" className="ms-nav-item">Dashboard</Link>
-              <Link to="/knowledge-base" className="ms-nav-item">Knowledge Base</Link>
-              <Link to="/federal-acquisition" className="ms-nav-item">Federal Acquisition</Link>
-              <Link to="/texas-acquisition" className="ms-nav-item">Texas Acquisition</Link>
-              <Link to="/solicitation-review" className="ms-nav-item">Solicitation Review</Link>
-              <Link to="/document-control" className="ms-nav-item">Document Control</Link>
-              <Link to="/market-research" className="ms-nav-item">Market Research</Link>
-              <Link to="/compliance" className="ms-nav-item">Compliance</Link>
-              <Link to="/legal-review" className="ms-nav-item">Legal Review</Link>
-              <Link to="/small-business" className="ms-nav-item">Small Business</Link>
-              <Link to="/quality-assurance" className="ms-nav-item">Quality Assurance</Link>
-              <Link to="/source-selection" className="ms-nav-item">Source Selection</Link>
-              <Link to="/contract-management" className="ms-nav-item">Contract Management</Link>
-              <Link to="/sitemap" className="ms-nav-item">Sitemap</Link>
+        {!hideFooterNav && (
+          <div className="mt-12 pt-6 border-t border-border">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                Need to navigate to another section?
+              </div>
+              <div className="ms-stack-horizontal flex-wrap gap-3">
+                <Link to="/dashboard" className="ms-nav-item">Dashboard</Link>
+                <Link to="/knowledge-base" className="ms-nav-item">Knowledge Base</Link>
+                <Link to="/federal-knowledge-base" className="ms-nav-item">Federal Knowledge</Link>
+                <Link to="/federal-acquisition" className="ms-nav-item">Federal Acquisition</Link>
+                <Link to="/texas-acquisition" className="ms-nav-item">Texas Acquisition</Link>
+                <Link to="/solicitation-review" className="ms-nav-item">Solicitation Review</Link>
+                <Link to="/document-control" className="ms-nav-item">Document Control</Link>
+                <Link to="/market-research" className="ms-nav-item">Market Research</Link>
+                <Link to="/compliance" className="ms-nav-item">Compliance</Link>
+                <Link to="/legal-review" className="ms-nav-item">Legal Review</Link>
+                <Link to="/small-business" className="ms-nav-item">Small Business</Link>
+                <Link to="/quality-assurance" className="ms-nav-item">Quality Assurance</Link>
+                <Link to="/source-selection" className="ms-nav-item">Source Selection</Link>
+                <Link to="/contract-management" className="ms-nav-item">Contract Management</Link>
+                <Link to="/settings" className="ms-nav-item">Settings</Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </Container>
   );

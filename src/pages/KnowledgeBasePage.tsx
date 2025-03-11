@@ -31,6 +31,7 @@ const KnowledgeBasePage = () => {
       <ProtectedPageLayout 
         title="Knowledge Base"
         description="Explore our comprehensive knowledge base to find answers to common questions and learn how to use our platform effectively."
+        isLoading={isLoading}
       >
         <Container>
           <Row>
@@ -54,6 +55,11 @@ const KnowledgeBasePage = () => {
             <Col>
               {isLoading ? (
                 <div className="text-center py-4">Loading knowledge base entries...</div>
+              ) : filteredEntries.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground mb-4">No knowledge base entries found. Try adjusting your search.</p>
+                  <Button variant="outline" onClick={() => setSearchQuery('')}>Clear Search</Button>
+                </div>
               ) : (
                 <Accordion type="single" collapsible className="w-full">
                   {filteredEntries.map(entry => (
@@ -61,6 +67,15 @@ const KnowledgeBasePage = () => {
                       <AccordionTrigger>{entry.title}</AccordionTrigger>
                       <AccordionContent>
                         {entry.content}
+                        {entry.tags && entry.tags.length > 0 && (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {entry.tags.map((tag, idx) => (
+                              <span key={idx} className="text-xs bg-secondary/30 px-2 py-1 rounded-md">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </AccordionContent>
                     </AccordionItem>
                   ))}

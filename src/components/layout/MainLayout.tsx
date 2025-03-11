@@ -1,3 +1,4 @@
+
 import React, { PropsWithChildren, useState, useEffect } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -22,6 +23,7 @@ interface MainLayoutProps extends PropsWithChildren {
   className?: string;
   containerSize?: string;
   forceExternalHeader?: boolean;
+  forceExternalFooter?: boolean;
 }
 
 export interface EnhancedNetworkBannerProps {
@@ -52,6 +54,16 @@ const headerRoutes = [
   '/federal-knowledge-base',
   '/texas-acquisition',
   '/improve',
+  '/federal-acquisition',
+  '/solicitation-review',
+  '/document-control',
+  '/market-research',
+  '/compliance',
+  '/legal-review',
+  '/small-business',
+  '/quality-assurance',
+  '/source-selection',
+  '/contract-management'
 ];
 
 const homeRoutes = ['/', '/home'];
@@ -69,6 +81,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   className = '',
   containerSize,
   forceExternalHeader,
+  forceExternalFooter,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -157,7 +170,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         </main>
         
         {showFooter && (
-          isExternalRoute ? <ExternalFooter /> : <InternalFooter />
+          forceExternalFooter ? <ExternalFooter /> : (isExternalRoute ? <ExternalFooter /> : <InternalFooter />)
         )}
         
         {showCookieConsent && <CookieConsent />}
