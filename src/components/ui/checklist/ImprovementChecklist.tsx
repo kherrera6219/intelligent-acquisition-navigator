@@ -1,11 +1,14 @@
 
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect, useMemo } from 'react';
 import { Card } from "@/components/ui/card";
 import { CheckCircle, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChecklistFeedback } from "./ChecklistFeedback";
 import { useImprovement, ChecklistItem } from "@/contexts/ImprovementContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ChecklistSearch } from "./ChecklistSearch";
+import { ChecklistPagination } from "./ChecklistPagination";
+import { useOfflineChecklistData } from "@/hooks/useOfflineChecklistData";
 
 // Memoized checklist item component for performance optimization
 const ChecklistItemComponent = memo(({ 
@@ -65,6 +68,49 @@ export const ImprovementChecklist: React.FC = () => {
     error
   } = useImprovement();
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Use the offline data hook
+  const { 
+    data: offlineChecklist, 
+    updateItemOffline,
+    hasPendingUpdates,
+    pendingUpdatesCount 
+  } = useOfflineChecklistData(checklist, isLoading, error);
+
+  // Filter checklist items based on search query
+  const filteredChecklist = useMemo(() => {
+    return offlineChecklist.filter(item => {
+      const searchRegex = new RegExp(searchQuery, 'i');
+      return searchRegex.test(item.title) || searchRegex.test(item.description);
+    });
+  }, [offlineChecklist, searchQuery]);
+
+  // Get current page items
+  const paginatedChecklist = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredChecklist.slice(startIndex, endIndex);
+  }, [filteredChecklist, currentPage, itemsPerPage]);
+
+  // Reset to first page when search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  // Handle checklist item toggle
+  const handleToggleItem = (id: number) => {
+    // Find the item
+    const item = offlineChecklist.find(i => i.id === id);
+    if (!item) return;
+    
+    // Update both online and offline state
+    toggleItem(id);
+    updateItemOffline(id, { completed: !item.completed });
+  };
+
   if (isLoading) {
     return (
       <div className="w-full h-64 flex items-center justify-center">
@@ -78,6 +124,12 @@ export const ImprovementChecklist: React.FC = () => {
       <div className="w-full p-6 text-center">
         <p className="text-red-500 mb-2">Error loading checklist</p>
         <p className="text-sm text-gray-400">{error.message}</p>
+        {offlineChecklist.length > 0 && (
+          <div className="mt-4">
+            <p className="text-sm text-amber-400 mb-2">Using cached checklist data</p>
+            {/* Display cached checklist here */}
+          </div>
+        )}
       </div>
     );
   }
@@ -87,20 +139,45 @@ export const ImprovementChecklist: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-6">
         <h2 className="text-xl sm:text-2xl font-bold">Improvement Checklist</h2>
         <div className="text-sm text-gray-400">
-          Completed: {completedCount} / {checklist.length}
+          Completed: {completedCount} / {offlineChecklist.length}
+          {hasPendingUpdates && (
+            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+              {pendingUpdatesCount} pending sync
+            </span>
+          )}
         </div>
       </div>
 
+      <ChecklistSearch 
+        searchQuery={searchQuery} 
+        onSearchChange={setSearchQuery} 
+      />
+
       <div className="grid gap-3 sm:gap-4">
-        {checklist.map((item) => (
-          <ChecklistItemComponent 
-            key={item.id}
-            item={item} 
-            isCurrentItem={currentItem === item.id - 1}
-            onToggle={() => toggleItem(item.id)}
-          />
-        ))}
+        {paginatedChecklist.length > 0 ? (
+          paginatedChecklist.map((item) => (
+            <ChecklistItemComponent 
+              key={item.id}
+              item={item} 
+              isCurrentItem={currentItem === item.id - 1}
+              onToggle={() => handleToggleItem(item.id)}
+            />
+          ))
+        ) : (
+          <div className="text-center py-8 text-gray-400">
+            {searchQuery 
+              ? "No items match your search. Try a different query."
+              : "No checklist items available."}
+          </div>
+        )}
       </div>
+
+      <ChecklistPagination 
+        totalItems={filteredChecklist.length}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
 
       {showFeedback && (
         <ChecklistFeedback 
