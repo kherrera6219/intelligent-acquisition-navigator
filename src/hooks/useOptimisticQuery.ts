@@ -1,229 +1,55 @@
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient, QueryKey } from '@tanstack/react-query';
-import { applyOptimisticUpdates } from '@/utils/optimisticUpdates';
-import { cachedFetch } from '@/utils/cachedFetch';
-
-/**
- * Options for the useOptimisticQuery hook
- */
-export interface UseOptimisticQueryOptions<TData = any, TError = Error> {
-  url: string;
-  queryKey: QueryKey;
-  resourceType: string;
-  enabled?: boolean;
-  refetchInterval?: number;
-  refetchOnWindowFocus?: boolean;
-  retryCount?: number;
+interface OptimisticQueryOptions<T> {
+  queryKey: string[];
+  queryFn: () => Promise<T>;
+  fallbackData?: T;
   staleTime?: number;
   cacheTime?: number;
+  refetchOnWindowFocus?: boolean;
 }
 
-/**
- * Options for the useOptimisticMutation hook
- */
-export interface UseOptimisticMutationOptions<TData = any, TVariables = any, TError = Error> {
-  url: string;
-  method: 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  onMutate?: (variables: TVariables) => Promise<TData> | TData;
-  onSuccess?: (data: TData) => void;
-  onError?: (error: TError) => void;
-}
-
-/**
- * Custom hook for fetching data with optimistic updates
- */
-export function useOptimisticQuery<TData = any, TError = Error>({
-  url,
+export function useOptimisticQuery<T>({
   queryKey,
-  resourceType,
-  enabled = true,
-  refetchInterval,
-  refetchOnWindowFocus = true,
-  retryCount = 3,
-  staleTime,
-  cacheTime
-}: UseOptimisticQueryOptions<TData, TError>) {
-  // Get query data with optimistic updates applied
-  const { data: originalData, ...rest } = useQuery({
+  queryFn,
+  fallbackData,
+  staleTime = 1000 * 60 * 5, // 5 minutes
+  cacheTime = 1000 * 60 * 30, // 30 minutes
+  refetchOnWindowFocus = true
+}: OptimisticQueryOptions<T>): UseQueryResult<T, Error> & { isOfflineData: boolean } {
+  const { isOnline, supabaseConnected } = useNetworkMonitor();
+  const [isOfflineData, setIsOfflineData] = useState(false);
+  
+  // Use react-query's useQuery with appropriate options
+  const queryResult = useQuery({
     queryKey,
-    queryFn: async () => {
-      try {
-        const response = await cachedFetch<TData>(url, {}, {
-          resourceType,
-          retryCount
-        });
-        return response;
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error;
-      }
-    },
-    enabled,
-    refetchInterval,
-    refetchOnWindowFocus,
+    queryFn,
     staleTime,
     gcTime: cacheTime,
-    retry: retryCount,
+    refetchOnWindowFocus,
+    // Don't refetch automatically when offline
+    enabled: isOnline && supabaseConnected,
+    // Retry fewer times when offline
+    retry: isOnline ? 3 : 0,
+    // Keep previous data when fetching fails
+    keepPreviousData: true,
+    // Initialize with fallback data if provided
+    initialData: fallbackData
   });
-
-  // Apply any pending optimistic updates to the data
-  const optimisticData = originalData
-    ? (Array.isArray(originalData) 
-        ? applyOptimisticUpdates(originalData, resourceType) 
-        : originalData) as TData
-    : undefined;
-
+  
+  // Determine if we're using offline data
+  useEffect(() => {
+    if (!isOnline || !supabaseConnected) {
+      setIsOfflineData(true);
+    } else if (queryResult.isSuccess && queryResult.dataUpdatedAt > 0) {
+      setIsOfflineData(false);
+    }
+  }, [isOnline, supabaseConnected, queryResult.isSuccess, queryResult.dataUpdatedAt]);
+  
   return {
-    ...rest,
-    data: optimisticData
-  };
-}
-
-/**
- * Custom hook for creating optimistic mutations
- */
-export function useOptimisticMutation<TData = any, TCreateVars = any, TError = Error>({
-  url,
-  method,
-  onMutate,
-  onSuccess,
-  onError
-}: UseOptimisticMutationOptions<TData, TCreateVars, TError>) {
-  const queryClient = useQueryClient();
-  const [isPending, setIsPending] = useState(false);
-
-  // For create operations
-  const create = async (variables: TCreateVars): Promise<TData> => {
-    setIsPending(true);
-    let optimisticResult: TData | undefined;
-    
-    try {
-      // Apply optimistic update if onMutate is provided
-      if (onMutate) {
-        optimisticResult = await onMutate(variables);
-      }
-      
-      // Perform the actual API call
-      const response = await cachedFetch<TData>(
-        url,
-        {
-          method,
-          body: JSON.stringify(variables),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      if (onSuccess) {
-        onSuccess(response);
-      }
-      
-      return response;
-    } catch (error) {
-      console.error(`Error in ${method} operation:`, error);
-      
-      if (onError) {
-        onError(error as TError);
-      }
-      
-      throw error;
-    } finally {
-      setIsPending(false);
-    }
-  };
-
-  // For update operations that require an id
-  const update = async (variables: TCreateVars & { id: string }): Promise<TData> => {
-    setIsPending(true);
-    let optimisticResult: TData | undefined;
-    const updateUrl = url.replace('{id}', variables.id);
-    
-    try {
-      // Apply optimistic update if onMutate is provided
-      if (onMutate) {
-        optimisticResult = await onMutate(variables);
-      }
-      
-      // Perform the actual API call
-      const response = await cachedFetch<TData>(
-        updateUrl,
-        {
-          method,
-          body: JSON.stringify(variables),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      if (onSuccess) {
-        onSuccess(response);
-      }
-      
-      return response;
-    } catch (error) {
-      console.error(`Error in ${method} operation:`, error);
-      
-      if (onError) {
-        onError(error as TError);
-      }
-      
-      throw error;
-    } finally {
-      setIsPending(false);
-    }
-  };
-
-  // For delete operations that require an id
-  const remove = async (variables: { id: string } & Record<string, any>): Promise<void> => {
-    setIsPending(true);
-    let optimisticResult: TData | undefined;
-    const deleteUrl = url.replace('{id}', variables.id);
-    
-    try {
-      // Apply optimistic update if onMutate is provided
-      if (onMutate) {
-        optimisticResult = await onMutate(variables as any);
-      }
-      
-      // Perform the actual API call
-      await cachedFetch(
-        deleteUrl,
-        {
-          method,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      if (onSuccess) {
-        onSuccess(undefined as unknown as TData);
-      }
-    } catch (error) {
-      console.error(`Error in ${method} operation:`, error);
-      
-      if (onError) {
-        onError(error as TError);
-      }
-      
-      throw error;
-    } finally {
-      setIsPending(false);
-    }
-  };
-
-  // Return the appropriate function based on the method
-  const mutationFn = method === 'DELETE' 
-    ? remove 
-    : (method === 'PUT' || method === 'PATCH') 
-      ? update 
-      : create;
-
-  return {
-    mutate: mutationFn,
-    isPending
+    ...queryResult,
+    isOfflineData
   };
 }

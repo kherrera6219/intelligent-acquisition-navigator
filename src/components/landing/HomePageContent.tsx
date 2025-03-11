@@ -8,14 +8,12 @@ import { SectionErrorBoundary } from "@/components/ui/section/SectionErrorBounda
 import { SectionLoader } from "@/components/ui/section/SectionLoader";
 import { PrivacyBanner } from "./PrivacyBanner";
 import { PrivacyDialog } from "./PrivacyDialog";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { BackToTopButton } from "@/components/ui/navigation/BackToTopButton";
 import { HelpButton } from "@/components/ui/navigation/HelpButton";
 import { FirstVisitGuide } from "@/components/ui/guide/FirstVisitGuide";
 import CookieConsent from "@/components/CookieConsent";
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Container } from "@/components/ui/universal/Container";
 
 interface HomePageContentProps {

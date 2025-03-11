@@ -6,6 +6,8 @@ import { useHomePageInit } from "@/hooks/useHomePageInit";
 import { HomePageError } from "@/components/landing/HomePageError";
 import { HomePageLoading } from "@/components/landing/HomePageLoading";
 import { HomePageContent } from "@/components/landing/HomePageContent";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 
 const Index = () => {
   const {
@@ -27,15 +29,19 @@ const Index = () => {
   }
 
   return (
-    <ScrollArea className="min-h-screen h-full w-full overflow-hidden">
-      <HomePageContent 
-        showPrivacyNotice={showPrivacyNotice}
-        setShowPrivacyNotice={setShowPrivacyNotice}
-        showBackToTop={showBackToTop}
-        isFirstVisit={isFirstVisit}
-        scrollToTop={scrollToTop}
-      />
-    </ScrollArea>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <ScrollArea className="flex-1 h-full w-full overflow-hidden">
+        <HomePageContent 
+          showPrivacyNotice={showPrivacyNotice}
+          setShowPrivacyNotice={setShowPrivacyNotice}
+          showBackToTop={showBackToTop}
+          isFirstVisit={isFirstVisit}
+          scrollToTop={scrollToTop}
+        />
+      </ScrollArea>
+      <Footer />
+    </div>
   );
 };
 

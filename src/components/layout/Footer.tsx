@@ -43,7 +43,7 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-gray-900/90 backdrop-blur-md border-t border-gray-800 mt-auto">
+    <footer className="w-full bg-gray-900/95 backdrop-blur-md border-t border-gray-800 mt-auto shadow-lg">
       {/* Top Footer - Main Content */}
       <div className="py-12 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
@@ -51,27 +51,27 @@ export const Footer = () => {
           <div className="lg:col-span-2">
             <div className="mb-6">
               <Link to="/" className="inline-block">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-violet-600 bg-clip-text text-transparent">ProcurityIQ</h2>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-violet-500 bg-clip-text text-transparent">ProcurityIQ</h2>
               </Link>
-              <p className="mt-4 text-gray-400 max-w-md">
+              <p className="mt-4 text-gray-300 max-w-md">
                 Advanced procurement intelligence platform that streamlines acquisition processes across federal, state, and local levels.
               </p>
             </div>
             <div className="space-y-4">
               <div className="flex items-start">
-                <MapPin className="h-5 w-5 text-gray-500 mt-1 mr-3 flex-shrink-0" />
-                <p className="text-gray-400">
+                <MapPin className="h-5 w-5 text-gray-400 mt-1 mr-3 flex-shrink-0" />
+                <p className="text-gray-300">
                   1234 Government Plaza, Suite 500<br />
                   Washington, DC 20001
                 </p>
               </div>
               <div className="flex items-center">
-                <Phone className="h-5 w-5 text-gray-500 mr-3 flex-shrink-0" />
-                <p className="text-gray-400">(202) 555-0123</p>
+                <Phone className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
+                <p className="text-gray-300">(202) 555-0123</p>
               </div>
               <div className="flex items-center">
-                <Mail className="h-5 w-5 text-gray-500 mr-3 flex-shrink-0" />
-                <a href="mailto:info@procurityiq.com" className="text-gray-400 hover:text-primary transition-colors">
+                <Mail className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
+                <a href="mailto:info@procurityiq.com" className="text-gray-300 hover:text-primary transition-colors">
                   info@procurityiq.com
                 </a>
               </div>
@@ -80,21 +80,21 @@ export const Footer = () => {
               <div className="flex space-x-4 mt-6">
                 <a 
                   href="https://twitter.com/procurityiq"
-                  className="text-gray-500 hover:text-blue-400 transition-colors"
+                  className="text-gray-400 hover:text-blue-400 transition-colors"
                   aria-label="Twitter"
                 >
                   <Twitter className="h-5 w-5" />
                 </a>
                 <a 
                   href="https://linkedin.com/company/procurityiq"
-                  className="text-gray-500 hover:text-blue-600 transition-colors"
+                  className="text-gray-400 hover:text-blue-500 transition-colors"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="h-5 w-5" />
                 </a>
                 <a 
                   href="https://github.com/procurityiq"
-                  className="text-gray-500 hover:text-white transition-colors"
+                  className="text-gray-400 hover:text-white transition-colors"
                   aria-label="GitHub"
                 >
                   <Github className="h-5 w-5" />
@@ -111,9 +111,9 @@ export const Footer = () => {
                 <li key={`main-${index}`}>
                   <Link 
                     to={route.path} 
-                    className="text-gray-400 hover:text-primary transition-colors flex items-center"
+                    className="text-gray-300 hover:text-primary transition-colors flex items-center"
                   >
-                    <ChevronRight className="h-3 w-3 mr-1 text-gray-600" />
+                    <ChevronRight className="h-3 w-3 mr-1 text-gray-500" />
                     {route.label}
                   </Link>
                 </li>
@@ -129,9 +129,9 @@ export const Footer = () => {
                 <li key={`resource-${index}`}>
                   <Link 
                     to={route.path} 
-                    className="text-gray-400 hover:text-primary transition-colors flex items-center"
+                    className="text-gray-300 hover:text-primary transition-colors flex items-center"
                   >
-                    <ChevronRight className="h-3 w-3 mr-1 text-gray-600" />
+                    <ChevronRight className="h-3 w-3 mr-1 text-gray-500" />
                     {route.label}
                   </Link>
                 </li>
@@ -147,9 +147,9 @@ export const Footer = () => {
                 <li key={`app-${index}`}>
                   <Link 
                     to={route.path} 
-                    className="text-gray-400 hover:text-primary transition-colors flex items-center"
+                    className="text-gray-300 hover:text-primary transition-colors flex items-center"
                   >
-                    <ChevronRight className="h-3 w-3 mr-1 text-gray-600" />
+                    <ChevronRight className="h-3 w-3 mr-1 text-gray-500" />
                     {route.label}
                   </Link>
                 </li>
@@ -163,17 +163,17 @@ export const Footer = () => {
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-400">
               &copy; {currentYear} ProcurityIQ. All rights reserved.
             </p>
             <div className="flex gap-4 mt-4 md:mt-0">
-              <Link to="/terms" className="text-xs text-gray-500 hover:text-primary transition-colors">
+              <Link to="/terms" className="text-xs text-gray-400 hover:text-primary transition-colors">
                 Terms of Service
               </Link>
-              <Link to="/privacy" className="text-xs text-gray-500 hover:text-primary transition-colors">
+              <Link to="/privacy" className="text-xs text-gray-400 hover:text-primary transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/cookies" className="text-xs text-gray-500 hover:text-primary transition-colors">
+              <Link to="/cookies" className="text-xs text-gray-400 hover:text-primary transition-colors">
                 Cookie Policy
               </Link>
             </div>

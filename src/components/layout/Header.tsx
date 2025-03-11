@@ -17,7 +17,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-gray-900/90 border-b border-gray-800 backdrop-blur-sm sticky top-0 z-50">
+    <header className="bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm sticky top-0 z-50 shadow-md">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -27,7 +27,7 @@ export const Header: React.FC = () => {
             
             {/* Status Indicator */}
             {!isOnline && (
-              <div className="ml-3 flex items-center gap-1 text-yellow-500 text-xs py-0.5 px-2 rounded-full bg-yellow-500/10 border border-yellow-500/20">
+              <div className="ml-3 flex items-center gap-1 text-yellow-400 text-xs py-0.5 px-2 rounded-full bg-yellow-500/20 border border-yellow-500/30">
                 <WifiOff className="h-3 w-3" />
                 <span>Offline</span>
               </div>
@@ -36,19 +36,19 @@ export const Header: React.FC = () => {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
-            <Link to="/about" className="text-gray-300 hover:text-white transition-colors">About</Link>
-            <Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link>
-            <Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</Link>
-            <Link to="/sitemap" className="text-gray-300 hover:text-white transition-colors">Sitemap</Link>
-            <Link to="/knowledge-base" className="text-gray-300 hover:text-white transition-colors">Knowledge Base</Link>
+            <Link to="/about" className="text-gray-200 hover:text-white transition-colors">About</Link>
+            <Link to="/contact" className="text-gray-200 hover:text-white transition-colors">Contact</Link>
+            <Link to="/pricing" className="text-gray-200 hover:text-white transition-colors">Pricing</Link>
+            <Link to="/sitemap" className="text-gray-200 hover:text-white transition-colors">Sitemap</Link>
+            <Link to="/knowledge-base" className="text-gray-200 hover:text-white transition-colors">Knowledge Base</Link>
             
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" className="text-gray-300 hover:text-white transition-colors">Dashboard</Link>
+                <Link to="/dashboard" className="text-gray-200 hover:text-white transition-colors">Dashboard</Link>
                 <Button variant="outline" size="sm" onClick={() => signOut()}>Sign Out</Button>
               </>
             ) : (
-              <Button onClick={() => navigate('/auth')} variant="default" size="sm">Sign In</Button>
+              <Button onClick={() => navigate('/auth')} variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700">Sign In</Button>
             )}
           </nav>
           
@@ -56,7 +56,7 @@ export const Header: React.FC = () => {
           <div className="md:hidden">
             <button 
               onClick={toggleMenu}
-              className="text-gray-400 hover:text-white focus:outline-none"
+              className="text-gray-300 hover:text-white focus:outline-none"
               aria-label="Toggle menu"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,35 +76,35 @@ export const Header: React.FC = () => {
             <nav className="flex flex-col space-y-2">
               <Link 
                 to="/about" 
-                className="text-gray-300 hover:text-white transition-colors py-2"
+                className="text-gray-200 hover:text-white transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
               <Link 
                 to="/contact" 
-                className="text-gray-300 hover:text-white transition-colors py-2"
+                className="text-gray-200 hover:text-white transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
               </Link>
               <Link 
                 to="/pricing" 
-                className="text-gray-300 hover:text-white transition-colors py-2"
+                className="text-gray-200 hover:text-white transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Pricing
               </Link>
               <Link 
                 to="/sitemap" 
-                className="text-gray-300 hover:text-white transition-colors py-2"
+                className="text-gray-200 hover:text-white transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sitemap
               </Link>
               <Link 
                 to="/knowledge-base" 
-                className="text-gray-300 hover:text-white transition-colors py-2"
+                className="text-gray-200 hover:text-white transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Knowledge Base
@@ -114,7 +114,7 @@ export const Header: React.FC = () => {
                 <>
                   <Link 
                     to="/dashboard" 
-                    className="text-gray-300 hover:text-white transition-colors py-2"
+                    className="text-gray-200 hover:text-white transition-colors py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
@@ -126,7 +126,7 @@ export const Header: React.FC = () => {
                       signOut();
                       setIsMenuOpen(false);
                     }}
-                    className="mt-2"
+                    className="mt-2 border-gray-600 text-white hover:bg-gray-800"
                   >
                     Sign Out
                   </Button>
@@ -139,7 +139,7 @@ export const Header: React.FC = () => {
                   }} 
                   variant="default" 
                   size="sm"
-                  className="mt-2"
+                  className="mt-2 bg-blue-600 hover:bg-blue-700"
                 >
                   Sign In
                 </Button>

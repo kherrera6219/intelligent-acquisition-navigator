@@ -18,7 +18,7 @@ export function NetworkStatusBanner() {
   return (
     <div className="sticky top-0 z-50 w-full">
       {!isOnline && (
-        <div className="bg-red-500 text-white py-1 px-4 flex items-center justify-between">
+        <div className="bg-red-600 text-white py-1 px-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <WifiOff className="h-4 w-4" />
             <span className="text-sm font-medium">You're offline. Some features may be limited.</span>
@@ -26,7 +26,7 @@ export function NetworkStatusBanner() {
           <Button 
             variant="outline" 
             size="sm"
-            className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs py-1 px-2 h-auto"
+            className="bg-white/20 hover:bg-white/30 text-white border-white/40 text-xs py-1 px-2 h-auto"
             onClick={() => window.location.reload()}
           >
             Try Reconnecting
@@ -35,15 +35,15 @@ export function NetworkStatusBanner() {
       )}
       
       {isOnline && !supabaseConnected && (
-        <div className="bg-orange-500 text-white py-1 px-4 flex items-center justify-between">
+        <div className="bg-orange-600 text-white py-1 px-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Database className="h-4 w-4 opacity-50" />
+            <Database className="h-4 w-4 opacity-80" />
             <span className="text-sm font-medium">Database connection issue. Some data may not sync.</span>
           </div>
           <Button 
             variant="outline" 
             size="sm"
-            className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs py-1 px-2 h-auto"
+            className="bg-white/20 hover:bg-white/30 text-white border-white/40 text-xs py-1 px-2 h-auto"
             onClick={() => window.location.reload()}
           >
             Try Again
@@ -52,7 +52,7 @@ export function NetworkStatusBanner() {
       )}
       
       {isOnline && pendingCount > 0 && (
-        <div className="bg-yellow-500 text-white py-1 px-4 flex items-center justify-between">
+        <div className="bg-yellow-600 text-white py-1 px-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {isSyncing ? (
               <RefreshCw className="h-4 w-4 animate-spin" />
@@ -69,7 +69,7 @@ export function NetworkStatusBanner() {
             <Button 
               variant="outline" 
               size="sm"
-              className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs py-1 px-2 h-auto"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/40 text-xs py-1 px-2 h-auto"
               onClick={syncOfflineData}
             >
               Sync Now

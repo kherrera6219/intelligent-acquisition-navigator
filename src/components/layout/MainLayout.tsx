@@ -51,8 +51,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     if (isInternalPage) {
       return {
         backgroundImage: `
-          linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
-          radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+          linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.12) 100%),
+          radial-gradient(at 50% 0%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.15) 75%)
         `,
         backgroundAttachment: 'fixed',
         backgroundColor: 'var(--background)'
@@ -61,8 +61,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     
     return {
       backgroundImage: `
-        linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
-        radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
+        linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.12) 100%),
+        radial-gradient(at 50% 0%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.15) 75%)
       `,
       backgroundAttachment: 'fixed'
     };
