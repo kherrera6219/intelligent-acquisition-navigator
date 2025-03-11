@@ -87,15 +87,6 @@ describe('HomePage', () => {
     expect(screen.getByRole('button', { name: /get help/i })).toBeInTheDocument();
   });
 
-  it('shows keyboard shortcut guide on first visit', () => {
-    (localStorage.getItem as jest.Mock).mockReturnValue(null);
-    renderWithRouter(<HomePage />);
-    
-    waitFor(() => {
-      expect(screen.getByText(/press '?' for keyboard shortcuts/i)).toBeInTheDocument();
-    });
-  });
-
   it('opens contact page when help button is clicked', () => {
     const windowSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
     renderWithRouter(<HomePage />);

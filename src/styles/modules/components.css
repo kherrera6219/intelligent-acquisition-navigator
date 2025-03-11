@@ -1,99 +1,100 @@
+
 /* Navigation */
-.nav-link {
+.ms-nav-link {
   @apply text-gray-300 hover:text-white transition-colors;
 }
 
-.nav-link-active {
+.ms-nav-link-active {
   @apply text-white font-medium;
 }
 
 /* Cards */
-.content-card {
+.ms-content-card {
   @apply bg-secondary/40 backdrop-blur-sm border border-white/5 rounded-lg p-4 sm:p-6 
          shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-secondary/50;
 }
 
-.dashboard-card {
+.ms-dashboard-card {
   @apply bg-secondary/30 backdrop-blur-sm border border-white/10 rounded-lg p-4 sm:p-6 
          shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-secondary/40;
 }
 
-.feature-card {
+.ms-feature-card {
   @apply bg-secondary/20 backdrop-blur-sm border border-white/5 rounded-lg p-4 sm:p-6 
          shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-secondary/30
          hover:translate-y-[-2px];
 }
 
-.testimonial-card {
+.ms-testimonial-card {
   @apply bg-secondary/30 backdrop-blur-sm border border-white/5 rounded-lg p-4 sm:p-6 
          shadow-lg transition-all duration-300;
 }
 
-.cta-card {
+.ms-cta-card {
   @apply bg-secondary/40 backdrop-blur-sm border border-white/10 rounded-lg p-6 sm:p-8 
          shadow-lg transition-all duration-300;
 }
 
 /* Sections */
-.hero-section {
+.ms-hero-section {
   @apply relative py-12 md:py-20 lg:py-24 overflow-hidden;
   background: linear-gradient(135deg, rgba(22, 22, 30, 0.9) 0%, rgba(16, 16, 24, 0.95) 100%);
 }
 
-.features-section {
+.ms-features-section {
   @apply py-12 md:py-20 relative;
   background-image: radial-gradient(circle at 50% 50%, rgba(30, 30, 40, 0.3) 0%, rgba(10, 10, 15, 0) 70%);
 }
 
-.testimonials-section {
+.ms-testimonials-section {
   @apply py-12 md:py-20 relative;
   background: linear-gradient(180deg, rgba(30, 30, 40, 0.2) 0%, rgba(20, 20, 30, 0.3) 100%);
 }
 
-.cta-section {
+.ms-cta-section {
   @apply py-12 md:py-20 relative;
   background: linear-gradient(135deg, rgba(40, 40, 60, 0.3) 0%, rgba(20, 20, 30, 0.4) 100%);
 }
 
 /* Buttons */
-.button-primary {
+.ms-button-primary {
   @apply bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md
          transition-all duration-200 font-medium shadow-md hover:shadow-lg;
 }
 
-.button-secondary {
+.ms-button-secondary {
   @apply bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-2 rounded-md
          transition-all duration-200 font-medium shadow-md hover:shadow-lg;
 }
 
-.button-outline {
+.ms-button-outline {
   @apply border border-primary/30 hover:border-primary/60 text-primary hover:text-primary/90
          px-4 py-2 rounded-md transition-all duration-200 font-medium;
 }
 
-.button-ghost {
+.ms-button-ghost {
   @apply text-primary hover:text-primary/90 hover:bg-primary/10
          px-4 py-2 rounded-md transition-all duration-200 font-medium;
 }
 
 /* Inputs */
-.input-field {
+.ms-input-field {
   @apply bg-secondary/20 border border-white/10 rounded-md px-4 py-2
          focus:outline-none focus:ring-2 focus:ring-primary/30
          placeholder:text-gray-500 text-white;
 }
 
 /* Headers */
-.section-header {
+.ms-section-header {
   @apply text-2xl md:text-3xl font-bold mb-4 md:mb-6;
 }
 
-.panel-header {
+.ms-panel-header {
   @apply text-xl font-semibold mb-4;
 }
 
 /* Fluent design enhancements */
-.fluent-panel {
+.ms-fluent-panel {
   @apply bg-card/40 backdrop-blur-sm border border-primary/5 rounded-lg p-4 sm:p-6
          shadow-lg transition-all duration-300;
   background-image: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.1) 100%);
@@ -190,4 +191,58 @@
 
 .ms-container-fluid {
   @apply w-full px-4 sm:px-6 lg:px-8;
+}
+
+/* Microsoft Motion Animation Classes */
+.ms-motion-fadeIn {
+  @apply animate-fadeIn;
+}
+
+.ms-motion-fadeInUp {
+  @apply animate-fadeInUp;
+}
+
+.ms-motion-slideInRight {
+  @apply animate-slideInRight;
+}
+
+.ms-motion-slideInLeft {
+  @apply animate-slideInLeft;
+}
+
+/* Animation definitions */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.5s ease-out forwards;
 }

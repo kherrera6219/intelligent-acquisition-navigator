@@ -2,6 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+
+// CSS imports in correct order
 import './styles/theme/index.css';
 import './styles/global.css';
 import './styles/application.css';

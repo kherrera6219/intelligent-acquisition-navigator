@@ -1,13 +1,13 @@
 
 import React from 'react';
-import { PrivacyNotice } from './PrivacyNotice';
+import { PrivacyNotice } from '../landing/PrivacyNotice';
 import { BackToTopButton } from '@/components/ui/navigation/BackToTopButton';
 import { HelpButton } from '@/components/ui/navigation/HelpButton';
-import { HomeHero } from './HomeHero';
-import { HomeFeatures } from './HomeFeatures';
-import { HomeCta } from './HomeCta';
+import { HomeHero } from './sections/HomeHero';
+import { HomeFeatures } from './sections/HomeFeatures';
+import { HomeCta } from './sections/HomeCta';
 
-interface HomePageContentProps {
+interface HomeContentProps {
   showPrivacyNotice: boolean;
   setShowPrivacyNotice: (show: boolean) => void;
   showBackToTop: boolean;
@@ -15,7 +15,7 @@ interface HomePageContentProps {
   scrollToTop: () => void;
 }
 
-export const HomePageContent: React.FC<HomePageContentProps> = ({
+export const HomeContent: React.FC<HomeContentProps> = ({
   showPrivacyNotice,
   setShowPrivacyNotice,
   showBackToTop,

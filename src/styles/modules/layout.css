@@ -1,6 +1,6 @@
 
 /* Grid Background */
-.bg-grid {
+.ms-bg-grid {
   background-size: 100px 100px;
   background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
@@ -9,102 +9,102 @@
 }
 
 /* Container Classes */
-.container-tight {
+.ms-container-tight {
   @apply w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8;
 }
 
-.container-wide {
+.ms-container-wide {
   @apply w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8;
 }
 
 /* Grid Systems */
-.grid-auto-fit {
+.ms-grid-auto-fit {
   @apply grid grid-cols-1 xs:grid-cols-[repeat(auto-fit,minmax(220px,1fr))] sm:grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-3 sm:gap-4 md:gap-6;
 }
 
-.grid-auto-fill {
+.ms-grid-auto-fill {
   @apply grid grid-cols-1 xs:grid-cols-[repeat(auto-fill,minmax(220px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-3 sm:gap-4 md:gap-6;
 }
 
 /* Layout Classes */
-.layout-container {
+.ms-layout-container {
   @apply w-full min-h-screen flex flex-col;
 }
 
-.main-content {
+.ms-main-content {
   @apply flex-1 w-full max-w-[100vw] overflow-x-hidden;
 }
 
 /* Page layouts */
-.page-layout {
+.ms-page-layout {
   @apply max-w-screen-2xl mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8;
 }
 
-.page-container {
+.ms-page-container {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-.section-container {
+.ms-section-container {
   @apply py-6 sm:py-8 md:py-12;
 }
 
 /* Special Layout Types */
-.dashboard-layout .page-content {
+.ms-dashboard-layout .ms-page-content {
   @apply grid gap-6;
 }
 
-.acquisition-layout .section-header {
+.ms-acquisition-layout .ms-section-header {
   @apply border-b border-border mb-6 pb-4;
 }
 
 /* Internal app page layouts */
-.internal-app-layout {
+.ms-internal-app-layout {
   @apply border-t border-border pt-6 mt-6;
 }
 
-.internal-link {
+.ms-internal-link {
   @apply text-blue-500 hover:text-blue-400 transition-colors;
 }
 
-.internal-card {
+.ms-internal-card {
   @apply bg-secondary/50 backdrop-blur-sm rounded-lg border border-border p-4 hover:border-border/60 transition-colors;
 }
 
-.internal-section {
+.ms-internal-section {
   @apply border-b border-border pb-6 mb-6;
 }
 
 /* Sidebar layout */
-.sidebar-layout {
+.ms-sidebar-layout {
   @apply grid grid-cols-1 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr] gap-6;
 }
 
-.sidebar-container {
+.ms-sidebar-container {
   @apply hidden md:flex flex-col gap-2 sticky top-20 self-start h-[calc(100vh-theme(spacing.40))] overflow-y-auto pb-10;
 }
 
-.sidebar-section {
+.ms-sidebar-section {
   @apply mb-4;
 }
 
-.sidebar-heading {
+.ms-sidebar-heading {
   @apply text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3;
 }
 
-.sidebar-link {
+.ms-sidebar-link {
   @apply flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors;
 }
 
-.sidebar-link-active {
+.ms-sidebar-link-active {
   @apply bg-secondary text-white font-medium;
 }
 
-.sidebar-link-inactive {
+.ms-sidebar-link-inactive {
   @apply text-muted-foreground hover:text-white hover:bg-secondary/50;
 }
 
 /* App layout with header sidebar and content */
-.app-layout {
+.ms-app-layout {
   @apply grid min-h-screen;
   grid-template-areas: 
     "header header"
@@ -113,17 +113,17 @@
   grid-template-rows: var(--header-height) 1fr;
 }
 
-.app-header {
+.ms-app-header {
   @apply fixed top-0 left-0 right-0 h-[var(--header-height)] z-40;
   grid-area: header;
 }
 
-.app-sidebar {
+.ms-app-sidebar {
   @apply w-[var(--sidebar-width)] border-r border-border overflow-y-auto fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))] hidden md:block;
   grid-area: sidebar;
 }
 
-.app-main {
+.ms-app-main {
   @apply pt-[var(--header-height)] md:pl-[var(--sidebar-width)];
   grid-area: main;
   background-image: 
@@ -133,7 +133,7 @@
 }
 
 /* Global background for all major content areas */
-.content-area, .main-content-area, .page-content {
+.ms-content-area, .ms-main-content-area, .ms-page-content {
   background-image: 
     linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
     radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%);
@@ -142,31 +142,46 @@
 
 /* Responsive layout adjustments */
 @media (max-width: 639px) {
-  .responsive-padding {
+  .ms-responsive-padding {
     @apply px-3 py-2;
   }
   
-  .responsive-card {
+  .ms-responsive-card {
     @apply p-3;
   }
 }
 
 @media (min-width: 640px) and (max-width: 1023px) {
-  .responsive-padding {
+  .ms-responsive-padding {
     @apply px-4 py-3;
   }
   
-  .responsive-card {
+  .ms-responsive-card {
     @apply p-4;
   }
 }
 
 @media (min-width: 1024px) {
-  .responsive-padding {
+  .ms-responsive-padding {
     @apply px-6 py-4;
   }
   
-  .responsive-card {
+  .ms-responsive-card {
     @apply p-5;
   }
 }
+
+/* Keep compatibility with old class names */
+.bg-grid { @apply ms-bg-grid; }
+.container-tight { @apply ms-container-tight; }
+.container-wide { @apply ms-container-wide; }
+.grid-auto-fit { @apply ms-grid-auto-fit; }
+.grid-auto-fill { @apply ms-grid-auto-fill; }
+.layout-container { @apply ms-layout-container; }
+.main-content { @apply ms-main-content; }
+.page-layout { @apply ms-page-layout; }
+.page-container { @apply ms-page-container; }
+.section-container { @apply ms-section-container; }
+.content-area, .main-content-area, .page-content { @apply ms-content-area; }
+.responsive-padding { @apply ms-responsive-padding; }
+.responsive-card { @apply ms-responsive-card; }

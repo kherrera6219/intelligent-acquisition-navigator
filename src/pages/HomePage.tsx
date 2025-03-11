@@ -2,9 +2,9 @@
 import { Suspense } from "react";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
-import { HomePageError } from "@/components/landing/HomePageError";
-import { HomePageLoading } from "@/components/landing/HomePageLoading";
-import { HomePageContent } from "@/components/landing/HomePageContent";
+import { HomeError } from "@/components/home/HomeError";
+import { HomeLoading } from "@/components/home/HomeLoading";
+import { HomeContent } from "@/components/home/HomeContent";
 import { MsFluentDashboardLayout } from "@/components/layout/MsFluentDashboardLayout";
 
 const HomePage = () => {
@@ -19,22 +19,22 @@ const HomePage = () => {
   } = useHomePageInit();
   
   if (error) {
-    return <HomePageError error={error} />;
+    return <HomeError error={error} />;
   }
 
   if (!isLoaded) {
-    return <HomePageLoading />;
+    return <HomeLoading />;
   }
 
   return (
     <PageErrorBoundary>
       <MsFluentDashboardLayout
-        title="ProcurityIQ Dashboard"
+        title="Intelligent Acquisition Navigator"
         description="Advanced procurement intelligence platform that streamlines acquisition processes across federal, state, and local levels."
         fullWidth={true}
       >
         <div className="ms-motion-fadeIn">
-          <HomePageContent 
+          <HomeContent 
             showPrivacyNotice={showPrivacyNotice}
             setShowPrivacyNotice={setShowPrivacyNotice}
             showBackToTop={showBackToTop}
