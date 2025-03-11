@@ -8,7 +8,7 @@ interface LazyComponentProps {
 }
 
 // Enhanced LazyComponent with error boundary and suspense
-export const LazyComponent = ({ Component }: LazyComponentProps): ReactNode => {
+export const LazyComponent = ({ Component }: LazyComponentProps): JSX.Element => {
   return (
     <PageErrorBoundary>
       <Suspense fallback={<PageLoader />}>
@@ -18,45 +18,21 @@ export const LazyComponent = ({ Component }: LazyComponentProps): ReactNode => {
   );
 };
 
-// Function to wrap pages with layout and authentication checks
-export const wrapWithLayout = (
-  Component: ComponentType,
-  requiresAuth: boolean = true,
-  requiredRole?: string
-): JSX.Element => {
-  // Import the required components
-  const ProtectedRoute = lazy(() => import('@/components/auth/ProtectedRoute'));
-  const MainLayout = lazy(() => import('@/components/layout/MainLayout'));
-  
-  // Move error boundary to the outermost layer to catch all errors
-  const element = (
-    <PageErrorBoundary>
-      {requiresAuth ? (
-        <Suspense fallback={<PageLoader />}>
-          <ProtectedRoute requiredRole={requiredRole}>
-            <MainLayout>
-              <LazyComponent Component={Component} />
-            </MainLayout>
-          </ProtectedRoute>
-        </Suspense>
-      ) : (
-        <Suspense fallback={<PageLoader />}>
-          <MainLayout>
-            <LazyComponent Component={Component} />
-          </MainLayout>
-        </Suspense>
-      )}
-    </PageErrorBoundary>
-  );
-  
-  return element;
-};
-
-// Route definition type using specific properties we need from RouteObject
-export interface RouteDefinition {
-  path: string;
-  element: JSX.Element;
-  children?: RouteDefinition[];
-  requiresAuth?: boolean;
-  requiredRole?: string;
+// Helper to create lazy-loaded components
+export function createLazyComponent<T extends ComponentType<any>>(
+  importFn: () => Promise<{ default: T }>
+): T {
+  const LazyComponent = lazy(importFn);
+  return LazyComponent as T;
 }
+
+// Lazy loaded pages
+export const LazyHomePage = lazy(() => import('@/pages/HomePage'));
+export const LazyDashboardPage = lazy(() => import('@/pages/DashboardPage'));
+export const LazyChatPage = lazy(() => import('@/pages/ChatPage'));
+export const LazyAnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
+export const LazyProposalsPage = lazy(() => import('@/pages/ProposalsPage'));
+export const LazySettingsPage = lazy(() => import('@/pages/SettingsPage'));
+export const LazyProfilePage = lazy(() => import('@/pages/ProfilePage'));
+export const LazyKnowledgeBasePage = lazy(() => import('@/pages/KnowledgeBasePage'));
+export const LazyAuthenticationPage = lazy(() => import('@/pages/auth/AuthenticationPage'));

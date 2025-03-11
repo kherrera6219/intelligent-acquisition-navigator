@@ -5,9 +5,9 @@ import { useHomePageInit } from "@/hooks/useHomePageInit";
 import { HomePageError } from "@/components/landing/HomePageError";
 import { HomePageLoading } from "@/components/landing/HomePageLoading";
 import { HomePageContent } from "@/components/landing/HomePageContent";
-import { MainLayout } from "@/components/layout/MainLayout";
+import { MsFluentDashboardLayout } from "@/components/layout/MsFluentDashboardLayout";
 
-const Index = () => {
+const HomePage = () => {
   const {
     showPrivacyNotice,
     setShowPrivacyNotice,
@@ -27,27 +27,24 @@ const Index = () => {
   }
 
   return (
-    <HomePageContent 
-      showPrivacyNotice={showPrivacyNotice}
-      setShowPrivacyNotice={setShowPrivacyNotice}
-      showBackToTop={showBackToTop}
-      isFirstVisit={isFirstVisit}
-      scrollToTop={scrollToTop}
-    />
+    <PageErrorBoundary>
+      <MsFluentDashboardLayout
+        title="ProcurityIQ Dashboard"
+        description="Advanced procurement intelligence platform that streamlines acquisition processes across federal, state, and local levels."
+        fullWidth={true}
+      >
+        <div className="ms-motion-fadeIn">
+          <HomePageContent 
+            showPrivacyNotice={showPrivacyNotice}
+            setShowPrivacyNotice={setShowPrivacyNotice}
+            showBackToTop={showBackToTop}
+            isFirstVisit={isFirstVisit}
+            scrollToTop={scrollToTop}
+          />
+        </div>
+      </MsFluentDashboardLayout>
+    </PageErrorBoundary>
   );
 };
-
-const HomePage = () => (
-  <PageErrorBoundary>
-    <MainLayout 
-      showHeader={true} 
-      showFooter={true} 
-      variant="default"
-      className="ms-motion-fadeIn"
-    >
-      <Index />
-    </MainLayout>
-  </PageErrorBoundary>
-);
 
 export default HomePage;
