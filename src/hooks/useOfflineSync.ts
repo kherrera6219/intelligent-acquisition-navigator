@@ -1,143 +1,93 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-import { 
-  processPendingRequests, 
-  getPendingRequests 
-} from '@/utils/offlineStorage';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
+import { processPendingRequests, getPendingRequests } from '@/utils/offlineStorage';
 import { useToast } from '@/hooks/use-toast';
 
-interface UseOfflineSyncOptions {
-  autoSync?: boolean;
-  syncOnReconnect?: boolean;
-  showToasts?: boolean;
-}
-
-export function useOfflineSync(options: UseOfflineSyncOptions = {}) {
-  const {
-    autoSync = true,
-    syncOnReconnect = true,
-    showToasts = true
-  } = options;
-  
-  const isOnline = useNetworkStatus();
-  const [isSyncing, setIsSyncing] = useState(false);
+export function useOfflineSync() {
+  const { isOnline } = useNetworkMonitor();
   const [pendingCount, setPendingCount] = useState(0);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const { toast } = useToast();
-  
-  // Get pending requests count
-  const refreshPendingCount = useCallback(async () => {
+
+  // Fetch the count of pending requests
+  const fetchPendingCount = useCallback(async () => {
     try {
-      const requests = await getPendingRequests();
-      setPendingCount(requests.length);
-      return requests.length;
+      const pendingRequests = await getPendingRequests();
+      setPendingCount(pendingRequests.length);
     } catch (error) {
-      console.error('Error counting pending requests:', error);
-      return 0;
+      console.error('Error fetching pending requests count:', error);
     }
   }, []);
-  
+
   // Sync offline data when back online
   const syncOfflineData = useCallback(async () => {
     if (!isOnline || isSyncing) return;
-    
+
     try {
       setIsSyncing(true);
-      
-      // First check if there are any pending requests
-      const count = await refreshPendingCount();
-      
-      if (count === 0) {
-        setIsSyncing(false);
-        return { successful: 0, failed: 0 };
-      }
-      
-      // Show toast notification if enabled
-      if (showToasts) {
+      setSyncProgress(0);
+
+      const result = await processPendingRequests((processed, total) => {
+        const progress = Math.round((processed / total) * 100);
+        setSyncProgress(progress);
+      });
+
+      if (result.successful > 0) {
         toast({
-          title: 'Syncing offline data',
-          description: `Processing ${count} pending requests...`,
+          title: "Sync Complete",
+          description: `Successfully processed ${result.successful} offline ${result.successful === 1 ? 'action' : 'actions'}.`,
+          variant: "default",
         });
       }
-      
-      // Process pending requests
-      const result = await processPendingRequests((processed, total) => {
-        setSyncProgress(Math.floor((processed / total) * 100));
-      });
-      
-      // Show result notification
-      if (showToasts) {
-        if (result.successful > 0 || result.failed > 0) {
-          toast({
-            title: 'Sync complete',
-            description: `Successfully processed ${result.successful} requests. ${
-              result.failed > 0 ? `Failed: ${result.failed}` : ''
-            }`,
-            variant: result.failed > 0 ? 'destructive' : 'default',
-          });
-        }
+
+      if (result.failed > 0) {
+        toast({
+          title: "Sync Issues",
+          description: `Failed to process ${result.failed} offline ${result.failed === 1 ? 'action' : 'actions'}. Some changes may need to be redone.`,
+          variant: "destructive",
+        });
       }
-      
-      // Refresh pending count
-      await refreshPendingCount();
-      
-      return result;
+
+      // Re-fetch pending count after sync
+      await fetchPendingCount();
     } catch (error) {
       console.error('Error syncing offline data:', error);
-      
-      if (showToasts) {
-        toast({
-          title: 'Sync failed',
-          description: `Error syncing offline data: ${(error as Error).message}`,
-          variant: 'destructive',
-        });
-      }
-      
-      return { successful: 0, failed: 0, errors: [error as Error] };
+      toast({
+        title: "Sync Error",
+        description: "An error occurred while syncing your offline data.",
+        variant: "destructive",
+      });
     } finally {
       setIsSyncing(false);
-      setSyncProgress(0);
+      setSyncProgress(100);
     }
-  }, [isOnline, isSyncing, refreshPendingCount, showToasts, toast]);
-  
-  // Check for pending requests on mount
-  useEffect(() => {
-    refreshPendingCount();
-  }, [refreshPendingCount]);
-  
+  }, [isOnline, isSyncing, toast, fetchPendingCount]);
+
   // Auto-sync when coming back online
   useEffect(() => {
-    let hasBeenOffline = false;
-    
-    if (!isOnline) {
-      hasBeenOffline = true;
-      return;
-    }
-    
-    if (hasBeenOffline && isOnline && syncOnReconnect) {
+    if (isOnline && pendingCount > 0 && !isSyncing) {
       syncOfflineData();
-      hasBeenOffline = false;
     }
-  }, [isOnline, syncOnReconnect, syncOfflineData]);
-  
-  // Run auto-sync on a timer if enabled
+  }, [isOnline, pendingCount, isSyncing, syncOfflineData]);
+
+  // Fetch pending count on mount and when online status changes
   useEffect(() => {
-    if (!autoSync || !isOnline) return;
+    fetchPendingCount();
     
-    const interval = setInterval(() => {
-      syncOfflineData();
-    }, 60000); // Check every minute
+    // Set up interval to periodically check for pending requests
+    const intervalId = setInterval(fetchPendingCount, 30000); // every 30 seconds
     
-    return () => clearInterval(interval);
-  }, [autoSync, isOnline, syncOfflineData]);
-  
+    return () => clearInterval(intervalId);
+  }, [fetchPendingCount, isOnline]);
+
   return {
-    isSyncing,
+    isOnline,
     pendingCount,
+    isSyncing,
     syncProgress,
     syncOfflineData,
-    refreshPendingCount,
-    isOnline
+    refreshPendingCount: fetchPendingCount
   };
 }

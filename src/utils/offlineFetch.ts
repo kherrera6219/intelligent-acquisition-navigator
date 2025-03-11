@@ -1,243 +1,139 @@
 
-/**
- * Module for managing offline request functionality
- */
-import { nanoid } from 'nanoid';
-import React from 'react';
-import { openDB, IDBPDatabase } from 'idb';
+import { supabase } from '@/integrations/supabase/client';
+import { offlineFetch, cacheResponse, getCachedResponse, savePendingRequest } from '@/utils/offlineStorage';
 
-// IndexedDB database name
-const DB_NAME = 'offlineRequestsDB';
-const STORE_NAME = 'failedRequests';
-
-// Queue to store failed requests when offline
-let failedRequestsDbPromise: Promise<IDBPDatabase> | null = null;
-
-/**
- * Initialize the IndexedDB database
- */
-const initDatabase = async () => {
-  if (!failedRequestsDbPromise) {
-    failedRequestsDbPromise = openDB(DB_NAME, 1, {
-      upgrade(db) {
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-        }
-      },
-    });
-  }
-  return failedRequestsDbPromise;
-};
-
-/**
- * Interface for failed request object
- */
-export interface FailedRequest {
-  id: string;
-  url: string;
-  options: RequestInit;
-  timestamp: number;
-  retryCount: number;
+// Enhanced fetch function for Supabase operations with offline support
+export async function fetchWithOfflineSupport(
+  endpoint: string,
+  options: RequestInit & { 
+    cacheMaxAge?: number;
+    offlinePriority?: number; 
+    bypassCache?: boolean;
+  } = {}
+) {
+  return offlineFetch(endpoint, options);
 }
 
-/**
- * Store a failed request in the queue
- */
-export const setFailedRequest = async (url: string, options: RequestInit): Promise<void> => {
-  try {
-    const db = await initDatabase();
-    const id = nanoid();
-    
-    await db.add(STORE_NAME, {
-      id,
-      url,
-      options,
-      timestamp: Date.now(),
-      retryCount: 0,
-    });
-    
-    console.log(`Request queued for offline processing: ${url}`);
-  } catch (error) {
-    console.error('Failed to queue request for offline processing:', error);
-  }
-};
-
-/**
- * Get all failed requests
- */
-export const getFailedRequests = async (): Promise<FailedRequest[]> => {
-  try {
-    const db = await initDatabase();
-    return await db.getAll(STORE_NAME);
-  } catch (error) {
-    console.error('Failed to get offline requests:', error);
-    return [];
-  }
-};
-
-/**
- * Retry a specific failed request
- */
-export const retryFailedRequest = async (id: string): Promise<boolean> => {
-  try {
-    const db = await initDatabase();
-    const request = await db.get(STORE_NAME, id);
-    
-    if (!request) {
-      console.warn(`Failed request with ID ${id} not found.`);
-      return false;
-    }
-    
-    // Attempt to resend the request
-    const response = await fetch(request.url, request.options);
-    
-    if (response.ok) {
-      // If successful, remove from the queue
-      await db.delete(STORE_NAME, id);
-      return true;
-    } else {
-      // Update retry count
-      await db.put(STORE_NAME, {
-        ...request,
-        retryCount: request.retryCount + 1,
-      });
-      return false;
-    }
-  } catch (error) {
-    console.error(`Failed to retry request ${id}:`, error);
-    return false;
-  }
-};
-
-/**
- * Register service worker for offline support if available
- */
-export const registerServiceWorker = async () => {
-  if ('serviceWorker' in navigator) {
-    try {
-      const registration = await navigator.serviceWorker.register('/serviceWorker.js');
-      console.log('Service Worker registered with scope:', registration.scope);
-    } catch (error) {
-      console.error('Service Worker registration failed:', error);
-    }
-  }
-};
-
-/**
- * Fetch with automatic retry and offline handling
- */
-export const offlineFetch = async (
-  url: string,
-  options: RequestInit & { retryCount?: number } = {}
-): Promise<Response> => {
-  const { retryCount = 3, ...fetchOptions } = options;
+// Cached Supabase query with offline support
+export async function queryCachedSupabase<T>(
+  tableName: string,
+  query: (supabaseQuery: any) => any, 
+  cacheKey?: string,
+  cacheMaxAge = 3600000 // 1 hour default
+): Promise<T[]> {
+  const isOnline = navigator.onLine;
+  const customCacheKey = cacheKey || `supabase_${tableName}_${JSON.stringify(query.toString())}`;
   
-  // Try to fetch with retries
-  for (let attempt = 0; attempt <= retryCount; attempt++) {
+  try {
+    if (isOnline) {
+      // Online: perform the query and cache result
+      const supabaseQuery = supabase.from(tableName);
+      const { data, error } = await query(supabaseQuery);
+      
+      if (error) throw error;
+      
+      // Cache the successful result
+      await cacheResponse(customCacheKey, data, cacheMaxAge);
+      return data as T[];
+    } else {
+      // Offline: try to get from cache
+      const cachedData = await getCachedResponse(customCacheKey);
+      if (cachedData) return cachedData as T[];
+      return [] as T[];
+    }
+  } catch (error) {
+    console.error(`Error in cached Supabase query for ${tableName}:`, error);
+    
+    // On error, try to get from cache
+    const cachedData = await getCachedResponse(customCacheKey);
+    if (cachedData) return cachedData as T[];
+    
+    throw error;
+  }
+}
+
+// Function to save pending Supabase operations for offline support
+export async function savePendingSupabaseOperation(
+  tableName: string, 
+  operation: 'insert' | 'update' | 'delete' | 'upsert',
+  data: any,
+  conditions?: Record<string, any>,
+  priority = 1
+): Promise<void> {
+  // Format the operation for storing
+  const pendingOperation = {
+    url: `/rest/v1/${tableName}`, // This is for tracking purposes
+    method: operation === 'insert' ? 'POST' : 'PATCH', // Simplification
+    headers: {
+      'Content-Type': 'application/json',
+      'Prefer': operation === 'upsert' ? 'resolution=merge-duplicates' : undefined
+    },
+    body: {
+      table: tableName,
+      operation,
+      data,
+      conditions
+    },
+    priority
+  };
+  
+  await savePendingRequest(pendingOperation);
+}
+
+// Perform offline-aware Supabase operations
+export async function offlineAwareSupabaseOperation<T>(
+  tableName: string,
+  operation: 'insert' | 'update' | 'delete' | 'upsert',
+  data: any,
+  conditions?: Record<string, any>,
+  priority = 1
+): Promise<T | null> {
+  const isOnline = navigator.onLine;
+  
+  if (isOnline) {
     try {
-      const response = await fetch(url, fetchOptions);
+      let result;
       
-      if (response.ok) {
-        return response;
+      switch (operation) {
+        case 'insert':
+          result = await supabase.from(tableName).insert(data).select().single();
+          break;
+        case 'update':
+          // Apply conditions to the update operation
+          let updateQuery = supabase.from(tableName).update(data);
+          Object.entries(conditions || {}).forEach(([key, value]) => {
+            updateQuery = updateQuery.eq(key, value);
+          });
+          result = await updateQuery.select().single();
+          break;
+        case 'delete':
+          // Apply conditions to the delete operation
+          let deleteQuery = supabase.from(tableName).delete();
+          Object.entries(conditions || {}).forEach(([key, value]) => {
+            deleteQuery = deleteQuery.eq(key, value);
+          });
+          result = await deleteQuery.select().single();
+          break;
+        case 'upsert':
+          result = await supabase.from(tableName).upsert(data).select().single();
+          break;
       }
       
-      // If we get a non-2xx response, throw to trigger retry
-      throw new Error(`HTTP Error ${response.status}`);
+      if (result?.error) throw result.error;
+      return result?.data as T || null;
     } catch (error) {
-      // Last attempt failed, check if we're offline
-      if (attempt === retryCount && !navigator.onLine) {
-        // If this is a mutation (POST, PUT, DELETE), queue it for later
-        const method = (fetchOptions.method || 'GET').toUpperCase();
-        if (method !== 'GET' && method !== 'HEAD') {
-          await setFailedRequest(url, fetchOptions);
-          
-          // Return a mock response
-          return new Response(
-            JSON.stringify({ success: true, offlineQueued: true }),
-            {
-              status: 200,
-              headers: { 'Content-Type': 'application/json' }
-            }
-          );
-        }
+      console.error(`Error in Supabase ${operation} for ${tableName}:`, error);
+      
+      // If error is due to network, save for later processing
+      if (error instanceof TypeError && error.message.includes('network')) {
+        await savePendingSupabaseOperation(tableName, operation, data, conditions, priority);
       }
       
-      // If it's not the last attempt, wait before retrying
-      if (attempt < retryCount) {
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
-        continue;
-      }
-      
-      // If it's the last attempt or we're offline with a GET request, throw
       throw error;
     }
+  } else {
+    // If offline, save operation for later processing
+    await savePendingSupabaseOperation(tableName, operation, data, conditions, priority);
+    return null;
   }
-  
-  // This should never be reached due to the throws above
-  throw new Error('Maximum retries exceeded');
-};
-
-/**
- * Retry all failed requests
- */
-export const retryAllFailedRequests = async (): Promise<{
-  total: number;
-  succeeded: number;
-  failed: number;
-}> => {
-  try {
-    const requests = await getFailedRequests();
-    let succeeded = 0;
-    let failed = 0;
-    
-    for (const request of requests) {
-      const success = await retryFailedRequest(request.id);
-      if (success) {
-        succeeded++;
-      } else {
-        failed++;
-      }
-    }
-    
-    return {
-      total: requests.length,
-      succeeded,
-      failed,
-    };
-  } catch (error) {
-    console.error('Failed to retry all requests:', error);
-    return {
-      total: 0,
-      succeeded: 0,
-      failed: 0,
-    };
-  }
-};
-
-/**
- * Remove a specific failed request without retrying
- */
-export const removeFailedRequest = async (id: string): Promise<boolean> => {
-  try {
-    const db = await initDatabase();
-    await db.delete(STORE_NAME, id);
-    return true;
-  } catch (error) {
-    console.error(`Failed to remove request ${id}:`, error);
-    return false;
-  }
-};
-
-/**
- * Clear all failed requests
- */
-export const clearAllFailedRequests = async (): Promise<boolean> => {
-  try {
-    const db = await initDatabase();
-    await db.clear(STORE_NAME);
-    return true;
-  } catch (error) {
-    console.error('Failed to clear all requests:', error);
-    return false;
-  }
-};
+}
