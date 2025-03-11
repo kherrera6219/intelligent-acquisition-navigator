@@ -18,7 +18,7 @@ export const Tooltip = ({
           {children}
         </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
-          <TooltipContent side={side} align={align}>
+          <TooltipContent side={side} align={align} className="ms-motion-fadeIn ms-duration-2">
             {content}
           </TooltipContent>
         </TooltipPrimitive.Portal>

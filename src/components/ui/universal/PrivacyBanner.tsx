@@ -3,6 +3,7 @@ import React from 'react';
 import { X, Info, ExternalLink, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Tooltip } from '@/components/ui/tooltip';
 
 export interface PrivacyBannerProps {
   onLearnMore: () => void;
@@ -34,6 +35,8 @@ export function PrivacyBanner({
     bottom: 'bottom-0 left-0 right-0 z-50'
   };
 
+  const animationClass = position === 'top' ? 'ms-motion-slideInTop' : 'ms-motion-slideInBottom';
+
   return (
     <div 
       className={cn(
@@ -42,10 +45,11 @@ export function PrivacyBanner({
         positionStyles[position],
         bannerStyles[type],
         className,
-        "ms-motion-slideInBottom"
+        animationClass
       )}
-      role="alert"
-      aria-live="polite"
+      role="alertdialog"
+      aria-labelledby="privacy-notice-title"
+      aria-describedby="privacy-notice-desc"
     >
       <div className={cn(
         "flex items-start gap-4",
@@ -58,38 +62,44 @@ export function PrivacyBanner({
         )}
         
         <div className="flex-1 space-y-2">
-          <div className="font-medium">Privacy Notice</div>
-          <p className="text-sm text-primary-foreground">
+          <div className="font-medium" id="privacy-notice-title">Privacy Notice</div>
+          <p className="text-sm text-primary-foreground" id="privacy-notice-desc">
             We value your privacy. This site uses cookies and similar technologies to personalize content, analyze traffic, and ensure you get the best experience on our website.
           </p>
           <div className="flex flex-wrap gap-3 mt-3">
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              onClick={onLearnMore}
-              className="bg-white text-primary hover:bg-white/90 hover:text-primary/90 flex items-center gap-1.5"
-            >
-              Learn More
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={onClose}
-              className="text-white border border-white/30 hover:bg-white/10"
-            >
-              I Understand
-            </Button>
+            <Tooltip content="View our detailed privacy policy">
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={onLearnMore}
+                className="bg-white text-primary hover:bg-white/90 hover:text-primary/90 flex items-center gap-1.5 focus-visible-ring"
+              >
+                Learn More
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              </Button>
+            </Tooltip>
+            <Tooltip content="Accept privacy notice and dismiss">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onClose}
+                className="text-white border border-white/30 hover:bg-white/10 focus-visible-ring"
+              >
+                I Understand
+              </Button>
+            </Tooltip>
           </div>
         </div>
         
-        <button
-          onClick={onClose}
-          className="shrink-0 rounded-md p-1 text-white/80 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-1 focus:ring-offset-primary"
-          aria-label="Close privacy notice"
-        >
-          <X className="h-5 w-5" aria-hidden="true" />
-        </button>
+        <Tooltip content="Close privacy notice">
+          <button
+            onClick={onClose}
+            className="shrink-0 rounded-md p-1 text-white/80 hover:text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-1 focus-visible:ring-offset-primary"
+            aria-label="Close privacy notice"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

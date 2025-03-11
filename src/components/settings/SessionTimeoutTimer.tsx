@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Clock } from 'lucide-react';
+import { Clock, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Tooltip } from '@/components/ui/tooltip';
 
 interface SessionTimeoutTimerProps {
   className?: string;
@@ -16,8 +17,9 @@ export const SessionTimeoutTimer: React.FC<SessionTimeoutTimerProps> = ({
   indicateStatus = true
 }) => {
   const { sessionTimeRemaining, refreshSession } = useAuth();
-  const [timeDisplay, setTimeDisplay] = useState<string>('');
+  const [timeDisplay, setTimeDisplay] = useState<string>('--:--');
   const [status, setStatus] = useState<'ok' | 'warning' | 'critical'>('ok');
+  const [tooltipContent, setTooltipContent] = useState<string>('Click to refresh your session');
 
   useEffect(() => {
     if (!sessionTimeRemaining) {
@@ -34,10 +36,13 @@ export const SessionTimeoutTimer: React.FC<SessionTimeoutTimerProps> = ({
     // Set status based on remaining time
     if (minutes < 2) {
       setStatus('critical');
+      setTooltipContent('Session expiring soon! Click to refresh');
     } else if (minutes < 5) {
       setStatus('warning');
+      setTooltipContent('Session expiring in less than 5 minutes. Click to refresh');
     } else {
       setStatus('ok');
+      setTooltipContent('Session active. Click to refresh if needed');
     }
   }, [sessionTimeRemaining]);
 
@@ -58,18 +63,24 @@ export const SessionTimeoutTimer: React.FC<SessionTimeoutTimerProps> = ({
   };
 
   return (
-    <button
-      className={cn(
-        "flex items-center gap-1.5 text-sm font-medium transition-colors",
-        "hover:opacity-80 cursor-pointer",
-        getStatusColor(),
-        className
-      )}
-      onClick={handleClick}
-      title="Click to refresh session"
-    >
-      {showIcon && <Clock className="h-3.5 w-3.5" />}
-      <span>{timeDisplay}</span>
-    </button>
+    <Tooltip content={tooltipContent}>
+      <button
+        className={cn(
+          "flex items-center gap-1.5 text-sm font-medium transition-colors",
+          "hover:opacity-80 cursor-pointer rounded py-1 px-1.5",
+          getStatusColor(),
+          className
+        )}
+        onClick={handleClick}
+        aria-label="Session time remaining"
+      >
+        {showIcon && (
+          status === 'critical' 
+            ? <Shield className="h-3.5 w-3.5" /> 
+            : <Clock className="h-3.5 w-3.5" />
+        )}
+        <span>{timeDisplay}</span>
+      </button>
+    </Tooltip>
   );
 };

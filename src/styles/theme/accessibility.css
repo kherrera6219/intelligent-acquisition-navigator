@@ -94,6 +94,48 @@
     border: 2px solid hsl(0 0% 0%) !important;
     color: hsl(0 0% 0%) !important;
   }
+
+  /* Error states clearly visible */
+  .text-red-500, 
+  .text-destructive,
+  .border-red-500 {
+    color: hsl(0 0% 0%) !important;
+    border-color: hsl(0 0% 0%) !important;
+    background-color: hsl(0 0% 90%) !important;
+  }
+
+  /* Progress indicators more visible */
+  progress,
+  .progress,
+  [role="progressbar"] {
+    border: 2px solid hsl(0 0% 0%) !important;
+  }
+
+  /* Enhanced tooltips */
+  [role="tooltip"] {
+    background-color: hsl(0 0% 100%) !important;
+    color: hsl(0 0% 0%) !important;
+    border: 2px solid hsl(0 0% 0%) !important;
+  }
+}
+
+/* Windows High Contrast Mode */
+@media screen and (-ms-high-contrast: active) {
+  button,
+  .button,
+  [role="button"] {
+    border: 2px solid currentColor !important;
+    background-color: Window !important;
+    color: WindowText !important;
+  }
+
+  a {
+    color: LinkText !important;
+  }
+
+  a:hover {
+    text-decoration: underline !important;
+  }
 }
 
 /* Reduced Motion Preferences */
@@ -202,4 +244,44 @@ body.keyboard-navigation-active :focus {
 
 [aria-invalid="true"] {
   @apply border-red-500 focus:ring-red-500;
+}
+
+/* Enhance focus styles for Microsoft Fluent UI compliance */
+.ms-focus-outline {
+  @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+}
+
+/* Accessibility announcement region for screen readers */
+.live-region {
+  @apply sr-only;
+  aria-live: polite;
+}
+
+/* Windows High Contrast Mode color adjustments */
+@media screen and (forced-colors: active) {
+  button, .button {
+    forced-color-adjust: none;
+    background-color: ButtonFace !important;
+    color: ButtonText !important;
+    border-color: ButtonText !important;
+  }
+  
+  button:hover, .button:hover {
+    background-color: Highlight !important;
+    color: HighlightText !important;
+  }
+  
+  a {
+    color: LinkText !important;
+  }
+  
+  a:visited {
+    color: VisitedText !important;
+  }
+  
+  input, select, textarea {
+    border: 1px solid ButtonText !important;
+    background-color: Field !important;
+    color: FieldText !important;
+  }
 }
