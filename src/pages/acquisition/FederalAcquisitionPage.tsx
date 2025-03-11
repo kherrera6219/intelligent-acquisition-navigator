@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { FederalChatContainer, FederalChatMessage } from '@/components/federal/FederalChatContainer';
@@ -6,8 +5,11 @@ import { FederalReportCardGrid } from '@/components/federal/FederalReportCardGri
 import { Button } from '@/components/ui/button';
 import { Plus, Filter } from 'lucide-react';
 import { ReportCardProps } from '@/components/federal/FederalReportCard';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { v4 as uuidv4 } from 'uuid';
+import { NetworkErrorBoundary } from '@/components/ui/universal/NetworkErrorBoundary';
+import { useNetworkOperation } from '@/hooks/useNetworkOperation';
+import { getAzureOpenAICompletion } from '@/services/texas/azureOpenAIService';
 
 const FederalAcquisitionPage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +19,13 @@ const FederalAcquisitionPage = () => {
   const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
   
-  // Example report data
+  const { executeOperation, error: networkError } = useNetworkOperation({
+    maxRetries: 2,
+    onError: (error) => {
+      console.error('Failed to get AI response:', error);
+    }
+  });
+  
   const [reports, setReports] = useState<ReportCardProps[]>([
     {
       title: "FAR Compliance Assessment Report",
@@ -57,7 +65,6 @@ const FederalAcquisitionPage = () => {
   ]);
 
   useEffect(() => {
-    // Simulate loading data
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -70,7 +77,6 @@ const FederalAcquisitionPage = () => {
       title: "Report details",
       description: `Viewing details for: ${reports[index].title}`,
     });
-    // In a real app, navigate to report details or open a modal
   };
 
   const handleNewReportClick = () => {
@@ -78,31 +84,42 @@ const FederalAcquisitionPage = () => {
       title: "New Report",
       description: "Creating a new Federal Acquisition report...",
     });
-    // In a real app, navigate to report creation page or open a modal
   };
 
-  const handleSendMessage = (message: string) => {
-    // Add user message
+  const handleSendMessage = async (message: string) => {
     const userMessage: FederalChatMessage = {
       id: uuidv4(),
       content: message,
       role: 'user',
       timestamp: new Date()
     };
-    setChatMessages(prev => [...prev, userMessage]);
     
-    // Simulate AI response
+    setChatMessages(prev => [...prev, userMessage]);
     setIsSending(true);
-    setTimeout(() => {
-      const aiMessage: FederalChatMessage = {
-        id: uuidv4(),
-        content: `This is a simulated response to your query: "${message}". In a real application, this would come from an AI service.`,
-        role: 'assistant',
-        timestamp: new Date()
-      };
-      setChatMessages(prev => [...prev, aiMessage]);
-      setIsSending(false);
-    }, 1500);
+    
+    await executeOperation(async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        const aiMessage: FederalChatMessage = {
+          id: uuidv4(),
+          content: `This is a simulated response to your query: "${message}". In a real application, this would come from an AI service.`,
+          role: 'assistant',
+          timestamp: new Date()
+        };
+        
+        setChatMessages(prev => [...prev, aiMessage]);
+      } catch (error) {
+        console.error('Error in AI response:', error);
+        toast({
+          title: "Failed to get response",
+          description: "There was a problem getting a response from the AI. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsSending(false);
+      }
+    });
   };
 
   const handleClearChat = () => {
@@ -111,6 +128,10 @@ const FederalAcquisitionPage = () => {
       title: "Chat cleared",
       description: "Conversation history has been cleared.",
     });
+  };
+
+  const handleNetworkErrorReset = () => {
+    window.location.reload();
   };
 
   return (
@@ -151,27 +172,31 @@ const FederalAcquisitionPage = () => {
         </div>
         
         {activeTab === 'reports' ? (
-          <FederalReportCardGrid
-            reports={reports}
-            onCardClick={handleReportCardClick}
-          />
-        ) : (
-          <div className="bg-black/10 backdrop-blur-sm border border-white/10 rounded-lg p-4">
-            <FederalChatContainer 
-              messages={chatMessages}
-              isLoading={isSending}
-              input={messageInput}
-              onInputChange={setMessageInput}
-              onSendMessage={handleSendMessage}
-              onClearChat={handleClearChat}
-              onFileUpload={(file) => {
-                toast({
-                  title: "File uploaded",
-                  description: `File "${file.name}" has been uploaded. This is a placeholder for actual file processing.`,
-                });
-              }}
+          <NetworkErrorBoundary onReset={handleNetworkErrorReset}>
+            <FederalReportCardGrid
+              reports={reports}
+              onCardClick={handleReportCardClick}
             />
-          </div>
+          </NetworkErrorBoundary>
+        ) : (
+          <NetworkErrorBoundary onReset={handleNetworkErrorReset}>
+            <div className="bg-black/10 backdrop-blur-sm border border-white/10 rounded-lg p-4">
+              <FederalChatContainer 
+                messages={chatMessages}
+                isLoading={isSending}
+                input={messageInput}
+                onInputChange={setMessageInput}
+                onSendMessage={handleSendMessage}
+                onClearChat={handleClearChat}
+                onFileUpload={(file) => {
+                  toast({
+                    title: "File uploaded",
+                    description: `File "${file.name}" has been uploaded. This is a placeholder for actual file processing.`,
+                  });
+                }}
+              />
+            </div>
+          </NetworkErrorBoundary>
         )}
       </div>
     </ProtectedPageLayout>

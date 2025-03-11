@@ -1,5 +1,6 @@
 
 import { AIChatMessage } from "@/types/chat";
+import { fetchWithRetry } from "@/utils/retryMechanism";
 
 interface AzureOpenAIResponse {
   choices: Array<{
@@ -16,7 +17,8 @@ const AZURE_OPENAI_API_KEY = 'eMT009c9UQ0DDyYHGyeyotsbX9SyCo1ic3lqeor4h6n1RzMVBh
 
 export async function getAzureOpenAICompletion(messages: AIChatMessage[]): Promise<AzureOpenAIResponse> {
   try {
-    const response = await fetch(AZURE_OPENAI_ENDPOINT, {
+    // Use fetchWithRetry instead of regular fetch
+    const response = await fetchWithRetry(AZURE_OPENAI_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,6 +28,12 @@ export async function getAzureOpenAICompletion(messages: AIChatMessage[]): Promi
         model: 'gpt-4o',
         messages,
       }),
+    }, {
+      // Configure retry options
+      maxRetries: 3,
+      initialDelay: 1000,
+      backoffFactor: 1.5,
+      retryableStatuses: [408, 429, 500, 502, 503, 504],
     });
 
     if (!response.ok) {
