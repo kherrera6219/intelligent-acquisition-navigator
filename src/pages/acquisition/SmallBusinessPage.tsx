@@ -133,10 +133,11 @@ const SmallBusinessPage: React.FC = () => {
 
   return (
     <ProtectedPageLayout
-      title={<GradientText>Small Business Programs</GradientText>}
+      title="Small Business Programs"
       description="Manage small business participation in your acquisition activities"
       isLoading={isLoading}
     >
+      <GradientText className="text-3xl font-bold mb-4">Small Business Programs</GradientText>
       <Tabs defaultValue="dashboard" className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
@@ -326,7 +327,7 @@ const SmallBusinessPage: React.FC = () => {
                           <div className="flex items-center">
                             <h3 className="font-medium">{business.name}</h3>
                             {business.verified && (
-                              <CheckCircle2 className="h-4 w-4 text-green-500 ml-2" title="Verified Business" />
+                              <CheckCircle2 className="h-4 w-4 text-green-500 ml-2" aria-label="Verified Business" />
                             )}
                           </div>
                           <div className="flex flex-wrap gap-2 mt-2">
