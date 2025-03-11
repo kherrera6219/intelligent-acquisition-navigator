@@ -1,77 +1,153 @@
 
-import { AnimatePresence } from "framer-motion";
-import { HeaderLeft } from "./navigation/HeaderLeft";
-import { DesktopNavigation } from "./navigation/DesktopNavigation";
-import { MobileNavigation } from "./navigation/MobileNavigation";
-import { navItems } from "@/components/layout/navigation/navItems";
-import { useAuthState } from "@/hooks/useAuthState";
-import { HeaderContainer } from "./header/HeaderContainer";
-import { HeaderActions } from "./header/HeaderActions";
-import { MobileMenuToggle } from "./header/MobileMenuToggle";
-import { useHeaderNavigation } from "@/hooks/useHeaderNavigation";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
+import { Wifi, WifiOff } from 'lucide-react';
 
-interface HeaderProps {
-  className?: string;
-}
-
-export const Header = ({ className }: HeaderProps) => {
-  const { 
-    isMobileMenuOpen, 
-    openDropdown, 
-    isScrolled, 
-    pathname,
-    toggleDropdown, 
-    toggleMobileMenu, 
-    isActiveRoute,
-    setIsMobileMenuOpen,
-    setOpenDropdown
-  } = useHeaderNavigation();
+export const Header: React.FC = () => {
+  const { isAuthenticated, user, signOut } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { isOnline } = useNetworkMonitor();
   
-  const { isAuthenticated, userRole, isAuthorized } = useAuthState();
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
-    <HeaderContainer isScrolled={isScrolled} className={className}>
-      <div className="flex items-center">
-        <div className="flex-shrink-0">
-          <HeaderLeft />
+    <header className="bg-gray-900/90 border-b border-gray-800 backdrop-blur-sm sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Link to="/" className="text-white font-bold text-xl">
+              ProcurityIQ
+            </Link>
+            
+            {/* Status Indicator */}
+            {!isOnline && (
+              <div className="ml-3 flex items-center gap-1 text-yellow-500 text-xs py-0.5 px-2 rounded-full bg-yellow-500/10 border border-yellow-500/20">
+                <WifiOff className="h-3 w-3" />
+                <span>Offline</span>
+              </div>
+            )}
+          </div>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-4">
+            <Link to="/about" className="text-gray-300 hover:text-white transition-colors">About</Link>
+            <Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link>
+            <Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</Link>
+            <Link to="/sitemap" className="text-gray-300 hover:text-white transition-colors">Sitemap</Link>
+            <Link to="/knowledge-base" className="text-gray-300 hover:text-white transition-colors">Knowledge Base</Link>
+            
+            {isAuthenticated ? (
+              <>
+                <Link to="/dashboard" className="text-gray-300 hover:text-white transition-colors">Dashboard</Link>
+                <Button variant="outline" size="sm" onClick={() => signOut()}>Sign Out</Button>
+              </>
+            ) : (
+              <Button onClick={() => navigate('/auth')} variant="default" size="sm">Sign In</Button>
+            )}
+          </nav>
+          
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button 
+              onClick={toggleMenu}
+              className="text-gray-400 hover:text-white focus:outline-none"
+              aria-label="Toggle menu"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
-        <div className="hidden md:ml-6 md:block">
-          <DesktopNavigation 
-            navItems={navItems}
-            isAuthorized={isAuthorized}
-            currentPath={pathname}
-            openDropdown={openDropdown}
-            toggleDropdown={toggleDropdown}
-            isActiveRoute={isActiveRoute}
-          />
-        </div>
+        
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden mt-4 pb-4">
+            <nav className="flex flex-col space-y-2">
+              <Link 
+                to="/about" 
+                className="text-gray-300 hover:text-white transition-colors py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link 
+                to="/contact" 
+                className="text-gray-300 hover:text-white transition-colors py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
+              </Link>
+              <Link 
+                to="/pricing" 
+                className="text-gray-300 hover:text-white transition-colors py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link 
+                to="/sitemap" 
+                className="text-gray-300 hover:text-white transition-colors py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Sitemap
+              </Link>
+              <Link 
+                to="/knowledge-base" 
+                className="text-gray-300 hover:text-white transition-colors py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Knowledge Base
+              </Link>
+              
+              {isAuthenticated ? (
+                <>
+                  <Link 
+                    to="/dashboard" 
+                    className="text-gray-300 hover:text-white transition-colors py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="mt-2"
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  onClick={() => {
+                    navigate('/auth');
+                    setIsMenuOpen(false);
+                  }} 
+                  variant="default" 
+                  size="sm"
+                  className="mt-2"
+                >
+                  Sign In
+                </Button>
+              )}
+            </nav>
+          </div>
+        )}
       </div>
-      
-      <HeaderActions 
-        isMobileMenuOpen={isMobileMenuOpen}
-        toggleMobileMenu={toggleMobileMenu}
-        userRole={userRole}
-        isAuthenticated={isAuthenticated}
-      />
-      
-      <MobileMenuToggle 
-        isMobileMenuOpen={isMobileMenuOpen} 
-        toggleMobileMenu={toggleMobileMenu} 
-      />
-      
-      <AnimatePresence>
-        <MobileNavigation
-          isMobileMenuOpen={isMobileMenuOpen}
-          navItems={navItems}
-          isAuthorized={isAuthorized}
-          currentPath={pathname}
-          openDropdown={openDropdown}
-          toggleDropdown={toggleDropdown}
-          isActiveRoute={isActiveRoute}
-          setIsMobileMenuOpen={setIsMobileMenuOpen}
-          setOpenDropdown={setOpenDropdown}
-        />
-      </AnimatePresence>
-    </HeaderContainer>
+    </header>
   );
 };

@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { routes } from './routes'; // Fixed import
+import { routes } from './routes'; 
 import AppRoutes from './routes/AppRoutes'; 
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -10,6 +10,7 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import { QueryProvider } from '@/providers/QueryProvider';
 import CookieConsent from '@/components/CookieConsent';
 import { NetworkStatusMonitor } from '@/components/ui/universal/NetworkStatusMonitor';
+import { NetworkMonitorProvider } from '@/components/ui/universal/NetworkMonitorProvider';
 import { initOfflineDB, clearExpiredCache } from '@/utils/offlineStorage';
 import { generateCsrfToken } from '@/utils/csrfProtection';
 
@@ -37,12 +38,14 @@ function App() {
     <QueryProvider>
       <ThemeProvider>
         <AuthProvider>
-          <Router>
-            <NetworkStatusMonitor />
-            <AppRoutes routes={routes} />
-            <CookieConsent />
-            <Toaster />
-          </Router>
+          <NetworkMonitorProvider>
+            <Router>
+              <NetworkStatusMonitor />
+              <AppRoutes routes={routes} />
+              <CookieConsent />
+              <Toaster />
+            </Router>
+          </NetworkMonitorProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryProvider>
