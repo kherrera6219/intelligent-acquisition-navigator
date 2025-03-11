@@ -1,4 +1,3 @@
-
 import React, { Suspense } from 'react';
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Container } from "@/components/ui/universal/Container";
@@ -11,7 +10,7 @@ import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBann
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { useAuthState } from "@/hooks/useAuthState";
 import { useLocation } from "react-router-dom";
-import { PageLoader } from "@/routes/PageLoader";
+import { PageLoader } from "@/components/ui/universal/PageLoader";
 
 interface MainLayoutProps {
   children: React.ReactNode;

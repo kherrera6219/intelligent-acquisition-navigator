@@ -32,8 +32,9 @@ const SitemapPage: React.FC = () => {
                path.startsWith('/legal-review') || path.startsWith('/small-business') ||
                path.startsWith('/quality-assurance')) {
       type = 'Acquisition';
-    } else if (path.startsWith('/settings') || path.startsWith('/knowledge-base')) {
-      type = 'Settings';
+    } else if (path.startsWith('/settings') || path.startsWith('/knowledge-base') || 
+               path.startsWith('/federal-knowledge-base')) {
+      type = 'Settings & Knowledge Base';
     } else if (path === '/' || path.startsWith('/about') || path.startsWith('/features') || 
                path.startsWith('/pricing') || path.startsWith('/contact') || 
                path.startsWith('/help') || path.startsWith('/privacy') || 
@@ -49,7 +50,7 @@ const SitemapPage: React.FC = () => {
   }, {});
 
   // Sort the keys to ensure consistent display order
-  const orderedTypes = ['Main', 'Dashboard', 'Acquisition', 'Authentication', 'Settings', 'Developer', 'Other'];
+  const orderedTypes = ['Main', 'Dashboard', 'Acquisition', 'Authentication', 'Settings & Knowledge Base', 'Developer', 'Other'];
 
   return (
     <Container className="py-8">

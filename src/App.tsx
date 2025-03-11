@@ -12,7 +12,6 @@ import { NetworkStatusMonitor } from '@/components/ui/universal/NetworkStatusMon
 import { NetworkMonitorProvider } from '@/components/ui/universal/NetworkMonitorProvider';
 import { initOfflineDB, clearExpiredCache } from '@/utils/offlineStorage';
 import { generateCsrfToken } from '@/utils/csrfProtection';
-import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 import { supabase } from '@/integrations/supabase/client';
 import { checkSupabaseConnection } from '@/utils/supabaseHelper';
 
@@ -60,7 +59,6 @@ function App() {
         <AuthProvider>
           <NetworkMonitorProvider>
             <NetworkStatusMonitor />
-            <NetworkStatusBanner />
             <RouterProvider router={router} />
             <CookieConsent />
             <Toaster />

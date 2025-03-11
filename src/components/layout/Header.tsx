@@ -45,6 +45,7 @@ export const Header: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <Link to="/dashboard" className="text-gray-200 hover:text-white transition-colors">Dashboard</Link>
+                <Link to="/profile" className="text-gray-200 hover:text-white transition-colors">Profile</Link>
                 <Button variant="outline" size="sm" onClick={() => signOut()}>Sign Out</Button>
               </>
             ) : (
@@ -118,6 +119,13 @@ export const Header: React.FC = () => {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
+                  </Link>
+                  <Link 
+                    to="/profile" 
+                    className="text-gray-200 hover:text-white transition-colors py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Profile
                   </Link>
                   <Button 
                     variant="outline" 
