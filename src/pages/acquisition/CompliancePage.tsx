@@ -103,17 +103,18 @@ const CompliancePage: React.FC = () => {
           Run Compliance Check
         </Button>
       }
+      fullWidth={true}
     >
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-6">
+        <TabsList className="mb-6 w-full justify-start overflow-x-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="requirements">Requirements</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <TabsContent value="overview" className="space-y-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
             <Card className="p-4 bg-green-950/30 border-green-800/50">
               <div className="flex items-center">
                 <CheckCircle className="h-8 w-8 text-green-500 mr-3" />
@@ -145,16 +146,16 @@ const CompliancePage: React.FC = () => {
             </Card>
           </div>
           
-          <div className="mt-8">
+          <div className="mt-8 w-full">
             <h2 className="text-xl font-semibold mb-4">Recent Compliance Items</h2>
-            <div className="space-y-4">
+            <div className="space-y-4 w-full">
               {complianceItems.map((item) => (
-                <Card key={item.id} className="p-4">
+                <Card key={item.id} className="p-4 w-full">
                   <div className="flex items-start">
                     {item.status === 'compliant' && <CheckCircle className="h-5 w-5 text-green-500 mt-1 mr-3 flex-shrink-0" />}
                     {item.status === 'non-compliant' && <AlertTriangle className="h-5 w-5 text-red-500 mt-1 mr-3 flex-shrink-0" />}
                     {item.status === 'pending' && <FileText className="h-5 w-5 text-amber-500 mt-1 mr-3 flex-shrink-0" />}
-                    <div>
+                    <div className="w-full">
                       <h3 className="font-medium">{item.title}</h3>
                       <p className="text-sm text-gray-400 mt-1">{item.description}</p>
                       <div className="flex items-center mt-2 text-xs text-gray-500">
@@ -169,8 +170,8 @@ const CompliancePage: React.FC = () => {
           </div>
         </TabsContent>
         
-        <TabsContent value="requirements">
-          <Card className="p-6">
+        <TabsContent value="requirements" className="w-full">
+          <Card className="p-6 w-full">
             <h2 className="text-xl font-semibold mb-4">Compliance Requirements</h2>
             <p className="text-gray-400 mb-6">Detailed regulatory requirements and standards will be displayed here.</p>
             <div className="text-center py-6">
@@ -180,8 +181,8 @@ const CompliancePage: React.FC = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="reports">
-          <Card className="p-6">
+        <TabsContent value="reports" className="w-full">
+          <Card className="p-6 w-full">
             <h2 className="text-xl font-semibold mb-4">Compliance Reports</h2>
             <p className="text-gray-400 mb-6">Comprehensive compliance reports and documentation will be available here.</p>
             <div className="text-center py-6">
@@ -191,8 +192,8 @@ const CompliancePage: React.FC = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="history">
-          <Card className="p-6">
+        <TabsContent value="history" className="w-full">
+          <Card className="p-6 w-full">
             <h2 className="text-xl font-semibold mb-4">Compliance History</h2>
             <p className="text-gray-400 mb-6">Historical compliance records and audit trails will be shown here.</p>
             <div className="text-center py-6">
