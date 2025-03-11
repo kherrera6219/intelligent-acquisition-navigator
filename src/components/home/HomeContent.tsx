@@ -18,6 +18,8 @@ export const HomeContent: React.FC<HomeContentProps> = ({
   showBackToTop,
   isFirstVisit,
   scrollToTop,
+  showPrivacyNotice,
+  setShowPrivacyNotice
 }) => {
   return (
     <div className="flex flex-col w-full">
