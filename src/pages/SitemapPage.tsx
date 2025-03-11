@@ -21,7 +21,7 @@ const SitemapPage: React.FC = () => {
     
     let type = 'Other';
     
-    if (path.startsWith('/dashboard') || path.startsWith('/proposals') || path.startsWith('/analytics') || path === '/ms-fluent-dashboard') {
+    if (path.startsWith('/dashboard') || path.startsWith('/analytics') || path === '/ms-fluent-dashboard') {
       type = 'Dashboard';
     } else if (path.startsWith('/auth') || path === '/profile') {
       type = 'Authentication';

@@ -1,14 +1,14 @@
 
 import { createBrowserRouter, RouteObject } from "react-router-dom";
-import appRoutes, { AppRoutes } from "./AppRoutes";
+import { lazy, Suspense } from "react";
+import { PageLoader } from "./PageLoader";
+import appRoutes from "./AppRoutes";
 import authRoutes from "./authRoutes";
 import dashboardRoutes from "./dashboardRoutes";
 import settingsRoutes from "./settingsRoutes";
 import acquisitionRoutes from "./acquisitionRoutes";
-import { lazy, Suspense } from "react";
-import { PageLoader } from "./PageLoader";
 
-// Lazy import for the Microsoft Fluent Dashboard example
+// Lazy import for Microsoft Fluent Dashboard
 const MsFluentDashboardExample = lazy(() => import("@/pages/MsFluentDashboardExample"));
 
 // Higher-order component for lazy loading with Microsoft UI loading styles
@@ -18,22 +18,25 @@ const withFluentLoading = (Component: React.ComponentType) => () => (
   </Suspense>
 );
 
-// New route for Microsoft Fluent Dashboard example - explicitly typed as RouteObject
+// Microsoft Fluent Dashboard route
 const msFluentRoute: RouteObject = {
   path: "/ms-fluent-dashboard",
   element: withFluentLoading(MsFluentDashboardExample)()
 };
 
-// All routes
+// Combine all routes
 const allRoutes: RouteObject[] = [
   msFluentRoute,
   ...appRoutes,
   ...authRoutes,
   ...dashboardRoutes,
   ...settingsRoutes,
-  ...acquisitionRoutes,
+  ...acquisitionRoutes
 ];
 
 // Create the router with all routes
 export const router = createBrowserRouter(allRoutes);
-export { allRoutes as routes, AppRoutes };
+
+// Export routes for sitemap
+export { allRoutes as routes };
+

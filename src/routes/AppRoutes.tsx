@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Routes, Route, RouteObject } from 'react-router-dom';
 import { wrapWithLayout } from "./routeTypes";
 import { lazy } from "react";
+import { PageNetworkWrapper } from '@/components/ui/universal/PageNetworkWrapper';
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const AboutPage = lazy(() => import("@/pages/About"));
@@ -17,8 +17,22 @@ const ImproveApp = lazy(() => import("@/pages/ImproveApp"));
 const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
 const ApiDocsPage = lazy(() => import("@/pages/developer/ApiDocsPage"));
 const ComponentLibraryPage = lazy(() => import("@/pages/developer/ComponentLibraryPage"));
+const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const AnalyticsPage = lazy(() => import("@/pages/analytics/AnalyticsPage"));
+const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
+const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
+const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage"));
+const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage"));
+const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage"));
+const CompliancePage = lazy(() => import("@/pages/acquisition/CompliancePage"));
+const SourceSelectionPage = lazy(() => import("@/pages/acquisition/SourceSelectionPage"));
+const ContractManagementPage = lazy(() => import("@/pages/acquisition/ContractManagementPage"));
+const LegalReviewPage = lazy(() => import("@/pages/acquisition/LegalReviewPage"));
+const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPage"));
+const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
+const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
+const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 
-// Define app routes
 export const appRoutes: RouteObject[] = [
   {
     path: "/",
@@ -69,7 +83,67 @@ export const appRoutes: RouteObject[] = [
     element: wrapWithLayout(ComponentLibraryPage, false)
   },
   {
-    path: "*", // Catch all for 404
+    path: "/dashboard",
+    element: wrapWithLayout(DashboardPage)
+  },
+  {
+    path: "/analytics",
+    element: wrapWithLayout(AnalyticsPage)
+  },
+  {
+    path: "/market-research",
+    element: wrapWithLayout(MarketResearchPage)
+  },
+  {
+    path: "/document-control",
+    element: wrapWithLayout(DocumentControlPage)
+  },
+  {
+    path: "/solicitation-review",
+    element: wrapWithLayout(SolicitationReviewPage)
+  },
+  {
+    path: "/federal-acquisition",
+    element: wrapWithLayout(FederalAcquisitionPage)
+  },
+  {
+    path: "/texas-acquisition",
+    element: wrapWithLayout(TexasAcquisitionPage)
+  },
+  {
+    path: "/compliance",
+    element: wrapWithLayout(CompliancePage)
+  },
+  {
+    path: "/source-selection",
+    element: wrapWithLayout(SourceSelectionPage)
+  },
+  {
+    path: "/contract-management",
+    element: wrapWithLayout(ContractManagementPage)
+  },
+  {
+    path: "/legal-review",
+    element: wrapWithLayout(LegalReviewPage)
+  },
+  {
+    path: "/small-business",
+    element: wrapWithLayout(SmallBusinessPage)
+  },
+  {
+    path: "/quality-assurance",
+    element: wrapWithLayout(QualityAssurancePage)
+  },
+  {
+    path: "/knowledge-base",
+    element: wrapWithLayout(KnowledgeBasePage)
+  },
+  {
+    path: "/profile",
+    element: wrapWithLayout(ProfilePage)
+  },
+  {
+    path: "*",
     element: wrapWithLayout(NotFoundPage, false)
   }
 ];
@@ -82,23 +156,25 @@ interface AppRoutesProps {
 // AppRoutes component for rendering routes
 export const AppRoutes: React.FC<AppRoutesProps> = ({ routes }) => {
   return (
-    <Routes>
-      {routes.map((route, index) => (
-        <Route 
-          key={route.path || index}
-          path={route.path}
-          element={route.element}
-        >
-          {route.children?.map((childRoute, childIndex) => (
-            <Route
-              key={childRoute.path || childIndex}
-              path={childRoute.path}
-              element={childRoute.element}
-            />
-          ))}
-        </Route>
-      ))}
-    </Routes>
+    <PageNetworkWrapper>
+      <Routes>
+        {routes.map((route, index) => (
+          <Route 
+            key={route.path || index}
+            path={route.path}
+            element={route.element}
+          >
+            {route.children?.map((childRoute, childIndex) => (
+              <Route
+                key={childRoute.path || childIndex}
+                path={childRoute.path}
+                element={childRoute.element}
+              />
+            ))}
+          </Route>
+        ))}
+      </Routes>
+    </PageNetworkWrapper>
   );
 };
 
