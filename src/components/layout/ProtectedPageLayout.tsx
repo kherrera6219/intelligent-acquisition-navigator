@@ -38,7 +38,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   withCard = false,
 }) => {
   return (
-    <Container size={fullWidth ? "full" : "lg"}>
+    <Container size={fullWidth ? "full" : "lg"} variant="fluent">
       <div className="py-6 animate-fade-in">
         <PageHeader
           title={title}
@@ -73,7 +73,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
             {children}
           </Card>
         ) : (
-          <div className={cn("glass-panel p-6 rounded-lg on-gunmetal", contentClassName)}>
+          <div className={cn("fluent-panel p-6 rounded-lg", contentClassName)}>
             {children}
           </div>
         )}

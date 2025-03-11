@@ -30,16 +30,17 @@ export const PageHeader = ({
   tags,
 }: PageHeaderProps) => {
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("fluent-page-header space-y-4", className)}>
       {/* Breadcrumbs navigation */}
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="flex items-center flex-wrap text-sm text-muted-foreground mb-2">
+        <nav className="flex items-center flex-wrap text-sm text-muted-foreground mb-2" aria-label="Breadcrumb">
           {breadcrumbs.map((crumb, index) => (
             <div key={crumb.href} className="flex items-center">
-              {index > 0 && <ChevronRight className="h-4 w-4 mx-2 flex-shrink-0" />}
+              {index > 0 && <ChevronRight className="h-4 w-4 mx-2 flex-shrink-0" aria-hidden="true" />}
               <Link
                 to={crumb.href}
                 className="hover:text-white transition-colors whitespace-nowrap"
+                aria-current={index === breadcrumbs.length - 1 ? "page" : undefined}
               >
                 {crumb.label}
               </Link>
@@ -54,12 +55,12 @@ export const PageHeader = ({
           <Button
             variant="ghost"
             size="sm"
-            className="pl-0 flex items-center text-muted-foreground hover:text-primary"
+            className="pl-0 flex items-center text-muted-foreground hover:text-primary group"
             asChild
           >
             <Link to={backLink.href}>
-              <ChevronRight className="h-4 w-4 mr-1 rotate-180" />
-              {backLink.label}
+              <ChevronRight className="h-4 w-4 mr-1 rotate-180 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
+              <span>{backLink.label}</span>
             </Link>
           </Button>
         </div>
@@ -68,8 +69,8 @@ export const PageHeader = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white flex items-center gap-2">
-              <Heading className="h-6 w-6 text-primary hidden sm:inline-block" />
+            <h1 className="fluent-typography-title text-2xl sm:text-3xl font-semibold tracking-tight text-white flex items-center gap-2">
+              <Heading className="h-6 w-6 text-primary hidden sm:inline-block" aria-hidden="true" />
               {title}
             </h1>
             
@@ -80,8 +81,12 @@ export const PageHeader = ({
                   <span 
                     key={index} 
                     className={cn(
-                      "text-xs px-2 py-0.5 rounded-full font-medium",
-                      tag.color ? `bg-${tag.color}-500/10 text-${tag.color}-500` : "bg-primary/10 text-primary"
+                      "fluent-badge",
+                      tag.color === "blue" && "fluent-badge-info",
+                      tag.color === "green" && "fluent-badge-success",
+                      tag.color === "amber" && "fluent-badge-warning",
+                      tag.color === "red" && "fluent-badge-danger",
+                      !tag.color && "fluent-badge-info"
                     )}
                   >
                     {tag.label}
@@ -92,7 +97,7 @@ export const PageHeader = ({
           </div>
           
           {description && (
-            <p className="text-sm text-muted-foreground max-w-3xl">
+            <p className="fluent-typography-subtitle text-sm text-muted-foreground max-w-3xl">
               {description}
             </p>
           )}

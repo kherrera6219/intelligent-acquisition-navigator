@@ -89,7 +89,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           <main 
             id="main-content" 
             role="main" 
-            className={`flex-1 w-full pb-3 sm:pb-4 md:pb-6 ${isInternalPage ? 'mt-16' : ''} ${className || ''} bg-noise`}
+            className={`flex-1 w-full pb-3 sm:pb-4 md:pb-6 ${isInternalPage ? 'mt-16' : ''} ${getPageSpecificClasses()} ${className || ''} bg-noise`}
             tabIndex={-1}
             style={{
               ...getBackgroundStyles(),
@@ -97,7 +97,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             }}
           >
             <div className="w-full h-full min-h-full overflow-hidden animate-fade-in">
-              <Container size={containerSize} className="px-0 sm:px-0 h-full">
+              <Container size={containerSize} className={`h-full ${containerSize === "full" ? "px-0 sm:px-0" : ""}`}>
                 <Suspense fallback={<LoadingOverlay />}>
                   {children}
                 </Suspense>
