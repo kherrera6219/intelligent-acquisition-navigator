@@ -1,0 +1,14 @@
+
+/* Improving form validation feedback */
+.form-error-message {
+  @apply text-red-500 text-sm mt-1;
+}
+
+[aria-invalid="true"] {
+  @apply border-red-500 focus:ring-red-500;
+}
+
+/* Enhancing contrast for text on colored backgrounds */
+.enhanced-contrast-text {
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+}

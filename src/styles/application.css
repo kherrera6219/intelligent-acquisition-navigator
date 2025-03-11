@@ -7,4 +7,4 @@
 @import './modules/gradients.css';
 @import './modules/form.css';
 @import './modules/states.css';
-@import './modules/accessibility.css';
+@import './modules/accessibility/index.css';

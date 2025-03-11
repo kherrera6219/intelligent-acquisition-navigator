@@ -1,0 +1,30 @@
+
+/* Focus visible utilities */
+.focus-visible-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}
+
+.focus-visible-outline {
+  @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/70;
+}
+
+/* Enhanced keyboard navigation indicators */
+body.keyboard-navigation-active :focus {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Ensuring proper tab index is visible */
+[tabindex]:not([tabindex="-1"]):focus {
+  @apply outline-2 outline-offset-2 outline-primary/70;
+}
+
+/* Enhance focus styles for Microsoft Fluent UI compliance */
+.ms-focus-outline {
+  @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+}
+
+/* Keyboard accessible helper class */
+.keyboard-accessible {
+  @apply cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2;
+}

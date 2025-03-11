@@ -1,0 +1,48 @@
+
+/* Windows High Contrast Mode */
+@media screen and (-ms-high-contrast: active) {
+  button,
+  .button,
+  [role="button"] {
+    border: 2px solid currentColor !important;
+    background-color: Window !important;
+    color: WindowText !important;
+  }
+
+  a {
+    color: LinkText !important;
+  }
+
+  a:hover {
+    text-decoration: underline !important;
+  }
+}
+
+/* Windows High Contrast Mode color adjustments */
+@media screen and (forced-colors: active) {
+  button, .button {
+    forced-color-adjust: none;
+    background-color: ButtonFace !important;
+    color: ButtonText !important;
+    border-color: ButtonText !important;
+  }
+  
+  button:hover, .button:hover {
+    background-color: Highlight !important;
+    color: HighlightText !important;
+  }
+  
+  a {
+    color: LinkText !important;
+  }
+  
+  a:visited {
+    color: VisitedText !important;
+  }
+  
+  input, select, textarea {
+    border: 1px solid ButtonText !important;
+    background-color: Field !important;
+    color: FieldText !important;
+  }
+}

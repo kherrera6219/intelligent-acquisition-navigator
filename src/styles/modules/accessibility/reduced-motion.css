@@ -1,0 +1,35 @@
+
+/* Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable all animation classes */
+  .animate-spin,
+  .animate-ping,
+  .animate-pulse,
+  .animate-bounce,
+  .ms-motion-fadeIn,
+  .ms-motion-slideUp,
+  .ms-motion-slideIn,
+  .ms-motion-scaleIn,
+  .ms-card-entrance,
+  [class*="animate-"] {
+    animation: none !important;
+  }
+  
+  /* Replace scrolling animations with immediate transitions */
+  html {
+    scroll-behavior: auto !important;
+  }
+  
+  /* Disable smooth scrolling in JS libraries */
+  [data-scroll],
+  .smooth-scroll {
+    transition: none !important;
+  }
+}

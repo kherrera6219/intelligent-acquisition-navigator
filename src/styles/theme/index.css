@@ -3,4 +3,4 @@
 @import './elements.css';
 @import './components.css';
 @import './utilities.css';
-@import './accessibility.css';
+@import '../modules/accessibility/index.css';

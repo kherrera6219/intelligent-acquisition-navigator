@@ -1,0 +1,40 @@
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.not-sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Skip links for keyboard navigation */
+.skip-link {
+  @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:p-3 focus:bg-background focus:shadow-lg focus:rounded-md;
+}
+
+/* Accessibility announcement region for screen readers */
+.live-region {
+  @apply sr-only;
+  aria-live: polite;
+}
+
+/* ARIA-labels for interactive elements without visible text */
+[aria-label] {
+  @apply cursor-pointer;
+}

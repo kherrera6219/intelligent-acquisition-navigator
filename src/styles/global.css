@@ -5,7 +5,7 @@
 @import './modules/animations.css';
 @import './modules/layout.css';
 @import './modules/utilities.css';
-@import './modules/accessibility.css';
+@import './modules/accessibility/index.css';
 @import './modules/fluent.css';
 @import './modules/microsoft-fluent.css';
 @import './modules/scrollbar.css';

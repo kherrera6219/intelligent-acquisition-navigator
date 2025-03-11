@@ -14,6 +14,7 @@
 @import './modules/ms-dashboard-layout.css';
 @import './modules/ms-fluent/core.css';
 @import './modules/ms-fluent/layout.css';
+@import './modules/accessibility/index.css';
 
 /* Base styles */
 :root {
