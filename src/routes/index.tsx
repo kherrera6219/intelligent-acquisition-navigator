@@ -1,6 +1,6 @@
 
 import { createBrowserRouter } from "react-router-dom";
-import appRoutes from "./AppRoutes";
+import appRoutes, { AppRoutes } from "./AppRoutes";
 import authRoutes from "./authRoutes";
 import dashboardRoutes from "./dashboardRoutes";
 import settingsRoutes from "./settingsRoutes";
@@ -28,4 +28,4 @@ const allRoutes = [
 
 // Create the router with all routes
 export const router = createBrowserRouter(allRoutes);
-export { allRoutes as routes };
+export { allRoutes as routes, AppRoutes };
