@@ -64,7 +64,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ className 
       {/* Sidebar navigation */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 bg-card/90 backdrop-blur-sm border-r border-border transition-all duration-300 ease-in-out z-30 p-4 flex flex-col",
+          "h-full bg-card/90 backdrop-blur-sm border-r border-border transition-all duration-300 ease-in-out z-30 p-4 flex flex-col",
           isMinimized ? "w-16" : "w-64",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
           className
