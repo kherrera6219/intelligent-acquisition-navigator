@@ -42,8 +42,8 @@ export type DetailLevel = "BRIEF" | "STANDARD" | "COMPREHENSIVE";
 export interface Message {
   id: string;
   role: "user" | "assistant" | "system";
-  content: string;  // Changed from 'content' to match TexasMessage
-  timestamp: Date;  // Changed from Date type to match TexasMessage
+  content: string;
+  timestamp: Date;
   userRole?: string;
   agencyRegulation?: string;
   detailLevel?: string;

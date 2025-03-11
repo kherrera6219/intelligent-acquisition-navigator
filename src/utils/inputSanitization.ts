@@ -67,7 +67,7 @@ export function isValidUrl(url: string): boolean {
  * @param schema Zod schema for validation
  * @returns Schema with sanitization applied for string fields
  */
-export function createSanitizedSchema<T extends z.ZodTypeAny>(schema: T): T {
+export function createSanitizedSchema<T extends z.ZodTypeAny>(schema: T): z.ZodTypeAny {
   const sanitizeTransform = (input: any) => 
     typeof input === 'string' ? sanitizeHtml(input) : input;
   
@@ -81,8 +81,8 @@ export function createSanitizedSchema<T extends z.ZodTypeAny>(schema: T): T {
     }, {} as any);
   });
   
-  // Type assertion to maintain the original type
-  return transformedSchema as T;
+  // Return the transformed schema
+  return transformedSchema;
 }
 
 /**

@@ -73,7 +73,7 @@ const TexasAcquisitionPage: React.FC = () => {
       ...messages.map(msg => ({
         role: msg.role === 'user' ? 'user' : 'assistant',
         content: msg.content
-      })),
+      } as AIChatMessage)),
       { role: 'user', content: sanitizedInput }
     ];
     

@@ -30,6 +30,7 @@ export interface TexasMessage {
   timestamp: Date;
   agencyType: TexasAgencyType;
   userRole: TexasRole;
+  responseLevel?: ResponseLevel;
 }
 
 export const TEXAS_AGENCY_LABELS: Record<TexasAgencyType, string> = {

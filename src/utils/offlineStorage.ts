@@ -75,7 +75,7 @@ export async function savePendingRequest(request: {
   headers: Record<string, string>;
   body?: any;
   priority?: number;
-}): Promise<number> {
+}): Promise<IDBValidKey> {
   const db = await initOfflineDB();
   return db.add(REQUESTS_STORE, {
     ...request,
@@ -91,7 +91,7 @@ export async function getPendingRequests(): Promise<any[]> {
 }
 
 // Remove a pending request after it's processed
-export async function removePendingRequest(id: number): Promise<void> {
+export async function removePendingRequest(id: IDBValidKey): Promise<void> {
   const db = await initOfflineDB();
   await db.delete(REQUESTS_STORE, id);
 }

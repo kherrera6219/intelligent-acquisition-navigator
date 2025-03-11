@@ -1,95 +1,87 @@
 
-import { useEffect } from 'react';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import React, { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { processPendingRequests } from '@/utils/offlineStorage';
 
 /**
- * Network Status Monitor Component
- * 
- * This component monitors network connectivity and handles offline/online transitions.
- * It's intended to be mounted once at the app root level.
+ * Network status monitor component that provides real-time feedback
+ * about the application's connectivity state
  */
-export function NetworkStatusMonitor() {
-  const isOnline = useNetworkStatus();
+export const NetworkStatusMonitor: React.FC = () => {
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [reconnecting, setReconnecting] = useState<boolean>(false);
   const { toast } = useToast();
-  
+
   useEffect(() => {
-    let hasBeenOffline = false;
-    let toastId: string | undefined = undefined;
-    
-    const handleOffline = () => {
-      hasBeenOffline = true;
-      const result = toast({
-        title: "You're offline",
-        description: "Your changes will be saved and synced when your connection is restored.",
-        duration: 5000,
-        variant: "destructive"
+    // Network status change handlers
+    const handleOnline = () => {
+      setIsOnline(true);
+      
+      toast({
+        title: "Back Online",
+        description: "You're connected to the internet again. Syncing data...",
+        variant: "default",
+        duration: 3000,
       });
-      toastId = result?.id;
-    };
-    
-    const handleOnline = async () => {
-      if (hasBeenOffline) {
-        if (toastId) {
-          // Dismiss the offline toast if it's still visible
+      
+      // Process any pending requests
+      setReconnecting(true);
+      processPendingRequests((processed, total) => {
+        console.log(`Processing offline requests: ${processed}/${total}`);
+      })
+      .then((result) => {
+        if (result.successful > 0) {
           toast({
-            title: "Connection restored",
-            description: "You're back online. Syncing your data...",
-            duration: 3000,
-          });
-          toastId = undefined;
-        } else {
-          toast({
-            title: "Connection restored",
-            description: "You're back online. Syncing your data...",
+            title: "Sync Complete",
+            description: `Successfully processed ${result.successful} offline ${result.successful === 1 ? 'action' : 'actions'}.`,
+            variant: "default",
             duration: 3000,
           });
         }
         
-        // Process any pending requests
-        try {
-          const result = await processPendingRequests();
-          
-          if (result.successful > 0 || result.failed > 0) {
-            toast({
-              title: "Sync complete",
-              description: `Successfully processed ${result.successful} requests. ${
-                result.failed > 0 ? `Failed: ${result.failed}` : ''
-              }`,
-              variant: result.failed > 0 ? 'destructive' : 'default',
-              duration: 5000,
-            });
-          }
-        } catch (error) {
-          console.error('Error processing pending requests:', error);
+        if (result.failed > 0) {
           toast({
-            title: "Sync error",
-            description: "Failed to sync some changes. Please try again later.",
+            title: "Sync Issues",
+            description: `Failed to process ${result.failed} offline ${result.failed === 1 ? 'action' : 'actions'}. Some changes may need to be redone.`,
             variant: "destructive",
             duration: 5000,
           });
         }
-        
-        hasBeenOffline = false;
-      }
+      })
+      .catch((error) => {
+        console.error("Error processing offline requests:", error);
+        toast({
+          title: "Sync Error",
+          description: "An error occurred while syncing your offline actions.",
+          variant: "destructive",
+          duration: 5000,
+        });
+      })
+      .finally(() => {
+        setReconnecting(false);
+      });
     };
     
-    // Initial check
-    if (!isOnline) {
-      handleOffline();
-    }
-    
-    // Set up event listeners for online/offline status changes
+    const handleOffline = () => {
+      setIsOnline(false);
+      toast({
+        title: "You're Offline",
+        description: "Working in offline mode. Some features may be limited.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    };
+
+    // Register event listeners
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    
+
+    // Clean up listeners on unmount
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [isOnline, toast]);
-  
-  // This component doesn't render anything
-  return null;
-}
+  }, [toast]);
+
+  return null; // This component doesn't render any UI directly
+};
