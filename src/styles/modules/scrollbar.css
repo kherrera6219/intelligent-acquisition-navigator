@@ -1,0 +1,19 @@
+
+/* Custom scrollbar styles */
+@layer utilities {
+  .custom-scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900;
+  }
+  
+  .light-scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100;
+  }
+  
+  .primary-scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-900;
+  }
+  
+  .transparent-scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-gray-700/50 scrollbar-track-transparent;
+  }
+}
