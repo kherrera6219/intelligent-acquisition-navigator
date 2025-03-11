@@ -100,4 +100,4 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ routes }) => {
 };
 
 export default AppRoutes;
-export { routes };
+export default routes;

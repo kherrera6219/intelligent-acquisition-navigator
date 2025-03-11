@@ -1,10 +1,10 @@
 
 import { createBrowserRouter } from "react-router-dom";
-import { routes as appRoutes } from "./AppRoutes";
-import { routes as authRoutes } from "./authRoutes";
-import { routes as dashboardRoutes } from "./dashboardRoutes";
-import { routes as settingsRoutes } from "./settingsRoutes";
-import { routes as acquisitionRoutes } from "./acquisitionRoutes";
+import appRoutes from "./AppRoutes";
+import authRoutes from "./authRoutes";
+import dashboardRoutes from "./dashboardRoutes";
+import settingsRoutes from "./settingsRoutes";
+import acquisitionRoutes from "./acquisitionRoutes";
 import { lazy } from "react";
 
 // Lazy import for the Microsoft Fluent Dashboard example
@@ -13,9 +13,7 @@ const MsFluentDashboardExample = lazy(() => import("@/pages/MsFluentDashboardExa
 // New route for Microsoft Fluent Dashboard example
 const msFluentRoute = {
   path: "/ms-fluent-dashboard",
-  element: (
-    <MsFluentDashboardExample />
-  ),
+  element: <MsFluentDashboardExample />
 };
 
 // All routes

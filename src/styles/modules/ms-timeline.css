@@ -1,0 +1,50 @@
+
+/* MS Timeline Styles */
+.ms-timeline {
+  @apply space-y-3;
+}
+
+.ms-timeline-item {
+  @apply flex items-start gap-3 pb-3 relative;
+}
+
+.ms-timeline-item:not(:last-child):after {
+  content: '';
+  @apply absolute left-2 top-6 bottom-0 w-px bg-border/30;
+}
+
+.ms-timeline-icon {
+  @apply flex-shrink-0 w-4 h-4 mt-1 rounded-full bg-background flex items-center justify-center z-10;
+}
+
+.ms-timeline-content {
+  @apply flex-grow;
+}
+
+.ms-timeline-title {
+  @apply text-sm font-medium;
+}
+
+.ms-timeline-time {
+  @apply text-xs text-muted-foreground mt-0.5;
+}
+
+.ms-badge {
+  @apply px-2 py-0.5 text-xs font-medium rounded-full;
+}
+
+.ms-badge-primary {
+  @apply bg-primary/20 text-primary;
+}
+
+.ms-badge-success {
+  @apply bg-green-500/20 text-green-500;
+}
+
+.ms-badge-warning {
+  @apply bg-amber-500/20 text-amber-500;
+}
+
+.ms-badge-error {
+  @apply bg-red-500/20 text-red-500;
+}

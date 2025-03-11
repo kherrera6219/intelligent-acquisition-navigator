@@ -67,4 +67,4 @@ const routes: RouteObject[] = [
   }
 ];
 
-export { routes };
+export default routes;

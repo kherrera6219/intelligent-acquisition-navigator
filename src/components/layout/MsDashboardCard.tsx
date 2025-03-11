@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card } from "@/components/ui/universal/Card";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useNavigate } from 'react-router-dom';
 
