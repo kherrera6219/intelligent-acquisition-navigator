@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Container } from "@/components/ui/universal/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card } from "@/components/ui/universal/Card";
-import { AlertCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { PageNetworkWrapper } from "@/components/ui/universal/PageNetworkWrapper";
