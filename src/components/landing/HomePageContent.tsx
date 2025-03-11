@@ -6,13 +6,12 @@ import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { SectionErrorBoundary } from "@/components/ui/section/SectionErrorBoundary";
 import { SectionLoader } from "@/components/ui/section/SectionLoader";
-import { PrivacyBanner } from "./PrivacyBanner";
 import { PrivacyDialog } from "./PrivacyDialog";
 import { BackToTopButton } from "@/components/ui/navigation/BackToTopButton";
 import { HelpButton } from "@/components/ui/navigation/HelpButton";
 import { FirstVisitGuide } from "@/components/ui/guide/FirstVisitGuide";
 import CookieConsent from "@/components/CookieConsent";
-import { VerificationBanner } from "@/components/auth/VerificationBanner";
+import { PrivacyBanner } from "./PrivacyBanner";
 import { useState } from "react";
 import { Container } from "@/components/ui/universal/Container";
 
@@ -33,32 +32,8 @@ export const HomePageContent = ({
 }: HomePageContentProps) => {
   const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
 
-  const skipToMain = () => {
-    const main = document.querySelector('main');
-    if (main) {
-      main.focus();
-    }
-  };
-
   return (
-    <div 
-      className="relative min-h-screen h-full w-full bg-background overflow-x-hidden bg-noise flex flex-col"
-      style={{
-        backgroundImage: `
-          linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
-          radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
-        `,
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        onClick={skipToMain}
-      >
-        Skip to main content
-      </a>
-      
+    <div className="relative w-full h-full flex flex-col">
       {/* Privacy Notice Dialog */}
       <PrivacyDialog 
         open={showPrivacyDialog}
@@ -76,49 +51,45 @@ export const HomePageContent = ({
         />
       )}
       
-      <VerificationBanner />
-      
-      <main id="main-content" tabIndex={-1} className="flex-1 w-full">
-        <div className="flex flex-col animate-fade-in h-full">
-          <SectionErrorBoundary>
-            <Suspense fallback={<SectionLoader />}>
-              <HeroSection />
-            </Suspense>
-          </SectionErrorBoundary>
+      <div className="flex flex-col animate-fade-in">
+        <SectionErrorBoundary>
+          <Suspense fallback={<SectionLoader />}>
+            <HeroSection />
+          </Suspense>
+        </SectionErrorBoundary>
 
-          <div className="space-y-24 py-12 md:py-24">
-            <Container>
-              <SectionErrorBoundary>
-                <Suspense fallback={<SectionLoader />}>
-                  <div className="fluent-panel rounded-lg p-6 md:p-8">
-                    <FeaturesSection />
-                  </div>
-                </Suspense>
-              </SectionErrorBoundary>
-            </Container>
+        <div className="space-y-24 py-12 md:py-24">
+          <Container>
+            <SectionErrorBoundary>
+              <Suspense fallback={<SectionLoader />}>
+                <div className="fluent-panel rounded-lg p-6 md:p-8">
+                  <FeaturesSection />
+                </div>
+              </Suspense>
+            </SectionErrorBoundary>
+          </Container>
 
-            <Container>
-              <SectionErrorBoundary>
-                <Suspense fallback={<SectionLoader />}>
-                  <div className="fluent-panel rounded-lg p-6 md:p-8">
-                    <TestimonialsSection />
-                  </div>
-                </Suspense>
-              </SectionErrorBoundary>
-            </Container>
+          <Container>
+            <SectionErrorBoundary>
+              <Suspense fallback={<SectionLoader />}>
+                <div className="fluent-panel rounded-lg p-6 md:p-8">
+                  <TestimonialsSection />
+                </div>
+              </Suspense>
+            </SectionErrorBoundary>
+          </Container>
 
-            <Container>
-              <SectionErrorBoundary>
-                <Suspense fallback={<SectionLoader />}>
-                  <div className="fluent-panel rounded-lg p-6 md:p-8">
-                    <CTASection />
-                  </div>
-                </Suspense>
-              </SectionErrorBoundary>
-            </Container>
-          </div>
+          <Container>
+            <SectionErrorBoundary>
+              <Suspense fallback={<SectionLoader />}>
+                <div className="fluent-panel rounded-lg p-6 md:p-8">
+                  <CTASection />
+                </div>
+              </Suspense>
+            </SectionErrorBoundary>
+          </Container>
         </div>
-      </main>
+      </div>
 
       <div className="fixed bottom-8 right-8 space-y-4 z-50">
         <HelpButton />

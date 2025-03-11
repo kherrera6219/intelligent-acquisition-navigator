@@ -6,15 +6,15 @@ import { HeaderActionButtons } from './HeaderActionButtons';
 import { HeaderUserMenu } from './HeaderUserMenu';
 
 interface HeaderContentProps {
-  isMobile: boolean;
-  mobileMenuOpen: boolean;
-  refreshSession: () => Promise<void>;
-  user: any;
+  isMobile?: boolean;
+  mobileMenuOpen?: boolean;
+  refreshSession?: () => Promise<void>;
+  user?: any;
 }
 
 export const HeaderContent: React.FC<HeaderContentProps> = ({
-  isMobile,
-  mobileMenuOpen,
+  isMobile = false,
+  mobileMenuOpen = false,
   refreshSession,
   user
 }) => {

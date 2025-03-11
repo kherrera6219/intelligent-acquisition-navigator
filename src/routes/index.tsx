@@ -29,7 +29,7 @@ export const routes: RouteObject[] = [
   {
     path: '/about',
     element: (
-      <MainLayout containerSize="lg">
+      <MainLayout containerSize="lg" forceExternalHeader={true}>
         <AboutPage />
       </MainLayout>
     ),
@@ -37,7 +37,7 @@ export const routes: RouteObject[] = [
   {
     path: '/contact',
     element: (
-      <MainLayout containerSize="lg">
+      <MainLayout containerSize="lg" forceExternalHeader={true}>
         <ContactPage />
       </MainLayout>
     ),
@@ -45,7 +45,7 @@ export const routes: RouteObject[] = [
   {
     path: '/pricing',
     element: (
-      <MainLayout containerSize="lg">
+      <MainLayout containerSize="lg" forceExternalHeader={true}>
         <PricingPage />
       </MainLayout>
     ),
@@ -53,7 +53,7 @@ export const routes: RouteObject[] = [
   {
     path: '/privacy',
     element: (
-      <MainLayout containerSize="lg">
+      <MainLayout containerSize="lg" forceExternalHeader={true}>
         <PrivacyPage />
       </MainLayout>
     ),
@@ -61,7 +61,7 @@ export const routes: RouteObject[] = [
   {
     path: '/sitemap',
     element: (
-      <MainLayout containerSize="lg">
+      <MainLayout containerSize="lg" forceExternalHeader={true}>
         <SitemapPage />
       </MainLayout>
     ),
@@ -69,7 +69,7 @@ export const routes: RouteObject[] = [
   {
     path: '/help',
     element: (
-      <MainLayout containerSize="lg">
+      <MainLayout containerSize="lg" forceExternalHeader={true}>
         <HelpPage />
       </MainLayout>
     ),
@@ -77,7 +77,7 @@ export const routes: RouteObject[] = [
   {
     path: '/improve',
     element: (
-      <MainLayout containerSize="lg">
+      <MainLayout containerSize="lg" forceExternalHeader={true}>
         <ImproveApp />
       </MainLayout>
     ),
@@ -85,7 +85,7 @@ export const routes: RouteObject[] = [
   {
     path: '/api-docs',
     element: (
-      <MainLayout containerSize="lg">
+      <MainLayout containerSize="lg" forceExternalHeader={true}>
         <ApiDocsPage />
       </MainLayout>
     ),
@@ -105,7 +105,7 @@ export const routes: RouteObject[] = [
   {
     path: '*',
     element: (
-      <MainLayout>
+      <MainLayout forceExternalHeader={true}>
         <NotFoundPage />
       </MainLayout>
     ),

@@ -1,15 +1,11 @@
 
 import { Suspense } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
 import { HomePageError } from "@/components/landing/HomePageError";
 import { HomePageLoading } from "@/components/landing/HomePageLoading";
 import { HomePageContent } from "@/components/landing/HomePageContent";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { useAuthState } from "@/hooks/useAuthState";
-import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
+import { MainLayout } from "@/components/layout/MainLayout";
 
 const Index = () => {
   const {
@@ -22,8 +18,6 @@ const Index = () => {
     error
   } = useHomePageInit();
   
-  const { isAuthenticated } = useAuthState();
-  
   if (error) {
     return <HomePageError error={error} />;
   }
@@ -33,25 +27,21 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {isAuthenticated ? <UniversalInternalHeader /> : <Header />}
-      <ScrollArea className="flex-1 h-full w-full overflow-hidden">
-        <HomePageContent 
-          showPrivacyNotice={showPrivacyNotice}
-          setShowPrivacyNotice={setShowPrivacyNotice}
-          showBackToTop={showBackToTop}
-          isFirstVisit={isFirstVisit}
-          scrollToTop={scrollToTop}
-        />
-      </ScrollArea>
-      <Footer />
-    </div>
+    <HomePageContent 
+      showPrivacyNotice={showPrivacyNotice}
+      setShowPrivacyNotice={setShowPrivacyNotice}
+      showBackToTop={showBackToTop}
+      isFirstVisit={isFirstVisit}
+      scrollToTop={scrollToTop}
+    />
   );
 };
 
 const HomePage = () => (
   <PageErrorBoundary>
-    <Index />
+    <MainLayout showHeader={true} showFooter={true} forceExternalHeader={true}>
+      <Index />
+    </MainLayout>
   </PageErrorBoundary>
 );
 

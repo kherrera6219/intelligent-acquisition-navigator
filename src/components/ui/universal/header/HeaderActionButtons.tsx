@@ -7,29 +7,31 @@ import { cn } from '@/lib/utils';
 import { SessionTimeoutTimer } from '@/components/settings/SessionTimeoutTimer';
 
 export interface HeaderActionButtonsProps {
-  refreshSession: () => Promise<void>;
-  mobileMenuOpen: boolean;
-  isMobile: boolean;
+  refreshSession?: () => Promise<void>;
+  mobileMenuOpen?: boolean;
+  isMobile?: boolean;
 }
 
 export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({ 
   refreshSession, 
-  mobileMenuOpen,
-  isMobile
+  mobileMenuOpen = false,
+  isMobile = false
 }) => {
   return (
     <>
-      <Tooltip content="Refresh Session">
-        <button 
-          onClick={() => refreshSession()} 
-          className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800"
-          aria-label="Refresh session"
-        >
-          <RefreshCw className="h-4 w-4" />
-        </button>
-      </Tooltip>
+      {refreshSession && (
+        <Tooltip content="Refresh Session">
+          <button 
+            onClick={() => refreshSession()} 
+            className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800"
+            aria-label="Refresh session"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </button>
+        </Tooltip>
+      )}
       
-      <SessionTimeoutTimer className="flex items-center gap-1 px-2 py-1 bg-gray-800 rounded text-xs" />
+      {refreshSession && <SessionTimeoutTimer className="flex items-center gap-1 px-2 py-1 bg-gray-800 rounded text-xs" />}
       
       <Tooltip content="Help">
         <Link 
@@ -41,19 +43,21 @@ export const HeaderActionButtons: React.FC<HeaderActionButtonsProps> = ({
         </Link>
       </Tooltip>
       
-      <Tooltip content="Notifications">
-        <Link 
-          to="/notifications" 
-          className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800 relative"
-          aria-label="Notifications"
-        >
-          <Bell className="h-4 w-4" />
-          <span 
-            className="absolute -top-0.5 -right-0.5 bg-red-500 text-[10px] flex items-center justify-center rounded-full h-3.5 w-3.5 font-medium"
-            aria-label="3 unread notifications"
-          >3</span>
-        </Link>
-      </Tooltip>
+      {refreshSession && (
+        <Tooltip content="Notifications">
+          <Link 
+            to="/notifications" 
+            className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-gray-800 relative"
+            aria-label="Notifications"
+          >
+            <Bell className="h-4 w-4" />
+            <span 
+              className="absolute -top-0.5 -right-0.5 bg-red-500 text-[10px] flex items-center justify-center rounded-full h-3.5 w-3.5 font-medium"
+              aria-label="3 unread notifications"
+            >3</span>
+          </Link>
+        </Tooltip>
+      )}
       
       <div className={cn("h-4 border-r border-gray-600", mobileMenuOpen && "hidden")} />
     </>

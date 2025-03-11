@@ -18,6 +18,7 @@ interface MainLayoutProps {
   showFooter?: boolean;
   containerSize?: "sm" | "md" | "lg" | "xl" | "full";
   className?: string;
+  forceExternalHeader?: boolean; // New prop to force external header even when authenticated
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ 
@@ -25,12 +26,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   showHeader = true, 
   showFooter = true,
   containerSize = "full",
-  className
+  className,
+  forceExternalHeader = false
 }) => {
   const { isAuthenticated } = useAuthState();
   const { pathname } = useLocation();
   
-  const isInternalPage = isAuthenticated && showHeader;
+  // Use internal header for authenticated users, unless specifically forcing external header
+  const useInternalHeader = isAuthenticated && !forceExternalHeader && showHeader;
   const isDashboardPage = pathname === "/dashboard";
   
   // Special classes for specific pages
@@ -46,25 +49,15 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     return "";
   };
 
-  // Determine background styles for internal pages
+  // Determine background styles
   const getBackgroundStyles = () => {
-    if (isInternalPage) {
-      return {
-        backgroundImage: `
-          linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.12) 100%),
-          radial-gradient(at 50% 0%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.15) 75%)
-        `,
-        backgroundAttachment: 'fixed',
-        backgroundColor: 'var(--background)'
-      };
-    }
-    
     return {
       backgroundImage: `
         linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.12) 100%),
         radial-gradient(at 50% 0%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.15) 75%)
       `,
-      backgroundAttachment: 'fixed'
+      backgroundAttachment: 'fixed',
+      backgroundColor: 'var(--background)'
     };
   };
 
@@ -81,7 +74,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           </a>
 
           {showHeader && (
-            isInternalPage ? <UniversalInternalHeader /> : <Header />
+            useInternalHeader ? <UniversalInternalHeader /> : <Header />
           )}
           
           <VerificationBanner />
@@ -89,11 +82,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           <main 
             id="main-content" 
             role="main" 
-            className={`flex-1 w-full pb-3 sm:pb-4 md:pb-6 ${isInternalPage ? 'mt-16' : ''} ${getPageSpecificClasses()} ${className || ''} bg-noise`}
+            className={`flex-1 w-full pb-3 sm:pb-4 md:pb-6 ${useInternalHeader ? 'mt-16' : ''} ${getPageSpecificClasses()} ${className || ''} bg-noise`}
             tabIndex={-1}
             style={{
               ...getBackgroundStyles(),
-              minHeight: isInternalPage ? 'calc(100vh - 4rem)' : '100vh'
+              minHeight: useInternalHeader ? 'calc(100vh - 4rem)' : '100vh'
             }}
           >
             <div className="w-full h-full min-h-full overflow-hidden animate-fade-in">
