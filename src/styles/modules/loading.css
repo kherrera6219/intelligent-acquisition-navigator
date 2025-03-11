@@ -1,0 +1,93 @@
+
+.loading-skeleton {
+  @apply animate-pulse bg-gradient-to-r from-neutral-200 via-neutral-300 to-neutral-200 dark:from-neutral-800 dark:via-neutral-700 dark:to-neutral-800;
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.loading-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.loading-scale-in {
+  transform: scale(0.95);
+  opacity: 0;
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+.loading-blur-in {
+  filter: blur(4px);
+  opacity: 0;
+  animation: blurIn 0.4s ease-out forwards;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--primary);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner-lg {
+  width: 40px;
+  height: 40px;
+  border-width: 5px;
+}
+
+.loading-card {
+  @apply bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl shadow-lg;
+  transition: all 0.3s ease;
+}
+
+.loading-card-hover:hover {
+  @apply translate-y-[-2px] shadow-xl;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes blurIn {
+  from {
+    filter: blur(4px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
