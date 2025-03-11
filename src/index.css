@@ -12,6 +12,7 @@
 @import './styles/modules/components.css';
 @import './styles/modules/utilities.css';
 @import './styles/modules/scrollbar.css';
+@import './styles/modules/textures.css';
 
 /* Mobile-first responsive design */
 html {
