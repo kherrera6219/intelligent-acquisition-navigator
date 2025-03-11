@@ -8,7 +8,7 @@ import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
 import { useToast } from "@/hooks/use-toast";
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { BackButton } from "@/components/navigation/BackButton";
-import { UniversalInternalHeader } from "@/components/layout/UniversalInternalHeader";
+import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
 import { InternalFooter } from "@/components/layout/InternalFooter";
 
 const TexasAcquisition = () => {
