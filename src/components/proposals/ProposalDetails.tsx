@@ -9,6 +9,7 @@ import AttachmentsTab from '@/components/proposals/AttachmentsTab';
 import EvaluationsTab from '@/components/proposals/EvaluationsTab';
 import { formatDate, formatCurrency } from '@/utils/formatters';
 import type { Proposal, Evaluation } from '@/types/proposals';
+import { Container, Row, Col } from '@/components/ui/universal/Grid';
 
 interface ProposalDetailsProps {
   proposal: Proposal;
@@ -44,7 +45,7 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal, hand
   };
 
   return (
-    <div className="p-3 sm:p-4">
+    <Container>
       <Button variant="ghost" size="sm" onClick={handleBack}>
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back
@@ -62,22 +63,26 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal, hand
           </div>
         </Card>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <Card className="p-3 sm:p-4 flex items-center">
-            <DollarSign className="h-4 sm:h-5 w-4 sm:w-5 mr-2 text-muted-foreground" />
-            <div>
-              <p className="text-xs sm:text-sm text-muted-foreground">Budget</p>
-              <p className="text-sm sm:text-base font-semibold">{formatCurrency(proposal.budget || 0)}</p>
-            </div>
-          </Card>
-          <Card className="p-3 sm:p-4 flex items-center">
-            <Calendar className="h-4 sm:h-5 w-4 sm:w-5 mr-2 text-muted-foreground" />
-            <div>
-              <p className="text-xs sm:text-sm text-muted-foreground">Timeline</p>
-              <p className="text-sm sm:text-base font-semibold">{proposal.timeframe || 0} {proposal.timeframe === 1 ? 'month' : 'months'}</p>
-            </div>
-          </Card>
-        </div>
+        <Row className="mb-4 sm:mb-6">
+          <Col sm={6} className="mb-3 sm:mb-0">
+            <Card className="p-3 sm:p-4 flex items-center h-full">
+              <DollarSign className="h-4 sm:h-5 w-4 sm:w-5 mr-2 text-muted-foreground" />
+              <div>
+                <p className="text-xs sm:text-sm text-muted-foreground">Budget</p>
+                <p className="text-sm sm:text-base font-semibold">{formatCurrency(proposal.budget || 0)}</p>
+              </div>
+            </Card>
+          </Col>
+          <Col sm={6}>
+            <Card className="p-3 sm:p-4 flex items-center h-full">
+              <Calendar className="h-4 sm:h-5 w-4 sm:w-5 mr-2 text-muted-foreground" />
+              <div>
+                <p className="text-xs sm:text-sm text-muted-foreground">Timeline</p>
+                <p className="text-sm sm:text-base font-semibold">{proposal.timeframe || 0} {proposal.timeframe === 1 ? 'month' : 'months'}</p>
+              </div>
+            </Card>
+          </Col>
+        </Row>
 
         <Card className="mb-4 sm:mb-6">
           <Tabs defaultValue="evaluations">
@@ -117,6 +122,6 @@ export const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal, hand
           </Tabs>
         </Card>
       </div>
-    </div>
+    </Container>
   );
 };
