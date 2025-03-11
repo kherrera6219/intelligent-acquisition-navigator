@@ -9,6 +9,7 @@ export function useOfflineSync() {
   const [pendingCount, setPendingCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   const { toast } = useToast();
 
   // Fetch the count of pending requests
@@ -50,6 +51,8 @@ export function useOfflineSync() {
         });
       }
 
+      setLastSyncTime(new Date());
+      
       // Re-fetch pending count after sync
       await fetchPendingCount();
     } catch (error) {
@@ -88,6 +91,7 @@ export function useOfflineSync() {
     isSyncing,
     syncProgress,
     syncOfflineData,
-    refreshPendingCount: fetchPendingCount
+    refreshPendingCount: fetchPendingCount,
+    lastSyncTime
   };
 }

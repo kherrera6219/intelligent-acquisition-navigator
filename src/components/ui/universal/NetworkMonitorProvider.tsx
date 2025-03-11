@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNetworkErrorMonitor } from '@/hooks/useNetworkErrorMonitor';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { checkSupabaseConnection } from '@/utils/supabaseHelper';
 
 // Create context
 interface NetworkContextType {
@@ -28,14 +29,10 @@ export const NetworkMonitorProvider: React.FC<{ children: React.ReactNode }> = (
   
   // Check Supabase connection on mount and when online status changes
   useEffect(() => {
-    const checkSupabaseConnection = async () => {
+    const checkConnectionStatus = async () => {
       if (networkState.isOnline) {
         try {
-          // Simple ping to see if Supabase is reachable
-          const { data, error } = await supabase.from('_healthcheck').select('*').limit(1);
-          
-          // If no error or got a helpful error (e.g. table doesn't exist), consider connected
-          const isConnected = !error || (error && error.code === 'PGRST116');
+          const isConnected = await checkSupabaseConnection();
           setSupabaseConnected(isConnected);
           
           if (isConnected) {
@@ -50,12 +47,12 @@ export const NetworkMonitorProvider: React.FC<{ children: React.ReactNode }> = (
       }
     };
     
-    checkSupabaseConnection();
+    checkConnectionStatus();
     
     // Set up periodic connection check
     const intervalId = setInterval(() => {
       if (networkState.isOnline) {
-        checkSupabaseConnection();
+        checkConnectionStatus();
       }
     }, 60000); // Check every minute
     
