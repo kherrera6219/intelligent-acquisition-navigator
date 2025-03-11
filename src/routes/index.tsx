@@ -1,25 +1,26 @@
+
 import { createBrowserRouter } from "react-router-dom";
 import { routes as appRoutes } from "./AppRoutes";
 import { routes as authRoutes } from "./authRoutes";
 import { routes as dashboardRoutes } from "./dashboardRoutes";
 import { routes as settingsRoutes } from "./settingsRoutes";
 import { routes as acquisitionRoutes } from "./acquisitionRoutes";
-import { PageLoader } from "./PageLoader";
-import { lazyImport } from "./lazyComponents";
+import { lazy } from "react";
 
-// Lazy import for the new Microsoft Fluent Dashboard example
-const { MsFluentDashboardExample } = lazyImport(
-  () => import("@/pages/MsFluentDashboardExample"),
-  "MsFluentDashboardExample"
-);
+// Lazy import for the Microsoft Fluent Dashboard example
+const MsFluentDashboardExample = lazy(() => import("@/pages/MsFluentDashboardExample"));
+
+// New route for Microsoft Fluent Dashboard example
+const msFluentRoute = {
+  path: "/ms-fluent-dashboard",
+  element: (
+    <MsFluentDashboardExample />
+  ),
+};
 
 // All routes
 const allRoutes = [
-  // Add our new Microsoft Fluent Dashboard example route
-  {
-    path: "/ms-fluent-dashboard",
-    element: <PageLoader component={MsFluentDashboardExample} />,
-  },
+  msFluentRoute,
   ...appRoutes,
   ...authRoutes,
   ...dashboardRoutes,
@@ -29,3 +30,4 @@ const allRoutes = [
 
 // Create the router with all routes
 export const router = createBrowserRouter(allRoutes);
+export const routes = allRoutes; // Also export the routes array for sitemap usage

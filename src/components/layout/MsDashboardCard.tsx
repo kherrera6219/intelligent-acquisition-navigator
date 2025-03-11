@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 
 interface MsDashboardCardProps {
-  children: ReactNode;
+  children?: ReactNode;
   title?: string;
   subtitle?: string;
   href?: string;
@@ -72,9 +72,11 @@ export function MsDashboardCard({
         </div>
       )}
       
-      <div className={cn("p-5", contentClassName)}>
-        {children}
-      </div>
+      {children && (
+        <div className={cn("p-5", contentClassName)}>
+          {children}
+        </div>
+      )}
       
       {footer && (
         <div className={cn("p-5 pt-0", footerClassName)}>

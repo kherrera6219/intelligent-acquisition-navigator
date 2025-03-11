@@ -1,38 +1,23 @@
 
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { MainLayout } from "@/components/layout/MainLayout";
+import { wrapWithLayout } from "./routeTypes";
 
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
-const HelpPage = lazy(() => import("@/pages/HelpPage"));
-const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
+const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
+const FederalKnowledgeBasePage = lazy(() => import("@/pages/FederalKnowledgeBasePage"));
 
-export const settingsRoutes: RouteObject[] = [
+export const routes: RouteObject[] = [
   {
     path: "/settings",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <SettingsPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(SettingsPage)
   },
   {
-    path: "/help",
-    element: (
-      <MainLayout>
-        <HelpPage />
-      </MainLayout>
-    )
+    path: "/knowledge-base",
+    element: wrapWithLayout(KnowledgeBasePage, false)
   },
   {
-    path: "/sitemap",
-    element: (
-      <MainLayout>
-        <SitemapPage />
-      </MainLayout>
-    )
+    path: "/federal-knowledge-base",
+    element: wrapWithLayout(FederalKnowledgeBasePage)
   }
 ];

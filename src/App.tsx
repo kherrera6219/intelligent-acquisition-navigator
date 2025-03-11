@@ -1,9 +1,8 @@
 
 import React, { useEffect } from 'react';
 import './App.css';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { routes } from './routes'; 
-import AppRoutes from './routes/AppRoutes'; 
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/providers/AuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
@@ -60,13 +59,11 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <NetworkMonitorProvider>
-            <Router>
-              <NetworkStatusMonitor />
-              <NetworkStatusBanner />
-              <AppRoutes routes={routes} />
-              <CookieConsent />
-              <Toaster />
-            </Router>
+            <NetworkStatusMonitor />
+            <NetworkStatusBanner />
+            <RouterProvider router={router} />
+            <CookieConsent />
+            <Toaster />
           </NetworkMonitorProvider>
         </AuthProvider>
       </ThemeProvider>

@@ -1,31 +1,28 @@
 
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { MainLayout } from "@/components/layout/MainLayout";
+import { wrapWithLayout } from "./routeTypes";
 
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
-const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
+const AnalyticsPage = lazy(() => import("@/pages/analytics/AnalyticsPage"));
+const ProposalsPage = lazy(() => import("@/pages/ProposalsPage"));
+const ProposalDetailPage = lazy(() => import("@/pages/ProposalDetailPage"));
 
-export const dashboardRoutes: RouteObject[] = [
+export const routes: RouteObject[] = [
   {
     path: "/dashboard",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <DashboardPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(DashboardPage)
   },
   {
     path: "/analytics",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <AnalyticsPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(AnalyticsPage)
+  },
+  {
+    path: "/proposals",
+    element: wrapWithLayout(ProposalsPage)
+  },
+  {
+    path: "/proposals/:id",
+    element: wrapWithLayout(ProposalDetailPage)
   }
 ];

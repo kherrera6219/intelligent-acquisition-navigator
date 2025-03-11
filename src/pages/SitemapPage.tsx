@@ -4,7 +4,7 @@ import { Container } from '@/components/ui/universal/Container';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { GradientText } from '@/components/ui/universal/GradientText';
 import { Link } from 'react-router-dom';
-import { routes } from '@/routes';
+import { routes } from '@/routes'; // This now properly imports the routes array
 import { Card } from '@/components/ui/universal/Card';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { NetworkErrorHandler } from '@/components/ui/universal/NetworkErrorHandler';

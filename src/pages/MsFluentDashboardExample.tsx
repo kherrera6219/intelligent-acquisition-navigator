@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function MsFluentDashboardExample() {
+const MsFluentDashboardExample: React.FC = () => {
   // Example recent activity data
   const recentActivities = [
     { 
@@ -288,4 +288,6 @@ export default function MsFluentDashboardExample() {
       </div>
     </MsFluentDashboardLayout>
   );
-}
+};
+
+export default MsFluentDashboardExample;

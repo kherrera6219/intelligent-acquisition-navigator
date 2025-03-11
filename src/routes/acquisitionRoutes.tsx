@@ -1,8 +1,7 @@
 
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { MainLayout } from "@/components/layout/MainLayout";
+import { wrapWithLayout } from "./routeTypes";
 
 const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
 const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
@@ -15,136 +14,55 @@ const ContractManagementPage = lazy(() => import("@/pages/acquisition/ContractMa
 const LegalReviewPage = lazy(() => import("@/pages/acquisition/LegalReviewPage"));
 const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPage"));
 const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
-const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
-const FederalKnowledgeBasePage = lazy(() => import("@/pages/FederalKnowledgeBasePage"));
+const TexasAcquisition = lazy(() => import("@/pages/acquisition/TexasAcquisition"));
 
-export const acquisitionRoutes: RouteObject[] = [
+export const routes: RouteObject[] = [
   {
     path: "/document-control",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <DocumentControlPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(DocumentControlPage)
   },
   {
     path: "/market-research",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <MarketResearchPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(MarketResearchPage)
   },
   {
     path: "/solicitation-review",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <SolicitationReviewPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(SolicitationReviewPage)
   },
   {
     path: "/federal-acquisition",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <FederalAcquisitionPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
-  },
-  {
-    path: "/federal-knowledge-base",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <FederalKnowledgeBasePage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(FederalAcquisitionPage)
   },
   {
     path: "/texas-acquisition",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <TexasAcquisitionPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(TexasAcquisitionPage)
   },
   {
     path: "/compliance",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <CompliancePage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(CompliancePage)
   },
   {
     path: "/source-selection",
-    element: (
-      <ProtectedRoute requiredRole="manager">
-        <MainLayout>
-          <SourceSelectionPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(SourceSelectionPage, true, "manager")
   },
   {
     path: "/contract-management",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <ContractManagementPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(ContractManagementPage)
   },
   {
     path: "/legal-review",
-    element: (
-      <ProtectedRoute requiredRole="manager">
-        <MainLayout>
-          <LegalReviewPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(LegalReviewPage, true, "manager")
   },
   {
     path: "/small-business",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <SmallBusinessPage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(SmallBusinessPage)
   },
   {
     path: "/quality-assurance",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <QualityAssurancePage />
-        </MainLayout>
-      </ProtectedRoute>
-    )
+    element: wrapWithLayout(QualityAssurancePage)
   },
   {
-    path: "/knowledge-base",
-    element: (
-      <MainLayout>
-        <KnowledgeBasePage />
-      </MainLayout>
-    )
+    path: "/texas-acquisition-detail",
+    element: wrapWithLayout(TexasAcquisition)
   }
 ];
