@@ -1,162 +1,61 @@
 
 import { lazy } from "react";
-import React from "react";
 
-// Public Pages
-export const HomePage = lazy(() => 
-  import("@/pages/HomePage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading home page")
-  }))
-);
+export function lazyImport<
+  T extends React.ComponentType<any>,
+  I extends { [K2 in K]: T },
+  K extends keyof I
+>(factory: () => Promise<I>, name: K): I {
+  return Object.create({
+    [name]: lazy(() => factory().then((module) => ({ default: module[name] }))),
+  });
+}
 
-export const AboutPage = lazy(() => 
-  import("@/pages/About").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading about page")
-  }))
-);
+// Components from app routes
+export const { HomePage } = lazyImport(() => import("@/pages/HomePage"), "HomePage");
+export const { AboutPage } = lazyImport(() => import("@/pages/About"), "AboutPage");
+export const { FeaturesPage } = lazyImport(() => import("@/pages/FeaturesPage"), "FeaturesPage");
+export const { ContactPage } = lazyImport(() => import("@/pages/ContactPage"), "ContactPage");
+export const { PricingPage } = lazyImport(() => import("@/pages/PricingPage"), "PricingPage");
+export const { HelpPage } = lazyImport(() => import("@/pages/HelpPage"), "HelpPage");
+export const { NotFoundPage } = lazyImport(() => import("@/pages/NotFoundPage"), "NotFoundPage");
+export const { PrivacyPage } = lazyImport(() => import("@/pages/PrivacyPage"), "PrivacyPage");
+export const { ChatPage } = lazyImport(() => import("@/pages/ChatPage"), "ChatPage");
+export const { ImproveApp } = lazyImport(() => import("@/pages/ImproveApp"), "ImproveApp");
+export const { SitemapPage } = lazyImport(() => import("@/pages/SitemapPage"), "SitemapPage");
+export const { KnowledgeBasePage } = lazyImport(() => import("@/pages/KnowledgeBasePage"), "KnowledgeBasePage");
+export const { FederalKnowledgeBasePage } = lazyImport(() => import("@/pages/FederalKnowledgeBasePage"), "FederalKnowledgeBasePage");
+export const { MsFluentDashboardExample } = lazyImport(() => import("@/pages/MsFluentDashboardExample"), "MsFluentDashboardExample");
 
-export const ContactPage = lazy(() => 
-  import("@/pages/ContactPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading contact page")
-  }))
-);
+// Components from auth routes
+export const { AuthenticationPage } = lazyImport(() => import("@/pages/auth/AuthenticationPage"), "AuthenticationPage");
+export const { PasswordResetRequestPage } = lazyImport(() => import("@/pages/auth/PasswordResetRequestPage"), "PasswordResetRequestPage");
+export const { PasswordResetPage } = lazyImport(() => import("@/pages/auth/PasswordResetPage"), "PasswordResetPage");
+export const { ProfilePage } = lazyImport(() => import("@/pages/ProfilePage"), "ProfilePage");
 
-export const PrivacyPage = lazy(() => 
-  import("@/pages/PrivacyPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading privacy page")
-  }))
-);
+// Components from dashboard routes
+export const { DashboardPage } = lazyImport(() => import("@/pages/DashboardPage"), "DashboardPage");
+export const { AnalyticsPage } = lazyImport(() => import("@/pages/analytics/AnalyticsPage"), "AnalyticsPage");
+export const { ProposalsPage } = lazyImport(() => import("@/pages/ProposalsPage"), "ProposalsPage");
+export const { ProposalDetailPage } = lazyImport(() => import("@/pages/ProposalDetailPage"), "ProposalDetailPage");
+export const { TexasAcquisitionPage } = lazyImport(() => import("@/pages/TexasAcquisitionPage"), "TexasAcquisitionPage");
 
-export const FeaturesPage = lazy(() => 
-  import("@/pages/FeaturesPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading features page")
-  }))
-);
+// Components from settings routes
+export const { SettingsPage } = lazyImport(() => import("@/pages/SettingsPage"), "SettingsPage");
 
-export const PricingPage = lazy(() => 
-  import("@/pages/PricingPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading pricing page")
-  }))
-);
+// Components from acquisition routes
+export const { FederalAcquisitionPage } = lazyImport(() => import("@/pages/acquisition/FederalAcquisitionPage"), "FederalAcquisitionPage");
+export const { DocumentControlPage } = lazyImport(() => import("@/pages/acquisition/DocumentControlPage"), "DocumentControlPage");
+export const { SolicitationReviewPage } = lazyImport(() => import("@/pages/acquisition/SolicitationReviewPage"), "SolicitationReviewPage");
+export const { MarketResearchPage } = lazyImport(() => import("@/pages/acquisition/MarketResearchPage"), "MarketResearchPage");
+export const { CompliancePage } = lazyImport(() => import("@/pages/acquisition/CompliancePage"), "CompliancePage");
+export const { LegalReviewPage } = lazyImport(() => import("@/pages/acquisition/LegalReviewPage"), "LegalReviewPage");
+export const { SmallBusinessPage } = lazyImport(() => import("@/pages/acquisition/SmallBusinessPage"), "SmallBusinessPage");
+export const { QualityAssurancePage } = lazyImport(() => import("@/pages/acquisition/QualityAssurancePage"), "QualityAssurancePage");
+export const { SourceSelectionPage } = lazyImport(() => import("@/pages/acquisition/SourceSelectionPage"), "SourceSelectionPage");
+export const { ContractManagementPage } = lazyImport(() => import("@/pages/acquisition/ContractManagementPage"), "ContractManagementPage");
+export const { TexasAcquisition } = lazyImport(() => import("@/pages/acquisition/TexasAcquisition"), "TexasAcquisition");
 
-export const HelpPage = lazy(() => 
-  import("@/pages/HelpPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading help page")
-  }))
-);
-
-export const SitemapPage = lazy(() => 
-  import("@/pages/SitemapPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading sitemap")
-  }))
-);
-
-// Protected Pages
-export const DashboardPage = lazy(() => 
-  import("@/pages/DashboardPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading dashboard")
-  }))
-);
-
-export const DocumentControlPage = lazy(() => 
-  import("@/pages/acquisition/DocumentControlPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading document control")
-  }))
-);
-
-export const MarketResearchPage = lazy(() => 
-  import("@/pages/acquisition/MarketResearchPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading market research")
-  }))
-);
-
-export const SolicitationReviewPage = lazy(() => 
-  import("@/pages/acquisition/SolicitationReviewPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading solicitation review")
-  }))
-);
-
-export const TexasAcquisitionPage = lazy(() => 
-  import("@/pages/TexasAcquisitionPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading Texas acquisition")
-  }))
-);
-
-export const FederalAcquisitionPage = lazy(() => 
-  import("@/pages/acquisition/FederalAcquisitionPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading federal acquisition")
-  }))
-);
-
-export const AuthPage = lazy(() => 
-  import("@/pages/auth/AuthenticationPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading authentication")
-  }))
-);
-
-export const PasswordResetRequestPage = lazy(() => 
-  import("@/pages/auth/PasswordResetRequestPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading password reset")
-  }))
-);
-
-export const PasswordResetPage = lazy(() => 
-  import("@/pages/auth/PasswordResetPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading password reset confirm")
-  }))
-);
-
-export const AnalyticsPage = lazy(() => 
-  import("@/pages/AnalyticsPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading analytics")
-  }))
-);
-
-export const ProposalsPage = lazy(() => 
-  import("@/pages/ProposalsPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading proposals")
-  }))
-);
-
-export const ProposalDetailPage = lazy(() => 
-  import("@/pages/ProposalDetailPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading proposal details")
-  }))
-);
-
-export const SettingsPage = lazy(() => 
-  import("@/pages/SettingsPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading settings")
-  }))
-);
-
-export const KnowledgeBasePage = lazy(() => 
-  import("@/pages/KnowledgeBasePage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading knowledge base page")
-  }))
-);
-
-export const ProfilePage = lazy(() => 
-  import("@/pages/ProfilePage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading profile page")
-  }))
-);
-
-export const NotFoundPage = lazy(() => 
-  import("@/pages/NotFoundPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading 404 page")
-  }))
-);
-
-// Developer Resources
-export const ApiDocsPage = lazy(() => 
-  import("@/pages/developer/ApiDocsPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading API docs page")
-  }))
-);
-
-export const ComponentLibraryPage = lazy(() => 
-  import("@/pages/developer/ComponentLibraryPage").catch(() => ({
-    default: () => React.createElement("div", null, "Error loading component library page")
-  }))
-);
+// Developer routes
+export const { ApiDocsPage } = lazyImport(() => import("@/pages/developer/ApiDocsPage"), "ApiDocsPage");
+export const { ComponentLibraryPage } = lazyImport(() => import("@/pages/developer/ComponentLibraryPage"), "ComponentLibraryPage");

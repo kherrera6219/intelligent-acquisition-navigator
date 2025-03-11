@@ -1,113 +1,31 @@
+import { createBrowserRouter } from "react-router-dom";
+import { routes as appRoutes } from "./AppRoutes";
+import { routes as authRoutes } from "./authRoutes";
+import { routes as dashboardRoutes } from "./dashboardRoutes";
+import { routes as settingsRoutes } from "./settingsRoutes";
+import { routes as acquisitionRoutes } from "./acquisitionRoutes";
+import { PageLoader } from "./PageLoader";
+import { lazyImport } from "./lazyComponents";
 
-import { lazy } from 'react';
-import { RouteObject } from 'react-router-dom';
-import { acquisitionRoutes } from './acquisitionRoutes';
-import { authRoutes } from './authRoutes';
-import { dashboardRoutes } from './dashboardRoutes';
-import { settingsRoutes } from './settingsRoutes'; 
-import HomePage from '@/pages/HomePage';
-import { MainLayout } from '@/components/layout/MainLayout';
+// Lazy import for the new Microsoft Fluent Dashboard example
+const { MsFluentDashboardExample } = lazyImport(
+  () => import("@/pages/MsFluentDashboardExample"),
+  "MsFluentDashboardExample"
+);
 
-// Lazily load routes that aren't essential for initial render
-const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
-const AboutPage = lazy(() => import('@/pages/About'));
-const ContactPage = lazy(() => import('@/pages/ContactPage'));
-const PricingPage = lazy(() => import('@/pages/PricingPage'));
-const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'));
-const SitemapPage = lazy(() => import('@/pages/SitemapPage'));
-const HelpPage = lazy(() => import('@/pages/HelpPage'));
-const ImproveApp = lazy(() => import('@/pages/ImproveApp'));
-const ApiDocsPage = lazy(() => import('@/pages/developer/ApiDocsPage'));
-const FederalKnowledgeBasePage = lazy(() => import('@/pages/FederalKnowledgeBasePage'));
-
-export const routes: RouteObject[] = [
+// All routes
+const allRoutes = [
+  // Add our new Microsoft Fluent Dashboard example route
   {
-    path: '/',
-    element: <HomePage />,
-    index: true,
+    path: "/ms-fluent-dashboard",
+    element: <PageLoader component={MsFluentDashboardExample} />,
   },
-  {
-    path: '/about',
-    element: (
-      <MainLayout containerSize="lg" forceExternalHeader={true}>
-        <AboutPage />
-      </MainLayout>
-    ),
-  },
-  {
-    path: '/contact',
-    element: (
-      <MainLayout containerSize="lg" forceExternalHeader={true}>
-        <ContactPage />
-      </MainLayout>
-    ),
-  },
-  {
-    path: '/pricing',
-    element: (
-      <MainLayout containerSize="lg" forceExternalHeader={true}>
-        <PricingPage />
-      </MainLayout>
-    ),
-  },
-  {
-    path: '/privacy',
-    element: (
-      <MainLayout containerSize="lg" forceExternalHeader={true}>
-        <PrivacyPage />
-      </MainLayout>
-    ),
-  },
-  {
-    path: '/sitemap',
-    element: (
-      <MainLayout containerSize="lg" forceExternalHeader={true}>
-        <SitemapPage />
-      </MainLayout>
-    ),
-  },
-  {
-    path: '/help',
-    element: (
-      <MainLayout containerSize="lg" forceExternalHeader={true}>
-        <HelpPage />
-      </MainLayout>
-    ),
-  },
-  {
-    path: '/improve',
-    element: (
-      <MainLayout containerSize="lg" forceExternalHeader={true}>
-        <ImproveApp />
-      </MainLayout>
-    ),
-  },
-  {
-    path: '/api-docs',
-    element: (
-      <MainLayout containerSize="lg" forceExternalHeader={true}>
-        <ApiDocsPage />
-      </MainLayout>
-    ),
-  },
-  {
-    path: '/federal-knowledge-base',
-    element: (
-      <MainLayout containerSize="lg">
-        <FederalKnowledgeBasePage />
-      </MainLayout>
-    ),
-  },
+  ...appRoutes,
   ...authRoutes,
   ...dashboardRoutes,
-  ...acquisitionRoutes,
   ...settingsRoutes,
-  {
-    path: '*',
-    element: (
-      <MainLayout forceExternalHeader={true}>
-        <NotFoundPage />
-      </MainLayout>
-    ),
-  },
+  ...acquisitionRoutes,
 ];
+
+// Create the router with all routes
+export const router = createBrowserRouter(allRoutes);

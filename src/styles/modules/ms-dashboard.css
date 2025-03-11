@@ -1,0 +1,184 @@
+
+/* Microsoft Fluent Dashboard Specific Styles */
+
+/* Dashboard Layouts */
+.ms-dashboard-layout {
+  @apply min-h-screen flex flex-col;
+}
+
+.ms-dashboard-container {
+  @apply w-full max-w-[1920px] mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12;
+}
+
+.ms-dashboard-content {
+  @apply flex-1 py-6;
+}
+
+.ms-dashboard-header {
+  @apply flex items-center justify-between pb-6 mb-6 border-b border-border/40;
+}
+
+.ms-dashboard-title {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.ms-dashboard-subtitle {
+  @apply text-sm text-muted-foreground mt-1;
+}
+
+.ms-dashboard-section {
+  @apply mb-8;
+}
+
+.ms-dashboard-footer {
+  @apply mt-auto py-6 border-t border-border/40;
+}
+
+/* Dashboard Grids */
+.ms-dashboard-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+}
+
+.ms-dashboard-grid-compact {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+}
+
+.ms-dashboard-grid-2col {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+}
+
+.ms-dashboard-grid-sidebar {
+  @apply grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6;
+}
+
+/* Dashboard Cards */
+.ms-dashboard-card {
+  @apply ms-fluent-card p-5 h-full;
+}
+
+.ms-dashboard-card-header {
+  @apply mb-4 flex justify-between items-start;
+}
+
+.ms-dashboard-card-title {
+  @apply font-semibold text-base;
+}
+
+.ms-dashboard-card-content {
+  @apply space-y-4;
+}
+
+.ms-dashboard-card-footer {
+  @apply mt-4 pt-4 border-t border-border/20 text-sm text-muted-foreground;
+}
+
+/* Dashboard Widgets */
+.ms-stat-card {
+  @apply ms-fluent-card p-5;
+}
+
+.ms-stat-value {
+  @apply text-2xl font-bold;
+}
+
+.ms-stat-label {
+  @apply text-sm font-medium text-muted-foreground mb-1;
+}
+
+.ms-stat-trend {
+  @apply flex items-center mt-2 text-xs font-medium;
+}
+
+.ms-trend-up {
+  @apply text-green-500;
+}
+
+.ms-trend-down {
+  @apply text-red-500;
+}
+
+.ms-trend-neutral {
+  @apply text-gray-500;
+}
+
+/* Activity Timeline */
+.ms-timeline {
+  @apply space-y-4;
+}
+
+.ms-timeline-item {
+  @apply flex gap-3 p-3 rounded-md hover:bg-white/5 transition-colors;
+}
+
+.ms-timeline-icon {
+  @apply flex-shrink-0 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center;
+}
+
+.ms-timeline-content {
+  @apply flex-1 min-w-0;
+}
+
+.ms-timeline-title {
+  @apply text-sm font-medium;
+}
+
+.ms-timeline-time {
+  @apply text-xs text-muted-foreground;
+}
+
+/* Navigation */
+.ms-dashboard-nav {
+  @apply space-y-1;
+}
+
+.ms-dashboard-nav-group {
+  @apply pt-4 mb-2;
+}
+
+.ms-dashboard-nav-group-title {
+  @apply text-xs font-medium text-muted-foreground uppercase tracking-wider px-3 mb-2;
+}
+
+.ms-dashboard-nav-item {
+  @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-white/5 transition-colors;
+}
+
+.ms-dashboard-nav-item-active {
+  @apply bg-white/10 text-white font-medium;
+}
+
+.ms-dashboard-nav-item-icon {
+  @apply flex-shrink-0 w-5 h-5 text-muted-foreground;
+}
+
+/* Quick Actions */
+.ms-quick-action-grid {
+  @apply grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4;
+}
+
+.ms-quick-action {
+  @apply rounded-md p-3 bg-white/5 border border-white/10 hover:bg-white/10 transition-all flex flex-col items-center justify-center gap-2 text-center;
+}
+
+.ms-quick-action-icon {
+  @apply w-8 h-8 text-primary;
+}
+
+.ms-quick-action-label {
+  @apply text-xs font-medium;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 639px) {
+  .ms-dashboard-header {
+    @apply flex-col items-start gap-4;
+  }
+  
+  .ms-stat-card {
+    @apply p-4;
+  }
+  
+  .ms-dashboard-card {
+    @apply p-4;
+  }
+}

@@ -9,6 +9,7 @@
 @import './modules/fluent.css';
 @import './modules/microsoft-fluent.css';
 @import './modules/scrollbar.css';
+@import './modules/ms-dashboard.css';
 
 /* Network status indicators */
 .network-status-online {
@@ -55,4 +56,13 @@
 
 .ms-interactive:hover {
   @apply transform transition-transform duration-200 hover:-translate-y-0.5;
+}
+
+/* Dashboard specific utilities */
+.ms-dashboard-scrollable {
+  @apply overflow-y-auto overflow-x-hidden max-h-[calc(100vh-theme(spacing.32))] custom-scrollbar pr-2;
+}
+
+.ms-dashboard-card-hover:hover {
+  @apply translate-y-[-2px] shadow-xl transition-all duration-200;
 }
