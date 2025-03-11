@@ -8,6 +8,8 @@ import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
 import { useToast } from "@/hooks/use-toast";
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { BackButton } from "@/components/navigation/BackButton";
+import { UniversalInternalHeader } from "@/components/layout/UniversalInternalHeader";
+import { InternalFooter } from "@/components/layout/InternalFooter";
 
 const TexasAcquisition = () => {
   const [input, setInput] = useState("");
@@ -87,29 +89,33 @@ const TexasAcquisition = () => {
   };
 
   return (
-    <ProtectedPageLayout
-      title="Texas Acquisition Management"
-      description="Manage and monitor Texas state acquisition compliance and procedures."
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Texas Acquisition', href: '/texas-acquisition' }
-      ]}
-    >
-      <TexasChatContainer
-        conversationId={conversationId || ""}
-        messages={messages}
-        isLoading={isInitializing || aiMutation.isPending}
-        input={input}
-        selectedAgency={selectedAgency}
-        selectedRole={selectedRole}
-        selectedResponseLevel={selectedResponseLevel}
-        onInputChange={setInput}
-        onSubmit={handleSubmit}
-        onAgencyChange={setSelectedAgency}
-        onRoleChange={setSelectedRole}
-        onResponseLevelChange={setSelectedResponseLevel}
-      />
-    </ProtectedPageLayout>
+    <>
+      <UniversalInternalHeader />
+      <ProtectedPageLayout
+        title="Texas Acquisition Management"
+        description="Manage and monitor Texas state acquisition compliance and procedures."
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Texas Acquisition', href: '/texas-acquisition' }
+        ]}
+      >
+        <TexasChatContainer
+          conversationId={conversationId || ""}
+          messages={messages}
+          isLoading={isInitializing || aiMutation.isPending}
+          input={input}
+          selectedAgency={selectedAgency}
+          selectedRole={selectedRole}
+          selectedResponseLevel={selectedResponseLevel}
+          onInputChange={setInput}
+          onSubmit={handleSubmit}
+          onAgencyChange={setSelectedAgency}
+          onRoleChange={setSelectedRole}
+          onResponseLevelChange={setSelectedResponseLevel}
+        />
+      </ProtectedPageLayout>
+      <InternalFooter />
+    </>
   );
 };
 
