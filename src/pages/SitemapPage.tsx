@@ -6,10 +6,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { routes } from '@/routes';
+import { RouteObject } from 'react-router-dom';
 
 const SitemapPage: React.FC = () => {
+  // Cast routes to RouteObject[] to ensure TypeScript knows it's an array
+  const routeObjects = routes as RouteObject[];
+  
   // Group routes by section
-  const routesByType = routes.reduce((acc: Record<string, string[]>, route: any) => {
+  const routesByType = routeObjects.reduce((acc: Record<string, string[]>, route: RouteObject) => {
     const path = route.path || "";
     
     if (path === '*') return acc; // Skip 404 route
