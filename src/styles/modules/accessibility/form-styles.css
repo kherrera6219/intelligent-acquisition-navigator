@@ -12,3 +12,48 @@
 .enhanced-contrast-text {
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
 }
+
+/* Better focus indicators for form elements */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus,
+[role="button"]:focus,
+a:focus {
+  @apply focus-visible-ring;
+  outline-offset: 2px;
+}
+
+/* Better styling for required form fields */
+[aria-required="true"]::after {
+  content: " *";
+  color: hsl(0, 100%, 50%);
+}
+
+/* Better styling for disabled form elements */
+[disabled],
+[aria-disabled="true"] {
+  @apply opacity-60 cursor-not-allowed;
+}
+
+/* High contrast focus for inputs */
+@media (prefers-contrast: high) {
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 3px solid hsl(0, 0%, 0%) !important;
+  }
+}
+
+/* Improve accessibility of placeholder text */
+::placeholder {
+  @apply opacity-70;
+  color: currentColor;
+}
+
+@media (prefers-contrast: high) {
+  ::placeholder {
+    @apply opacity-90;
+    color: hsl(0, 0%, 40%);
+  }
+}

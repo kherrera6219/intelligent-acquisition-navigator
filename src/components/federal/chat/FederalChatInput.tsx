@@ -48,7 +48,9 @@ export const FederalChatInput: React.FC<FederalChatInputProps> = ({
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder="Type your question about federal acquisition..."
-        className="min-h-[80px] resize-none"
+        className="min-h-[80px] resize-none focus-visible-ring"
+        aria-label="Chat message input"
+        aria-multiline="true"
       />
       <div className="flex flex-col gap-2">
         <Button 
@@ -56,8 +58,11 @@ export const FederalChatInput: React.FC<FederalChatInputProps> = ({
           size="icon" 
           onClick={onSendMessage}
           disabled={isLoading || input.trim() === ''}
+          aria-label="Send message"
+          className="keyboard-accessible"
         >
           <Send className="h-4 w-4" />
+          <span className="sr-only">Send</span>
         </Button>
         {onFileUpload && (
           <Button
@@ -65,14 +70,18 @@ export const FederalChatInput: React.FC<FederalChatInputProps> = ({
             size="icon"
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
+            aria-label="Upload file"
+            className="keyboard-accessible"
           >
             <Paperclip className="h-4 w-4" />
+            <span className="sr-only">Upload file</span>
             <input
               ref={fileInputRef}
               type="file"
               className="hidden"
               accept=".pdf,.doc,.docx,.txt"
               onChange={handleFileChange}
+              aria-hidden="true"
             />
           </Button>
         )}

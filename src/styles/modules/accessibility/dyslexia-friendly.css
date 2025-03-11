@@ -1,0 +1,59 @@
+
+/* Dyslexia-friendly styles */
+.dyslexia-mode {
+  /* Increased letter spacing */
+  letter-spacing: 0.05em;
+  
+  /* Increased word spacing */
+  word-spacing: 0.1em;
+  
+  /* Increased line height for better readability */
+  line-height: 1.5;
+  
+  /* Default to a more readable font family */
+  font-family: 'Open Sans', 'Arial', sans-serif;
+}
+
+/* Enable dyslexia-friendly mode when users have the appropriate preference */
+@media (prefers-reduced-transparency: reduce) {
+  body {
+    @apply dyslexia-mode;
+  }
+}
+
+/* Avoid justified text which can create "rivers" of white space */
+.dyslexia-mode p,
+.dyslexia-mode li,
+.dyslexia-mode div {
+  text-align: left;
+}
+
+/* Implement a toggle for users to enable dyslexia mode */
+.dyslexia-toggle:checked ~ * {
+  @apply dyslexia-mode;
+}
+
+/* Simplified backgrounds for dyslexic users */
+.dyslexia-mode .glass-card,
+.dyslexia-mode .glass-morphism {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: none !important;
+}
+
+/* Higher contrast for text elements */
+.dyslexia-mode h1,
+.dyslexia-mode h2,
+.dyslexia-mode h3,
+.dyslexia-mode h4,
+.dyslexia-mode h5,
+.dyslexia-mode h6 {
+  color: hsl(0, 0%, 100%) !important;
+  font-weight: 700 !important;
+}
+
+/* Simplified text displays */
+.dyslexia-mode .text-gradient {
+  background: none !important;
+  background-image: none !important;
+  color: hsl(0, 0%, 100%) !important;
+}

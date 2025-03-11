@@ -8,30 +8,37 @@ interface FederalChatMessageProps {
 }
 
 export const FederalChatMessage: React.FC<FederalChatMessageProps> = ({ message }) => {
+  const isUserMessage = message.role === 'user';
+  const role = isUserMessage ? 'You' : 'AI Assistant';
+  
   return (
     <div 
-      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+      className={`flex ${isUserMessage ? 'justify-end' : 'justify-start'}`}
+      role="listitem"
     >
       <div 
         className={`max-w-[80%] p-3 rounded-lg ${
-          message.role === 'user' 
+          isUserMessage 
             ? 'bg-primary text-primary-foreground rounded-tr-none' 
             : 'bg-secondary/50 backdrop-blur-sm text-secondary-foreground rounded-tl-none'
         }`}
+        aria-label={`Message from ${role}`}
       >
         <div className="flex items-center gap-2 mb-1">
-          {message.role === 'assistant' ? (
-            <Bot className="h-4 w-4" />
+          {isUserMessage ? (
+            <User className="h-4 w-4" aria-hidden="true" />
           ) : (
-            <User className="h-4 w-4" />
+            <Bot className="h-4 w-4" aria-hidden="true" />
           )}
           <span className="text-xs opacity-70">
-            {message.role === 'assistant' ? 'AI Assistant' : 'You'}
+            {role}
           </span>
         </div>
         <div className="whitespace-pre-wrap">{message.content}</div>
         <div className="text-xs opacity-50 text-right mt-1">
-          {message.timestamp.toLocaleTimeString()}
+          <time dateTime={message.timestamp.toISOString()}>
+            {message.timestamp.toLocaleTimeString()}
+          </time>
         </div>
       </div>
     </div>
