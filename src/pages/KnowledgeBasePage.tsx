@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PageErrorBoundary } from '@/components/ui/universal/PageErrorBoundary';
 import { Container, Row, Col } from '@/components/ui/universal/Grid';
@@ -42,13 +43,13 @@ const KnowledgeBasePage = () => {
                 <AccordionItem value="item-1">
                   <AccordionTrigger>How do I create a new proposal?</AccordionTrigger>
                   <AccordionContent>
-                    To create a new proposal, navigate to the Proposals page and click on the "Create Proposal" button. Fill out the required fields and submit the form.
+                    To create a new proposal, navigate to the <Link to="/proposals" className="text-primary hover:text-primary/90">Proposals page</Link> and click on the "Create Proposal" button. Fill out the required fields and submit the form.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">
                   <AccordionTrigger>How do I reset my password?</AccordionTrigger>
                   <AccordionContent>
-                    To reset your password, go to the <Link to="/auth/forgot-password" className="underline">Forgot Password</Link> page and follow the instructions.
+                    To reset your password, go to the <Link to="/auth/forgot-password" className="text-primary hover:text-primary/90">Forgot Password</Link> page and follow the instructions.
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3">
@@ -60,7 +61,7 @@ const KnowledgeBasePage = () => {
                 <AccordionItem value="item-4">
                   <AccordionTrigger>How do I contact support?</AccordionTrigger>
                   <AccordionContent>
-                    You can contact our support team by visiting the <Link to="/contact" className="underline">Contact Us</Link> page and submitting the form.
+                    You can contact our support team by visiting the <Link to="/contact" className="text-primary hover:text-primary/90">Contact Us</Link> page and submitting the form.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
