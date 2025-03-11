@@ -57,4 +57,4 @@ export function SessionExpiryManager() {
       <Progress value={progressValue} className="h-1" indicatorClassName={progressColor} />
     </Card>
   );
-}
+};
