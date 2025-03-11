@@ -23,15 +23,18 @@ const ChecklistItemComponent = memo(({
   <Card 
     key={item.id}
     className={cn(
-      "p-3 sm:p-4 transition-all duration-200 cursor-pointer hover:bg-white/5",
+      "p-3 sm:p-4 transition-all duration-300 cursor-pointer hover:bg-white/5",
       "transform hover:-translate-y-0.5 hover:shadow-lg",
-      item.completed && "bg-white/5",
+      item.completed && "bg-green-950/10 border-green-800/20",
       isCurrentItem && "border-primary"
     )}
     onClick={onToggle}
   >
     <div className="flex items-start gap-3 sm:gap-4">
-      <div className="text-primary pt-1">
+      <div className={cn(
+        "pt-1",
+        item.completed ? "text-green-500" : "text-primary"
+      )}>
         {item.completed ? (
           <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
         ) : (
@@ -41,7 +44,7 @@ const ChecklistItemComponent = memo(({
       <div className="flex-1 min-w-0">
         <h3 className={cn(
           "font-medium text-sm sm:text-base break-words",
-          item.completed && "line-through text-gray-400"
+          item.completed && "text-green-400"
         )}>
           {item.title}
         </h3>
@@ -138,10 +141,17 @@ export const ImprovementChecklist: React.FC = () => {
     <div className="w-full px-4 md:px-6 py-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-6">
         <h2 className="text-xl sm:text-2xl font-bold">Improvement Checklist</h2>
-        <div className="text-sm text-gray-400">
-          Completed: {completedCount} / {offlineChecklist.length}
+        <div className="flex items-center gap-2">
+          <div className={cn(
+            "px-3 py-1 rounded-full text-sm font-medium",
+            completedCount === offlineChecklist.length 
+              ? "bg-green-500/20 text-green-400" 
+              : "bg-blue-500/20 text-blue-400"
+          )}>
+            {completedCount} / {offlineChecklist.length} completed
+          </div>
           {hasPendingUpdates && (
-            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
               {pendingUpdatesCount} pending sync
             </span>
           )}
@@ -178,6 +188,13 @@ export const ImprovementChecklist: React.FC = () => {
         currentPage={currentPage}
         onPageChange={setCurrentPage}
       />
+
+      {completedCount === offlineChecklist.length && (
+        <div className="mt-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-center">
+          <h3 className="text-green-400 font-medium mb-2">All items completed! 🎉</h3>
+          <p className="text-sm text-gray-400">Great job! You've completed all improvement tasks.</p>
+        </div>
+      )}
 
       {showFeedback && (
         <ChecklistFeedback 
