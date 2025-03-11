@@ -8,3 +8,29 @@
 @import './modules/accessibility.css';
 @import './modules/fluent.css';
 @import './modules/scrollbar.css';
+
+/* Network status indicators */
+.network-status-online {
+  color: var(--success);
+}
+
+.network-status-offline {
+  color: var(--destructive);
+}
+
+.network-status-reconnecting {
+  color: var(--warning);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
