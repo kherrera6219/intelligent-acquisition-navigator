@@ -4,8 +4,14 @@ import { ThemeContext, Theme } from "@/contexts/ThemeContext";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
+    // Check for saved theme in localStorage or use system preference
     const savedTheme = localStorage.getItem("theme") as Theme;
-    return savedTheme || "dark";
+    if (savedTheme) return savedTheme;
+    
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+    return systemTheme;
   });
 
   useEffect(() => {
@@ -17,8 +23,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         ? "dark"
         : "light";
       root.classList.add(systemTheme);
+      
+      // Apply the appropriate scrollbar class
+      document.body.classList.remove("light-scrollbar", "custom-scrollbar");
+      document.body.classList.add(systemTheme === "dark" ? "custom-scrollbar" : "light-scrollbar");
     } else {
       root.classList.add(theme);
+      
+      // Apply the appropriate scrollbar class
+      document.body.classList.remove("light-scrollbar", "custom-scrollbar");
+      document.body.classList.add(theme === "dark" ? "custom-scrollbar" : "light-scrollbar");
     }
 
     localStorage.setItem("theme", theme);

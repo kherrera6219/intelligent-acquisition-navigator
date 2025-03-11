@@ -1,4 +1,6 @@
 
+@tailwind utilities;
+
 /* Custom scrollbar styles */
 @layer utilities {
   .custom-scrollbar {
