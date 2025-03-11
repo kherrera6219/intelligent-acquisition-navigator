@@ -163,9 +163,11 @@ const LegalReviewPage: React.FC = () => {
     }
   };
 
+  const pageTitle = "Legal Review";
+
   return (
     <ProtectedPageLayout
-      title={<GradientText>Legal Review</GradientText>}
+      title={pageTitle}
       description="Conduct legal reviews of acquisition documents and contracts"
       isLoading={isLoading}
       action={
@@ -271,6 +273,7 @@ const LegalReviewPage: React.FC = () => {
         </Dialog>
       }
     >
+      <GradientText className="text-3xl font-bold mb-4">{pageTitle}</GradientText>
       <Tabs defaultValue="pending" value={selectedTab} onValueChange={setSelectedTab} className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="pending">Pending</TabsTrigger>
@@ -285,7 +288,7 @@ const LegalReviewPage: React.FC = () => {
             {filterReviewsByStatus(tab === 'all' ? 'all' : tab).length === 0 ? (
               <Card className="p-8 text-center">
                 <FileText className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                <h3 className="text-xl font-medium mb-2">No {tab === 'all' ? '' : tab} reviews found</h3>
+                <h3 className="text-lg font-medium mb-2">No {tab === 'all' ? '' : tab} reviews found</h3>
                 <p className="text-gray-400">
                   {tab === 'all' 
                     ? 'There are no documents submitted for legal review.' 
@@ -322,8 +325,8 @@ const LegalReviewPage: React.FC = () => {
                           <span className={`px-2 py-0.5 rounded text-xs ${
                             item.reviewStatus === 'pending' ? 'bg-amber-900/50 text-amber-300' : 
                             item.reviewStatus === 'in-progress' ? 'bg-blue-900/50 text-blue-300' : 
-                            item.reviewStatus === 'completed' ? 'bg-green-900/50 text-green-300' : 
-                            'bg-red-900/50 text-red-300'
+                            item.reviewStatus === 'completed' ? 'bg-green-900/50 text-green-400' : 
+                            'bg-red-900/50 text-red-400'
                           }`}>
                             {item.reviewStatus.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                           </span>

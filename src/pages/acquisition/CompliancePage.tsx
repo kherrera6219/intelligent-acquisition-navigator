@@ -92,9 +92,11 @@ const CompliancePage: React.FC = () => {
     pending: complianceItems.filter(item => item.status === 'pending').length,
   };
 
+  const pageTitle = "Compliance Management";
+
   return (
     <ProtectedPageLayout
-      title={<GradientText>Compliance Management</GradientText>}
+      title={pageTitle}
       description="Monitor and ensure regulatory compliance for your acquisition activities"
       isLoading={isLoading}
       action={
@@ -105,6 +107,7 @@ const CompliancePage: React.FC = () => {
       }
       fullWidth={true}
     >
+      <GradientText className="text-3xl font-bold mb-4">{pageTitle}</GradientText>
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-6 w-full justify-start overflow-x-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>

@@ -16,9 +16,11 @@ import {
 } from 'lucide-react';
 
 const SourceSelectionPage: React.FC = () => {
+  const pageTitle = "Source Selection";
+
   return (
     <ProtectedPageLayout
-      title={<GradientText>Source Selection</GradientText>}
+      title={pageTitle}
       description="Evaluate and select the optimal sources for your procurement needs"
       action={
         <Button>
@@ -28,6 +30,7 @@ const SourceSelectionPage: React.FC = () => {
       }
       fullWidth={true}
     >
+      <GradientText className="text-3xl font-bold mb-4">{pageTitle}</GradientText>
       <Tabs defaultValue="active" className="w-full">
         <TabsList className="mb-6 w-full justify-start overflow-x-auto">
           <TabsTrigger value="active">Active Evaluations</TabsTrigger>

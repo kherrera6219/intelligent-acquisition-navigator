@@ -200,9 +200,11 @@ const QualityAssurancePage: React.FC = () => {
     completion: qaItems.filter(item => item.status !== 'pending').length / qaItems.length * 100
   };
 
+  const pageTitle = "Quality Assurance";
+
   return (
     <ProtectedPageLayout
-      title={<GradientText>Quality Assurance</GradientText>}
+      title={pageTitle}
       description="Ensure quality control for your acquisition processes and deliverables"
       isLoading={isLoading}
       action={
@@ -295,6 +297,7 @@ const QualityAssurancePage: React.FC = () => {
         </Dialog>
       }
     >
+      <GradientText className="text-3xl font-bold mb-4">{pageTitle}</GradientText>
       <Tabs defaultValue="dashboard" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>

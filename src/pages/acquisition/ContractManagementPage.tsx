@@ -17,9 +17,11 @@ import {
 } from 'lucide-react';
 
 const ContractManagementPage: React.FC = () => {
+  const pageTitle = "Contract Management";
+
   return (
     <ProtectedPageLayout
-      title={<GradientText>Contract Management</GradientText>}
+      title={pageTitle}
       description="Manage and monitor your contracts throughout their lifecycle"
       action={
         <Button>
@@ -29,6 +31,7 @@ const ContractManagementPage: React.FC = () => {
       }
       fullWidth={true}
     >
+      <GradientText className="text-3xl font-bold mb-4">{pageTitle}</GradientText>
       <Tabs defaultValue="active" className="w-full">
         <TabsList className="mb-6 w-full justify-start overflow-x-auto">
           <TabsTrigger value="active">Active Contracts</TabsTrigger>
