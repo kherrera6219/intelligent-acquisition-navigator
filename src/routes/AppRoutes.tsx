@@ -1,8 +1,8 @@
+
 import React from 'react';
-import { Routes, Route, RouteObject } from 'react-router-dom';
+import { RouteObject } from 'react-router-dom';
 import { wrapWithLayout } from "./routeTypes";
 import { lazy } from "react";
-import { PageNetworkWrapper } from '@/components/ui/universal/PageNetworkWrapper';
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const AboutPage = lazy(() => import("@/pages/About"));
@@ -33,7 +33,7 @@ const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssur
 const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 
-export const appRoutes: RouteObject[] = [
+const appRoutes: RouteObject[] = [
   {
     path: "/",
     element: wrapWithLayout(HomePage, false)
@@ -147,35 +147,5 @@ export const appRoutes: RouteObject[] = [
     element: wrapWithLayout(NotFoundPage, false)
   }
 ];
-
-// AppRoutes component props interface
-interface AppRoutesProps {
-  routes: RouteObject[];
-}
-
-// AppRoutes component for rendering routes
-export const AppRoutes: React.FC<AppRoutesProps> = ({ routes }) => {
-  return (
-    <PageNetworkWrapper>
-      <Routes>
-        {routes.map((route, index) => (
-          <Route 
-            key={route.path || index}
-            path={route.path}
-            element={route.element}
-          >
-            {route.children?.map((childRoute, childIndex) => (
-              <Route
-                key={childRoute.path || childIndex}
-                path={childRoute.path}
-                element={childRoute.element}
-              />
-            ))}
-          </Route>
-        ))}
-      </Routes>
-    </PageNetworkWrapper>
-  );
-};
 
 export default appRoutes;

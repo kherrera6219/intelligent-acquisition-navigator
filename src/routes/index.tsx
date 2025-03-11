@@ -1,7 +1,7 @@
 
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import { PageLoader } from "./PageLoader";
+import { PageLoader } from "@/components/ui/universal/PageLoader";
 import appRoutes from "./AppRoutes";
 import authRoutes from "./authRoutes";
 import dashboardRoutes from "./dashboardRoutes";
@@ -18,7 +18,7 @@ const withFluentLoading = (Component: React.ComponentType) => () => (
   </Suspense>
 );
 
-// Microsoft Fluent Dashboard route
+// Microsoft Fluent Dashboard route properly typed as RouteObject
 const msFluentRoute: RouteObject = {
   path: "/ms-fluent-dashboard",
   element: withFluentLoading(MsFluentDashboardExample)()
@@ -39,4 +39,3 @@ export const router = createBrowserRouter(allRoutes);
 
 // Export routes for sitemap
 export { allRoutes as routes };
-

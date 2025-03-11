@@ -1,10 +1,11 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { SessionTimeoutWarning } from "@/components/auth/SessionTimeoutWarning";
-import { PageLoader } from "@/components/ui/universal/PageLoader";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -17,7 +18,14 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   const { toast } = useToast();
 
   if (isLoading) {
-    return <PageLoader variant="fluent" message="Loading..." />;
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50">
+        <div className="text-center">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-muted-foreground font-medium">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -29,7 +37,8 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
     return <Navigate to={`/auth?returnUrl=${encodeURIComponent(location.pathname)}`} state={{ from: location }} replace />;
   }
 
-  if (user && !user.email_verified_at) {
+  // Fix the email_verified_at property check
+  if (user && user.user_metadata && user.user_metadata.email_verified === false) {
     toast({
       title: "Email verification required",
       description: "Please verify your email address to access this resource.",
