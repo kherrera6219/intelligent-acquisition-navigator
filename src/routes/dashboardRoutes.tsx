@@ -8,7 +8,7 @@ const AnalyticsPage = lazy(() => import("@/pages/analytics/AnalyticsPage"));
 const ProposalsPage = lazy(() => import("@/pages/ProposalsPage"));
 const ProposalDetailPage = lazy(() => import("@/pages/ProposalDetailPage"));
 
-export const routes: RouteObject[] = [
+const routes: RouteObject[] = [
   {
     path: "/dashboard",
     element: wrapWithLayout(DashboardPage)
@@ -26,3 +26,5 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(ProposalDetailPage)
   }
 ];
+
+export { routes };

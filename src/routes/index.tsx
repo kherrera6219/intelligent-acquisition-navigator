@@ -30,4 +30,4 @@ const allRoutes = [
 
 // Create the router with all routes
 export const router = createBrowserRouter(allRoutes);
-export const routes = allRoutes; // Also export the routes array for sitemap usage
+export { allRoutes as routes };

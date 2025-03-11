@@ -7,7 +7,7 @@ const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
 const FederalKnowledgeBasePage = lazy(() => import("@/pages/FederalKnowledgeBasePage"));
 
-export const routes: RouteObject[] = [
+const routes: RouteObject[] = [
   {
     path: "/settings",
     element: wrapWithLayout(SettingsPage)
@@ -21,3 +21,5 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(FederalKnowledgeBasePage)
   }
 ];
+
+export { routes };

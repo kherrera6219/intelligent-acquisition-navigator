@@ -9,7 +9,7 @@ const PasswordResetRequestPage = lazy(() => import("@/pages/auth/PasswordResetRe
 const PasswordResetPage = lazy(() => import("@/pages/auth/PasswordResetPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 
-export const routes: RouteObject[] = [
+const routes: RouteObject[] = [
   {
     path: "/auth",
     element: wrapWithLayout(AuthPage, false)
@@ -27,3 +27,5 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(ProfilePage)
   }
 ];
+
+export { routes };

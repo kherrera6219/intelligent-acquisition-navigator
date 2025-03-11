@@ -16,7 +16,7 @@ const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPa
 const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
 const TexasAcquisition = lazy(() => import("@/pages/acquisition/TexasAcquisition"));
 
-export const routes: RouteObject[] = [
+const routes: RouteObject[] = [
   {
     path: "/document-control",
     element: wrapWithLayout(DocumentControlPage)
@@ -66,3 +66,5 @@ export const routes: RouteObject[] = [
     element: wrapWithLayout(TexasAcquisition)
   }
 ];
+
+export { routes };

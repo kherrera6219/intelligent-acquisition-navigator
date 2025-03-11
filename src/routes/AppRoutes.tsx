@@ -18,7 +18,7 @@ const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
 const ApiDocsPage = lazy(() => import("@/pages/developer/ApiDocsPage"));
 const ComponentLibraryPage = lazy(() => import("@/pages/developer/ComponentLibraryPage"));
 
-export const routes: RouteObject[] = [
+const routes: RouteObject[] = [
   {
     path: "/",
     element: wrapWithLayout(HomePage, false)
@@ -100,3 +100,4 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ routes }) => {
 };
 
 export default AppRoutes;
+export { routes };

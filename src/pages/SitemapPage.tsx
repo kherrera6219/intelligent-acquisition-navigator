@@ -2,130 +2,75 @@
 import React from 'react';
 import { Container } from '@/components/ui/universal/Container';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { GradientText } from '@/components/ui/universal/GradientText';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { routes } from '@/routes'; // This now properly imports the routes array
-import { Card } from '@/components/ui/universal/Card';
-import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { NetworkErrorHandler } from '@/components/ui/universal/NetworkErrorHandler';
+import { routes } from '@/routes';
 
 const SitemapPage: React.FC = () => {
-  // Categorize routes
-  const marketingRoutes = routes.filter(route => 
-    ["/", "/about", "/contact", "/features", "/pricing", "/help", "/privacy", "/sitemap", "/improve", "/api-docs"].includes(route.path || "")
-  );
-  
-  const authRoutes = routes.filter(route => 
-    ["/auth", "/auth/forgot-password", "/auth/reset-password"].includes(route.path || "")
-  );
-  
-  const appRoutes = routes.filter(route => 
-    route.path?.startsWith("/dashboard") || 
-    route.path?.startsWith("/analytics") || 
-    route.path?.startsWith("/profile") || 
-    route.path?.startsWith("/settings")
-  );
-  
-  const acquisitionRoutes = routes.filter(route => 
-    (route.path?.includes("federal-acquisition") || 
-    route.path?.includes("federal-knowledge-base") ||
-    route.path?.includes("texas-acquisition") ||
-    route.path === "/solicitation-review" || 
-    route.path === "/document-control" || 
-    route.path === "/market-research" || 
-    route.path === "/contract-management" ||
-    route.path === "/source-selection" ||
-    route.path === "/legal-review" ||
-    route.path === "/small-business" ||
-    route.path === "/quality-assurance" ||
-    route.path === "/compliance" ||
-    route.path === "/knowledge-base")
-  );
-
-  const { isOnline } = useNetworkMonitor();
+  // Group routes by section
+  const routesByType = routes.reduce((acc: Record<string, string[]>, route: any) => {
+    const path = route.path || "";
+    
+    if (path === '*') return acc; // Skip 404 route
+    
+    let type = 'Other';
+    
+    if (path.startsWith('/dashboard') || path.startsWith('/proposals') || path.startsWith('/analytics')) {
+      type = 'Dashboard';
+    } else if (path.startsWith('/auth') || path === '/profile') {
+      type = 'Authentication';
+    } else if (path.startsWith('/market-research') || path.startsWith('/document-control') || 
+               path.startsWith('/solicitation') || path.startsWith('/compliance') ||
+               path.startsWith('/federal-acquisition') || path.startsWith('/texas-acquisition') ||
+               path.startsWith('/source-selection') || path.startsWith('/contract-management') || 
+               path.startsWith('/legal-review') || path.startsWith('/small-business') ||
+               path.startsWith('/quality-assurance')) {
+      type = 'Acquisition';
+    } else if (path.startsWith('/settings') || path.startsWith('/knowledge-base')) {
+      type = 'Settings';
+    } else if (path === '/' || path.startsWith('/about') || path.startsWith('/features') || 
+               path.startsWith('/pricing') || path.startsWith('/contact') || 
+               path.startsWith('/help') || path.startsWith('/privacy') || 
+               path.startsWith('/chat') || path.startsWith('/improve')) {
+      type = 'Main';
+    }
+    
+    acc[type] = [...(acc[type] || []), path];
+    return acc;
+  }, {});
 
   return (
-    <main className="flex-grow">
-      <Container>
-        <NetworkErrorHandler
-          errorMessage={!isOnline ? "You are currently offline. Some links may not work." : undefined}
-        >
-          <div className="space-y-8 py-6 bg-noise"
-            style={{
-              backgroundImage: `
-                linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
-                radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
-              `,
-              backgroundAttachment: 'fixed',
-              backgroundColor: 'var(--background)'
-            }}
-          >
-            <PageHeader
-              title={<GradientText>Sitemap</GradientText>}
-              description="Find and navigate to all pages of our application"
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Marketing Pages */}
-              <Card variant="metal" className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Marketing Pages</h2>
-                <ul className="space-y-2">
-                  {marketingRoutes.map((route, index) => (
-                    <li key={`marketing-${index}`} className="hover:bg-gray-800/50 rounded">
-                      <Link to={route.path || "#"} className="block px-3 py-2 transition-colors">
-                        {route.path}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-              
-              {/* Auth Pages */}
-              <Card variant="metal" className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Authentication</h2>
-                <ul className="space-y-2">
-                  {authRoutes.map((route, index) => (
-                    <li key={`auth-${index}`} className="hover:bg-gray-800/50 rounded">
-                      <Link to={route.path || "#"} className="block px-3 py-2 transition-colors">
-                        {route.path}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-              
-              {/* Application Pages */}
-              <Card variant="metal" className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Application</h2>
-                <ul className="space-y-2">
-                  {appRoutes.map((route, index) => (
-                    <li key={`app-${index}`} className="hover:bg-gray-800/50 rounded">
-                      <Link to={route.path || "#"} className="block px-3 py-2 transition-colors">
-                        {route.path}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-              
-              {/* Acquisition Pages */}
-              <Card variant="metal" className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Acquisition</h2>
-                <ul className="space-y-2">
-                  {acquisitionRoutes.map((route, index) => (
-                    <li key={`acquisition-${index}`} className="hover:bg-gray-800/50 rounded">
-                      <Link to={route.path || "#"} className="block px-3 py-2 transition-colors">
-                        {route.path}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            </div>
+    <Container className="py-8">
+      <PageHeader
+        title="Sitemap"
+        description="Navigation map of all pages in the application"
+      />
+
+      <div className="space-y-8 mt-8">
+        {Object.entries(routesByType).map(([type, paths]) => (
+          <div key={type}>
+            <h2 className="text-xl font-semibold mb-4">{type}</h2>
+            <Card className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {paths.map(path => (
+                  <Button
+                    key={path}
+                    variant="outline"
+                    className="justify-start"
+                    asChild
+                  >
+                    <Link to={path}>
+                      {path === '/' ? 'Home' : path.replace(/^\/([\w-]+).*$/, '$1')}
+                    </Link>
+                  </Button>
+                ))}
+              </div>
+            </Card>
           </div>
-        </NetworkErrorHandler>
-      </Container>
-    </main>
+        ))}
+      </div>
+    </Container>
   );
 };
 
