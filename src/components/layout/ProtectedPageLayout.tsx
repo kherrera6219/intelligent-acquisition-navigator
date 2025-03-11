@@ -4,9 +4,10 @@ import { Container } from "@/components/ui/universal/Container";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card } from "@/components/ui/universal/Card";
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { PageNetworkWrapper } from "@/components/ui/universal/PageNetworkWrapper";
 
 interface ProtectedPageLayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ interface ProtectedPageLayoutProps {
   contentClassName?: string;
   fullWidth?: boolean;
   withCard?: boolean;
+  withNetwork?: boolean;
 }
 
 export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
@@ -36,8 +38,9 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   contentClassName,
   fullWidth = false,
   withCard = false,
+  withNetwork = true,
 }) => {
-  return (
+  const content = (
     <Container size={fullWidth ? "full" : "lg"} variant="ms-fluent">
       <div className="py-6 ms-motion-fadeIn">
         <PageHeader
@@ -52,8 +55,11 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
 
         {/* Content Area */}
         {isLoading ? (
-          <div className="flex justify-center items-center min-h-[200px]">
-            <LoadingSpinner size="lg" />
+          <div className="flex justify-center items-center min-h-[200px] ms-fluent-panel p-8">
+            <div className="flex flex-col items-center">
+              <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-4" />
+              <p className="text-muted-foreground">Loading content...</p>
+            </div>
             <span className="sr-only">Loading content</span>
           </div>
         ) : error ? (
@@ -85,24 +91,30 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
               Need to navigate to another section?
             </div>
             <div className="ms-stack-horizontal flex-wrap gap-3">
-              <Link to="/dashboard" className="text-sm text-gray-300 hover:text-white">Dashboard</Link>
-              <Link to="/knowledge-base" className="text-sm text-gray-300 hover:text-white">Knowledge Base</Link>
-              <Link to="/federal-acquisition" className="text-sm text-gray-300 hover:text-white">Federal Acquisition</Link>
-              <Link to="/texas-acquisition" className="text-sm text-gray-300 hover:text-white">Texas Acquisition</Link>
-              <Link to="/solicitation-review" className="text-sm text-gray-300 hover:text-white">Solicitation Review</Link>
-              <Link to="/document-control" className="text-sm text-gray-300 hover:text-white">Document Control</Link>
-              <Link to="/market-research" className="text-sm text-gray-300 hover:text-white">Market Research</Link>
-              <Link to="/compliance" className="text-sm text-gray-300 hover:text-white">Compliance</Link>
-              <Link to="/legal-review" className="text-sm text-gray-300 hover:text-white">Legal Review</Link>
-              <Link to="/small-business" className="text-sm text-gray-300 hover:text-white">Small Business</Link>
-              <Link to="/quality-assurance" className="text-sm text-gray-300 hover:text-white">Quality Assurance</Link>
-              <Link to="/source-selection" className="text-sm text-gray-300 hover:text-white">Source Selection</Link>
-              <Link to="/contract-management" className="text-sm text-gray-300 hover:text-white">Contract Management</Link>
-              <Link to="/sitemap" className="text-sm text-gray-300 hover:text-white">Sitemap</Link>
+              <Link to="/dashboard" className="ms-nav-item">Dashboard</Link>
+              <Link to="/knowledge-base" className="ms-nav-item">Knowledge Base</Link>
+              <Link to="/federal-acquisition" className="ms-nav-item">Federal Acquisition</Link>
+              <Link to="/texas-acquisition" className="ms-nav-item">Texas Acquisition</Link>
+              <Link to="/solicitation-review" className="ms-nav-item">Solicitation Review</Link>
+              <Link to="/document-control" className="ms-nav-item">Document Control</Link>
+              <Link to="/market-research" className="ms-nav-item">Market Research</Link>
+              <Link to="/compliance" className="ms-nav-item">Compliance</Link>
+              <Link to="/legal-review" className="ms-nav-item">Legal Review</Link>
+              <Link to="/small-business" className="ms-nav-item">Small Business</Link>
+              <Link to="/quality-assurance" className="ms-nav-item">Quality Assurance</Link>
+              <Link to="/source-selection" className="ms-nav-item">Source Selection</Link>
+              <Link to="/contract-management" className="ms-nav-item">Contract Management</Link>
+              <Link to="/sitemap" className="ms-nav-item">Sitemap</Link>
             </div>
           </div>
         </div>
       </div>
     </Container>
   );
+
+  if (withNetwork) {
+    return <PageNetworkWrapper>{content}</PageNetworkWrapper>;
+  }
+
+  return content;
 };

@@ -1,0 +1,281 @@
+
+/* Microsoft Fluent UI inspired component styles */
+
+/* Button styles */
+.ms-button {
+  @apply rounded-md font-medium transition-all duration-200 relative 
+         focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-1
+         active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.ms-button-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white;
+}
+
+.ms-button-secondary {
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100;
+}
+
+.ms-button-outline {
+  @apply border border-gray-300 bg-transparent hover:bg-gray-100 text-gray-800
+         dark:border-gray-600 dark:hover:bg-gray-800 dark:text-gray-200;
+}
+
+.ms-button-ghost {
+  @apply bg-transparent hover:bg-gray-100 text-gray-800
+         dark:hover:bg-gray-800 dark:text-gray-200;
+}
+
+.ms-button-danger {
+  @apply bg-red-600 hover:bg-red-700 text-white;
+}
+
+/* Card styles */
+.ms-card {
+  @apply rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden
+         dark:border-gray-800 dark:bg-gray-900 transition-all duration-200;
+}
+
+.ms-card-hover {
+  @apply hover:shadow-md hover:translate-y-[-2px] transition-all duration-200;
+}
+
+.ms-card-interactive {
+  @apply cursor-pointer hover:shadow-md hover:translate-y-[-2px] transition-all duration-200;
+}
+
+.ms-card-header {
+  @apply p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900;
+}
+
+.ms-card-body {
+  @apply p-4;
+}
+
+.ms-card-footer {
+  @apply p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900;
+}
+
+/* Form elements */
+.ms-input {
+  @apply w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700
+         bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+         focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500;
+}
+
+.ms-input-error {
+  @apply border-red-500 focus:ring-red-500/50 focus:border-red-500;
+}
+
+.ms-label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+}
+
+.ms-select {
+  @apply w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700
+         bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+         focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500;
+}
+
+/* Badge styles */
+.ms-badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+}
+
+.ms-badge-primary {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-300;
+}
+
+.ms-badge-success {
+  @apply bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300;
+}
+
+.ms-badge-warning {
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-300;
+}
+
+.ms-badge-danger {
+  @apply bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-300;
+}
+
+.ms-badge-neutral {
+  @apply bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-300;
+}
+
+/* Alert styles */
+.ms-alert {
+  @apply rounded-md p-4 mb-4;
+}
+
+.ms-alert-info {
+  @apply bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300;
+}
+
+.ms-alert-success {
+  @apply bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300;
+}
+
+.ms-alert-warning {
+  @apply bg-yellow-50 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300;
+}
+
+.ms-alert-danger {
+  @apply bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300;
+}
+
+/* Panel styles */
+.ms-panel {
+  @apply rounded-lg border border-gray-200 bg-white p-4
+         dark:border-gray-800 dark:bg-gray-900;
+}
+
+.ms-panel-header {
+  @apply flex justify-between items-center mb-4 pb-2 border-b border-gray-200 dark:border-gray-800;
+}
+
+.ms-panel-title {
+  @apply text-lg font-semibold;
+}
+
+/* Fluent UI specific components */
+.ms-fluent-panel {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg
+         dark:bg-black/20 dark:border-white/10;
+}
+
+.ms-fluent-button {
+  @apply bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20
+         rounded-md transition-all duration-200 font-medium relative overflow-hidden
+         focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-1
+         active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.ms-fluent-button::before {
+  @apply content-[''] absolute top-0 left-0 w-full h-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-[100%];
+}
+
+.ms-fluent-button:hover::before {
+  @apply animate-shimmer;
+}
+
+.ms-fluent-input {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-md text-white
+         px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-white/50 placeholder:text-white/50;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Microsoft Fluent UI Typography */
+.ms-title-large {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.ms-title {
+  @apply text-xl font-semibold tracking-tight;
+}
+
+.ms-subtitle {
+  @apply text-base font-medium text-muted-foreground;
+}
+
+.ms-body {
+  @apply text-base leading-relaxed;
+}
+
+.ms-body-small {
+  @apply text-sm leading-relaxed;
+}
+
+.ms-caption {
+  @apply text-xs text-muted-foreground;
+}
+
+/* Layout components */
+.ms-stack-horizontal {
+  @apply flex flex-row items-center gap-2;
+}
+
+.ms-stack-vertical {
+  @apply flex flex-col gap-2;
+}
+
+.ms-divider {
+  @apply h-px w-full bg-gray-200 dark:bg-gray-800 my-4;
+}
+
+.ms-container {
+  @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Navigation elements */
+.ms-nav-item {
+  @apply text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white
+         transition-colors py-1 px-2 rounded;
+}
+
+.ms-nav-item-active {
+  @apply bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white font-medium;
+}
+
+/* Page specific */
+.ms-page-header {
+  @apply mb-6;
+}
+
+.ms-page-title {
+  @apply mb-2;
+}
+
+.ms-content-card {
+  @apply bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10;
+}
+
+/* Dashboard components */
+.ms-dashboard-stat {
+  @apply ms-card p-4 flex flex-col;
+}
+
+.ms-dashboard-stat-title {
+  @apply text-sm font-medium text-muted-foreground;
+}
+
+.ms-dashboard-stat-value {
+  @apply text-2xl font-semibold mt-1;
+}
+
+.ms-dashboard-stat-description {
+  @apply text-xs text-muted-foreground mt-2;
+}
+
+/* Motion animations */
+.ms-motion-fadeIn {
+  animation: ms-fadeIn 0.3s ease-in-out;
+}
+
+.ms-motion-scaleIn {
+  animation: ms-scaleIn 0.2s ease-out;
+}
+
+@keyframes ms-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ms-scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

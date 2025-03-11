@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route, RouteObject } from 'react-router-dom';
 import { wrapWithLayout } from "./routeTypes";
@@ -73,6 +74,7 @@ export const appRoutes: RouteObject[] = [
   }
 ];
 
+// AppRoutes component props interface
 interface AppRoutesProps {
   routes: RouteObject[];
 }

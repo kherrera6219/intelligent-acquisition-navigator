@@ -20,6 +20,7 @@ interface MainLayoutProps {
   containerSize?: "sm" | "md" | "lg" | "xl" | "full";
   className?: string;
   forceExternalHeader?: boolean; // Prop to force external header even when authenticated
+  variant?: "default" | "fluent" | "minimal";
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ 
@@ -28,14 +29,25 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   showFooter = true,
   containerSize = "full",
   className,
-  forceExternalHeader = false
+  forceExternalHeader = false,
+  variant = "default"
 }) => {
   const { isAuthenticated } = useAuthState();
   const { pathname } = useLocation();
   
   // Use internal header for authenticated users, unless specifically forcing external header
   const useInternalHeader = isAuthenticated && !forceExternalHeader && showHeader;
-  const isDashboardPage = pathname === "/dashboard" || pathname === "/ms-fluent-dashboard";
+  const isDashboardPage = pathname.includes("/dashboard") || pathname === "/ms-fluent-dashboard";
+  const isAcquisitionPage = pathname.includes("acquisition") || 
+                            pathname.includes("solicitation") || 
+                            pathname.includes("compliance") ||
+                            pathname.includes("market-research") ||
+                            pathname.includes("document-control") ||
+                            pathname.includes("source-selection") ||
+                            pathname.includes("contract-management") ||
+                            pathname.includes("legal-review") ||
+                            pathname.includes("small-business") ||
+                            pathname.includes("quality-assurance");
   
   // Special classes for specific pages
   const getPageSpecificClasses = () => {
@@ -43,8 +55,17 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       return "ms-dashboard-layout";
     }
     
-    if (pathname.includes("acquisition")) {
+    if (isAcquisitionPage) {
       return "ms-acquisition-layout";
+    }
+    
+    // Add more page-specific classes as needed
+    if (pathname.includes("auth")) {
+      return "ms-auth-layout";
+    }
+    
+    if (pathname.includes("profile")) {
+      return "ms-profile-layout";
     }
     
     return "";
@@ -52,6 +73,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 
   // Determine background styles based on fluent design principles
   const getBackgroundStyles = () => {
+    if (variant === "minimal") {
+      return {};
+    }
+    
     return {
       backgroundImage: `
         linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.1) 100%),
