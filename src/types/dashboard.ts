@@ -3,8 +3,11 @@ import { LucideIcon } from 'lucide-react';
 
 export interface RecentActivity {
   title: string;
-  time: string;
+  time?: string; // Keep for backward compatibility
+  timestamp: string; // ISO date string for sorting and proper formatting
   icon: LucideIcon;
+  description?: string; // Optional longer description
+  category?: string; // Optional category for filtering
 }
 
 export interface DashboardCardProps {
@@ -16,7 +19,6 @@ export interface DashboardCardProps {
     text: string;
     variant: string;
   };
-  // Add missing props
   icon?: React.ReactNode;
   href?: string;
   className?: string;
