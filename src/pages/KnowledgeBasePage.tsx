@@ -32,6 +32,11 @@ const KnowledgeBasePage = () => {
         title="Knowledge Base"
         description="Explore our comprehensive knowledge base to find answers to common questions and learn how to use our platform effectively."
         isLoading={isLoading}
+        backLink={{ label: "Back to Dashboard", href: "/dashboard" }}
+        breadcrumbs={[
+          { label: "Home", href: "/dashboard" },
+          { label: "Knowledge Base", href: "/knowledge-base" }
+        ]}
       >
         <Container>
           <Row>

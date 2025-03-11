@@ -49,23 +49,6 @@ export const PageHeader = ({
         </nav>
       )}
       
-      {/* Back link if provided */}
-      {backLink && (
-        <div className="mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="pl-0 flex items-center text-muted-foreground hover:text-primary group"
-            asChild
-          >
-            <Link to={backLink.href}>
-              <ChevronRight className="h-4 w-4 mr-1 rotate-180 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
-              <span>{backLink.label}</span>
-            </Link>
-          </Button>
-        </div>
-      )}
-      
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
           <div className="ms-page-title">
