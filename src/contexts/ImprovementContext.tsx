@@ -1,178 +1,39 @@
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { useChecklistData } from '@/hooks/useChecklistData';
-
-export interface ChecklistItem {
-  id: number;
-  title: string;
-  description: string;
-  completed: boolean;
-}
-
-interface ImprovementContextType {
-  checklist: ChecklistItem[];
-  toggleItem: (id: number) => void;
-  completedCount: number;
-  currentItem: number;
-  showFeedback: boolean;
-  setShowFeedback: React.Dispatch<React.SetStateAction<boolean>>;
-  handleFeedbackSubmit: (feedback: string, rating: number) => void;
-  isLoading: boolean;
-  error: Error | null;
-}
+import React, { createContext, useContext, useEffect, ReactNode } from 'react';
+import { initialChecklist } from '@/data/initialChecklist';
+import { useImprovementActions } from '@/hooks/useImprovementActions';
+import { ImprovementContextType, ChecklistItem } from '@/types/checklist';
 
 const ImprovementContext = createContext<ImprovementContextType | undefined>(undefined);
 
-export const initialChecklist: ChecklistItem[] = [
-  {
-    id: 1,
-    title: "TypeScript Configuration",
-    description: "Implement strict TypeScript settings and proper type definitions",
-    completed: false
-  },
-  {
-    id: 2,
-    title: "Component Architecture",
-    description: "Follow component-driven development with proper file structure",
-    completed: false
-  },
-  {
-    id: 3,
-    title: "State Management",
-    description: "Optimize React state management and Context API usage",
-    completed: false
-  },
-  {
-    id: 4,
-    title: "Performance Optimization",
-    description: "Implement React.memo, useCallback, and useMemo where needed",
-    completed: false
-  },
-  {
-    id: 5,
-    title: "Code Quality",
-    description: "Set up ESLint, Prettier, and consistent code formatting",
-    completed: false
-  },
-  {
-    id: 6,
-    title: "Testing Infrastructure",
-    description: "Configure Jest and React Testing Library with proper test coverage",
-    completed: false
-  },
-  {
-    id: 7,
-    title: "Error Handling",
-    description: "Implement comprehensive error boundaries and error recovery mechanisms",
-    completed: false
-  },
-  {
-    id: 8,
-    title: "Form Validation",
-    description: "Add client-side input validation with helpful feedback",
-    completed: false
-  },
-  {
-    id: 9,
-    title: "Responsive Design",
-    description: "Ensure proper display on all device sizes with adaptive layouts",
-    completed: false
-  },
-  {
-    id: 10,
-    title: "API Integration",
-    description: "Set up React Query for efficient API data fetching and caching",
-    completed: false
-  }
-];
-
 export const ImprovementProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [currentItem, setCurrentItem] = useState(0);
-  const { toast } = useToast();
-  
-  // Use React Query hook for data fetching and management
   const {
     checklistItems,
+    toggleItem,
+    completedCount,
+    currentItem,
+    showFeedback,
+    setShowFeedback,
+    handleFeedbackSubmit,
+    updateCurrentItem,
     isLoading,
-    error,
-    updateItem,
-    submitFeedback: submitFeedbackToAPI,
-    isSubmittingFeedback
-  } = useChecklistData();
+    error
+  } = useImprovementActions();
   
   // Fallback to initial checklist if the API data isn't available yet
   const checklist = checklistItems.length > 0 ? checklistItems : initialChecklist;
-  const completedCount = checklist.filter(item => item.completed).length;
 
   // Effect to show feedback dialog after every third item completed
   useEffect(() => {
     if (completedCount > 0 && completedCount % 3 === 0) {
       setShowFeedback(true);
     }
-  }, [completedCount]);
+  }, [completedCount, setShowFeedback]);
 
   // Effect to handle automatic progression to next uncompleted item
   useEffect(() => {
-    const findNextIncomplete = () => {
-      const nextIncomplete = checklist.findIndex(item => !item.completed);
-      if (nextIncomplete !== -1) {
-        setCurrentItem(nextIncomplete);
-      }
-    };
-    findNextIncomplete();
-  }, [checklist]);
-
-  const toggleItem = useCallback((id: number) => {
-    try {
-      const item = checklist.find(item => item.id === id);
-      if (!item) return;
-      
-      // Toggle the completed status
-      updateItem(id, { completed: !item.completed });
-      
-      toast({
-        title: "Task Updated",
-        description: "Progress has been saved",
-      });
-    } catch (error) {
-      console.error("Error toggling item:", error);
-      
-      toast({
-        title: "Error Updating Task",
-        description: "Automatically retrying...",
-        variant: "destructive",
-      });
-    }
-  }, [checklist, updateItem, toast]);
-
-  const handleFeedbackSubmit = useCallback((feedback: string, rating: number) => {
-    try {
-      // Submit feedback to API
-      submitFeedbackToAPI({
-        feedback,
-        rating,
-        timestamp: new Date().toISOString(),
-        completedCount
-      });
-      
-      toast({
-        title: "Feedback Received",
-        description: "Thank you for your feedback! We'll use it to improve further.",
-      });
-      
-      setShowFeedback(false);
-    } catch (error) {
-      console.error("Error submitting feedback:", error);
-      
-      toast({
-        title: "Error Submitting Feedback",
-        description: "Automatically retrying...",
-        variant: "destructive",
-      });
-    }
-  }, [submitFeedbackToAPI, completedCount, toast]);
+    updateCurrentItem(checklist);
+  }, [checklist, updateCurrentItem]);
 
   const value = {
     checklist,
@@ -200,3 +61,6 @@ export const useImprovement = (): ImprovementContextType => {
   }
   return context;
 };
+
+export { ChecklistItem };
+export type { ImprovementContextType };
