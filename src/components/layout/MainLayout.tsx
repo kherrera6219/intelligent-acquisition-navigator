@@ -1,15 +1,11 @@
-
 import React, { PropsWithChildren, useState, useEffect } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { ExternalFooter } from './ExternalFooter';
+import { InternalFooter } from './InternalFooter';
 import { NetworkStatusBanner } from '../ui/universal/NetworkStatusBanner';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
-import { NetworkErrorBoundary } from '../ui/universal/NetworkErrorBoundary';
-import CookieConsent from '../CookieConsent';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
-import { PrivacyBanner } from '../landing/PrivacyBanner';
-import { EnhancedNetworkBanner } from '../ui/universal/EnhancedNetworkBanner';
 
 interface MainLayoutProps extends PropsWithChildren {
   variant?: 'default' | 'fluent' | 'minimal';
@@ -55,6 +51,8 @@ const headerRoutes = [
 
 const homeRoutes = ['/', '/home'];
 
+const externalRoutes = ['/', '/about', '/features', '/pricing', '/contact', '/help', '/privacy', '/terms'];
+
 export const MainLayout: React.FC<MainLayoutProps> = ({
   children,
   variant = 'default',
@@ -69,8 +67,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const isExternalRoute = externalRoutes.includes(location.pathname);
   
-  // Install keyboard shortcuts
   useKeyboardShortcuts();
   
   useEffect(() => {
@@ -81,7 +79,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 
     window.addEventListener('scroll', handleScroll);
 
-    // Clean up the event listener when the component unmounts
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -107,7 +104,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     minimal: 'min-h-screen flex flex-col bg-background',
   };
   
-  // Network status for the banner
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   
   useEffect(() => {
@@ -123,11 +119,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     };
   }, []);
   
-  // Privacy banner handlers
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(showPrivacyBanner);
   
   const handleLearnMore = () => {
-    // Navigate to privacy page or open modal
     console.log('Learn more about privacy');
   };
   
@@ -157,7 +151,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           {children}
         </main>
         
-        {showFooter && <Footer />}
+        {showFooter && (
+          isExternalRoute ? <ExternalFooter /> : <InternalFooter />
+        )}
         
         {showCookieConsent && <CookieConsent />}
       </NetworkErrorBoundary>
