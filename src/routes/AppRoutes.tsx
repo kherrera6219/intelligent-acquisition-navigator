@@ -79,7 +79,7 @@ interface AppRoutesProps {
 }
 
 // AppRoutes component for rendering routes
-const AppRoutes: React.FC<AppRoutesProps> = ({ routes }) => {
+export const AppRoutes: React.FC<AppRoutesProps> = ({ routes }) => {
   return (
     <Routes>
       {routes.map((route, index) => (

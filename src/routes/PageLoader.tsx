@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/universal/Container";
 interface PageLoaderProps {
   component?: React.ComponentType<any>;
   message?: string;
-  variant?: 'default' | 'minimal' | 'fullscreen';
+  variant?: 'default' | 'minimal' | 'fullscreen' | 'fluent';
 }
 
 export const PageLoader: React.FC<PageLoaderProps> = ({ 
@@ -33,6 +33,17 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
         <div className="text-center loading-scale-in">
           <LoadingSpinner size="lg" className="mx-auto" />
           <p className="mt-4 text-muted-foreground font-medium">{message}</p>
+        </div>
+      </div>
+    );
+  }
+  
+  if (variant === 'fluent') {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm z-50">
+        <div className="ms-fluent-panel p-8 loading-scale-in flex flex-col items-center">
+          <div className="ms-loading-progress mb-4 w-[200px]"></div>
+          <p className="text-lg font-semibold text-foreground mt-4 ms-loading-dots">{message}</p>
         </div>
       </div>
     );

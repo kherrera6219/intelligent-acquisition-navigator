@@ -20,7 +20,7 @@ const SitemapPage: React.FC = () => {
     
     let type = 'Other';
     
-    if (path.startsWith('/dashboard') || path.startsWith('/proposals') || path.startsWith('/analytics')) {
+    if (path.startsWith('/dashboard') || path.startsWith('/proposals') || path.startsWith('/analytics') || path === '/ms-fluent-dashboard') {
       type = 'Dashboard';
     } else if (path.startsWith('/auth') || path === '/profile') {
       type = 'Authentication';
@@ -53,15 +53,15 @@ const SitemapPage: React.FC = () => {
 
       <div className="space-y-8 mt-8">
         {Object.entries(routesByType).map(([type, paths]) => (
-          <div key={type}>
+          <div key={type} className="loading-fade-in">
             <h2 className="text-xl font-semibold mb-4">{type}</h2>
-            <Card className="p-4">
+            <Card className="p-4 ms-fluent-panel">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {paths.map(path => (
                   <Button
                     key={path}
                     variant="outline"
-                    className="justify-start"
+                    className="justify-start ms-nav-item"
                     asChild
                   >
                     <Link to={path}>
