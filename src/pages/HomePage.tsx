@@ -8,6 +8,8 @@ import { HomePageLoading } from "@/components/landing/HomePageLoading";
 import { HomePageContent } from "@/components/landing/HomePageContent";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { useAuthState } from "@/hooks/useAuthState";
+import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
 
 const Index = () => {
   const {
@@ -20,6 +22,8 @@ const Index = () => {
     error
   } = useHomePageInit();
   
+  const { isAuthenticated } = useAuthState();
+  
   if (error) {
     return <HomePageError error={error} />;
   }
@@ -30,7 +34,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      {isAuthenticated ? <UniversalInternalHeader /> : <Header />}
       <ScrollArea className="flex-1 h-full w-full overflow-hidden">
         <HomePageContent 
           showPrivacyNotice={showPrivacyNotice}

@@ -31,10 +31,7 @@ export const HeaderContent: React.FC<HeaderContentProps> = ({
           isMobile={isMobile}
         />
         
-        <HeaderUserMenu 
-          user={user} 
-          mobileMenuOpen={mobileMenuOpen} 
-        />
+        {user && <HeaderUserMenu user={user} mobileMenuOpen={mobileMenuOpen} />}
       </div>
     </TooltipProvider>
   );
