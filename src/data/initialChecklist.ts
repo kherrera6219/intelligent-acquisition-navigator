@@ -61,5 +61,35 @@ export const initialChecklist: ChecklistItem[] = [
     title: "API Integration",
     description: "Set up React Query for efficient API data fetching and caching",
     completed: true
+  },
+  {
+    id: 11,
+    title: "Accessibility Compliance",
+    description: "Ensure WCAG 2.1 AA compliance with proper ARIA attributes",
+    completed: false
+  },
+  {
+    id: 12,
+    title: "Search Functionality",
+    description: "Implement robust search with filtering and pagination",
+    completed: false
+  },
+  {
+    id: 13,
+    title: "Offline Support",
+    description: "Add service workers and IndexedDB for offline functionality",
+    completed: false
+  },
+  {
+    id: 14,
+    title: "Performance Monitoring",
+    description: "Set up analytics and performance tracking with error reporting",
+    completed: false
+  },
+  {
+    id: 15,
+    title: "Security Enhancements",
+    description: "Implement security best practices including CSRF protection and input sanitization",
+    completed: false
   }
 ];
