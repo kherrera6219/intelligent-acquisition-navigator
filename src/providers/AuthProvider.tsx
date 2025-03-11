@@ -5,7 +5,7 @@ import { useAuthState } from '@/hooks/useAuthState';
 import { useAuthActions } from '@/hooks/useAuthActions';
 import { useSessionState } from '@/hooks/useSessionState';
 import { useSessionManagement } from '@/hooks/useSessionManagement';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { 
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     SESSION_DURATION 
   } = useSessionState(isAuthenticated);
   
-  const isOnline = useNetworkStatus();
+  const { isOnline } = useNetworkMonitor();
 
   // Use the session management hook
   useSessionManagement(

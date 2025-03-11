@@ -17,6 +17,16 @@ export const NetworkStatusMonitor: React.FC = () => {
     // or when isOnline changes, but not on initial mount
     const hasReconnected = !reconnecting && isOnline;
     
+    // Show a toast when the user reconnects
+    if (hasReconnected) {
+      toast({
+        title: "You're back online",
+        description: "Your connection has been restored. Syncing data...",
+        variant: "default",
+        duration: 3000,
+      });
+    }
+    
     return () => {
       // Cleanup function to prevent memory leaks
       // This will be called when the component unmounts

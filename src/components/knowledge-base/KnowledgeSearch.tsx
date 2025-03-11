@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/universal/Card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 interface SearchResult {
   id: string;
@@ -29,6 +30,7 @@ export const KnowledgeSearch: React.FC<KnowledgeSearchProps> = ({ className }) =
   const [assistantResponse, setAssistantResponse] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<string>('documents');
   const { toast } = useToast();
+  const { isOnline } = useNetworkMonitor();
   
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +39,15 @@ export const KnowledgeSearch: React.FC<KnowledgeSearchProps> = ({ className }) =
       toast({
         title: "Empty search",
         description: "Please enter a search query",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!isOnline) {
+      toast({
+        title: "Offline mode",
+        description: "Search is not available while offline. Please reconnect to the internet.",
         variant: "destructive"
       });
       return;
@@ -99,14 +110,14 @@ export const KnowledgeSearch: React.FC<KnowledgeSearchProps> = ({ className }) =
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search the knowledge base..."
             className="pr-12"
-            disabled={isSearching}
+            disabled={isSearching || !isOnline}
           />
           <Button
             type="submit"
             size="sm"
             variant="default"
             className="absolute right-1 top-1 h-8"
-            disabled={isSearching}
+            disabled={isSearching || !isOnline}
           >
             {isSearching ? (
               <LoadingState variant="inline" size="sm" message="" />
@@ -115,6 +126,11 @@ export const KnowledgeSearch: React.FC<KnowledgeSearchProps> = ({ className }) =
             )}
           </Button>
         </div>
+        {!isOnline && (
+          <p className="text-xs text-destructive mt-2">
+            Search is not available while offline. Please reconnect to the internet.
+          </p>
+        )}
       </form>
       
       {(results.length > 0 || assistantResponse.length > 0) && (
