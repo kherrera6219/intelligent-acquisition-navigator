@@ -1,0 +1,64 @@
+
+/* Keyboard Accessibility Utilities */
+
+/* Add a subtle indicator class for elements with keyboard focus */
+body.keyboard-user *:focus {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Helper class to apply to skip links */
+.skip-link {
+  @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 
+         focus:p-3 focus:bg-background focus:text-foreground focus:shadow-lg focus:rounded-md;
+}
+
+/* Focus indicator for keyboard navigation on interactive elements */
+.keyboard-focus-indicator {
+  @apply transition-all duration-150;
+}
+
+/* When using keyboard navigation, show focus indicators */
+body.keyboard-user .keyboard-focus-indicator:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+}
+
+/* Helper class for keyboard accessible elements */
+.keyboard-accessible {
+  @apply cursor-pointer focus:outline-none;
+}
+
+body.keyboard-user .keyboard-accessible:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+}
+
+/* Make sure keyboard focus is visible on interactive elements */
+body.keyboard-user button:focus-visible,
+body.keyboard-user [role="button"]:focus-visible,
+body.keyboard-user a:focus-visible,
+body.keyboard-user input:focus-visible,
+body.keyboard-user select:focus-visible,
+body.keyboard-user textarea:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+  outline: none !important;
+}
+
+/* For card-style interactive components */
+body.keyboard-user .interactive-card:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+  transform: translateY(-2px);
+}
+
+/* JavaScript detection of keyboard users
+   Add this to your main JavaScript file or create a keyboard detection utility:
+
+   document.addEventListener('keydown', function(e) {
+     if (e.key === 'Tab') {
+       document.body.classList.add('keyboard-user');
+     }
+   });
+
+   document.addEventListener('mousedown', function() {
+     document.body.classList.remove('keyboard-user');
+   });
+*/

@@ -14,6 +14,23 @@
   font-family: 'Open Sans', 'Arial', sans-serif;
 }
 
+/* Color themes for dyslexia - Cream background with dark text often helps */
+.dyslexia-color-theme {
+  background-color: #f8f4e5 !important;
+  color: #444 !important;
+}
+
+.dyslexia-color-theme p,
+.dyslexia-color-theme li,
+.dyslexia-color-theme h1,
+.dyslexia-color-theme h2,
+.dyslexia-color-theme h3,
+.dyslexia-color-theme h4,
+.dyslexia-color-theme h5,
+.dyslexia-color-theme h6 {
+  color: #444 !important;
+}
+
 /* Enable dyslexia-friendly mode when users have the appropriate preference */
 @media (prefers-reduced-transparency: reduce) {
   body {
@@ -26,6 +43,12 @@
 .dyslexia-mode li,
 .dyslexia-mode div {
   text-align: left;
+}
+
+/* Use a special highlight color for dyslexic users */
+.dyslexia-mode ::selection {
+  background-color: #FFFF00 !important;
+  color: #000000 !important;
 }
 
 /* Implement a toggle for users to enable dyslexia mode */
@@ -56,4 +79,20 @@
   background: none !important;
   background-image: none !important;
   color: hsl(0, 0%, 100%) !important;
+}
+
+/* Special paragraph styling for improved readability */
+.dyslexia-mode p {
+  margin-bottom: 1.2em !important;
+  max-width: 80ch !important; /* Limit line length for readability */
+}
+
+/* Improved list readability */
+.dyslexia-mode ul,
+.dyslexia-mode ol {
+  padding-left: 2em !important;
+}
+
+.dyslexia-mode li {
+  margin-bottom: 0.5em !important;
 }
