@@ -13,18 +13,24 @@ export default function FeaturesPage() {
       title="Features"
       description="Explore the comprehensive features of our acquisition knowledge platform."
     >
-      <Container className="py-16">
+      <Container className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <HeroSection />
         
         {/* Feature Tabs */}
-        <FeatureTabs />
+        <div className="mt-16">
+          <FeatureTabs />
+        </div>
         
         {/* Feature Comparison */}
-        <ComparisonTable />
+        <div className="mt-24">
+          <ComparisonTable />
+        </div>
         
         {/* CTA Section */}
-        <CtaSection />
+        <div className="mt-24 mb-12">
+          <CtaSection />
+        </div>
       </Container>
     </ExternalPageLayout>
   );
