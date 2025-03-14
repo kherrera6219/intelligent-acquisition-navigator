@@ -7,7 +7,7 @@ export const CtaSection: React.FC = () => {
   return (
     <div className="text-center">
       <Card className="p-10 bg-gradient-to-br from-blue-900/30 to-gray-800 border-gray-700 max-w-4xl mx-auto shadow-2xl">
-        <h2 className="text-3xl md:text-4xl font-bold mb-5 text-white tracking-tight">Ready to Transform Your Acquisition Process?</h2>
+        <h2 className="text-3xl font-bold mb-5 text-white tracking-tight">Ready to Transform Your Acquisition Process?</h2>
         <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
           Join federal agencies nationwide that use our platform to streamline procurement, 
           ensure compliance, and make data-driven acquisition decisions.

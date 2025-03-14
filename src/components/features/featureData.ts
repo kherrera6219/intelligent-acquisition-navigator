@@ -131,3 +131,8 @@ export const featureTabs = [
     image: '/images/analytics.jpg'
   }
 ];
+
+// Define exported constants for the individual feature sections
+export const knowledgeFeatures = featureTabs[0].features;
+export const complianceFeatures = featureTabs[1].features;
+export const analyticsFeatures = featureTabs[2].features;
