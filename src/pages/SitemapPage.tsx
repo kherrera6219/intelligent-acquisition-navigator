@@ -1,11 +1,8 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AppRoutes } from '@/routes/AppRoutes';
 
 const SitemapPage: React.FC = () => {
-  // Note: We need the actual routes imported from AppRoutes
-  
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Sitemap</h1>
@@ -35,10 +32,16 @@ const SitemapPage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">Acquisition</h2>
           <ul className="space-y-2">
             <li><Link to="/federal-acquisition" className="text-blue-500 hover:underline">Federal Acquisition</Link></li>
+            <li><Link to="/texas-acquisition" className="text-blue-500 hover:underline">Texas Acquisition</Link></li>
             <li><Link to="/market-research" className="text-blue-500 hover:underline">Market Research</Link></li>
             <li><Link to="/solicitation-review" className="text-blue-500 hover:underline">Solicitation Review</Link></li>
             <li><Link to="/document-control" className="text-blue-500 hover:underline">Document Control</Link></li>
             <li><Link to="/compliance" className="text-blue-500 hover:underline">Compliance</Link></li>
+            <li><Link to="/source-selection" className="text-blue-500 hover:underline">Source Selection</Link></li>
+            <li><Link to="/contract-management" className="text-blue-500 hover:underline">Contract Management</Link></li>
+            <li><Link to="/legal-review" className="text-blue-500 hover:underline">Legal Review</Link></li>
+            <li><Link to="/small-business" className="text-blue-500 hover:underline">Small Business</Link></li>
+            <li><Link to="/quality-assurance" className="text-blue-500 hover:underline">Quality Assurance</Link></li>
           </ul>
         </div>
         
@@ -56,6 +59,14 @@ const SitemapPage: React.FC = () => {
           <ul className="space-y-2">
             <li><Link to="/privacy" className="text-blue-500 hover:underline">Privacy Policy</Link></li>
             <li><Link to="/terms" className="text-blue-500 hover:underline">Terms of Service</Link></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Developer Resources</h2>
+          <ul className="space-y-2">
+            <li><Link to="/component-library" className="text-blue-500 hover:underline">Component Library</Link></li>
+            <li><Link to="/validation" className="text-blue-500 hover:underline">Validation</Link></li>
           </ul>
         </div>
       </div>

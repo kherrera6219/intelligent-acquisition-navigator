@@ -1,4 +1,3 @@
-
 import React, { Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 import { wrapWithLayout } from "./routeTypes";
@@ -22,17 +21,21 @@ const ApiDocsPage = lazy(() => import("@/pages/developer/ApiDocsPage"));
 const ComponentLibraryPage = lazy(() => import("@/pages/developer/ComponentLibraryPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const AnalyticsPage = lazy(() => import("@/pages/analytics/AnalyticsPage"));
+
+// Acquisition pages - standardized imports
 const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
 const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
 const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage"));
 const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage"));
-const TexasAcquisitionPage = lazy(() => import("@/pages/TexasAcquisitionPage"));
 const CompliancePage = lazy(() => import("@/pages/acquisition/CompliancePage"));
 const SourceSelectionPage = lazy(() => import("@/pages/acquisition/SourceSelectionPage"));
 const ContractManagementPage = lazy(() => import("@/pages/acquisition/ContractManagementPage"));
 const LegalReviewPage = lazy(() => import("@/pages/acquisition/LegalReviewPage"));
 const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPage"));
 const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
+const TexasAcquisitionPage = lazy(() => import("@/pages/acquisition/TexasAcquisition"));
+
+// Other specific pages
 const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const ValidationPage = lazy(() => import("@/pages/ValidationPage"));

@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { FederalChatContainer } from '@/components/federal/FederalChatContainer';
 import { FederalTabNavigation } from '@/components/federal/FederalTabNavigation';
-import { FederalTabContent } from '@/components/federal/FederalTabContent';
 import { FederalReportCardGrid } from '@/components/federal/FederalReportCardGrid';
 import { useNetworkOperation } from '@/hooks/useNetworkOperation';
 import { useToast } from '@/hooks/use-toast';
