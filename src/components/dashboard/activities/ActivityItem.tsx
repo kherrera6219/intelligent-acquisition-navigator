@@ -5,7 +5,7 @@ import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ActivityItemProps {
-  icon?: React.ReactNode | React.ElementType;
+  icon?: React.ReactNode | React.ComponentType<any>;
   title: string;
   description: string;
   timestamp: Date | string;
@@ -51,7 +51,7 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
     >
       {IconComponent && typeof IconComponent === 'function' ? (
         <div className={cn("p-2 rounded-full", getStatusColorClass())}>
-          {React.createElement(IconComponent as React.ElementType, { 
+          {React.createElement(IconComponent as React.ComponentType, { 
             className: "h-5 w-5"
           })}
         </div>

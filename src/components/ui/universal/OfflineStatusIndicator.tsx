@@ -1,43 +1,65 @@
 
 import React from 'react';
 import { Wifi, WifiOff } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { format } from 'date-fns';
-import { NetworkStatus } from '@/types/dashboard';
+import { Tooltip } from '@/components/ui/tooltip';
+import { useNetworkMonitor } from './NetworkMonitorProvider';
+import { cn } from '@/lib/utils';
 
-export const OfflineStatusIndicator: React.FC<{ status: NetworkStatus }> = ({ status }) => {
-  const { isOnline, isReconnecting, lastOnlineAt, lastSyncTime } = status;
+interface OfflineStatusIndicatorProps {
+  compact?: boolean;
+  className?: string;
+}
+
+export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({
+  compact = false,
+  className
+}) => {
+  const { isOnline, isReconnecting } = useNetworkMonitor();
   
-  if (isOnline && !isReconnecting) {
-    return null;
-  }
-  
-  const formattedLastOnline = lastOnlineAt ? format(lastOnlineAt, 'h:mm a') : 'Unknown';
-  const formattedLastSync = lastSyncTime ? format(lastSyncTime, 'h:mm a') : 'No sync yet';
-  
-  const statusText = isReconnecting 
-    ? 'Reconnecting to server...' 
-    : `Offline mode. Last online: ${formattedLastOnline}. Last sync: ${formattedLastSync}`;
-  
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="inline-flex items-center gap-1.5 text-sm">
+  if (!isOnline || isReconnecting) {
+    if (compact) {
+      return (
+        <Tooltip content={isReconnecting ? "Reconnecting..." : "You are offline"}>
+          <div className={cn("flex items-center", className)}>
             {isReconnecting ? (
-              <Wifi className="h-4 w-4 text-yellow-500 animate-pulse" />
+              <span className="flex h-2 w-2 rounded-full bg-yellow-500 animate-pulse" />
             ) : (
               <WifiOff className="h-4 w-4 text-red-500" />
             )}
-            <span className={isReconnecting ? 'text-yellow-500' : 'text-red-500'}>
-              {isReconnecting ? 'Reconnecting...' : 'Offline'}
-            </span>
           </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{statusText}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+        </Tooltip>
+      );
+    }
+    
+    return (
+      <div className={cn(
+        "flex items-center gap-2 px-3 py-1.5 rounded-full",
+        isReconnecting ? "bg-yellow-500/10" : "bg-red-500/10",
+        className
+      )}>
+        {isReconnecting ? (
+          <>
+            <span className="flex h-2 w-2 rounded-full bg-yellow-500 animate-pulse" />
+            <span className="text-sm text-yellow-500 font-medium">Reconnecting...</span>
+          </>
+        ) : (
+          <>
+            <WifiOff className="h-4 w-4 text-red-500" />
+            <span className="text-sm text-red-500 font-medium">Offline</span>
+          </>
+        )}
+      </div>
+    );
+  }
+  
+  if (compact) {
+    return null; // Don't show anything when online and in compact mode
+  }
+  
+  return (
+    <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10", className)}>
+      <Wifi className="h-4 w-4 text-green-500" />
+      <span className="text-sm text-green-500 font-medium">Online</span>
+    </div>
   );
 };
