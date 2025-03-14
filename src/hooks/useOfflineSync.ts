@@ -1,82 +1,69 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useToast } from './use-toast';
+import { useEffect, useState } from 'react';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { getPendingRequests, getPendingRequestCount, deletePendingRequest, processPendingRequests, clearExpiredCache } from '@/utils/offlineStorage';
+import { getPendingRequests, processPendingRequests, clearExpiredCache } from '@/utils/offlineStorage';
 
-export function useOfflineSync() {
-  const [pendingRequests, setPendingRequests] = useState<number>(0);
-  const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const [canSync, setCanSync] = useState<boolean>(false);
+export const useOfflineSync = () => {
   const { isOnline, supabaseConnected } = useNetworkMonitor();
-  const { toast } = useToast();
+  const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+  const [syncing, setSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
 
-  // Check for pending requests
-  const checkPendingRequests = useCallback(async () => {
+  // Fetch pending requests
+  const fetchPendingRequests = async () => {
+    const requests = await getPendingRequests();
+    setPendingRequests(requests);
+    return requests;
+  };
+
+  // Process pending requests when online
+  const syncOfflineData = async () => {
+    if (!isOnline || !supabaseConnected || syncing) return;
+    
+    setSyncing(true);
     try {
-      const count = await getPendingRequestCount();
-      setPendingRequests(count);
-      setCanSync(count > 0 && isOnline && supabaseConnected);
+      await processPendingRequests(async (request) => {
+        try {
+          await fetch(request.url, {
+            method: request.method,
+            headers: new Headers(request.headers),
+            body: request.body
+          });
+        } catch (error) {
+          console.error('Error processing offline request:', error);
+          throw error; // Rethrow to prevent request deletion
+        }
+      });
+      
+      // Clear expired cache items
+      await clearExpiredCache();
+      
+      // Update state after sync
+      setLastSyncTime(new Date());
+      await fetchPendingRequests();
     } catch (error) {
-      console.error('Error checking pending requests:', error);
+      console.error('Error during offline sync:', error);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Check for pending requests on mount and when connection state changes
+  useEffect(() => {
+    fetchPendingRequests();
+    
+    if (isOnline && supabaseConnected) {
+      syncOfflineData();
     }
   }, [isOnline, supabaseConnected]);
 
-  // Sync pending requests
-  const syncPendingRequests = useCallback(async () => {
-    if (!isOnline || !supabaseConnected || isSyncing) return;
-    
-    setIsSyncing(true);
-    
-    try {
-      const { successful, failed } = await processPendingRequests();
-      
-      if (successful > 0 || failed > 0) {
-        toast({
-          title: failed > 0 ? 'Sync completed with issues' : 'Sync completed',
-          description: `${successful} ${successful === 1 ? 'request' : 'requests'} synchronized, ${failed} failed.`,
-          variant: failed > 0 ? 'destructive' : 'default',
-        });
-      }
-      
-      // Clear any expired cache items
-      await clearExpiredCache();
-      
-      // Update pending requests count
-      checkPendingRequests();
-    } catch (error) {
-      console.error('Error syncing pending requests:', error);
-      toast({
-        title: 'Sync failed',
-        description: 'An error occurred while trying to synchronize data.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [isOnline, supabaseConnected, isSyncing, toast, checkPendingRequests]);
-
-  // Auto-sync when coming back online
-  useEffect(() => {
-    if (isOnline && supabaseConnected && pendingRequests > 0 && !isSyncing) {
-      syncPendingRequests();
-    }
-  }, [isOnline, supabaseConnected, pendingRequests, isSyncing, syncPendingRequests]);
-
-  // Check for pending requests on mount and when network status changes
-  useEffect(() => {
-    checkPendingRequests();
-    
-    // Set up interval to check for pending requests
-    const interval = setInterval(checkPendingRequests, 30000); // Check every 30 seconds
-    
-    return () => clearInterval(interval);
-  }, [isOnline, supabaseConnected, checkPendingRequests]);
-
   return {
     pendingRequests,
-    isSyncing,
-    syncPendingRequests,
-    canSync
+    hasPendingRequests: pendingRequests.length > 0,
+    pendingRequestCount: pendingRequests.length,
+    syncing,
+    lastSyncTime,
+    syncNow: syncOfflineData,
+    refreshPendingRequests: fetchPendingRequests
   };
-}
+};

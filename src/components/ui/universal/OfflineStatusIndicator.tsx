@@ -1,52 +1,53 @@
 
 import React from 'react';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { formatDistanceToNow } from 'date-fns';
+import { Tooltip } from '@/components/ui/tooltip';
 import { NetworkStatusIcon } from './NetworkStatusIcon';
 
-export interface OfflineStatusIndicatorProps {
+interface OfflineStatusIndicatorProps {
   compact?: boolean;
+  className?: string;
 }
 
-export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({ 
-  compact = false 
+export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({
+  compact = false,
+  className
 }) => {
   const { isOnline, lastOnlineAt, lastSyncTime } = useNetworkStatus();
-  
-  if (isOnline) {
-    return null;
-  }
-  
+
   if (compact) {
     return (
-      <div className="inline-flex items-center rounded-full bg-yellow-500/10 px-2 py-1 text-xs font-medium text-yellow-500 ring-1 ring-inset ring-yellow-500/20">
-        <NetworkStatusIcon status="offline" className="mr-1 h-3 w-3" />
-        Offline
-      </div>
+      <Tooltip content={isOnline ? 'Online' : 'Offline Mode'}>
+        <div className={className}>
+          <NetworkStatusIcon 
+            isOnline={isOnline} 
+            status={isOnline ? 'online' : 'offline'} 
+            className="h-4 w-4" 
+          />
+        </div>
+      </Tooltip>
     );
   }
 
   return (
-    <div className="rounded-md bg-yellow-50 p-4 dark:bg-yellow-900/20">
-      <div className="flex">
-        <div className="flex-shrink-0">
-          <NetworkStatusIcon status="offline" className="h-5 w-5 text-yellow-400" />
-        </div>
-        <div className="ml-3">
-          <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Offline Mode</h3>
-          <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-200">
-            <p>
-              You are currently working offline. Changes will be synced when you reconnect.
-              {lastSyncTime && (
-                <span className="block mt-1 text-xs">
-                  Last synced: {new Date(lastSyncTime).toLocaleString()}
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className={`flex items-center gap-2 ${className}`}>
+      <NetworkStatusIcon 
+        isOnline={isOnline} 
+        status={isOnline ? 'online' : 'offline'} 
+        className="h-5 w-5" 
+      />
+      <span className="text-sm font-medium">
+        {isOnline 
+          ? 'Online' 
+          : `Offline (Last online: ${lastOnlineAt ? formatDistanceToNow(lastOnlineAt, { addSuffix: true }) : 'unknown'})`
+        }
+      </span>
+      {lastSyncTime && (
+        <span className="text-xs text-muted-foreground">
+          Last sync: {formatDistanceToNow(lastSyncTime, { addSuffix: true })}
+        </span>
+      )}
     </div>
   );
 };
-
-export default OfflineStatusIndicator;

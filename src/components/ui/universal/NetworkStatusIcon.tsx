@@ -1,61 +1,32 @@
 
-import React, { useEffect, useState } from 'react';
-import { Wifi, WifiOff } from 'lucide-react';
+import React from 'react';
 import { cn } from '@/lib/utils';
+import { Wifi, WifiOff, AlertTriangle } from 'lucide-react';
 
-export interface NetworkStatusIconProps {
+interface NetworkStatusIconProps {
   isOnline?: boolean;
-  status?: 'online' | 'offline' | 'reconnecting';
+  status?: 'online' | 'offline' | 'limited' | 'reconnecting';
   className?: string;
-  showLabel?: boolean;
-  iconSize?: number;
+  size?: number;
 }
 
 export const NetworkStatusIcon: React.FC<NetworkStatusIconProps> = ({
-  isOnline,
-  status,
+  isOnline = true,
+  status = 'online',
   className,
-  showLabel = false,
-  iconSize = 16
+  size = 16
 }) => {
-  const [animateIcon, setAnimateIcon] = useState(false);
-  
-  // Determine online status from either prop
-  const online = isOnline !== undefined ? isOnline : status === 'online';
-  
-  // Animation effect when status changes
-  useEffect(() => {
-    setAnimateIcon(true);
-    const timeout = setTimeout(() => setAnimateIcon(false), 1000);
-    return () => clearTimeout(timeout);
-  }, [online, status]);
+  const statusToUse = status || (isOnline ? 'online' : 'offline');
 
-  return (
-    <div className={cn(
-      "flex items-center gap-2 transition-opacity", 
-      animateIcon ? "animate-pulse" : "",
-      className
-    )}>
-      {online ? (
-        <Wifi 
-          className="text-green-500" 
-          size={iconSize} 
-        />
-      ) : (
-        <WifiOff 
-          className="text-red-500" 
-          size={iconSize} 
-        />
-      )}
-      
-      {showLabel && (
-        <span className={cn(
-          "text-xs font-medium",
-          online ? "text-green-500" : "text-red-500"
-        )}>
-          {online ? "Online" : "Offline"}
-        </span>
-      )}
-    </div>
-  );
+  switch (statusToUse) {
+    case 'online':
+      return <Wifi className={cn("text-green-500", className)} size={size} />;
+    case 'offline':
+      return <WifiOff className={cn("text-red-500", className)} size={size} />;
+    case 'limited':
+    case 'reconnecting':
+      return <AlertTriangle className={cn("text-amber-500", className)} size={size} />;
+    default:
+      return <Wifi className={cn("text-gray-500", className)} size={size} />;
+  }
 };
