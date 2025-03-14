@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table/index";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -6,3 +6,4 @@ export { TableFooter } from './TableFooter';
 export { TableHead } from './TableHead';
 export { TableRow } from './TableRow';
 export { TableCell } from './TableCell';
+export { default as TableCaption } from './TableCaption';
