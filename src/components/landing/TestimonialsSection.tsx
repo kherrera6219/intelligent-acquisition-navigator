@@ -1,74 +1,62 @@
 
 import React from 'react';
-import { Container } from '@/components/ui/universal/Container';
-import { MsGradientText } from '@/components/ui/universal/MsGradientText';
-import { StarRating } from '@/components/ui/universal/StarRating';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Container } from '@/components/ui/universal/Grid';
+import { Avatar } from '@/components/ui/avatar';
+import { Quote } from 'lucide-react';
 
-const testimonials = [
-  {
-    name: "Sarah Johnson",
-    role: "Federal Contracting Officer",
-    content: "ProcurityIQ has transformed our procurement process. We've reduced review time by 72% and improved compliance accuracy by 98%.",
-    image: "/avatars/sarah.jpg",
-    score: 5
-  },
-  {
-    name: "Michael Chen",
-    role: "City Procurement Manager",
-    content: "The AI-powered compliance checks have saved our department countless hours and helped us avoid several potential issues before they became problems.",
-    image: "/avatars/michael.jpg",
-    score: 5
-  },
-  {
-    name: "Jamal Williams",
-    role: "State Acquisition Director",
-    content: "We've been able to standardize our procurement processes across 12 different departments thanks to the platform's flexibility and powerful knowledge base.",
-    image: "/avatars/jamal.jpg",
-    score: 4
-  }
-];
+export const TestimonialsSection: React.FC = () => {
+  const testimonials = [
+    {
+      quote: "ProcurityIQ has transformed our procurement processes, saving us countless hours and ensuring compliance with changing regulations.",
+      author: "Sarah Johnson",
+      position: "Chief Procurement Officer",
+      organization: "Federal Agency"
+    },
+    {
+      quote: "The AI-powered insights have helped us make better vendor decisions and improve our overall acquisition strategy.",
+      author: "Michael Chen",
+      position: "Contracts Manager",
+      organization: "State Government"
+    },
+    {
+      quote: "Implementation was smooth, and the ROI has been remarkable. We've reduced compliance risks by over 40%.",
+      author: "David Rodriguez",
+      position: "Director of Operations",
+      organization: "Local Government"
+    }
+  ];
 
-export const TestimonialsSection = () => {
   return (
-    <section className="py-20 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/60" />
-      
-      <Container className="relative z-10">
-        <div className="text-center mb-16 space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Trusted by <MsGradientText>Government Agencies</MsGradientText> Nationwide
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            See how procurement professionals across federal, state, and local levels are transforming their acquisition processes.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div 
-              key={index} 
-              className="bg-card/50 backdrop-blur-sm border-border/50 p-6 rounded-xl hover:border-primary/50 transition-colors duration-300"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <Avatar className="h-12 w-12 border border-border/50">
-                  <AvatarImage src={testimonial.image} alt={testimonial.name} />
-                  <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <h3 className="font-semibold">{testimonial.name}</h3>
-                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+    <Container>
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Customers Say</h2>
+        <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+          Trusted by procurement teams across federal, state, and local governments.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {testimonials.map((testimonial, index) => (
+          <div 
+            key={index} 
+            className="bg-[#1A1F2C]/50 border border-[#9b87f5]/20 rounded-xl p-6 backdrop-blur-sm hover:shadow-lg transition-all duration-300"
+          >
+            <Quote className="h-8 w-8 text-[#9b87f5] mb-4 opacity-70" />
+            <p className="italic text-gray-200 mb-6">{testimonial.quote}</p>
+            <div className="flex items-center">
+              <Avatar className="h-10 w-10 mr-4 border-2 border-[#9b87f5]/30">
+                <div className="bg-[#9b87f5]/20 h-full w-full flex items-center justify-center">
+                  {testimonial.author.split(' ').map(n => n[0]).join('')}
                 </div>
+              </Avatar>
+              <div>
+                <h4 className="font-medium text-white">{testimonial.author}</h4>
+                <p className="text-sm text-gray-400">{testimonial.position}, {testimonial.organization}</p>
               </div>
-              
-              <StarRating score={testimonial.score} showScore={true} />
-              
-              <p className="mt-4 text-muted-foreground">{testimonial.content}</p>
             </div>
-          ))}
-        </div>
-      </Container>
-    </section>
+          </div>
+        ))}
+      </div>
+    </Container>
   );
 };

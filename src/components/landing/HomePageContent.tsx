@@ -8,6 +8,9 @@ import { HeroSection } from './HeroSection';
 import { HomeFeatures } from './HomeFeatures';
 import { HomeCta } from './HomeCta';
 import { CTASection } from './CTASection';
+import { TestimonialsSection } from './TestimonialsSection';
+import { FeaturesSection } from './FeaturesSection';
+import { ComparisonTable } from '@/components/features/ComparisonTable';
 
 interface HomePageContentProps {
   showPrivacyNotice: boolean;
@@ -37,17 +40,34 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
           <HeroSection />
         </section>
 
-        {/* Features Section */}
+        {/* Features Highlight Section */}
+        <section id="features-highlight" className="w-full py-16 md:py-24">
+          <FeaturesSection />
+        </section>
+
+        {/* Main Features Grid */}
         <section id="features" className="w-full">
           <HomeFeatures />
         </section>
 
-        {/* CTA Section */}
+        {/* Testimonials Section */}
+        <section id="testimonials" className="w-full py-16 md:py-20">
+          <TestimonialsSection />
+        </section>
+
+        {/* Comparison Table */}
+        <section id="comparison" className="w-full py-16 md:py-20 bg-[#1A1F2C]/80">
+          <div className="container mx-auto px-4">
+            <ComparisonTable />
+          </div>
+        </section>
+
+        {/* First CTA Section */}
         <section id="cta" className="w-full">
           <HomeCta />
         </section>
 
-        {/* Additional CTA Section with more details */}
+        {/* Final CTA Section */}
         <section id="additional-cta" className="w-full">
           <CTASection />
         </section>

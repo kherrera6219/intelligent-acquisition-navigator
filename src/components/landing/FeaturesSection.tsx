@@ -1,69 +1,81 @@
 
 import React from 'react';
-import { Container } from '@/components/ui/universal/Container';
-import { MsGradientText } from '@/components/ui/universal/MsGradientText';
-import { Card } from '@/components/ui/card';
-import { Clock, Shield, Zap, BarChart3, Globe, Check } from 'lucide-react';
+import { Container } from '@/components/ui/universal/Grid';
+import { Shield, ChartBar, Zap, Database } from 'lucide-react';
 
-const features = [
-  {
-    title: "AI-Powered Compliance",
-    description: "Our system continuously monitors changing regulations across federal, state, and local levels to ensure 100% compliance.",
-    icon: <Shield className="h-10 w-10 text-primary" />
-  },
-  {
-    title: "4D Knowledge Framework",
-    description: "Access a comprehensive database of acquisition regulations, organized in an intuitive 4-dimensional knowledge system.",
-    icon: <Globe className="h-10 w-10 text-primary" />
-  },
-  {
-    title: "Real-Time Analysis",
-    description: "Get instant insights and recommendations for your procurement documents, with AI that understands context and intent.",
-    icon: <Zap className="h-10 w-10 text-primary" />
-  },
-  {
-    title: "Time-Saving Automation",
-    description: "Reduce document review time by up to 85% with automated compliance checking and intelligent document generation.",
-    icon: <Clock className="h-10 w-10 text-primary" />
-  },
-  {
-    title: "Decision Support",
-    description: "Make informed procurement decisions with AI-generated insights based on historical data and best practices.",
-    icon: <BarChart3 className="h-10 w-10 text-primary" />
-  },
-  {
-    title: "Cross-Level Integration",
-    description: "Seamless integration of federal, state, and local procurement requirements in a single unified platform.",
-    icon: <Check className="h-10 w-10 text-primary" />
-  }
-];
-
-export const FeaturesSection = () => {
+export const FeaturesSection: React.FC = () => {
   return (
-    <section className="py-20 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background/90" />
-      
-      <Container className="relative z-10">
-        <div className="text-center mb-16 space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Powerful <MsGradientText>Features</MsGradientText> for Acquisition Excellence
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Our platform combines advanced AI technology with deep procurement expertise to deliver a comprehensive solution.
-          </p>
+    <Container>
+      <div className="text-center mb-16">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6">Next-Generation Acquisition Intelligence</h2>
+        <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+          Our platform combines AI technology with deep procurement expertise to streamline your acquisition process.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="bg-gradient-to-br from-[#1A1F2C] to-[#1A1F2C]/60 p-6 md:p-8 rounded-xl border border-[#9b87f5]/20 shadow-xl">
+          <div className="space-y-10">
+            <Feature 
+              icon={<Shield className="h-8 w-8 text-[#9b87f5]" />}
+              title="Automated Compliance"
+              description="Ensure all procurement activities comply with federal, state, and local regulations through AI-powered monitoring."
+            />
+            <Feature 
+              icon={<ChartBar className="h-8 w-8 text-[#D946EF]" />}
+              title="Data-Driven Insights"
+              description="Make informed decisions with comprehensive analytics and visualizations of your procurement data."
+            />
+            <Feature 
+              icon={<Zap className="h-8 w-8 text-[#F97316]" />}
+              title="Process Acceleration"
+              description="Reduce procurement cycle times by up to 60% through intelligent workflow automation."
+            />
+            <Feature 
+              icon={<Database className="h-8 w-8 text-[#9b87f5]" />}
+              title="Centralized Knowledge"
+              description="Access all procurement documents, regulations, and resources in one secure, searchable platform."
+            />
+          </div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <Card key={index} className="bg-card/50 backdrop-blur-sm border-border/50 p-6 h-full hover:border-primary/50 transition-colors duration-300">
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-            </Card>
-          ))}
+
+        <div className="relative hidden md:block">
+          <div className="absolute -inset-4 bg-gradient-to-r from-[#9b87f5]/20 to-[#D946EF]/20 rounded-lg blur-2xl opacity-30"></div>
+          <div className="relative bg-[#1A1F2C]/70 border border-[#9b87f5]/30 rounded-lg overflow-hidden shadow-2xl">
+            <img 
+              src="https://images.unsplash.com/photo-1498050108023-c5249f4df085" 
+              alt="ProcurityIQ Dashboard"
+              className="w-full h-auto rounded-lg opacity-90 hover:opacity-100 transition-opacity"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+            <div className="absolute bottom-4 left-4 right-4">
+              <span className="px-3 py-1 bg-[#9b87f5]/20 text-[#9b87f5] text-sm font-medium rounded-full backdrop-blur-sm">
+                AI-Powered Dashboard
+              </span>
+            </div>
+          </div>
         </div>
-      </Container>
-    </section>
+      </div>
+    </Container>
+  );
+};
+
+interface FeatureProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+const Feature: React.FC<FeatureProps> = ({ icon, title, description }) => {
+  return (
+    <div className="flex gap-4">
+      <div className="flex-shrink-0 p-2 bg-[#1A1F2C]/80 rounded-lg border border-[#9b87f5]/20">
+        {icon}
+      </div>
+      <div>
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-gray-300">{description}</p>
+      </div>
+    </div>
   );
 };
