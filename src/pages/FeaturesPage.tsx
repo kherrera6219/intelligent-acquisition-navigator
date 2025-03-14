@@ -35,7 +35,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, icon }) =
       {icon}
     </div>
     <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
-    <p className="text-gray-400 flex-grow">{description}</p>
+    <p className="text-gray-400 flex-grow text-base leading-relaxed">{description}</p>
   </Card>
 );
 
@@ -59,8 +59,8 @@ const FeatureTabContent: React.FC<FeatureTabContentProps> = ({
   <div className="pt-8">
     <div className="grid md:grid-cols-2 gap-8 items-center mb-12">
       <div>
-        <h2 className="text-3xl font-bold mb-4 text-white">{title}</h2>
-        <p className="text-xl text-gray-400 mb-6">{description}</p>
+        <h2 className="text-3xl font-bold mb-4 text-white leading-tight">{title}</h2>
+        <p className="text-xl text-gray-400 mb-6 leading-relaxed">{description}</p>
         <Button variant="default" className="bg-blue-600 hover:bg-blue-700">
           Learn More
           <ArrowRight className="ml-2 h-4 w-4" />
@@ -198,8 +198,8 @@ export default function FeaturesPage() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4 px-3 py-1 text-blue-400 border-blue-400">Platform Capabilities</Badge>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">Comprehensive Acquisition Solutions</h1>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight tracking-tight">Comprehensive Acquisition Solutions</h1>
+          <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Discover how our platform streamlines federal acquisition processes with intelligent tools, 
             comprehensive knowledge management, and robust compliance features.
           </p>
@@ -208,15 +208,15 @@ export default function FeaturesPage() {
         {/* Feature Tabs */}
         <Tabs defaultValue="knowledge" className="mb-20">
           <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="knowledge" className="data-[state=active]:bg-blue-900/20">
+            <TabsTrigger value="knowledge" className="data-[state=active]:bg-blue-900/20 text-base">
               <BookOpen className="h-4 w-4 mr-2" />
               Knowledge Base
             </TabsTrigger>
-            <TabsTrigger value="compliance" className="data-[state=active]:bg-blue-900/20">
+            <TabsTrigger value="compliance" className="data-[state=active]:bg-blue-900/20 text-base">
               <Shield className="h-4 w-4 mr-2" />
               Compliance
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-900/20">
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-900/20 text-base">
               <BarChart3 className="h-4 w-4 mr-2" />
               Analytics
             </TabsTrigger>
@@ -254,8 +254,8 @@ export default function FeaturesPage() {
         <div className="mb-20">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-4 px-3 py-1 text-blue-400 border-blue-400">Platform Comparison</Badge>
-            <h2 className="text-3xl font-bold text-white">How We Compare</h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto mt-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4">How We Compare</h2>
+            <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mt-4 leading-relaxed">
               See how our comprehensive solution stacks up against traditional acquisition tools.
             </p>
           </div>
@@ -264,60 +264,60 @@ export default function FeaturesPage() {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th className="py-4 px-6 text-left text-gray-400 font-medium">Features</th>
-                  <th className="py-4 px-6 text-center text-white bg-blue-900/20 font-semibold">AKF Platform</th>
-                  <th className="py-4 px-6 text-center text-gray-400 font-medium">Traditional Tools</th>
+                  <th className="py-4 px-6 text-left text-gray-400 font-medium text-base">Features</th>
+                  <th className="py-4 px-6 text-center text-white bg-blue-900/20 font-semibold text-base">AKF Platform</th>
+                  <th className="py-4 px-6 text-center text-gray-400 font-medium text-base">Traditional Tools</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
                 <tr>
-                  <td className="py-4 px-6 text-gray-300">Integrated Knowledge Base</td>
+                  <td className="py-4 px-6 text-gray-300 text-base">Integrated Knowledge Base</td>
                   <td className="py-4 px-6 text-center bg-blue-900/10">
                     <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="py-4 px-6 text-center text-gray-500">Limited</td>
+                  <td className="py-4 px-6 text-center text-gray-500 text-base">Limited</td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-6 text-gray-300">AI-Powered Compliance</td>
+                  <td className="py-4 px-6 text-gray-300 text-base">AI-Powered Compliance</td>
                   <td className="py-4 px-6 text-center bg-blue-900/10">
                     <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="py-4 px-6 text-center text-gray-500">—</td>
+                  <td className="py-4 px-6 text-center text-gray-500 text-base">—</td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-6 text-gray-300">Real-time Regulatory Updates</td>
+                  <td className="py-4 px-6 text-gray-300 text-base">Real-time Regulatory Updates</td>
                   <td className="py-4 px-6 text-center bg-blue-900/10">
                     <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="py-4 px-6 text-center text-gray-500">Manual Updates</td>
+                  <td className="py-4 px-6 text-center text-gray-500 text-base">Manual Updates</td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-6 text-gray-300">Advanced Analytics</td>
+                  <td className="py-4 px-6 text-gray-300 text-base">Advanced Analytics</td>
                   <td className="py-4 px-6 text-center bg-blue-900/10">
                     <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="py-4 px-6 text-center text-gray-500">Basic</td>
+                  <td className="py-4 px-6 text-center text-gray-500 text-base">Basic</td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-6 text-gray-300">Collaborative Workflows</td>
+                  <td className="py-4 px-6 text-gray-300 text-base">Collaborative Workflows</td>
                   <td className="py-4 px-6 text-center bg-blue-900/10">
                     <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="py-4 px-6 text-center text-gray-500">Limited</td>
+                  <td className="py-4 px-6 text-center text-gray-500 text-base">Limited</td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-6 text-gray-300">Document Generation</td>
+                  <td className="py-4 px-6 text-gray-300 text-base">Document Generation</td>
                   <td className="py-4 px-6 text-center bg-blue-900/10">
                     <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="py-4 px-6 text-center text-gray-500">Basic Templates</td>
+                  <td className="py-4 px-6 text-center text-gray-500 text-base">Basic Templates</td>
                 </tr>
                 <tr>
-                  <td className="py-4 px-6 text-gray-300">Mobile Accessibility</td>
+                  <td className="py-4 px-6 text-gray-300 text-base">Mobile Accessibility</td>
                   <td className="py-4 px-6 text-center bg-blue-900/10">
                     <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
                   </td>
-                  <td className="py-4 px-6 text-center text-gray-500">Limited</td>
+                  <td className="py-4 px-6 text-center text-gray-500 text-base">Limited</td>
                 </tr>
               </tbody>
             </table>
@@ -327,16 +327,16 @@ export default function FeaturesPage() {
         {/* CTA Section */}
         <div className="text-center">
           <Card className="p-8 bg-gradient-to-br from-blue-900/30 to-gray-800 border-gray-700 max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-white">Ready to Transform Your Acquisition Process?</h2>
-            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-white leading-tight">Ready to Transform Your Acquisition Process?</h2>
+            <p className="text-gray-300 mb-8 max-w-2xl mx-auto text-lg leading-relaxed">
               Join federal agencies nationwide that use our platform to streamline procurement, 
               ensure compliance, and make data-driven acquisition decisions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-base py-6">
                 Request a Demo
               </Button>
-              <Button size="lg" variant="outline" className="border-gray-600 hover:bg-gray-700">
+              <Button size="lg" variant="outline" className="border-gray-600 hover:bg-gray-700 text-base py-6">
                 View Pricing Plans
               </Button>
             </div>
