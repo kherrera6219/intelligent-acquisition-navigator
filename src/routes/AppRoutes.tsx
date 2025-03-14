@@ -12,7 +12,7 @@ import acquisitionRoutes from './acquisitionRoutes';
 import settingsRoutes from './settingsRoutes';
 
 // Lazy load pages
-const HomePage = lazy(() => import("@/pages/HomePage"));
+const LandingPage = lazy(() => import("@/pages/HomePage"));
 const AboutPage = lazy(() => import("@/pages/About"));
 const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
@@ -32,11 +32,7 @@ const ValidationPage = lazy(() => import("@/pages/ValidationPage"));
 const mainRoutes = [
   {
     path: "/",
-    element: wrapWithLayout(HomePage, false)
-  },
-  {
-    path: "/home",
-    element: wrapWithLayout(HomePage, false)
+    element: wrapWithLayout(LandingPage, false)
   },
   {
     path: "/about",

@@ -14,6 +14,10 @@ const routes: RouteObject[] = [
     element: wrapWithLayout(DashboardPage)
   },
   {
+    path: "/home",
+    element: wrapWithLayout(DashboardPage)
+  },
+  {
     path: "/analytics",
     element: wrapWithLayout(AnalyticsPage)
   },

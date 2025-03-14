@@ -14,7 +14,8 @@ export const HeaderNavigation: React.FC = () => {
   
   // Main menu items for our dropdown
   const mainMenuItems = [
-    { label: 'Home', href: '/', icon: Home },
+    { label: 'Landing', href: '/', icon: Home },
+    { label: 'Home', href: '/home', icon: Home },
     { label: 'Dashboard', href: '/dashboard', icon: Home },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag },

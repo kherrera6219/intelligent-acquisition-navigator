@@ -20,6 +20,9 @@ export default function DashboardPage() {
     if (hour < 12) setGreeting('Good morning');
     else if (hour < 18) setGreeting('Good afternoon');
     else setGreeting('Good evening');
+    
+    // Set the document title to indicate this is the Home page
+    document.title = "Home | ProcurityIQ";
   }, []);
   
   // Simulate loading data

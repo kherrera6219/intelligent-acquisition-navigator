@@ -25,11 +25,11 @@ const Navigation = () => {
 
   return (
     <nav className="flex gap-4 p-4 bg-slate-800">
-      <Link to="/" onClick={() => handleNavClick('Home')} className="text-white hover:text-blue-300">
-        Home
+      <Link to="/" onClick={() => handleNavClick('Landing')} className="text-white hover:text-blue-300">
+        Landing
       </Link>
-      <Link to="/dashboard" onClick={() => handleNavClick('Dashboard')} className="text-white hover:text-blue-300">
-        Dashboard
+      <Link to="/home" onClick={() => handleNavClick('Home')} className="text-white hover:text-blue-300">
+        Home
       </Link>
       <Link to="/federal-acquisition" onClick={() => handleNavClick('Federal Acquisition')} className="text-white hover:text-blue-300">
         Federal Acquisition
