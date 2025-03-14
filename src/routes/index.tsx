@@ -1,14 +1,17 @@
 
-import { createBrowserRouter } from 'react-router-dom';
-import { AppRoutes } from './AppRoutes';
+import { createBrowserRouter } from "react-router-dom";
+import { Suspense } from "react";
+import { LoadingState } from "@/components/ui/universal/LoadingState";
+import { AppRoutes } from "./AppRoutes";
 
-// Create a browser router with a catch-all route that delegates
-// to the AppRoutes component for further routing
+// Create the browser router with the AppRoutes component
 export const browserRouter = createBrowserRouter([
   {
     path: "*",
-    element: <AppRoutes />
+    element: (
+      <Suspense fallback={<LoadingState message="Loading..." />}>
+        <AppRoutes />
+      </Suspense>
+    )
   }
 ]);
-
-export default browserRouter;
