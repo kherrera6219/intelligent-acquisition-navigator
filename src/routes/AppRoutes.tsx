@@ -25,6 +25,7 @@ const KnowledgeBasePage = lazy(() => import('@/pages/KnowledgeBasePage'));
 const ValidationPage = lazy(() => import('@/pages/ValidationPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 const ActivityPage = lazy(() => import('@/pages/ActivityPage'));
+const CodeReviewPage = lazy(() => import('@/pages/CodeReviewPage'));
 
 export function AppRoutes() {
   return (
@@ -103,6 +104,16 @@ export function AppRoutes() {
             element={
               <ProtectedPageLayout>
                 <ActivityPage />
+              </ProtectedPageLayout>
+            } 
+          />
+          
+          {/* Code Review page */}
+          <Route 
+            path="/code-review" 
+            element={
+              <ProtectedPageLayout>
+                <CodeReviewPage />
               </ProtectedPageLayout>
             } 
           />
