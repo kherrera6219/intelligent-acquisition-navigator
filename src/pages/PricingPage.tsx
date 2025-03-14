@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 import { Container } from '@/components/ui/universal/Container';
@@ -212,14 +213,19 @@ const PricingPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <Tooltip 
-                  content="These plans include unlimited users, priority support, and customized training"
-                >
-                  <div className="flex items-center">
-                    <InfoIcon className="h-4 w-4 mr-1 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">Enterprise plans include additional benefits</span>
-                  </div>
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center mt-4 cursor-help">
+                        <InfoIcon className="h-4 w-4 mr-1 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Enterprise plans include additional benefits</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>These plans include unlimited users, priority support, and customized training</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
           </Card>
