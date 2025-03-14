@@ -1,12 +1,13 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { SkipToContent } from '@/components/ui/accessibility/SkipToContent';
 
 export const SkipLinks: React.FC = () => {
   return (
     <div className="skip-links">
-      <a href="#main-content" className="skip-link">Skip to main content</a>
-      <a href="#navigation" className="skip-link">Skip to navigation</a>
+      <SkipToContent targetId="main-content" />
+      <SkipToContent targetId="navigation" label="Skip to navigation" />
+      <SkipToContent targetId="search" label="Skip to search" />
     </div>
   );
 };
