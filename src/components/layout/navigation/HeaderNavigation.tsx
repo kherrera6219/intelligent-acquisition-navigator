@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
-import { ChevronDown, Home, FileText, Map, HelpCircle, GlobeLock, Flag, Book, Shield, BarChart2 } from 'lucide-react';
+import { ChevronDown, Home, FileText, Map, HelpCircle, Book, Shield, BarChart2, Building } from 'lucide-react';
 
 export const HeaderNavigation: React.FC = () => {
   const { pathname } = useLocation();
@@ -15,8 +15,8 @@ export const HeaderNavigation: React.FC = () => {
   const mainMenuItems = [
     { label: 'Home', href: '/', icon: Home, description: "Public landing page" },
     { label: 'Dashboard', href: '/dashboard', icon: Home, description: "Main dashboard" },
-    { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock, description: "Federal acquisition information" },
-    { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag, description: "Texas acquisition information" },
+    { label: 'Federal Acquisition', href: '/federal-acquisition', icon: Building, description: "Federal acquisition information" },
+    { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Building, description: "Texas acquisition information" },
     { label: 'Market Research', href: '/market-research', icon: FileText, description: "Research market information" },
     { label: 'Knowledge Base', href: '/knowledge-base', icon: Book, description: "Browse knowledge resources" },
     { label: 'Compliance', href: '/compliance', icon: Shield, description: "View compliance information" },

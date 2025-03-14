@@ -7,11 +7,9 @@ import {
   Settings, 
   HelpCircle,
   Map,
-  Book,
-  Building2,
-  Scale,
   BookOpen,
-  Flag
+  Scale,
+  Building
 } from 'lucide-react';
 
 export const navigationItems = [
@@ -79,14 +77,14 @@ export const navigationItems = [
     description: 'View complete site structure'
   },
   { 
-    icon: Flag, 
+    icon: Building, 
     label: 'Federal Acquisition', 
     route: '/federal-acquisition',
     permission: null,
     description: 'Federal-specific procurement guidance'
   },
   { 
-    icon: Flag, 
+    icon: Building, 
     label: 'Texas Acquisition', 
     route: '/texas-acquisition',
     permission: null,

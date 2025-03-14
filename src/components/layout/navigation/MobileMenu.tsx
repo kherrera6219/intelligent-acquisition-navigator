@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, BarChart2, FileText, Map, HelpCircle, GlobeLock, Flag, BookOpen, Building, Shield, Settings } from 'lucide-react';
+import { ChevronDown, BarChart2, FileText, Map, HelpCircle, GlobeLock, Book, Building, Shield, Settings } from 'lucide-react';
 
 interface MobileMenuProps {
   isMobileMenuOpen: boolean;
@@ -23,18 +23,17 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   const mainMenuItems = [
     { label: 'Dashboard', href: '/dashboard', icon: BarChart2 },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
-    { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag },
+    { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Building },
     { label: 'Market Research', href: '/market-research', icon: Building },
-    { label: 'Knowledge Base', href: '/knowledge-base', icon: BookOpen },
+    { label: 'Knowledge Base', href: '/knowledge-base', icon: Book },
     { label: 'Compliance', href: '/compliance', icon: Shield },
     { label: 'Analytics', href: '/analytics', icon: BarChart2 },
     { label: 'Features', href: '/features', icon: FileText },
-    { label: 'About', href: '/about', icon: BookOpen },
+    { label: 'About', href: '/about', icon: Book },
     { label: 'Contact', href: '/contact', icon: FileText },
     { label: 'Settings', href: '/settings', icon: Settings },
     { label: 'Sitemap', href: '/sitemap', icon: Map },
-    { label: 'Help', href: '/help', icon: HelpCircle },
-    { label: 'Privacy', href: '/privacy', icon: Shield }
+    { label: 'Help', href: '/help', icon: HelpCircle }
   ];
   
   if (!isMobileMenuOpen) return null;

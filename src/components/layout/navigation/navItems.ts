@@ -14,7 +14,6 @@ import {
   FileSearch,
   Building,
   GlobeLock,
-  Flag,
   List
 } from 'lucide-react';
 import { NavItem } from './types';
@@ -104,7 +103,7 @@ export const navItems: NavItem[] = [
         items: undefined
       },
       {
-        icon: Flag,
+        icon: Building,
         label: 'Texas Acquisition',
         href: '/texas-acquisition',
         minRole: 'authenticated',
