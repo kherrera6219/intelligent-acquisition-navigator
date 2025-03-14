@@ -9,11 +9,10 @@ export const HeaderNavigation: React.FC = () => {
   const { userRole } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   
-  // Main menu items for our dropdown
+  // Main menu items for our dropdown - synchronized with Navigation.tsx links
   const mainMenuItems = [
-    { label: 'Landing', href: '/', icon: Home, description: "Public landing page" },
+    { label: 'Home', href: '/', icon: Home, description: "Public landing page" },
     { label: 'Dashboard', href: '/dashboard', icon: Home, description: "Main dashboard" },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock, description: "Federal acquisition information" },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag, description: "Texas acquisition information" },

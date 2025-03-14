@@ -4,6 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { auditLogger } from '@/lib/audit';
 
+/**
+ * Secondary navigation component for pages without the main header.
+ * This is primarily used as a fallback or in specific contexts where
+ * the full header is not needed.
+ */
 const Navigation = () => {
   const { toast } = useToast();
   const navigate = useNavigate();

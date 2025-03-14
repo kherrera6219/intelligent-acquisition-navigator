@@ -33,7 +33,7 @@ export const EnterpriseCompliance: React.FC<ComplianceInfoProps> = ({
       ))}
       
       <TooltipProvider>
-        <Tooltip content={tooltipText} side="top" align="center">
+        <Tooltip content={tooltipText}>
           <div className="flex items-center mt-4 cursor-help">
             <InfoIcon className="h-4 w-4 mr-1 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">Enterprise plans include additional benefits</span>

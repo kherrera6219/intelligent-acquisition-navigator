@@ -10,7 +10,6 @@ import {
   Building2,
   Scale,
   ClipboardCheck,
-  AlertCircle,
   BookOpen,
   FileSearch,
   Building,

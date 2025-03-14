@@ -5,15 +5,12 @@ import { wrapWithLayout } from "./routeTypes";
 
 // Lazily load dashboard components
 const DashboardHomePage = lazy(() => import("@/pages/dashboard/DashboardHomePage"));
-const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage")); // Fixed path
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
 const ProposalsPage = lazy(() => import("@/pages/proposals/ProposalsPage"));
 const ProposalDetailPage = lazy(() => import("@/pages/proposals/ProposalDetailPage"));
 
 const routes: RouteObject[] = [
-  {
-    path: "/",
-    element: wrapWithLayout(DashboardHomePage)
-  },
+  // Removed the duplicate "/" route to avoid conflict with landingRoutes
   {
     path: "/dashboard",
     element: wrapWithLayout(DashboardHomePage)

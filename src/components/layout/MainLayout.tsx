@@ -30,6 +30,7 @@ export interface PrivacyBannerProps {
   onClose: () => void;
 }
 
+// Define which routes should have which header and footer
 const headerRoutes = [
   '/',
   '/features',
@@ -148,7 +149,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <div className={cn(containerClasses[variant], className)}>
       <NetworkErrorBoundary>
-        {shouldShowHeader && !forceExternalHeader && (
+        {shouldShowHeader && (
           <Header />
         )}
         

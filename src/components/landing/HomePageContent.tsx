@@ -33,16 +33,24 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       
       <div className="flex flex-col w-full min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800">
         {/* Hero Section */}
-        <HomeHero />
+        <section id="hero" className="w-full">
+          <HomeHero />
+        </section>
 
         {/* Features Section */}
-        <HomeFeatures />
+        <section id="features" className="w-full">
+          <HomeFeatures />
+        </section>
 
         {/* CTA Section */}
-        <HomeCta />
+        <section id="cta" className="w-full">
+          <HomeCta />
+        </section>
 
         {/* Additional CTA Section with more details */}
-        <CTASection />
+        <section id="additional-cta" className="w-full">
+          <CTASection />
+        </section>
 
         {/* Privacy Notice */}
         {showPrivacyNotice && (
