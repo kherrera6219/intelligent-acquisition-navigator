@@ -23,29 +23,29 @@ const Navigation = () => {
     });
   };
 
+  const navLinks = [
+    { path: "/", label: "Landing", description: "Welcome page" },
+    { path: "/dashboard", label: "Dashboard", description: "Main dashboard" },
+    { path: "/federal-acquisition", label: "Federal Acquisition", description: "Federal acquisition information" },
+    { path: "/texas-acquisition", label: "Texas Acquisition", description: "Texas acquisition information" },
+    { path: "/market-research", label: "Market Research", description: "Research market information" },
+    { path: "/knowledge-base", label: "Knowledge Base", description: "Browse knowledge resources" },
+    { path: "/sitemap", label: "Sitemap", description: "View all pages" }
+  ];
+
   return (
     <nav className="flex gap-4 p-4 bg-slate-800">
-      <Link to="/" onClick={() => handleNavClick('Landing')} className="text-white hover:text-blue-300">
-        Landing
-      </Link>
-      <Link to="/home" onClick={() => handleNavClick('Home')} className="text-white hover:text-blue-300">
-        Home
-      </Link>
-      <Link to="/federal-acquisition" onClick={() => handleNavClick('Federal Acquisition')} className="text-white hover:text-blue-300">
-        Federal Acquisition
-      </Link>
-      <Link to="/texas-acquisition" onClick={() => handleNavClick('Texas Acquisition')} className="text-white hover:text-blue-300">
-        Texas Acquisition
-      </Link>
-      <Link to="/market-research" onClick={() => handleNavClick('Market Research')} className="text-white hover:text-blue-300">
-        Market Research
-      </Link>
-      <Link to="/knowledge-base" onClick={() => handleNavClick('Knowledge Base')} className="text-white hover:text-blue-300">
-        Knowledge Base
-      </Link>
-      <Link to="/sitemap" onClick={() => handleNavClick('Sitemap')} className="text-white hover:text-blue-300">
-        Sitemap
-      </Link>
+      {navLinks.map((link) => (
+        <Link 
+          key={link.path}
+          to={link.path} 
+          onClick={() => handleNavClick(link.label)} 
+          className="text-white hover:text-blue-300"
+          title={link.description}
+        >
+          {link.label}
+        </Link>
+      ))}
     </nav>
   );
 };

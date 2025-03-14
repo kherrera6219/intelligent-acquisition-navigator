@@ -3,19 +3,20 @@ import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
 
-const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+// Lazily load dashboard components
+const DashboardHomePage = lazy(() => import("@/pages/dashboard/DashboardHomePage"));
 const AnalyticsPage = lazy(() => import("@/pages/analytics/AnalyticsPage"));
-const ProposalsPage = lazy(() => import("@/pages/ProposalsPage"));
-const ProposalDetailPage = lazy(() => import("@/pages/ProposalDetailPage"));
+const ProposalsPage = lazy(() => import("@/pages/proposals/ProposalsPage"));
+const ProposalDetailPage = lazy(() => import("@/pages/proposals/ProposalDetailPage"));
 
 const routes: RouteObject[] = [
   {
     path: "/dashboard",
-    element: wrapWithLayout(DashboardPage)
+    element: wrapWithLayout(DashboardHomePage)
   },
   {
     path: "/home",
-    element: wrapWithLayout(DashboardPage)
+    element: wrapWithLayout(DashboardHomePage)
   },
   {
     path: "/analytics",

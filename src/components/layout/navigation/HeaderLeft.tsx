@@ -6,8 +6,8 @@ import { useAuth } from "@/hooks/useAuth";
 export const HeaderLeft = () => {
   const { isAuthenticated } = useAuth();
   
-  // If authenticated, link to the home/dashboard page, otherwise to the landing page
-  const linkPath = isAuthenticated ? "/home" : "/";
+  // If authenticated, link to the dashboard page, otherwise to the landing page
+  const linkPath = isAuthenticated ? "/dashboard" : "/";
   
   return (
     <Link to={linkPath} className="flex items-center space-x-2 text-white group">

@@ -2,7 +2,6 @@
 import React, { Suspense } from 'react';
 import { Routes, Route } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
-import { lazy } from "react";
 import { LoadingPage } from "@/components/LoadingPage";
 
 // Import route collections
@@ -11,24 +10,26 @@ import dashboardRoutes from './dashboardRoutes';
 import acquisitionRoutes from './acquisitionRoutes';
 import settingsRoutes from './settingsRoutes';
 
-// Lazy load pages
-const LandingPage = lazy(() => import("@/pages/HomePage"));
-const AboutPage = lazy(() => import("@/pages/About"));
-const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
-const ContactPage = lazy(() => import("@/pages/ContactPage"));
-const PricingPage = lazy(() => import("@/pages/PricingPage"));
-const HelpPage = lazy(() => import("@/pages/HelpPage"));
-const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
-const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
-const ChatPage = lazy(() => import("@/pages/ChatPage"));
-const ImproveApp = lazy(() => import("@/pages/ImproveApp"));
-const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
-const ApiDocsPage = lazy(() => import("@/pages/developer/ApiDocsPage"));
-const ComponentLibraryPage = lazy(() => import("@/pages/developer/ComponentLibraryPage"));
-const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
-const ValidationPage = lazy(() => import("@/pages/ValidationPage"));
+// Import from lazy component file
+import {
+  LandingPage,
+  AboutPage,
+  FeaturesPage,
+  ContactPage,
+  PricingPage,
+  HelpPage,
+  PrivacyPage,
+  ChatPage,
+  ImproveApp,
+  SitemapPage,
+  ApiDocsPage,
+  ComponentLibraryPage,
+  KnowledgeBasePage,
+  ValidationPage,
+  NotFoundPage
+} from './lazyComponents';
 
-// Combine main routes
+// Main routes
 const mainRoutes = [
   {
     path: "/",

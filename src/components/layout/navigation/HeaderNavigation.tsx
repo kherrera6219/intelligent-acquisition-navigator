@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { navItems } from "./navItems";
@@ -14,18 +13,17 @@ export const HeaderNavigation: React.FC = () => {
   
   // Main menu items for our dropdown
   const mainMenuItems = [
-    { label: 'Landing', href: '/', icon: Home },
-    { label: 'Home', href: '/home', icon: Home },
-    { label: 'Dashboard', href: '/dashboard', icon: Home },
-    { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
-    { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag },
-    { label: 'Knowledge Base', href: '/knowledge-base', icon: Book },
-    { label: 'Solicitation Review', href: '/solicitation-review', icon: FileText },
-    { label: 'Market Research', href: '/market-research', icon: FileText },
-    { label: 'Compliance', href: '/compliance', icon: Shield },
-    { label: 'Analytics', href: '/analytics', icon: BarChart2 },
-    { label: 'Sitemap', href: '/sitemap', icon: Map },
-    { label: 'Help', href: '/help', icon: HelpCircle }
+    { label: 'Landing', href: '/', icon: Home, description: "Public landing page" },
+    { label: 'Dashboard', href: '/dashboard', icon: Home, description: "Main dashboard" },
+    { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock, description: "Federal acquisition information" },
+    { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag, description: "Texas acquisition information" },
+    { label: 'Knowledge Base', href: '/knowledge-base', icon: Book, description: "Browse knowledge resources" },
+    { label: 'Solicitation Review', href: '/solicitation-review', icon: FileText, description: "Review solicitations" },
+    { label: 'Market Research', href: '/market-research', icon: FileText, description: "Research market information" },
+    { label: 'Compliance', href: '/compliance', icon: Shield, description: "View compliance information" },
+    { label: 'Analytics', href: '/analytics', icon: BarChart2, description: "View analytics data" },
+    { label: 'Sitemap', href: '/sitemap', icon: Map, description: "View all pages" },
+    { label: 'Help', href: '/help', icon: HelpCircle, description: "Get help" }
   ];
   
   // Filter navItems to exclude items that are now in the dropdown
@@ -58,7 +56,7 @@ export const HeaderNavigation: React.FC = () => {
           aria-expanded={isDropdownOpen}
           title="Main Menu"
         >
-          <span>Main</span>
+          <span>Navigation</span>
           <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
         </button>
         
@@ -74,7 +72,7 @@ export const HeaderNavigation: React.FC = () => {
                   }`}
                   onClick={() => setIsDropdownOpen(false)}
                   role="menuitem"
-                  title={item.label}
+                  title={item.description}
                 >
                   <div className="flex items-center">
                     <item.icon className="h-4 w-4 mr-2" />
