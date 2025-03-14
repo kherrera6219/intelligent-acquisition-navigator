@@ -4,6 +4,7 @@ import React from "react";
 export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
   className?: string;
   colSpan?: number;
+  children: React.ReactNode;
 }
 
 export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(

@@ -3,17 +3,17 @@ import { RouteObject } from "react-router-dom";
 import { lazy } from "react";
 
 // Lazy-load landing page components
-const HomePage = lazy(() => import("@/pages/HomePage"));
-const AboutPage = lazy(() => import("@/pages/AboutPage"));
-const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
-const PricingPage = lazy(() => import("@/pages/PricingPage"));
-const ContactPage = lazy(() => import("@/pages/ContactPage"));
-const HelpPage = lazy(() => import("@/pages/HelpPage"));
-const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
-const TermsPage = lazy(() => import("@/pages/TermsPage"));
-const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
-const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
-const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
+const HomePage = lazy(() => import("../pages/HomePage"));
+const AboutPage = lazy(() => import("../pages/AboutPage"));
+const FeaturesPage = lazy(() => import("../pages/FeaturesPage"));
+const PricingPage = lazy(() => import("../pages/PricingPage"));
+const ContactPage = lazy(() => import("../pages/ContactPage"));
+const HelpPage = lazy(() => import("../pages/HelpPage"));
+const PrivacyPage = lazy(() => import("../pages/PrivacyPage"));
+const TermsPage = lazy(() => import("../pages/TermsPage"));
+const SitemapPage = lazy(() => import("../pages/SitemapPage"));
+const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
+const KnowledgeBasePage = lazy(() => import("../pages/KnowledgeBasePage"));
 
 const routes: RouteObject[] = [
   {

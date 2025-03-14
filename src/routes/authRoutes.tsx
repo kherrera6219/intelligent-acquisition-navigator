@@ -3,10 +3,10 @@ import { RouteObject } from "react-router-dom";
 import { lazy } from "react";
 
 // Lazy-load auth components
-const LoginPage = lazy(() => import("@/pages/auth/LoginPage"));
-const RegisterPage = lazy(() => import("@/pages/auth/RegisterPage"));
-const ForgotPasswordPage = lazy(() => import("@/pages/auth/ForgotPasswordPage"));
-const ResetPasswordPage = lazy(() => import("@/pages/auth/ResetPasswordPage"));
+const LoginPage = lazy(() => import("../pages/LoginPage"));
+const RegisterPage = lazy(() => import("../pages/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("../pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("../pages/ResetPasswordPage"));
 
 const routes: RouteObject[] = [
   {

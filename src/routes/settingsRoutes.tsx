@@ -4,10 +4,10 @@ import { wrapWithLayout } from "./routeTypes";
 import { lazy } from "react";
 
 // Lazy-load settings components
-const SettingsPage = lazy(() => import("@/pages/settings/SettingsPage"));
-const ProfilePage = lazy(() => import("@/pages/settings/ProfilePage"));
-const SecurityPage = lazy(() => import("@/pages/settings/SecurityPage"));
-const NotificationsPage = lazy(() => import("@/pages/settings/NotificationsPage"));
+const SettingsPage = lazy(() => import("../pages/SettingsPage"));
+const ProfilePage = lazy(() => import("../pages/ProfilePage"));
+const SecurityPage = lazy(() => import("../pages/settings/SecurityPage"));
+const NotificationsPage = lazy(() => import("../pages/settings/NotificationsPage"));
 
 const routes: RouteObject[] = [
   {
