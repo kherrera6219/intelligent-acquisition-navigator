@@ -149,7 +149,10 @@ export default function SitemapPage() {
   ];
 
   return (
-    <ExternalPageLayout title="Sitemap" description="Find all the pages and resources on our platform.">
+    <ExternalPageLayout 
+      title="Sitemap"
+      description="Find all the pages and resources on our platform."
+    >
       <Container className="py-16">
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4 px-3 py-1 text-blue-400 border-blue-400">Navigation</Badge>

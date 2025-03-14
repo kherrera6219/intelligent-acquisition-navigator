@@ -48,7 +48,10 @@ export default function ContactPage() {
   };
 
   return (
-    <ExternalPageLayout title="Contact Us" description="Get in touch with our team. We'd love to hear from you.">
+    <ExternalPageLayout 
+      title="Contact Us"
+      description="Get in touch with our team. We'd love to hear from you."
+    >
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold mb-4 text-white">Contact Us</h1>

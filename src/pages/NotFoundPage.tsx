@@ -9,7 +9,10 @@ import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 
 const NotFoundPage: React.FC = () => {
   return (
-    <ExternalPageLayout title="Page Not Found" description="The page you're looking for cannot be found.">
+    <ExternalPageLayout 
+      title="Page Not Found"
+      description="The page you're looking for cannot be found."
+    >
       <Container className="py-24">
         <div className="flex flex-col items-center justify-center">
           <div className="relative mb-8">

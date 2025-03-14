@@ -3,7 +3,12 @@ import React from 'react';
 import { X, Info, ExternalLink, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Tooltip } from '@/components/ui/tooltip';
+import { 
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider
+} from '@/components/ui/tooltip';
 
 export interface PrivacyBannerProps {
   onLearnMore: () => void;
@@ -67,39 +72,55 @@ export function PrivacyBanner({
             We value your privacy. This site uses cookies and similar technologies to personalize content, analyze traffic, and ensure you get the best experience on our website.
           </p>
           <div className="flex flex-wrap gap-3 mt-3">
-            <Tooltip content="View our detailed privacy policy">
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                onClick={onLearnMore}
-                className="bg-white text-primary hover:bg-white/90 hover:text-primary/90 flex items-center gap-1.5 focus-visible-ring"
-              >
-                Learn More
-                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-              </Button>
-            </Tooltip>
-            <Tooltip content="Accept privacy notice and dismiss">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={onClose}
-                className="text-white border border-white/30 hover:bg-white/10 focus-visible-ring"
-              >
-                I Understand
-              </Button>
-            </Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    onClick={onLearnMore}
+                    className="bg-white text-primary hover:bg-white/90 hover:text-primary/90 flex items-center gap-1.5 focus-visible-ring"
+                  >
+                    Learn More
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>View our detailed privacy policy</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={onClose}
+                    className="text-white border border-white/30 hover:bg-white/10 focus-visible-ring"
+                  >
+                    I Understand
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Accept privacy notice and dismiss</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         
-        <Tooltip content="Close privacy notice">
-          <button
-            onClick={onClose}
-            className="shrink-0 rounded-md p-1 text-white/80 hover:text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-1 focus-visible:ring-offset-primary"
-            aria-label="Close privacy notice"
-          >
-            <X className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </Tooltip>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={onClose}
+                className="shrink-0 rounded-md p-1 text-white/80 hover:text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-1 focus-visible:ring-offset-primary"
+                aria-label="Close privacy notice"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>Close privacy notice</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );

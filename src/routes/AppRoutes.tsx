@@ -1,4 +1,3 @@
-
 import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
 import { LoadingPage } from "@/components/LoadingPage";
@@ -48,7 +47,10 @@ export function AppRoutes() {
             key={`auth-${index}`} 
             path={route.path} 
             element={
-              <ExternalPageLayout showHeader={false} showFooter={false}>
+              <ExternalPageLayout 
+                showHeader={false} 
+                showFooter={false}
+              >
                 {route.element}
               </ExternalPageLayout>
             } 

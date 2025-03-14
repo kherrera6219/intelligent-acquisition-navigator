@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { ProtectedPageLayout } from './components/layout/ProtectedPageLayout';
@@ -30,14 +29,16 @@ export const browserRouter = createBrowserRouter([
           const { default: AuthenticationPage } = await import('./pages/auth/AuthenticationPage');
           return { 
             Component: () => (
-              <ExternalPageLayout showHeader={false} showFooter={false}>
+              <ExternalPageLayout 
+                showHeader={false} 
+                showFooter={false}
+              >
                 <AuthenticationPage />
               </ExternalPageLayout>
             )
           };
         }
       },
-      // External pages
       {
         path: "about",
         element: (
@@ -151,7 +152,6 @@ export const browserRouter = createBrowserRouter([
           {
             index: true,
             async lazy() {
-              // Using PrivacyPage for terms since there's no dedicated TermsPage
               const { default: PrivacyPage } = await import('./pages/PrivacyPage');
               return { 
                 Component: () => <PrivacyPage pageType="terms" /> 

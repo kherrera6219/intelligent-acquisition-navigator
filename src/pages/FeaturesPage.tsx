@@ -9,7 +9,10 @@ import { CtaSection } from '@/components/features/CtaSection';
 
 export default function FeaturesPage() {
   return (
-    <ExternalPageLayout title="Features" description="Explore the comprehensive features of our acquisition knowledge platform.">
+    <ExternalPageLayout 
+      title="Features"
+      description="Explore the comprehensive features of our acquisition knowledge platform."
+    >
       <Container className="py-16">
         {/* Hero Section */}
         <HeroSection />
