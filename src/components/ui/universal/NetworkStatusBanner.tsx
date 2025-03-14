@@ -4,14 +4,14 @@ import { AlertCircle, WifiOff, Loader } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
 
-interface NetworkStatusBannerProps {
+export interface NetworkStatusBannerProps {
   isOffline?: boolean;
   isReconnecting?: boolean;
-  message?: string; // Added this prop
-  actionLabel?: string; // Added this prop
-  onAction?: () => void; // Added this prop
-  isLoading?: boolean; // Added this prop
-  variant?: string; // Added this prop
+  message?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  isLoading?: boolean;
+  variant?: string;
   className?: string;
 }
 

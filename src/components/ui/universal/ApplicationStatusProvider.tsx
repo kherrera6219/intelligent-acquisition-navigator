@@ -22,7 +22,7 @@ const ApplicationStatusContext = createContext<ApplicationStatusContextType>({
 export const useApplicationStatus = () => useContext(ApplicationStatusContext);
 
 export const ApplicationStatusProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isOnline, isReconnecting: reconnecting, lastSyncTime } = useNetworkMonitor();
+  const { isOnline, isReconnecting, lastSyncTime } = useNetworkMonitor();
   const [pendingActions, setPendingActions] = useState<number>(0);
   
   // Get pending actions count on mount
@@ -48,7 +48,7 @@ export const ApplicationStatusProvider: React.FC<{ children: React.ReactNode }> 
   
   const contextValue = {
     isOnline,
-    reconnecting,
+    reconnecting: isReconnecting,
     lastSyncTime,
     pendingActions
   };

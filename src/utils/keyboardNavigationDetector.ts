@@ -1,53 +1,34 @@
 
 /**
- * Utility to detect keyboard navigation and add a class to the body
- * This helps style focus states differently for keyboard vs. mouse users
+ * Utility for detecting keyboard navigation
+ * Adds a class to the body when keyboard navigation is detected
  */
-
-// Used to check if keyboard navigation is being used
-export function isKeyboardUser(): boolean {
-  // Only run in the browser
-  if (typeof document === 'undefined') return false;
-  
-  return document.body.classList.contains('keyboard-user');
-}
-
-export function initKeyboardNavigationDetector(): (() => void) | void {
-  // Only run in the browser
-  if (typeof document === 'undefined') return;
-
-  // Function to handle keyboard detection
+export const initKeyboardNavigationDetector = (): void => {
+  // Add keyboard detection
   const handleFirstTab = (e: KeyboardEvent) => {
     if (e.key === 'Tab') {
-      document.body.classList.add('keyboard-user');
+      document.body.classList.add('user-is-tabbing');
       
-      // Remove the event listener after detecting keyboard use
+      // Once we know they're using keyboard, we don't need this listener anymore
       window.removeEventListener('keydown', handleFirstTab);
-      
-      // Add event listener for mouse use
-      window.addEventListener('mousedown', handleMouseDown);
     }
   };
 
-  // Function to handle mouse use
+  // Add mouse detection to remove keyboard focus styles when mouse is used
   const handleMouseDown = () => {
-    document.body.classList.remove('keyboard-user');
+    document.body.classList.remove('user-is-tabbing');
     
-    // Re-add keyboard detection when mouse is used
+    // Re-add the keyboard listener
     window.addEventListener('keydown', handleFirstTab);
   };
 
-  // Initialize the event listener
+  // Add the listeners
   window.addEventListener('keydown', handleFirstTab);
-
-  // Clean up function
+  window.addEventListener('mousedown', handleMouseDown);
+  
+  // Return cleanup function for React useEffect if needed
   return () => {
     window.removeEventListener('keydown', handleFirstTab);
     window.removeEventListener('mousedown', handleMouseDown);
   };
-}
-
-// Auto-initialize when imported
-if (typeof window !== 'undefined') {
-  window.addEventListener('DOMContentLoaded', initKeyboardNavigationDetector);
-}
+};

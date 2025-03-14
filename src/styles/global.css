@@ -1,4 +1,3 @@
-
 @import './theme/index.css';
 @import './modules/base.css';
 @import './modules/components.css';
@@ -65,4 +64,35 @@
 
 .ms-dashboard-card-hover:hover {
   @apply translate-y-[-2px] shadow-xl transition-all duration-200;
+}
+
+/* Add keyboard navigation styles */
+.user-is-tabbing :focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.user-is-tabbing :focus:not(:focus-visible) {
+  outline: none;
+}
+
+.user-is-tabbing :focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Skip links */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
 }

@@ -1,14 +1,16 @@
 
 import React from 'react';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
-import { AppRoutes } from './routes/AppRoutes';
 import NotFoundPage from '@/pages/NotFoundPage';
 import { ProtectedPageLayout } from './components/layout/ProtectedPageLayout';
 import { ExternalPageLayout } from './components/layout/ExternalPageLayout';
-import HomePage from './pages/HomePage';
-import AuthenticationPage from './pages/auth/AuthenticationPage';
-import DashboardPage from './pages/dashboard/DashboardHomePage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { AppRoutes } from './routes/AppRoutes';
+
+// Lazy-load page components
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const AuthenticationPage = React.lazy(() => import('./pages/auth/AuthenticationPage'));
+const DashboardHomePage = React.lazy(() => import('./pages/dashboard/DashboardHomePage'));
 
 // Simple wrapper for public routes
 const PublicWrapper = () => {
@@ -48,7 +50,10 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: () => import('./pages/AboutPage')
+            async lazy() {
+              const { default: AboutPage } = await import('./pages/AboutPage');
+              return { Component: AboutPage };
+            }
           }
         ]
       },
@@ -62,7 +67,10 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: () => import('./pages/FeaturesPage')
+            async lazy() {
+              const { default: FeaturesPage } = await import('./pages/FeaturesPage');
+              return { Component: FeaturesPage };
+            }
           }
         ]
       },
@@ -76,7 +84,10 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: () => import('./pages/PricingPage')
+            async lazy() {
+              const { default: PricingPage } = await import('./pages/PricingPage');
+              return { Component: PricingPage };
+            }
           }
         ]
       },
@@ -90,7 +101,10 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: () => import('./pages/ContactPage')
+            async lazy() {
+              const { default: ContactPage } = await import('./pages/ContactPage');
+              return { Component: ContactPage };
+            }
           }
         ]
       },
@@ -104,7 +118,10 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: () => import('./pages/HelpPage')
+            async lazy() {
+              const { default: HelpPage } = await import('./pages/HelpPage');
+              return { Component: HelpPage };
+            }
           }
         ]
       },
@@ -118,7 +135,10 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: () => import('./pages/PrivacyPage')
+            async lazy() {
+              const { default: PrivacyPage } = await import('./pages/PrivacyPage');
+              return { Component: PrivacyPage };
+            }
           }
         ]
       },
@@ -132,10 +152,13 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            // Create TermsPage that was previously missing
-            lazy: () => import('./pages/PrivacyPage').then(module => ({ 
-              Component: () => React.createElement(module.default, { pageType: 'terms' })
-            }))
+            async lazy() {
+              // Use PrivacyPage with a "terms" pageType prop for Terms page
+              const { default: PrivacyPage } = await import('./pages/PrivacyPage');
+              return { 
+                Component: () => <PrivacyPage pageType="terms" /> 
+              };
+            }
           }
         ]
       },
@@ -149,7 +172,10 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: () => import('./pages/SitemapPage')
+            async lazy() {
+              const { default: SitemapPage } = await import('./pages/SitemapPage');
+              return { Component: SitemapPage };
+            }
           }
         ]
       }

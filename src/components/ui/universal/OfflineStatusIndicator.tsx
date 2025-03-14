@@ -77,8 +77,8 @@ export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({
           {!compact && <span className="text-sm">{statusText()}</span>}
         </div>
       </TooltipTrigger>
-      <TooltipContent side="bottom">
-        <p>{tooltipText()}</p>
+      <TooltipContent>
+        {tooltipText()}
       </TooltipContent>
     </Tooltip>
   );

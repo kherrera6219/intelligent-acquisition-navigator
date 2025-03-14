@@ -6,14 +6,12 @@ import { useToast } from '@/hooks/use-toast';
 import { setLastSyncTime } from '@/utils/supabaseHelper';
 
 export function useOfflineSync() {
-  const { isOnline, isReconnecting } = useNetworkMonitor();
+  const { isOnline, isReconnecting, supabaseConnected } = useNetworkMonitor();
   const [pendingCount, setPendingCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const [lastSyncTimeState, setLastSyncTimeState] = useState<Date | null>(null);
   const { toast } = useToast();
-  // Default supabaseConnected to true if not provided by the context
-  const supabaseConnected = true;
 
   // Fetch the count of pending requests
   const fetchPendingCount = useCallback(async () => {

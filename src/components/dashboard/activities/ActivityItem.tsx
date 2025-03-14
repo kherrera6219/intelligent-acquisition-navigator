@@ -1,56 +1,55 @@
 
 import React from 'react';
-import { Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { formatDistanceToNow } from 'date-fns';
 import { 
-  TooltipProvider, 
-  TooltipContent, 
-  TooltipTrigger,
-  Tooltip
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger 
 } from '@/components/ui/tooltip';
-import type { RecentActivity } from '@/types/dashboard';
-import { formatActivityTime } from '@/utils/activityFormatters';
 
 interface ActivityItemProps {
-  activity: RecentActivity;
-  index: number;
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  timestamp: Date;
+  status?: 'success' | 'warning' | 'error' | 'info';
+  className?: string;
 }
 
-export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index }) => {
-  const Icon = activity.icon;
-  const time = formatActivityTime(activity.timestamp);
-  
+export const ActivityItem: React.FC<ActivityItemProps> = ({
+  icon,
+  title,
+  description,
+  timestamp,
+  status = 'info',
+  className
+}) => {
   return (
-    <TooltipProvider key={index}>
-      <div className="ms-timeline-item group" role="listitem">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="ms-timeline-content-wrapper">
-              <div className="ms-timeline-icon">
-                <Icon className="h-4 w-4 text-blue-400" aria-hidden="true" />
-              </div>
-              <div className="ms-timeline-content">
-                <p className="ms-timeline-title">{activity.title}</p>
-                <p className="ms-timeline-time flex items-center text-xs">
-                  <Clock className="inline-block h-3 w-3 mr-1 text-gray-400" aria-hidden="true" />
-                  {time.relative}
-                  {activity.category && (
-                    <span className="ml-2 px-1.5 py-0.5 bg-primary/10 text-primary/80 rounded text-[10px]">
-                      {activity.category}
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <div className="text-xs">
-              <p className="font-semibold">{activity.title}</p>
-              <p>{time.exact}</p>
-              {activity.description && <p className="mt-1 text-gray-300">{activity.description}</p>}
-            </div>
-          </TooltipContent>
-        </Tooltip>
+    <div className={cn("flex items-start gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors", className)}>
+      <div className={cn(
+        "flex-shrink-0 p-2 rounded-full",
+        status === 'success' && "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
+        status === 'warning' && "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
+        status === 'error' && "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+        status === 'info' && "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+      )}>
+        {icon}
       </div>
-    </TooltipProvider>
+      <div className="flex-1 min-w-0">
+        <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">{title}</h4>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{description}</p>
+      </div>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <time className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+            {formatDistanceToNow(timestamp, { addSuffix: true })}
+          </time>
+        </TooltipTrigger>
+        <TooltipContent>
+          {timestamp.toLocaleString()}
+        </TooltipContent>
+      </Tooltip>
+    </div>
   );
 };
