@@ -5,6 +5,8 @@ import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { ProposalDetails } from '@/components/proposals/ProposalDetails';
 import ProposalDetailsError from '@/components/proposals/ProposalDetailsError';
 import ProposalDetailsLoading from '@/components/proposals/ProposalDetailsLoading';
+import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
+import { InternalFooter } from '@/components/layout/InternalFooter';
 import type { Proposal } from '@/types/proposals';
 
 export default function ProposalDetailPage() {
@@ -68,51 +70,49 @@ export default function ProposalDetailPage() {
     navigate('/proposals');
   };
 
-  if (isLoading) {
-    return (
-      <ProtectedPageLayout
-        title="Proposal Details"
-        description="Loading proposal information..."
-        breadcrumbs={[
-          { label: 'Dashboard', href: '/dashboard' },
-          { label: 'Proposals', href: '/proposals' },
-          { label: 'Details', href: `/proposals/${id}` }
-        ]}
-        isLoading={true}
-      >
-        <ProposalDetailsLoading />
-      </ProtectedPageLayout>
-    );
-  }
-
-  if (error || !proposal) {
-    return (
-      <ProtectedPageLayout
-        title="Proposal Details"
-        description="An error occurred loading the proposal"
-        breadcrumbs={[
-          { label: 'Dashboard', href: '/dashboard' },
-          { label: 'Proposals', href: '/proposals' },
-          { label: 'Details', href: `/proposals/${id}` }
-        ]}
-        error={error}
-      >
-        <ProposalDetailsError onBack={handleBack} error={error} />
-      </ProtectedPageLayout>
-    );
-  }
-
   return (
-    <ProtectedPageLayout
-      title={proposal.title}
-      description={`Proposal ID: ${proposal.id}`}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Proposals', href: '/proposals' },
-        { label: 'Details', href: `/proposals/${id}` }
-      ]}
-    >
-      <ProposalDetails proposal={proposal} handleBack={handleBack} />
-    </ProtectedPageLayout>
+    <>
+      <UniversalInternalHeader />
+      {isLoading ? (
+        <ProtectedPageLayout
+          title="Proposal Details"
+          description="Loading proposal information..."
+          breadcrumbs={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Proposals', href: '/proposals' },
+            { label: 'Details', href: `/proposals/${id}` }
+          ]}
+          isLoading={true}
+        >
+          <ProposalDetailsLoading />
+        </ProtectedPageLayout>
+      ) : error || !proposal ? (
+        <ProtectedPageLayout
+          title="Proposal Details"
+          description="An error occurred loading the proposal"
+          breadcrumbs={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Proposals', href: '/proposals' },
+            { label: 'Details', href: `/proposals/${id}` }
+          ]}
+          error={error}
+        >
+          <ProposalDetailsError onBack={handleBack} error={error} />
+        </ProtectedPageLayout>
+      ) : (
+        <ProtectedPageLayout
+          title={proposal.title}
+          description={`Proposal ID: ${proposal.id}`}
+          breadcrumbs={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Proposals', href: '/proposals' },
+            { label: 'Details', href: `/proposals/${id}` }
+          ]}
+        >
+          <ProposalDetails proposal={proposal} handleBack={handleBack} />
+        </ProtectedPageLayout>
+      )}
+      <InternalFooter />
+    </>
   );
 }

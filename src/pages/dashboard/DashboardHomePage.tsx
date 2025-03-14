@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { DashboardQuickActions } from '@/components/dashboard/DashboardQuickActions';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { DashboardRecentActivity } from '@/components/dashboard/DashboardRecentActivity';
+import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
+import { InternalFooter } from '@/components/layout/InternalFooter';
 
 export default function DashboardHomePage() {
   const { user } = useAuth();
@@ -42,28 +44,32 @@ export default function DashboardHomePage() {
   }, []);
 
   return (
-    <ProtectedPageLayout
-      title={`${greeting}${user?.email ? ', ' + user.email.split('@')[0] : ''}!`}
-      description="Welcome to your procurement management dashboard"
-      isLoading={isLoading}
-      error={error}
-      action={
-        <Button className="bg-primary hover:bg-primary/90 text-white">
-          <PlusCircle className="h-4 w-4 mr-2" />
-          New Project
-        </Button>
-      }
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <DashboardQuickActions />
-          <DashboardOverview />
-        </div>
+    <>
+      <UniversalInternalHeader />
+      <ProtectedPageLayout
+        title={`${greeting}${user?.email ? ', ' + user.email.split('@')[0] : ''}!`}
+        description="Welcome to your procurement management dashboard"
+        isLoading={isLoading}
+        error={error}
+        action={
+          <Button className="bg-primary hover:bg-primary/90 text-white">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            New Project
+          </Button>
+        }
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <DashboardQuickActions />
+            <DashboardOverview />
+          </div>
 
-        <div className="lg:col-span-1">
-          <DashboardRecentActivity />
+          <div className="lg:col-span-1">
+            <DashboardRecentActivity />
+          </div>
         </div>
-      </div>
-    </ProtectedPageLayout>
+      </ProtectedPageLayout>
+      <InternalFooter />
+    </>
   );
 }

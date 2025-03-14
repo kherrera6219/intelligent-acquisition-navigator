@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
@@ -9,6 +8,8 @@ import { SearchBar } from '@/components/proposals/SearchBar';
 import { ProposalList } from '@/components/proposals/ProposalList';
 import { Pagination } from '@/components/proposals/Pagination';
 import { ProposalModal } from '@/components/proposals/ProposalModal';
+import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
+import { InternalFooter } from '@/components/layout/InternalFooter';
 import type { Proposal } from '@/types/proposals';
 
 export default function ProposalsPage() {
@@ -99,51 +100,55 @@ export default function ProposalsPage() {
   const totalPages = Math.ceil(filteredProposals.length / itemsPerPage);
   
   return (
-    <ProtectedPageLayout
-      title="Proposals"
-      description="Manage and track all your proposal submissions."
-      isLoading={isLoading}
-      error={error}
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Proposals', href: '/proposals' }
-      ]}
-      action={
-        <Button onClick={() => setIsModalOpen(true)}>
-          <PlusCircle className="h-4 w-4 mr-2" />
-          New Proposal
-        </Button>
-      }
-    >
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
-          <SearchBar onSearch={handleSearch} />
-          
-          <Button variant="outline" size="sm" className="sm:self-end">
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
+    <>
+      <UniversalInternalHeader />
+      <ProtectedPageLayout
+        title="Proposals"
+        description="Manage and track all your proposal submissions."
+        isLoading={isLoading}
+        error={error}
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Proposals', href: '/proposals' }
+        ]}
+        action={
+          <Button onClick={() => setIsModalOpen(true)}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            New Proposal
           </Button>
+        }
+      >
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <SearchBar onSearch={handleSearch} />
+            
+            <Button variant="outline" size="sm" className="sm:self-end">
+              <Filter className="h-4 w-4 mr-2" />
+              Filters
+            </Button>
+          </div>
+          
+          <Card className="p-6">
+            <ProposalList 
+              proposals={paginatedProposals} 
+              onProposalClick={handleProposalClick}
+            />
+            
+            <Pagination 
+              currentPage={currentPage} 
+              totalPages={totalPages} 
+              onPageChange={handlePageChange} 
+            />
+          </Card>
         </div>
         
-        <Card className="p-6">
-          <ProposalList 
-            proposals={paginatedProposals} 
-            onProposalClick={handleProposalClick}
-          />
-          
-          <Pagination 
-            currentPage={currentPage} 
-            totalPages={totalPages} 
-            onPageChange={handlePageChange} 
-          />
-        </Card>
-      </div>
-      
-      <ProposalModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSubmit={handleCreateProposal} 
-      />
-    </ProtectedPageLayout>
+        <ProposalModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          onSubmit={handleCreateProposal} 
+        />
+      </ProtectedPageLayout>
+      <InternalFooter />
+    </>
   );
 }

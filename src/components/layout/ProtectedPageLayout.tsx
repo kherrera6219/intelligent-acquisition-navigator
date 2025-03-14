@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { AppLayout } from './AppLayout';
 import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 import { OfflineStatusIndicator } from '@/components/ui/universal/OfflineStatusIndicator';
 import { GlobalNetworkErrorBanner } from '@/components/ui/universal/GlobalNetworkErrorBanner';
@@ -43,7 +42,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   }, [title]);
 
   return (
-    <AppLayout showSidebar={showSidebar}>
+    <div className="container mx-auto px-4 py-6">
       {/* Global network error banner that appears at the top of the page */}
       {error && (
         <GlobalNetworkErrorBanner 
@@ -74,6 +73,6 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
           </>
         )}
       </main>
-    </AppLayout>
+    </div>
   );
 };
