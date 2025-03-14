@@ -17,7 +17,7 @@ export const ApiDocsPage = lazy(() => import('@/pages/developer/ApiDocsPage'));
 export const ComponentLibraryPage = lazy(() => import('@/pages/developer/ComponentLibraryPage'));
 export const ImproveApp = lazy(() => import('@/pages/ImproveApp'));
 
-// Analytics page import
+// Analytics page import - fixed to use the main page path
 export const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
 
 // The following internal pages will be reconnected later when we update them

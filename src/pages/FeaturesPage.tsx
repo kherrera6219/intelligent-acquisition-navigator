@@ -1,277 +1,348 @@
 
-import React from "react";
-import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { Container } from "@/components/ui/universal/Container";
-import { Card } from "@/components/ui/universal/Card";
-import { GradientText } from "@/components/ui/universal/GradientText";
-import { Button } from "@/components/ui/button";
+import React from 'react';
+import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { 
+  BookOpen, 
+  BarChart3, 
+  CheckCircle, 
   Shield, 
   Zap, 
-  BarChart, 
-  Brain, 
-  ClipboardCheck, 
-  RefreshCw, 
-  Globe, 
-  Lock, 
-  Clock, 
+  Database, 
+  Users, 
+  FileText, 
+  LucideIcon,
+  PenTool,
+  GanttChart,
+  Bot,
   Search,
-  Landmark,
-  FileText
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
+  Lock,
+  ArrowRight
+} from 'lucide-react';
 
-const FeaturesPage = () => {
-  const navigate = useNavigate();
-  
+interface FeatureCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, icon }) => (
+  <Card className="p-6 bg-gray-800 border-gray-700 hover:border-blue-500 transition-colors h-full flex flex-col">
+    <div className="rounded-full bg-blue-900/20 p-3 w-fit mb-4">
+      {icon}
+    </div>
+    <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
+    <p className="text-gray-400 flex-grow">{description}</p>
+  </Card>
+);
+
+interface FeatureTabContentProps {
+  title: string;
+  description: string;
+  features: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+  }[];
+  image?: string;
+}
+
+const FeatureTabContent: React.FC<FeatureTabContentProps> = ({ 
+  title, 
+  description, 
+  features, 
+  image = '/images/feature-placeholder.jpg' 
+}) => (
+  <div className="pt-8">
+    <div className="grid md:grid-cols-2 gap-8 items-center mb-12">
+      <div>
+        <h2 className="text-3xl font-bold mb-4 text-white">{title}</h2>
+        <p className="text-xl text-gray-400 mb-6">{description}</p>
+        <Button variant="default" className="bg-blue-600 hover:bg-blue-700">
+          Learn More
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+      <div className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
+        <img 
+          src={image} 
+          alt={`${title} feature visualization`} 
+          className="w-full h-auto object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = 'https://placehold.co/600x400/1e293b/38bdf8?text=Feature+Image';
+          }}
+        />
+      </div>
+    </div>
+    
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {features.map((feature, index) => (
+        <FeatureCard
+          key={index}
+          title={feature.title}
+          description={feature.description}
+          icon={feature.icon}
+        />
+      ))}
+    </div>
+  </div>
+);
+
+export default function FeaturesPage() {
+  const knowledgeFeatures = [
+    {
+      title: 'Comprehensive FAR Database',
+      description: 'Access the complete Federal Acquisition Regulation database with advanced search capabilities.',
+      icon: <Database className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Interactive Learning Modules',
+      description: 'Engage with interactive tutorials and training materials to enhance your acquisition knowledge.',
+      icon: <BookOpen className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Real-time Updates',
+      description: 'Stay current with automatically updated regulatory changes and acquisition policy updates.',
+      icon: <Zap className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Cross-Reference Tools',
+      description: 'Easily navigate between related regulations, clauses, and provisions across multiple documents.',
+      icon: <Search className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Customizable Knowledge Base',
+      description: 'Create and maintain your organization's acquisition knowledge repository with custom annotations.',
+      icon: <PenTool className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Expert Community',
+      description: 'Connect with acquisition professionals and subject matter experts to share insights and best practices.',
+      icon: <Users className="h-6 w-6 text-blue-500" />
+    }
+  ];
+
+  const complianceFeatures = [
+    {
+      title: 'Automated Compliance Checks',
+      description: 'Ensure acquisition documents meet all relevant regulatory requirements with AI-powered verification.',
+      icon: <CheckCircle className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Audit Trail Documentation',
+      description: 'Maintain comprehensive records of compliance checks and decisions for audit readiness.',
+      icon: <FileText className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Risk Assessment Tools',
+      description: 'Identify and mitigate compliance risks with built-in risk assessment frameworks.',
+      icon: <Shield className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Approval Workflows',
+      description: 'Streamline the review and approval process with customizable compliance-focused workflows.',
+      icon: <GanttChart className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Policy Implementation',
+      description: 'Transform organizational policies into actionable compliance requirements.',
+      icon: <PenTool className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Secure Document Management',
+      description: 'Store and manage acquisition documents with enterprise-grade security protocols.',
+      icon: <Lock className="h-6 w-6 text-blue-500" />
+    }
+  ];
+
+  const analyticsFeatures = [
+    {
+      title: 'Performance Dashboards',
+      description: 'Visualize key acquisition metrics and performance indicators in customizable dashboards.',
+      icon: <BarChart3 className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Predictive Analytics',
+      description: 'Leverage AI to forecast acquisition outcomes and identify optimization opportunities.',
+      icon: <Bot className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Spending Analysis',
+      description: 'Gain insights into procurement spending patterns across categories, suppliers, and time periods.',
+      icon: <Database className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Supplier Performance Tracking',
+      description: 'Monitor and evaluate vendor performance against contractual obligations and quality metrics.',
+      icon: <Users className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Compliance Analytics',
+      description: 'Measure and report on organizational compliance with acquisition regulations and policies.',
+      icon: <CheckCircle className="h-6 w-6 text-blue-500" />
+    },
+    {
+      title: 'Custom Reporting',
+      description: 'Generate tailored reports to meet specific stakeholder information needs and requirements.',
+      icon: <FileText className="h-6 w-6 text-blue-500" />
+    }
+  ];
+
   return (
-    <PageErrorBoundary>
-      <MainLayout
-        variant="fluent"
-        showHeader={true}
-        showFooter={true}
-        forceExternalHeader={true}
-        forceExternalFooter={true}
-        className="bg-background"
-      >
-        <Container className="py-16">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              <GradientText>Features</GradientText> and Capabilities
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Discover how our platform streamlines your acquisition process with 
-              powerful AI-driven tools and comprehensive regulatory knowledge.
+    <ExternalPageLayout title="Features" description="Explore the comprehensive features of our acquisition knowledge platform.">
+      <div className="container mx-auto px-4 py-16">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <Badge variant="outline" className="mb-4 px-3 py-1 text-blue-400 border-blue-400">Platform Capabilities</Badge>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">Comprehensive Acquisition Solutions</h1>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            Discover how our platform streamlines federal acquisition processes with intelligent tools, 
+            comprehensive knowledge management, and robust compliance features.
+          </p>
+        </div>
+        
+        {/* Feature Tabs */}
+        <Tabs defaultValue="knowledge" className="mb-20">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="knowledge" className="data-[state=active]:bg-blue-900/20">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Knowledge Base
+            </TabsTrigger>
+            <TabsTrigger value="compliance" className="data-[state=active]:bg-blue-900/20">
+              <Shield className="h-4 w-4 mr-2" />
+              Compliance
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-900/20">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="knowledge">
+            <FeatureTabContent
+              title="Comprehensive Knowledge Management"
+              description="Access comprehensive acquisition knowledge resources, from FAR regulations to agency-specific guidance, all in one centralized platform."
+              features={knowledgeFeatures}
+              image="/images/knowledge-base.jpg"
+            />
+          </TabsContent>
+          
+          <TabsContent value="compliance">
+            <FeatureTabContent
+              title="Automated Compliance Tools"
+              description="Ensure adherence to acquisition regulations with powerful compliance tools that automate checks and streamline approvals."
+              features={complianceFeatures}
+              image="/images/compliance.jpg"
+            />
+          </TabsContent>
+          
+          <TabsContent value="analytics">
+            <FeatureTabContent
+              title="Advanced Analytics & Reporting"
+              description="Gain actionable insights into your acquisition processes with comprehensive analytics and customizable reporting capabilities."
+              features={analyticsFeatures}
+              image="/images/analytics.jpg"
+            />
+          </TabsContent>
+        </Tabs>
+        
+        {/* Feature Comparison */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 px-3 py-1 text-blue-400 border-blue-400">Platform Comparison</Badge>
+            <h2 className="text-3xl font-bold text-white">How We Compare</h2>
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto mt-4">
+              See how our comprehensive solution stacks up against traditional acquisition tools.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            <Card variant="metal" className="p-6">
-              <div className="flex flex-col items-center text-center mb-4">
-                <Brain className="w-12 h-12 text-blue-400 mb-4" />
-                <h3 className="text-xl font-semibold">AI-Powered Analysis</h3>
-              </div>
-              <p className="text-muted-foreground">
-                Our advanced AI analyzes documents, identifies risks, and generates 
-                recommendations based on your specific procurement context.
-              </p>
-            </Card>
-            
-            <Card variant="metal" className="p-6">
-              <div className="flex flex-col items-center text-center mb-4">
-                <Shield className="w-12 h-12 text-green-400 mb-4" />
-                <h3 className="text-xl font-semibold">Real-Time Compliance</h3>
-              </div>
-              <p className="text-muted-foreground">
-                Stay compliant with automatic monitoring and instant updates when 
-                regulations change at federal, state, or local levels.
-              </p>
-            </Card>
-            
-            <Card variant="metal" className="p-6">
-              <div className="flex flex-col items-center text-center mb-4">
-                <Zap className="w-12 h-12 text-amber-400 mb-4" />
-                <h3 className="text-xl font-semibold">Lightning-Fast Processing</h3>
-              </div>
-              <p className="text-muted-foreground">
-                Process and analyze complex documents in seconds, not hours, with 
-                our optimized document processing engine.
-              </p>
-            </Card>
-            
-            <Card variant="metal" className="p-6">
-              <div className="flex flex-col items-center text-center mb-4">
-                <BarChart className="w-12 h-12 text-violet-400 mb-4" />
-                <h3 className="text-xl font-semibold">Advanced Analytics</h3>
-              </div>
-              <p className="text-muted-foreground">
-                Gain insights from comprehensive dashboards showing performance metrics,
-                compliance scores, and opportunity areas.
-              </p>
-            </Card>
-            
-            <Card variant="metal" className="p-6">
-              <div className="flex flex-col items-center text-center mb-4">
-                <ClipboardCheck className="w-12 h-12 text-rose-400 mb-4" />
-                <h3 className="text-xl font-semibold">Automated Document Generation</h3>
-              </div>
-              <p className="text-muted-foreground">
-                Create compliant solicitations, contracts, and procurement documents 
-                with AI-assisted templates and content generation.
-              </p>
-            </Card>
-            
-            <Card variant="metal" className="p-6">
-              <div className="flex flex-col items-center text-center mb-4">
-                <RefreshCw className="w-12 h-12 text-cyan-400 mb-4" />
-                <h3 className="text-xl font-semibold">Workflow Automation</h3>
-              </div>
-              <p className="text-muted-foreground">
-                Streamline approval processes and automate routine tasks with 
-                customizable workflow rules and notifications.
-              </p>
-            </Card>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="py-4 px-6 text-left text-gray-400 font-medium">Features</th>
+                  <th className="py-4 px-6 text-center text-white bg-blue-900/20 font-semibold">AKF Platform</th>
+                  <th className="py-4 px-6 text-center text-gray-400 font-medium">Traditional Tools</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                <tr>
+                  <td className="py-4 px-6 text-gray-300">Integrated Knowledge Base</td>
+                  <td className="py-4 px-6 text-center bg-blue-900/10">
+                    <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="py-4 px-6 text-center text-gray-500">Limited</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6 text-gray-300">AI-Powered Compliance</td>
+                  <td className="py-4 px-6 text-center bg-blue-900/10">
+                    <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="py-4 px-6 text-center text-gray-500">—</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6 text-gray-300">Real-time Regulatory Updates</td>
+                  <td className="py-4 px-6 text-center bg-blue-900/10">
+                    <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="py-4 px-6 text-center text-gray-500">Manual Updates</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6 text-gray-300">Advanced Analytics</td>
+                  <td className="py-4 px-6 text-center bg-blue-900/10">
+                    <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="py-4 px-6 text-center text-gray-500">Basic</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6 text-gray-300">Collaborative Workflows</td>
+                  <td className="py-4 px-6 text-center bg-blue-900/10">
+                    <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="py-4 px-6 text-center text-gray-500">Limited</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6 text-gray-300">Document Generation</td>
+                  <td className="py-4 px-6 text-center bg-blue-900/10">
+                    <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="py-4 px-6 text-center text-gray-500">Basic Templates</td>
+                </tr>
+                <tr>
+                  <td className="py-4 px-6 text-gray-300">Mobile Accessibility</td>
+                  <td className="py-4 px-6 text-center bg-blue-900/10">
+                    <CheckCircle className="h-5 w-5 text-green-500 mx-auto" />
+                  </td>
+                  <td className="py-4 px-6 text-center text-gray-500">Limited</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-
-          <div className="max-w-5xl mx-auto mb-16">
-            <h2 className="text-2xl font-bold mb-8 text-center">The Power of the 4D Knowledge Framework</h2>
-            
-            <Card variant="metal" className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <div className="flex items-center mb-4">
-                    <Globe className="w-8 h-8 text-primary mr-3" />
-                    <h3 className="text-xl font-semibold">Comprehensive Coverage</h3>
-                  </div>
-                  <p className="text-muted-foreground mb-6">
-                    Our framework integrates regulations from federal, state, and local levels 
-                    into a unified knowledge system.
-                  </p>
-                  
-                  <div className="flex items-center mb-4">
-                    <Lock className="w-8 h-8 text-primary mr-3" />
-                    <h3 className="text-xl font-semibold">Regulatory Certainty</h3>
-                  </div>
-                  <p className="text-muted-foreground mb-6">
-                    Stay confident with continuously updated regulations and interpretations 
-                    across all jurisdictions.
-                  </p>
-                </div>
-                
-                <div>
-                  <div className="flex items-center mb-4">
-                    <Clock className="w-8 h-8 text-primary mr-3" />
-                    <h3 className="text-xl font-semibold">Time-Based Analysis</h3>
-                  </div>
-                  <p className="text-muted-foreground mb-6">
-                    Evaluate regulations that were in effect at specific points in time for 
-                    historical compliance verification.
-                  </p>
-                  
-                  <div className="flex items-center mb-4">
-                    <Search className="w-8 h-8 text-primary mr-3" />
-                    <h3 className="text-xl font-semibold">Context-Aware Search</h3>
-                  </div>
-                  <p className="text-muted-foreground">
-                    Find exactly what you need with intelligent search that understands 
-                    procurement terminology and context.
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            <Card variant="metal" className="p-8">
-              <div className="flex items-center mb-6">
-                <Landmark className="w-10 h-10 text-blue-400 mr-4" />
-                <h3 className="text-2xl font-semibold">Federal Acquisition</h3>
-              </div>
-              <ul className="space-y-3 text-muted-foreground mb-6">
-                <li className="flex items-start">
-                  <div className="bg-primary/20 p-1 rounded mr-3 mt-1">
-                    <Shield className="w-4 h-4 text-primary" />
-                  </div>
-                  <span>FAR and DFARS compliance automation</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-primary/20 p-1 rounded mr-3 mt-1">
-                    <Shield className="w-4 h-4 text-primary" />
-                  </div>
-                  <span>Agency-specific acquisition regulations</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-primary/20 p-1 rounded mr-3 mt-1">
-                    <Shield className="w-4 h-4 text-primary" />
-                  </div>
-                  <span>Federal procurement best practices</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-primary/20 p-1 rounded mr-3 mt-1">
-                    <Shield className="w-4 h-4 text-primary" />
-                  </div>
-                  <span>Small business set-aside assistance</span>
-                </li>
-              </ul>
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => navigate("/contact")}
-              >
-                Learn More
-              </Button>
-            </Card>
-            
-            <Card variant="metal" className="p-8">
-              <div className="flex items-center mb-6">
-                <FileText className="w-10 h-10 text-green-400 mr-4" />
-                <h3 className="text-2xl font-semibold">State & Local Acquisition</h3>
-              </div>
-              <ul className="space-y-3 text-muted-foreground mb-6">
-                <li className="flex items-start">
-                  <div className="bg-primary/20 p-1 rounded mr-3 mt-1">
-                    <Shield className="w-4 h-4 text-primary" />
-                  </div>
-                  <span>State-specific procurement regulations</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-primary/20 p-1 rounded mr-3 mt-1">
-                    <Shield className="w-4 h-4 text-primary" />
-                  </div>
-                  <span>Local ordinance compliance</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-primary/20 p-1 rounded mr-3 mt-1">
-                    <Shield className="w-4 h-4 text-primary" />
-                  </div>
-                  <span>Cross-jurisdiction regulation management</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-primary/20 p-1 rounded mr-3 mt-1">
-                    <Shield className="w-4 h-4 text-primary" />
-                  </div>
-                  <span>Special district procurement support</span>
-                </li>
-              </ul>
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => navigate("/contact")}
-              >
-                Learn More
-              </Button>
-            </Card>
-          </div>
-
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Ready to transform your procurement process?</h2>
-            <p className="text-lg text-muted-foreground mb-6">
-              Join government agencies across the country already using ProcurityIQ to 
-              streamline their acquisition workflows.
+        </div>
+        
+        {/* CTA Section */}
+        <div className="text-center">
+          <Card className="p-8 bg-gradient-to-br from-blue-900/30 to-gray-800 border-gray-700 max-w-4xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-white">Ready to Transform Your Acquisition Process?</h2>
+            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
+              Join federal agencies nationwide that use our platform to streamline procurement, 
+              ensure compliance, and make data-driven acquisition decisions.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button 
-                size="lg"
-                className="px-8"
-                onClick={() => navigate("/pricing")}
-              >
-                View Pricing
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                Request a Demo
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="px-8"
-                onClick={() => navigate("/contact")}
-              >
-                Request Demo
+              <Button size="lg" variant="outline" className="border-gray-600 hover:bg-gray-700">
+                View Pricing Plans
               </Button>
             </div>
-          </div>
-        </Container>
-      </MainLayout>
-    </PageErrorBoundary>
+          </Card>
+        </div>
+      </div>
+    </ExternalPageLayout>
   );
-};
-
-export default FeaturesPage;
+}
