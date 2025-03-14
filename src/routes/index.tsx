@@ -15,3 +15,5 @@ export const browserRouter = createBrowserRouter([
     )
   }
 ]);
+
+export default browserRouter;

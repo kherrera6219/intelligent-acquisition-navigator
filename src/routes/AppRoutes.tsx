@@ -1,8 +1,9 @@
 
-import React, { Suspense } from 'react';
-import { useRoutes, Navigate } from 'react-router-dom';
+import React, { Suspense, useEffect } from 'react';
+import { useRoutes, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
+import { toast } from 'sonner';
 
 // Import route collections
 import landingRoutes from './landingRoutes';
@@ -22,6 +23,14 @@ const allRoutes = [
 
 export const AppRoutes: React.FC = () => {
   const { user, isLoading } = useAuth();
+  const location = useLocation();
+  
+  useEffect(() => {
+    // Log route changes in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Route changed to: ${location.pathname}`);
+    }
+  }, [location.pathname]);
   
   // Process routes to handle protection based on auth state
   const processedRoutes = React.useMemo(() => {
@@ -33,11 +42,10 @@ export const AppRoutes: React.FC = () => {
     }
 
     return allRoutes.map(route => {
-      // Skip if the route has already been processed or doesn't contain "protect" metadata
       const routePath = route.path;
       
+      // Redirect authenticated users away from auth pages
       if (routePath === '/login' || routePath === '/register' || routePath === '/forgot-password') {
-        // Redirect to dashboard if already logged in
         if (user) {
           return {
             ...route,
@@ -46,21 +54,25 @@ export const AppRoutes: React.FC = () => {
         }
       }
       
+      // Protect dashboard and app routes
       if (routePath?.startsWith('/dashboard') || 
           routePath?.startsWith('/acquisition') || 
+          routePath?.startsWith('/settings') ||
           routePath?.startsWith('/documents')) {
-        // Protected routes
         if (!user) {
+          // Save the attempted URL for redirect after login
+          const returnUrl = encodeURIComponent(location.pathname + location.search);
+          toast.error("Please log in to access this page");
           return {
             ...route,
-            element: <Navigate to="/login" replace />
+            element: <Navigate to={`/login?returnUrl=${returnUrl}`} replace />
           };
         }
       }
       
       return route;
     });
-  }, [user, isLoading]);
+  }, [user, isLoading, location]);
 
   const element = useRoutes(processedRoutes);
 
@@ -70,3 +82,5 @@ export const AppRoutes: React.FC = () => {
     </Suspense>
   );
 };
+
+export default AppRoutes;
