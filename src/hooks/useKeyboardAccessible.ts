@@ -1,39 +1,37 @@
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { isKeyboardUser } from '@/utils/keyboardNavigationDetector';
 
 /**
- * A hook that helps components detect if the user is navigating via keyboard
- * This can be used to conditionally apply focus styles
+ * Hook to detect if the user is using keyboard navigation
+ * @returns Boolean indicating if the user is using keyboard navigation
  */
-export function useKeyboardAccessible() {
-  const [isKeyboard, setIsKeyboard] = useState(false);
-  
+export function useKeyboardAccessible(): boolean {
+  const [isKeyboardAccessible, setIsKeyboardAccessible] = useState<boolean>(isKeyboardUser());
+
   useEffect(() => {
-    // Set initial state
-    setIsKeyboard(isKeyboardUser());
-    
-    // Set up a MutationObserver to watch for class changes on the body element
+    const checkKeyboardNav = () => {
+      setIsKeyboardAccessible(isKeyboardUser());
+    };
+
+    // Check whenever the body class changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === 'class') {
-          setIsKeyboard(isKeyboardUser());
+          checkKeyboardNav();
         }
       });
     });
-    
-    // Start observing
-    if (typeof document !== 'undefined') {
-      observer.observe(document.body, { attributes: true });
-    }
-    
-    // Clean up observer
+
+    observer.observe(document.body, { attributes: true });
+
+    // Initial check
+    checkKeyboardNav();
+
     return () => {
       observer.disconnect();
     };
   }, []);
-  
-  return isKeyboard;
-}
 
-export default useKeyboardAccessible;
+  return isKeyboardAccessible;
+}

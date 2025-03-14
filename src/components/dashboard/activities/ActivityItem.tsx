@@ -5,6 +5,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { 
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger 
 } from '@/components/ui/tooltip';
 
@@ -40,16 +41,18 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
         <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">{title}</h4>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{description}</p>
       </div>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <time className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
-            {formatDistanceToNow(timestamp, { addSuffix: true })}
-          </time>
-        </TooltipTrigger>
-        <TooltipContent>
-          {timestamp.toLocaleString()}
-        </TooltipContent>
-      </Tooltip>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <time className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+              {formatDistanceToNow(timestamp, { addSuffix: true })}
+            </time>
+          </TooltipTrigger>
+          <TooltipContent>
+            {timestamp.toLocaleString()}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 };

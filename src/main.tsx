@@ -8,6 +8,7 @@ import { ThemeProvider } from './providers/ThemeProvider';
 import { NetworkMonitorProvider } from './components/ui/universal/NetworkMonitorProvider'; 
 import { ApplicationStatusProvider } from './components/ui/universal/ApplicationStatusProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './providers/AuthProvider';
 import './styles/global.css';
 
 // Create React Query client with offline support
@@ -35,8 +36,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <NetworkMonitorProvider>
           <ApplicationStatusProvider>
-            <RouterProvider router={browserRouter} />
-            <Toaster />
+            <AuthProvider>
+              <RouterProvider router={browserRouter} />
+              <Toaster />
+            </AuthProvider>
           </ApplicationStatusProvider>
         </NetworkMonitorProvider>
       </QueryClientProvider>

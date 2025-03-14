@@ -1,16 +1,10 @@
 
 import React from 'react';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
-import NotFoundPage from '@/pages/NotFoundPage';
 import { ProtectedPageLayout } from './components/layout/ProtectedPageLayout';
 import { ExternalPageLayout } from './components/layout/ExternalPageLayout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AppRoutes } from './routes/AppRoutes';
-
-// Lazy-load page components
-const HomePage = React.lazy(() => import('./pages/HomePage'));
-const AuthenticationPage = React.lazy(() => import('./pages/auth/AuthenticationPage'));
-const DashboardHomePage = React.lazy(() => import('./pages/dashboard/DashboardHomePage'));
 
 // Simple wrapper for public routes
 const PublicWrapper = () => {
@@ -25,19 +19,23 @@ export const browserRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <ExternalPageLayout>
-            <HomePage />
-          </ExternalPageLayout>
-        ),
+        async lazy() {
+          const { default: HomePage } = await import('./pages/HomePage');
+          return { Component: HomePage };
+        }
       },
       {
         path: "auth/*",
-        element: (
-          <ExternalPageLayout showHeader={false} showFooter={false}>
-            <AuthenticationPage />
-          </ExternalPageLayout>
-        ),
+        async lazy() {
+          const { default: AuthenticationPage } = await import('./pages/auth/AuthenticationPage');
+          return { 
+            Component: () => (
+              <ExternalPageLayout showHeader={false} showFooter={false}>
+                <AuthenticationPage />
+              </ExternalPageLayout>
+            )
+          };
+        }
       },
       // External pages
       {
@@ -153,7 +151,7 @@ export const browserRouter = createBrowserRouter([
           {
             index: true,
             async lazy() {
-              // Use PrivacyPage with a "terms" pageType prop for Terms page
+              // Using PrivacyPage for terms since there's no dedicated TermsPage
               const { default: PrivacyPage } = await import('./pages/PrivacyPage');
               return { 
                 Component: () => <PrivacyPage pageType="terms" /> 
@@ -182,17 +180,169 @@ export const browserRouter = createBrowserRouter([
     ]
   },
   {
-    path: "/dashboard/*",
+    path: "/dashboard",
     element: (
       <ProtectedRoute>
         <ProtectedPageLayout>
-          <AppRoutes />
+          <Outlet />
         </ProtectedPageLayout>
       </ProtectedRoute>
-    )
+    ),
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { default: DashboardHomePage } = await import('./pages/dashboard/DashboardHomePage');
+          return { Component: DashboardHomePage };
+        }
+      }
+    ]
+  },
+  {
+    path: "/analytics",
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout>
+          <Outlet />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { default: AnalyticsPage } = await import('./pages/AnalyticsPage');
+          return { Component: AnalyticsPage };
+        }
+      }
+    ]
+  },
+  {
+    path: "/settings",
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout>
+          <Outlet />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { default: SettingsPage } = await import('./pages/SettingsPage');
+          return { Component: SettingsPage };
+        }
+      }
+    ]
+  },
+  {
+    path: "/profile",
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout>
+          <Outlet />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { default: ProfilePage } = await import('./pages/ProfilePage');
+          return { Component: ProfilePage };
+        }
+      }
+    ]
+  },
+  {
+    path: "/federal-acquisition",
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout>
+          <Outlet />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { default: FederalAcquisitionPage } = await import('./pages/acquisition/FederalAcquisitionPage');
+          return { Component: FederalAcquisitionPage };
+        }
+      }
+    ]
+  },
+  {
+    path: "/texas-acquisition",
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout>
+          <Outlet />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { default: TexasAcquisitionPage } = await import('./pages/acquisition/TexasAcquisition');
+          return { Component: TexasAcquisitionPage };
+        }
+      }
+    ]
+  },
+  {
+    path: "/knowledge-base",
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout>
+          <Outlet />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { default: KnowledgeBasePage } = await import('./pages/KnowledgeBasePage');
+          return { Component: KnowledgeBasePage };
+        }
+      }
+    ]
+  },
+  {
+    path: "/proposals",
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout>
+          <Outlet />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { default: ProposalsPage } = await import('./pages/ProposalsPage');
+          return { Component: ProposalsPage };
+        }
+      },
+      {
+        path: ":id",
+        async lazy() {
+          const { default: ProposalDetailPage } = await import('./pages/ProposalDetailPage');
+          return { Component: ProposalDetailPage };
+        }
+      }
+    ]
   },
   {
     path: "*",
-    element: <NotFoundPage />
+    async lazy() {
+      const { default: NotFoundPage } = await import('./pages/NotFoundPage');
+      return { Component: NotFoundPage };
+    }
   }
 ]);

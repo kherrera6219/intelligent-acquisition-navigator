@@ -43,7 +43,13 @@ export const ApplicationStatusProvider: React.FC<{ children: React.ReactNode }> 
     getPendingActionsCount();
     
     // Set up keyboard navigation detection
-    initKeyboardNavigationDetector();
+    const cleanup = initKeyboardNavigationDetector();
+    
+    return () => {
+      if (typeof cleanup === 'function') {
+        cleanup();
+      }
+    };
   }, []);
   
   const contextValue = {

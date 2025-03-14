@@ -3,7 +3,7 @@
  * Utility for detecting keyboard navigation
  * Adds a class to the body when keyboard navigation is detected
  */
-export const initKeyboardNavigationDetector = (): void => {
+export const initKeyboardNavigationDetector = (): (() => void) => {
   // Add keyboard detection
   const handleFirstTab = (e: KeyboardEvent) => {
     if (e.key === 'Tab') {
@@ -31,4 +31,11 @@ export const initKeyboardNavigationDetector = (): void => {
     window.removeEventListener('keydown', handleFirstTab);
     window.removeEventListener('mousedown', handleMouseDown);
   };
+};
+
+/**
+ * Helper to check if the user is navigating with keyboard
+ */
+export const isKeyboardUser = (): boolean => {
+  return document.body.classList.contains('user-is-tabbing');
 };

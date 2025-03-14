@@ -1,51 +1,56 @@
 
 import React from 'react';
-import { ClipboardList } from 'lucide-react';
 import { ActivityItem } from './ActivityItem';
-import type { RecentActivity } from '@/types/dashboard';
+import { Card } from '@/components/ui/card';
 
-interface ActivityListProps {
-  isLoading: boolean;
-  activities: RecentActivity[];
+export interface Activity {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  timestamp: Date;
+  status: 'success' | 'warning' | 'error' | 'info';
 }
 
-export const ActivityList: React.FC<ActivityListProps> = ({ isLoading, activities }) => {
-  if (isLoading) {
-    return (
-      <>
-        {Array(3).fill(0).map((_, index) => (
-          <div key={`skeleton-${index}`} className="ms-timeline-item ms-timeline-skeleton" role="listitem">
-            <div className="ms-timeline-icon">
-              <div className="h-4 w-4 bg-white/20 rounded-full" />
-            </div>
-            <div className="ms-timeline-content">
-              <div className="ms-timeline-title" />
-              <div className="ms-timeline-time" />
-            </div>
-          </div>
-        ))}
-      </>
-    );
-  }
-  
-  if (activities.length === 0) {
-    return (
-      <div className="ms-timeline-empty">
-        <ClipboardList className="h-10 w-10 ms-timeline-empty-icon" aria-hidden="true" />
-        <p>No recent activity to display.</p>
-      </div>
-    );
-  }
-  
+interface ActivityListProps {
+  activities: Activity[];
+  title?: string;
+  emptyMessage?: string;
+  className?: string;
+  maxItems?: number;
+}
+
+export const ActivityList: React.FC<ActivityListProps> = ({
+  activities,
+  title = 'Recent Activities',
+  emptyMessage = 'No recent activities',
+  className = '',
+  maxItems
+}) => {
+  const displayActivities = maxItems ? activities.slice(0, maxItems) : activities;
+
   return (
-    <>
-      {activities.map((activity, index) => (
-        <ActivityItem 
-          key={index} 
-          activity={activity} 
-          index={index} 
-        />
-      ))}
-    </>
+    <Card className={`p-4 ${className}`}>
+      <h3 className="text-lg font-medium mb-4">{title}</h3>
+      
+      {displayActivities.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">
+          {emptyMessage}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {displayActivities.map((activity, index) => (
+            <ActivityItem
+              key={activity.id}
+              icon={activity.icon}
+              title={activity.title}
+              description={activity.description}
+              timestamp={activity.timestamp}
+              status={activity.status}
+            />
+          ))}
+        </div>
+      )}
+    </Card>
   );
 };

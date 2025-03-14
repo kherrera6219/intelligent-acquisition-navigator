@@ -1,85 +1,71 @@
 
 import React from 'react';
-import { Wifi, WifiOff, Loader } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
 import { 
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipProvider,
+  TooltipTrigger 
 } from '@/components/ui/tooltip';
 
 interface OfflineStatusIndicatorProps {
-  className?: string;
   compact?: boolean;
+  showLabel?: boolean;
+  showRetry?: boolean;
 }
 
 export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({
-  className,
-  compact = false
+  compact = false,
+  showLabel = true,
+  showRetry = true
 }) => {
-  const { isOnline, isReconnecting, lastOnlineTime } = useNetworkMonitor();
-  
-  const statusIcon = () => {
-    if (isReconnecting) {
-      return <Loader className="h-4 w-4 text-yellow-500 animate-spin" aria-hidden="true" />;
+  const { isOnline, isReconnecting, checkConnection } = useNetworkMonitor();
+
+  if (isOnline && !isReconnecting) {
+    return null;
+  }
+
+  const handleRetry = () => {
+    if (checkConnection) {
+      checkConnection();
     }
-    
-    if (isOnline) {
-      return <Wifi className="h-4 w-4 text-green-500" aria-hidden="true" />;
-    }
-    
-    return <WifiOff className="h-4 w-4 text-red-500" aria-hidden="true" />;
   };
-  
-  const statusText = () => {
-    if (isReconnecting) {
-      return "Reconnecting...";
-    }
-    
-    if (isOnline) {
-      return "Online";
-    }
-    
-    return "Offline";
-  };
-  
-  const tooltipText = () => {
-    if (isReconnecting) {
-      return "Trying to reconnect to the network...";
-    }
-    
-    if (isOnline) {
-      return "Connected to the network";
-    }
-    
-    if (lastOnlineTime) {
-      return `Offline. Last connected: ${lastOnlineTime.toLocaleString()}`;
-    }
-    
-    return "Offline. No recent connection.";
-  };
-  
+
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div
-          className={cn(
-            "flex items-center gap-2",
-            isOnline ? "network-status-online" : "network-status-offline",
-            isReconnecting && "network-status-reconnecting",
-            className
-          )}
-          aria-live="polite"
-          role="status"
-        >
-          {statusIcon()}
-          {!compact && <span className="text-sm">{statusText()}</span>}
-        </div>
-      </TooltipTrigger>
-      <TooltipContent>
-        {tooltipText()}
-      </TooltipContent>
-    </Tooltip>
+    <div className={`flex items-center gap-2 ${compact ? 'text-sm' : 'text-base'}`}>
+      {isReconnecting ? (
+        <>
+          <RefreshCw size={compact ? 16 : 20} className="animate-spin text-amber-500" />
+          {showLabel && <span className="text-amber-500">Reconnecting...</span>}
+        </>
+      ) : (
+        <>
+          <WifiOff size={compact ? 16 : 20} className="text-red-500" />
+          {showLabel && <span className="text-red-500">Offline</span>}
+        </>
+      )}
+      
+      {showRetry && !isReconnecting && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="ml-1 p-1 h-auto"
+                onClick={handleRetry}
+              >
+                <RefreshCw size={compact ? 14 : 16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Try to reconnect</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+    </div>
   );
 };

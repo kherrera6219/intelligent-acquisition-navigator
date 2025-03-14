@@ -1,177 +1,261 @@
+
 /**
- * Utility functions for offline storage and synchronization
+ * Utility for managing offline storage and synchronization
  */
 
-// Get pending requests from storage
+// Database name and version
+const DB_NAME = 'offlineDb';
+const DB_VERSION = 1;
+
+// Store names
+const CACHE_STORE = 'cache';
+const PENDING_REQUESTS_STORE = 'pendingRequests';
+
+// Open the database
+const openDB = (): Promise<IDBDatabase> => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onerror = (event) => {
+      console.error('Error opening IndexedDB:', event);
+      reject(new Error('Could not open IndexedDB'));
+    };
+
+    request.onsuccess = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+      resolve(db);
+    };
+
+    request.onupgradeneeded = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+      
+      // Create cache store with timestamp index for expiration
+      if (!db.objectStoreNames.contains(CACHE_STORE)) {
+        const cacheStore = db.createObjectStore(CACHE_STORE, { keyPath: 'key' });
+        cacheStore.createIndex('expirationTime', 'expirationTime', { unique: false });
+      }
+      
+      // Create pending requests store
+      if (!db.objectStoreNames.contains(PENDING_REQUESTS_STORE)) {
+        const pendingStore = db.createObjectStore(PENDING_REQUESTS_STORE, { 
+          keyPath: 'id', 
+          autoIncrement: true 
+        });
+        pendingStore.createIndex('priority', 'priority', { unique: false });
+        pendingStore.createIndex('timestamp', 'timestamp', { unique: false });
+      }
+    };
+  });
+};
+
+// Initialize the database
+export const initOfflineDB = async (): Promise<void> => {
+  try {
+    await openDB();
+    console.log('IndexedDB initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize IndexedDB:', error);
+  }
+};
+
+// Cache a response
+export const cacheResponse = async (
+  key: string, 
+  data: any, 
+  expiration: number = 3600000 // Default: 1 hour
+): Promise<void> => {
+  try {
+    const db = await openDB();
+    const transaction = db.transaction(CACHE_STORE, 'readwrite');
+    const store = transaction.objectStore(CACHE_STORE);
+    
+    const expirationTime = Date.now() + expiration;
+    
+    await store.put({
+      key,
+      data,
+      expirationTime,
+      cachedAt: Date.now()
+    });
+    
+    db.close();
+  } catch (error) {
+    console.error('Error caching response:', error);
+    throw error;
+  }
+};
+
+// Get a cached response
+export const getCachedResponse = async (key: string): Promise<any | null> => {
+  try {
+    const db = await openDB();
+    const transaction = db.transaction(CACHE_STORE, 'readonly');
+    const store = transaction.objectStore(CACHE_STORE);
+    
+    const request = store.get(key);
+    
+    return new Promise((resolve, reject) => {
+      request.onsuccess = () => {
+        const cachedItem = request.result;
+        
+        if (!cachedItem) {
+          resolve(null);
+          return;
+        }
+        
+        // Check if the cached item has expired
+        if (cachedItem.expirationTime < Date.now()) {
+          // Remove expired item asynchronously
+          const cleanupTx = db.transaction(CACHE_STORE, 'readwrite');
+          cleanupTx.objectStore(CACHE_STORE).delete(key);
+          resolve(null);
+        } else {
+          resolve(cachedItem.data);
+        }
+        
+        db.close();
+      };
+      
+      request.onerror = (event) => {
+        console.error('Error retrieving cached response:', event);
+        reject(new Error('Failed to retrieve cached response'));
+      };
+    });
+  } catch (error) {
+    console.error('Error getting cached response:', error);
+    return null;
+  }
+};
+
+// Add a request to be processed when back online
+export const addPendingRequest = async (
+  request: RequestInfo, 
+  options?: RequestInit,
+  priority: number = 0
+): Promise<number> => {
+  try {
+    const db = await openDB();
+    const transaction = db.transaction(PENDING_REQUESTS_STORE, 'readwrite');
+    const store = transaction.objectStore(PENDING_REQUESTS_STORE);
+    
+    const pendingRequest = {
+      url: typeof request === 'string' ? request : request.url,
+      options,
+      priority,
+      timestamp: Date.now(),
+      retryCount: 0
+    };
+    
+    const id = await store.add(pendingRequest);
+    db.close();
+    return id as number;
+  } catch (error) {
+    console.error('Error adding pending request:', error);
+    throw error;
+  }
+};
+
+// Get all pending requests
 export const getPendingRequests = async (): Promise<any[]> => {
   try {
-    const pendingRequestsStr = localStorage.getItem('pendingRequests');
-    if (!pendingRequestsStr) return [];
+    const db = await openDB();
+    const transaction = db.transaction(PENDING_REQUESTS_STORE, 'readonly');
+    const store = transaction.objectStore(PENDING_REQUESTS_STORE);
     
-    return JSON.parse(pendingRequestsStr);
+    return new Promise((resolve, reject) => {
+      const request = store.getAll();
+      
+      request.onsuccess = () => {
+        resolve(request.result);
+        db.close();
+      };
+      
+      request.onerror = (event) => {
+        console.error('Error retrieving pending requests:', event);
+        reject(new Error('Failed to retrieve pending requests'));
+      };
+    });
   } catch (error) {
     console.error('Error getting pending requests:', error);
     return [];
   }
 };
 
-// Add a pending request to storage
-export const addPendingRequest = async (request: any): Promise<void> => {
+// Remove a pending request
+export const removePendingRequest = async (id: number): Promise<void> => {
   try {
-    const pendingRequests = await getPendingRequests();
-    pendingRequests.push({
-      ...request,
-      timestamp: new Date().toISOString(),
-    });
+    const db = await openDB();
+    const transaction = db.transaction(PENDING_REQUESTS_STORE, 'readwrite');
+    const store = transaction.objectStore(PENDING_REQUESTS_STORE);
     
-    localStorage.setItem('pendingRequests', JSON.stringify(pendingRequests));
+    await store.delete(id);
+    db.close();
   } catch (error) {
-    console.error('Error adding pending request:', error);
+    console.error('Error removing pending request:', error);
+    throw error;
   }
 };
 
-// Process all pending requests
-export const processPendingRequests = async (
-  progressCallback?: (processed: number, total: number) => void
-): Promise<{ successful: number; failed: number }> => {
-  try {
-    const pendingRequests = await getPendingRequests();
-    if (pendingRequests.length === 0) {
-      return { successful: 0, failed: 0 };
-    }
-    
-    let successful = 0;
-    let failed = 0;
-    const total = pendingRequests.length;
-    const remaining = [];
-    
-    for (let i = 0; i < pendingRequests.length; i++) {
-      const request = pendingRequests[i];
-      
-      try {
-        // Process the request - this would be implemented based on your specific needs
-        // await processRequest(request);
-        successful++;
-      } catch (error) {
-        console.error('Error processing request:', error);
-        // If we still want to retry this request later
-        remaining.push(request);
-        failed++;
-      }
-      
-      // Update progress
-      if (progressCallback) {
-        progressCallback(i + 1, total);
-      }
-    }
-    
-    // Save the remaining requests
-    localStorage.setItem('pendingRequests', JSON.stringify(remaining));
-    
-    return { successful, failed };
-  } catch (error) {
-    console.error('Error processing pending requests:', error);
-    return { successful: 0, failed: 0 };
-  }
-};
-
-// Initialize offline database (if using IndexedDB)
-export const initOfflineDB = async (): Promise<void> => {
-  // This would be implemented if using IndexedDB
-  console.log('Offline storage initialized');
-};
-
-// Clear expired cache items
+// Clean up expired cache items
 export const clearExpiredCache = async (): Promise<void> => {
   try {
-    // This would clear any expired items from your cache
-    console.log('Expired cache cleared');
+    const db = await openDB();
+    const transaction = db.transaction(CACHE_STORE, 'readwrite');
+    const store = transaction.objectStore(CACHE_STORE);
+    const index = store.index('expirationTime');
+    
+    const currentTime = Date.now();
+    const range = IDBKeyRange.upperBound(currentTime);
+    
+    const request = index.openCursor(range);
+    
+    request.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest).result;
+      
+      if (cursor) {
+        store.delete(cursor.primaryKey);
+        cursor.continue();
+      }
+    };
+    
+    transaction.oncomplete = () => {
+      db.close();
+    };
   } catch (error) {
     console.error('Error clearing expired cache:', error);
   }
 };
 
-// Offline fetch implementation for network requests
-export const offlineFetch = async (
-  url: string,
-  options: RequestInit & {
-    offlineOptions?: {
-      key?: string;
-      expiration?: number;
-      priority?: number;
-      processOffline?: boolean;
-    };
-  }
-): Promise<Response> => {
-  const offlineOptions = options.offlineOptions || {};
-  const cacheKey = offlineOptions.key || `offline_fetch_${url}`;
-  const expiration = offlineOptions.expiration || 3600000; // 1 hour default
+// Process all pending requests
+export const processPendingRequests = async (): Promise<{ success: number, failed: number }> => {
+  let successCount = 0;
+  let failedCount = 0;
   
   try {
-    // Try to make the actual fetch request
-    const response = await fetch(url, options);
+    const pendingRequests = await getPendingRequests();
     
-    // If successful, cache the response
-    if (response.ok) {
+    // Sort by priority (higher first) and then by timestamp (older first)
+    pendingRequests.sort((a, b) => {
+      if (a.priority !== b.priority) {
+        return b.priority - a.priority;
+      }
+      return a.timestamp - b.timestamp;
+    });
+    
+    for (const request of pendingRequests) {
       try {
-        const clonedResponse = response.clone();
-        const data = await clonedResponse.json();
-        
-        localStorage.setItem(cacheKey, JSON.stringify({
-          data,
-          timestamp: Date.now(),
-          expiration: Date.now() + expiration
-        }));
+        await fetch(request.url, request.options);
+        await removePendingRequest(request.id);
+        successCount++;
       } catch (error) {
-        console.error('Error caching response:', error);
+        console.error(`Failed to process pending request ${request.id}:`, error);
+        failedCount++;
       }
     }
     
-    return response;
+    return { success: successCount, failed: failedCount };
   } catch (error) {
-    // Network error, try to use cached data
-    console.warn('Network request failed, trying cached data:', url);
-    
-    const cachedDataStr = localStorage.getItem(cacheKey);
-    if (cachedDataStr) {
-      try {
-        const cachedData = JSON.parse(cachedDataStr);
-        
-        // Check if cache is expired
-        if (cachedData.expiration > Date.now()) {
-          // Return cached data as a Response object
-          return new Response(JSON.stringify(cachedData.data), {
-            headers: { 'Content-Type': 'application/json', 'X-From-Cache': 'true' },
-            status: 200
-          });
-        }
-      } catch (parseError) {
-        console.error('Error parsing cached data:', parseError);
-      }
-    }
-    
-    // If we should queue this for processing offline
-    if (offlineOptions.processOffline) {
-      await addPendingRequest({
-        url,
-        options: {
-          ...options,
-          offlineOptions: undefined // Don't store the offline options again
-        },
-        priority: offlineOptions.priority || 0
-      });
-      
-      // Return a "queued" response
-      return new Response(JSON.stringify({ 
-        message: 'Request queued for processing when online',
-        queued: true
-      }), {
-        headers: { 'Content-Type': 'application/json', 'X-Queued-Offline': 'true' },
-        status: 202 // Accepted
-      });
-    }
-    
-    // If we get here, we have no cached data and couldn't queue, so throw the original error
-    throw error;
+    console.error('Error processing pending requests:', error);
+    return { success: successCount, failed: failedCount };
   }
 };

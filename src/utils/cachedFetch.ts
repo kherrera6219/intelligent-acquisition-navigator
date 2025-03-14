@@ -1,36 +1,44 @@
 
 import { cacheResponse, getCachedResponse } from './offlineStorage';
 
-// Utility function to fetch with caching
-export async function cachedFetch<T>(
+/**
+ * Performs a network request with caching capabilities
+ */
+export const cachedFetch = async <T>(
   url: string,
   options: RequestInit & {
     cacheKey?: string;
-    cacheMaxAge?: number;
+    cacheMaxAge?: number; // milliseconds
+    bypassCache?: boolean;
   } = {}
-): Promise<T> {
+): Promise<T> => {
   const {
     cacheKey = url,
-    cacheMaxAge = 3600000, // Default 1 hour
+    cacheMaxAge = 3600000, // 1 hour default
+    bypassCache = false,
     ...fetchOptions
   } = options;
 
-  // Try to get from cache first
-  const cachedData = await getCachedResponse(cacheKey);
-  if (cachedData) {
-    return cachedData as T;
+  // Try to get from cache if not bypassing
+  if (!bypassCache) {
+    const cachedData = await getCachedResponse(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
   }
 
-  // Perform the fetch
+  // Perform network request
   const response = await fetch(url, fetchOptions);
   
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
   }
-
-  // Parse and cache the response
+  
+  // Parse response
   const data = await response.json();
+  
+  // Cache the response
   await cacheResponse(cacheKey, data, cacheMaxAge);
   
   return data as T;
-}
+};

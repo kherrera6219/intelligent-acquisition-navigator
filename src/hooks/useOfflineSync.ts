@@ -2,108 +2,74 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { processPendingRequests, getPendingRequests } from '@/utils/offlineStorage';
-import { useToast } from '@/hooks/use-toast';
-import { setLastSyncTime } from '@/utils/supabaseHelper';
+import { useToast } from './use-toast';
 
 export function useOfflineSync() {
-  const { isOnline, isReconnecting, supabaseConnected } = useNetworkMonitor();
-  const [pendingCount, setPendingCount] = useState(0);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncProgress, setSyncProgress] = useState(0);
-  const [lastSyncTimeState, setLastSyncTimeState] = useState<Date | null>(null);
+  const { isOnline, isReconnecting } = useNetworkMonitor();
+  const [pendingRequests, setPendingRequests] = useState<number>(0);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const { toast } = useToast();
 
-  // Fetch the count of pending requests
-  const fetchPendingCount = useCallback(async () => {
-    try {
-      const pendingRequests = await getPendingRequests();
-      setPendingCount(pendingRequests.length);
-    } catch (error) {
-      console.error('Error fetching pending requests count:', error);
-    }
+  // Get initial pending requests count
+  useEffect(() => {
+    const getInitialCount = async () => {
+      try {
+        const requests = await getPendingRequests();
+        setPendingRequests(requests.length);
+      } catch (error) {
+        console.error('Error getting pending requests count:', error);
+      }
+    };
+
+    getInitialCount();
   }, []);
 
-  // Sync offline data when back online
-  const syncOfflineData = useCallback(async () => {
-    if (!isOnline || isSyncing) return;
+  // Monitor connectivity changes
+  useEffect(() => {
+    if (isOnline && !isReconnecting && pendingRequests > 0) {
+      // Automatically sync when coming back online
+      syncPendingRequests();
+    }
+  }, [isOnline, isReconnecting, pendingRequests]);
+
+  // Sync pending requests
+  const syncPendingRequests = useCallback(async () => {
+    if (!isOnline || isReconnecting || isSyncing) {
+      return;
+    }
+
+    setIsSyncing(true);
 
     try {
-      setIsSyncing(true);
-      setSyncProgress(0);
-
-      const result = await processPendingRequests((processed, total) => {
-        const progress = Math.round((processed / total) * 100);
-        setSyncProgress(progress);
-      });
-
-      if (result.successful > 0 || result.failed > 0) {
-        if (result.successful > 0) {
-          toast({
-            title: "Sync Complete",
-            description: `Successfully processed ${result.successful} offline ${result.successful === 1 ? 'action' : 'actions'}.`,
-            variant: "default",
-          });
-        }
-
-        if (result.failed > 0) {
-          toast({
-            title: "Sync Issues",
-            description: `Failed to process ${result.failed} offline ${result.failed === 1 ? 'action' : 'actions'}. Some changes may need to be redone.`,
-            variant: "destructive",
-          });
-        }
-      }
-
-      const now = new Date();
-      setLastSyncTimeState(now);
-      // Update global last sync time
-      setLastSyncTime(now);
+      const result = await processPendingRequests();
       
-      // Re-fetch pending count after sync
-      await fetchPendingCount();
+      if (result.success > 0 || result.failed > 0) {
+        toast({
+          title: 'Offline Data Sync',
+          description: `${result.success} request(s) synced, ${result.failed} failed.`,
+          variant: result.failed > 0 ? 'warning' : 'default',
+        });
+
+        // Update pending count
+        const requests = await getPendingRequests();
+        setPendingRequests(requests.length);
+      }
     } catch (error) {
-      console.error('Error syncing offline data:', error);
+      console.error('Error syncing pending requests:', error);
       toast({
-        title: "Sync Error",
-        description: "An error occurred while syncing your offline data.",
-        variant: "destructive",
+        title: 'Sync Failed',
+        description: 'Unable to sync offline data. Will try again later.',
+        variant: 'destructive',
       });
     } finally {
       setIsSyncing(false);
-      setSyncProgress(100);
-
-      // Reset progress after a short delay
-      setTimeout(() => {
-        setSyncProgress(0);
-      }, 1000);
     }
-  }, [isOnline, supabaseConnected, isSyncing, toast, fetchPendingCount]);
-
-  // Auto-sync when coming back online
-  useEffect(() => {
-    if (isOnline && pendingCount > 0 && !isSyncing) {
-      syncOfflineData();
-    }
-  }, [isOnline, pendingCount, isSyncing, syncOfflineData]);
-
-  // Fetch pending count on mount and when connection status changes
-  useEffect(() => {
-    fetchPendingCount();
-    
-    // Set up interval to periodically check for pending requests
-    const intervalId = setInterval(fetchPendingCount, 30000); // every 30 seconds
-    
-    return () => clearInterval(intervalId);
-  }, [fetchPendingCount, isOnline]);
+  }, [isOnline, isReconnecting, isSyncing, toast]);
 
   return {
-    isOnline,
-    supabaseConnected,
-    pendingCount,
+    pendingRequests,
     isSyncing,
-    syncProgress,
-    syncOfflineData,
-    refreshPendingCount: fetchPendingCount,
-    lastSyncTime: lastSyncTimeState
+    syncPendingRequests,
+    canSync: isOnline && !isReconnecting && pendingRequests > 0 && !isSyncing
   };
 }
