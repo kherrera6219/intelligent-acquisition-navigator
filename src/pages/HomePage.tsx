@@ -4,9 +4,12 @@ import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
 import { useHomePageInit } from "@/hooks/useHomePageInit";
 import { HomeError } from "@/components/home/HomeError";
 import { HomeLoading } from "@/components/home/HomeLoading";
-import { HomeContent } from "@/components/home/HomeContent";
-import { MsFluentDashboardLayout } from "@/components/layout/MsFluentDashboardLayout";
+import { MainLayout } from "@/components/layout/MainLayout";
 import { PrivacyBanner } from "@/components/ui/universal/PrivacyBanner";
+import { LandingHero } from "@/components/landing/LandingHero";
+import { FeaturesSection } from "@/components/landing/FeaturesSection";
+import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { CTASection } from "@/components/landing/CTASection";
 
 const HomePage = () => {
   const {
@@ -21,10 +24,14 @@ const HomePage = () => {
   
   return (
     <PageErrorBoundary>
-      <MsFluentDashboardLayout
-        title="Intelligent Acquisition Navigator"
-        description="Advanced procurement intelligence platform that streamlines acquisition processes across federal, state, and local levels."
-        fullWidth={true}
+      <MainLayout 
+        variant="fluent" 
+        showHeader={true} 
+        showFooter={true}
+        showPrivacyBanner={false}
+        forceExternalHeader={true}
+        forceExternalFooter={true}
+        className="bg-background"
       >
         <Suspense fallback={<HomeLoading />}>
           {error ? (
@@ -33,14 +40,11 @@ const HomePage = () => {
             <HomeLoading />
           ) : (
             <>
-              <div className="ms-motion-fadeIn">
-                <HomeContent 
-                  showBackToTop={showBackToTop}
-                  isFirstVisit={isFirstVisit}
-                  scrollToTop={scrollToTop}
-                  showPrivacyNotice={showPrivacyNotice}
-                  setShowPrivacyNotice={setShowPrivacyNotice}
-                />
+              <div className="animate-in fade-in-50 duration-500">
+                <LandingHero />
+                <FeaturesSection />
+                <TestimonialsSection />
+                <CTASection />
               </div>
               
               {showPrivacyNotice && (
@@ -54,7 +58,7 @@ const HomePage = () => {
             </>
           )}
         </Suspense>
-      </MsFluentDashboardLayout>
+      </MainLayout>
     </PageErrorBoundary>
   );
 };

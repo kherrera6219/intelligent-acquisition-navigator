@@ -1,64 +1,29 @@
 
 import React, { Suspense } from 'react';
 import { Routes, Route } from "react-router-dom";
-import { wrapWithLayout } from "./routeTypes";
 import { LoadingPage } from "@/components/LoadingPage";
 
 // Import route collections
+import landingRoutes from './landingRoutes';
 import authRoutes from './authRoutes';
 import dashboardRoutes from './dashboardRoutes';
 import acquisitionRoutes from './acquisitionRoutes';
 import settingsRoutes from './settingsRoutes';
 
-// Import from lazy component file
+// Import specific pages for route definitions that aren't in collections
 import {
-  LandingPage,
-  AboutPage,
-  FeaturesPage,
-  ContactPage,
-  PricingPage,
-  HelpPage,
-  PrivacyPage,
   ChatPage,
   ImproveApp,
-  SitemapPage,
   ApiDocsPage,
   ComponentLibraryPage,
   KnowledgeBasePage,
   ValidationPage,
   NotFoundPage
 } from './lazyComponents';
+import { wrapWithLayout } from './routeTypes';
 
-// Main routes
-const mainRoutes = [
-  {
-    path: "/",
-    element: wrapWithLayout(LandingPage, false)
-  },
-  {
-    path: "/about",
-    element: wrapWithLayout(AboutPage, false)
-  },
-  {
-    path: "/features",
-    element: wrapWithLayout(FeaturesPage, false)
-  },
-  {
-    path: "/contact",
-    element: wrapWithLayout(ContactPage, false)
-  },
-  {
-    path: "/pricing",
-    element: wrapWithLayout(PricingPage, false)
-  },
-  {
-    path: "/help",
-    element: wrapWithLayout(HelpPage, false)
-  },
-  {
-    path: "/privacy",
-    element: wrapWithLayout(PrivacyPage, false)
-  },
+// Additional utility routes that don't fit in other route groups
+const utilityRoutes = [
   {
     path: "/chat",
     element: wrapWithLayout(ChatPage)
@@ -66,10 +31,6 @@ const mainRoutes = [
   {
     path: "/improve",
     element: wrapWithLayout(ImproveApp, false)
-  },
-  {
-    path: "/sitemap",
-    element: wrapWithLayout(SitemapPage, false)
   },
   {
     path: "/api-docs",
@@ -97,9 +58,9 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<LoadingPage />}>
       <Routes>
-        {/* Main routes */}
-        {mainRoutes.map((route, index) => (
-          <Route key={`main-${index}`} path={route.path} element={route.element} />
+        {/* Landing routes */}
+        {landingRoutes.map((route, index) => (
+          <Route key={`landing-${index}`} path={route.path} element={route.element} />
         ))}
         
         {/* Auth routes */}
@@ -120,6 +81,11 @@ export function AppRoutes() {
         {/* Settings routes */}
         {settingsRoutes.map((route, index) => (
           <Route key={`settings-${index}`} path={route.path} element={route.element} />
+        ))}
+        
+        {/* Additional utility routes */}
+        {utilityRoutes.map((route, index) => (
+          <Route key={`utility-${index}`} path={route.path} element={route.element} />
         ))}
       </Routes>
     </Suspense>

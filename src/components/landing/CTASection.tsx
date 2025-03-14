@@ -1,6 +1,9 @@
 
+import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { GradientButton } from "@/components/ui/universal/GradientButton";
+import { Button } from "@/components/ui/button";
+import { MsGradientText } from "@/components/ui/universal/MsGradientText";
+import { Container } from "@/components/ui/universal/Container";
 import { useToast } from "@/hooks/use-toast";
 
 export const CTASection = () => {
@@ -16,55 +19,51 @@ export const CTASection = () => {
   };
 
   return (
-    <section className="py-24 bg-black/40 relative overflow-hidden" aria-labelledby="cta-title">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 via-fuchsia-500/5 to-pink-500/10 pointer-events-none"></div>
+    <section className="py-24 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-background to-primary/5" />
+      <div className="absolute inset-0 bg-grid opacity-5" />
       
       {/* Content */}
-      <div className="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative">
-        <div className="space-y-8 animate-in fade-in-50">
-          <h2 
-            id="cta-title" 
-            className="text-3xl md:text-4xl font-bold text-white"
-          >
-            Ready to Transform Your Acquisition Process?
+      <Container className="relative z-10">
+        <div className="max-w-3xl mx-auto text-center px-4 space-y-8">
+          <h2 className="text-3xl md:text-4xl font-bold">
+            Ready to Transform Your <MsGradientText>Acquisition Process?</MsGradientText>
           </h2>
           
-          <p className="text-xl text-gray-400">
-            Join the leading federal agencies already using ProcurityIQ to streamline their procurement.
+          <p className="text-xl text-muted-foreground">
+            Join the leading government agencies already using Procurity to streamline their procurement workflows.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <GradientButton
-              onClick={() => navigate("/signup")}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <Button
               size="lg"
-              gradientVariant="primary"
-              className="w-full sm:w-auto px-8 py-4"
-              aria-label="Start free trial of ProcurityIQ"
+              variant="default"
+              className="px-8 py-6 h-12 text-base"
+              onClick={() => navigate("/signup")}
             >
               Start Free Trial
-            </GradientButton>
+            </Button>
             
-            <GradientButton
-              onClick={handleDemoRequest}
-              gradientVariant="secondary"
+            <Button
               size="lg"
-              className="w-full sm:w-auto px-8 py-4"
-              aria-label="Schedule a demo of ProcurityIQ"
+              variant="outline" 
+              className="px-8 py-6 h-12 text-base"
+              onClick={handleDemoRequest}
             >
               Schedule Demo
-            </GradientButton>
+            </Button>
           </div>
           
-          <p className="text-sm text-gray-500 mt-6">
-            No credit card required. 14-day free trial for all new users.
+          <p className="text-sm text-muted-foreground">
+            No credit card required. 14-day free trial for all federal, state, and local government agencies.
           </p>
         </div>
-      </div>
+      </Container>
       
       {/* Decorative elements */}
-      <div className="absolute -bottom-16 -right-16 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute -top-16 -left-16 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute -bottom-16 -right-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-16 -left-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
     </section>
   );
 };
