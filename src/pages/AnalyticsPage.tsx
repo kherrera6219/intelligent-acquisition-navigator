@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { Card } from '@/components/ui/universal/Card';
 import { 
@@ -18,12 +18,20 @@ import {
 } from 'recharts';
 import { ArrowUpRight, ArrowDownRight, TrendingUp } from 'lucide-react';
 
+// Define the type expected by MetricsChart
+interface PerformanceDataItem {
+  month: string;
+  efficiency: number;
+  compliance: number;
+  risk: number;
+}
+
 export default function AnalyticsPage() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<Error | null>(null);
   
   // Simulate loading data
-  useEffect(() => {
+  React.useEffect(() => {
     const loadAnalytics = async () => {
       try {
         // Simulate API call

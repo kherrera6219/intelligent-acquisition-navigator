@@ -18,7 +18,7 @@ export const ComponentLibraryPage = lazy(() => import('@/pages/developer/Compone
 export const ImproveApp = lazy(() => import('@/pages/ImproveApp'));
 
 // Analytics page import
-export const AnalyticsPage = lazy(() => import('@/pages/analytics/AnalyticsPage'));
+export const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
 
 // The following internal pages will be reconnected later when we update them
 // export const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
