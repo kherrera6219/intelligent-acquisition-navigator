@@ -1,27 +1,9 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
-
-interface ConnectionQuality {
-  isOnline: boolean;
-  latency: number | null;
-  connectionType: string | null;
-  effectiveConnectionType: string | null;
-  downlink: number | null;
-  lastChecked: Date;
-}
-
-interface ConnectionCheckResult {
-  success: boolean;
-  latency: number | null;
-}
-
-interface ConnectionMonitorOptions {
-  pingEndpoint?: string;
-  pingInterval?: number;
-  showToasts?: boolean;
-  onConnectionChange?: (status: ConnectionQuality) => void;
-}
+import { useEffect, useCallback } from 'react';
+import { ConnectionMonitorOptions, ConnectionQuality, ConnectionCheckResult } from './network/types';
+import { checkServerConnection } from './network/connectionUtils';
+import { useNetworkState } from './network/useNetworkState';
+import { useNetworkEvents } from './network/useNetworkEvents';
 
 export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = {}) {
   const {
@@ -31,132 +13,29 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
     onConnectionChange
   } = options;
   
-  const [connectionQuality, setConnectionQuality] = useState<ConnectionQuality>({
-    isOnline: navigator.onLine,
-    latency: null,
-    connectionType: null,
-    effectiveConnectionType: null,
-    downlink: null,
-    lastChecked: new Date()
-  });
+  const {
+    connectionQuality,
+    setConnectionQuality,
+    isReconnecting,
+    setIsReconnecting,
+    updateNetworkInfo,
+    updateConnectionStatus
+  } = useNetworkState();
   
-  const [isReconnecting, setIsReconnecting] = useState(false);
-  const { toast } = useToast();
-
-  // Function to check connection with server
-  const checkServerConnection = useCallback(async (): Promise<ConnectionCheckResult> => {
-    if (!navigator.onLine) return { success: false, latency: null };
-    
-    setIsReconnecting(true);
-    const startTime = performance.now();
-    
-    try {
-      // Try to fetch a small resource from the server with cache busting
-      const response = await fetch(`${pingEndpoint}?_=${Date.now()}`, { 
-        method: 'HEAD',
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
-      });
-      
-      const endTime = performance.now();
-      const latency = endTime - startTime;
-      
-      if (response.ok) {
-        return { success: true, latency };
-      }
-      
-      return { success: false, latency };
-    } catch (error) {
-      console.warn('Failed to connect to server:', error);
-      return { success: false, latency: null };
-    } finally {
-      setIsReconnecting(false);
-    }
-  }, [pingEndpoint]);
-
-  // Update network information when available
-  const updateNetworkInfo = useCallback(() => {
-    const connection = (navigator as any).connection || 
-                      (navigator as any).mozConnection || 
-                      (navigator as any).webkitConnection;
-    
-    if (connection) {
-      const connectionType = connection.type;
-      const effectiveConnectionType = connection.effectiveType;
-      const downlink = connection.downlink;
-
-      setConnectionQuality(prev => ({
-        ...prev,
-        connectionType,
-        effectiveConnectionType,
-        downlink,
-        lastChecked: new Date()
-      }));
-    }
-  }, []);
-
-  const handleOnline = useCallback(async () => {
-    // Double check server connection
-    const result = await checkServerConnection();
-    
-    if (result.success) {
-      const newState = {
-        isOnline: true,
-        latency: result.latency,
-        connectionType: connectionQuality.connectionType,
-        effectiveConnectionType: connectionQuality.effectiveConnectionType,
-        downlink: connectionQuality.downlink,
-        lastChecked: new Date()
-      };
-      
-      setConnectionQuality(newState);
-      updateNetworkInfo();
-      
-      if (showToasts) {
-        toast({
-          title: "Connection Restored",
-          description: result.latency 
-            ? `Your internet connection has been restored (${Math.round(result.latency)}ms).` 
-            : "Your internet connection has been restored.",
-          variant: "default"
-        });
-      }
-      
-      if (onConnectionChange) {
-        onConnectionChange(newState);
-      }
-    }
-  }, [checkServerConnection, connectionQuality, updateNetworkInfo, showToasts, toast, onConnectionChange]);
-
-  const handleOffline = useCallback(() => {
-    const newState = {
-      isOnline: false,
-      latency: null,
-      connectionType: connectionQuality.connectionType,
-      effectiveConnectionType: connectionQuality.effectiveConnectionType,
-      downlink: connectionQuality.downlink,
-      lastChecked: new Date()
-    };
-    
-    setConnectionQuality(newState);
-    
-    if (showToasts) {
-      toast({
-        title: "Offline",
-        description: "Your internet connection has been lost. Some features may be unavailable.",
-        variant: "destructive"
-      });
-    }
-    
-    if (onConnectionChange) {
-      onConnectionChange(newState);
-    }
-  }, [connectionQuality, showToasts, toast, onConnectionChange]);
+  const { handleOnline, handleOffline } = useNetworkEvents({
+    connectionQuality,
+    updateConnectionStatus,
+    updateNetworkInfo,
+    setIsReconnecting,
+    showToasts,
+    onConnectionChange,
+    pingEndpoint
+  });
 
   // Forcibly refresh connection status
   const refreshConnectionStatus = useCallback(async () => {
     setIsReconnecting(true);
-    const result = await checkServerConnection();
+    const result = await checkServerConnection(pingEndpoint);
     
     const newState = {
       isOnline: result.success,
@@ -176,7 +55,7 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
     }
     
     return result.success;
-  }, [checkServerConnection, connectionQuality, updateNetworkInfo, onConnectionChange]);
+  }, [pingEndpoint, connectionQuality, setConnectionQuality, updateNetworkInfo, setIsReconnecting, onConnectionChange]);
 
   // Setup event listeners for online/offline events
   useEffect(() => {
@@ -196,7 +75,7 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
 
     // Initial check with server
     if (navigator.onLine) {
-      checkServerConnection().then((result) => {
+      checkServerConnection(pingEndpoint).then((result) => {
         if (!result.success && connectionQuality.isOnline) {
           handleOffline();
         }
@@ -206,7 +85,7 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
     // Set up periodic check
     const intervalId = setInterval(() => {
       if (navigator.onLine) {
-        checkServerConnection().then((result) => {
+        checkServerConnection(pingEndpoint).then((result) => {
           const newState = {
             isOnline: result.success,
             latency: result.latency,
@@ -252,10 +131,11 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
     handleOnline, 
     handleOffline, 
     updateNetworkInfo, 
-    checkServerConnection, 
+    pingEndpoint, 
     connectionQuality.isOnline,
     pingInterval,
-    onConnectionChange
+    onConnectionChange,
+    setConnectionQuality
   ]);
 
   return {
