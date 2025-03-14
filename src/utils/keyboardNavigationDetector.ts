@@ -12,7 +12,7 @@ export function isKeyboardUser(): boolean {
   return document.body.classList.contains('keyboard-user');
 }
 
-export function initKeyboardNavigationDetector(): void {
+export function initKeyboardNavigationDetector(): (() => void) | void {
   // Only run in the browser
   if (typeof document === 'undefined') return;
 
