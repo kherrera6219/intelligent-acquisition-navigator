@@ -32,22 +32,24 @@ export const HeroSection = () => {
             id="hero-title" 
             className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight"
           >
-            <GradientText 
-              className="animate-in fade-in slide-in-from-bottom-2 bg-gradient-to-r from-[#9b87f5] via-[#D946EF] to-[#F97316]"
-            >
-              Next-Generation
-            </GradientText>
-            <br />
-            <span className="text-white text-lg md:text-xl lg:text-2xl animate-in fade-in-50 slide-in-from-bottom-3 delay-150">
-              Acquisition Management
-            </span>
-            <br />
-            <span className="text-5xl md:text-6xl lg:text-7xl text-[#9b87f5] animate-in fade-in-50 slide-in-from-bottom-4 delay-200 font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] tracking-wide filter blur-[0.3px]">
-              ProcurityIQ
-            </span>
+            <div className="space-y-4">
+              <GradientText 
+                className="animate-in fade-in slide-in-from-bottom-2 bg-gradient-to-r from-[#9b87f5] via-[#D946EF] to-[#F97316] text-4xl md:text-5xl lg:text-6xl"
+              >
+                Next-Generation
+              </GradientText>
+              
+              <div className="text-white text-lg md:text-xl lg:text-2xl animate-in fade-in-50 slide-in-from-bottom-3 delay-150 tracking-wide font-medium">
+                Acquisition Management
+              </div>
+              
+              <div className="text-6xl md:text-7xl lg:text-8xl text-[#9b87f5] animate-in fade-in-50 slide-in-from-bottom-4 delay-200 font-bold tracking-wider filter drop-shadow-[0_2px_8px_rgba(155,135,245,0.6)] mix-blend-luminosity">
+                ProcurityIQ
+              </div>
+            </div>
           </h1>
           
-          <p className="max-w-2xl mx-auto text-base md:text-lg text-gray-400 animate-in fade-in-50 slide-in-from-bottom-4 delay-300">
+          <p className="max-w-2xl mx-auto text-base md:text-lg text-white/80 animate-in fade-in-50 slide-in-from-bottom-4 delay-300 bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent backdrop-blur-sm py-2 font-medium">
             Streamline your procurement process with AI-powered insights and compliance automation.
           </p>
           
