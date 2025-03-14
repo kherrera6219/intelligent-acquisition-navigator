@@ -1,77 +1,63 @@
 
 import React from 'react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, WifiOff, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useNetworkMonitor } from './NetworkMonitorProvider';
+import { useSupabaseHealth } from '@/hooks/useSupabaseHealth';
+import { NetworkStatusTooltip } from './NetworkStatusTooltip';
+import { RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export interface NetworkStatusBannerProps {
-  isOffline?: boolean;
-  isReconnecting?: boolean;
-  message?: string;
-  actionLabel?: string;
-  onAction?: () => void;
-  isLoading?: boolean;
-  variant?: 'default' | 'destructive' | 'warning';
-}
+export const NetworkStatusBanner = () => {
+  const { isOnline, isReconnecting } = useNetworkMonitor();
+  const { health, isChecking, checkHealth } = useSupabaseHealth();
+  
+  // Determine if Supabase connection is available
+  const supabaseConnected = health?.db_status === 'available' && health?.api_status === 'available';
 
-export const NetworkStatusBanner: React.FC<NetworkStatusBannerProps> = ({
-  isOffline = false,
-  isReconnecting = false,
-  message,
-  actionLabel,
-  onAction,
-  isLoading = false,
-  variant = 'default'
-}) => {
-  if (!isOffline && !isReconnecting && !message) return null;
-
-  // Map the variant to the alert variant which only supports default/destructive
-  const alertVariant = variant === 'warning' ? 'default' : variant;
+  // Only show banner if there's an issue or we're reconnecting
+  if (isOnline && supabaseConnected && !isReconnecting) {
+    return null;
+  }
 
   return (
-    <Alert 
-      variant={alertVariant} 
-      className={`${variant === 'warning' ? 'bg-amber-100 border-amber-500 text-amber-900 dark:bg-amber-900/20 dark:border-amber-500 dark:text-amber-200' : ''} fixed top-0 left-0 right-0 z-50 rounded-none px-6 py-2 flex items-center justify-between`}
-    >
-      <div className="flex items-center space-x-2">
-        {isOffline && (
-          <WifiOff className="h-4 w-4" />
-        )}
-        {isReconnecting && (
-          <RefreshCw className="h-4 w-4 animate-spin" />
-        )}
-        {!isOffline && !isReconnecting && (
-          <AlertCircle className="h-4 w-4" />
-        )}
-        <AlertDescription>
-          {message || (
-            isOffline 
-              ? "You're offline. Some features may be unavailable." 
-              : isReconnecting 
-                ? "Reconnecting to the server..." 
-                : "Connection issue detected."
-          )}
-        </AlertDescription>
+    <div className={cn(
+      "w-full px-4 py-2 flex justify-between items-center text-sm border-b transition-colors",
+      !isOnline 
+        ? "bg-destructive/10 border-destructive/20 text-destructive dark:bg-destructive/20" 
+        : isReconnecting 
+          ? "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400" 
+          : "bg-blue-500/10 border-blue-500/20 text-blue-700 dark:text-blue-400"
+    )}>
+      <div className="flex items-center gap-2">
+        <NetworkStatusTooltip
+          isOnline={isOnline}
+          isReconnecting={isReconnecting}
+          supabaseConnected={Boolean(supabaseConnected)}
+        />
+        <span className="sm:inline hidden">
+          {!isOnline 
+            ? "You're offline. Some features are unavailable." 
+            : isReconnecting 
+              ? "Reconnecting..." 
+              : "Limited connection to services. Some features may be unavailable."}
+        </span>
+        <span className="sm:hidden inline">
+          {!isOnline 
+            ? "You're offline" 
+            : isReconnecting 
+              ? "Reconnecting..." 
+              : "Limited connection"}
+        </span>
       </div>
-
-      {onAction && actionLabel && (
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={onAction} 
-          disabled={isLoading}
-          className="ml-4"
-        >
-          {isLoading ? (
-            <>
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-              Retrying...
-            </>
-          ) : (
-            actionLabel
-          )}
-        </Button>
-      )}
-    </Alert>
+      
+      <button 
+        onClick={checkHealth}
+        disabled={isChecking}
+        className="text-xs flex items-center gap-1 px-2 py-1 bg-background/10 rounded hover:bg-background/20 transition-colors"
+        aria-label="Check connection"
+      >
+        <RefreshCw className={cn("h-3 w-3", isChecking && "animate-spin")} />
+        <span className="hidden sm:inline">Retry</span>
+      </button>
+    </div>
   );
 };

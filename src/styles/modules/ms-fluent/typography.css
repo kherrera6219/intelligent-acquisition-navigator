@@ -1,25 +1,245 @@
 
-/* Typography System */
-.ms-title-large {
-  @apply text-3xl font-semibold leading-tight tracking-tight;
+/* Microsoft Fluent UI Typography System */
+
+/* Base typography */
+.ms-text-xs {
+  @apply text-xs leading-4;
 }
 
-.ms-title {
-  @apply text-2xl font-semibold leading-tight tracking-tight;
+.ms-text-sm {
+  @apply text-sm leading-5;
 }
 
-.ms-subtitle {
-  @apply text-xl font-medium leading-tight;
+.ms-text-base {
+  @apply text-base leading-6;
 }
 
-.ms-body-large {
-  @apply text-base leading-relaxed;
+.ms-text-lg {
+  @apply text-lg leading-7;
 }
 
-.ms-body {
-  @apply text-sm leading-relaxed;
+.ms-text-xl {
+  @apply text-xl leading-8;
 }
 
-.ms-caption {
-  @apply text-xs leading-normal;
+.ms-text-2xl {
+  @apply text-2xl leading-9;
+}
+
+.ms-text-3xl {
+  @apply text-3xl leading-tight;
+}
+
+/* Headings */
+.ms-heading-1 {
+  @apply text-4xl font-bold tracking-tight;
+}
+
+.ms-heading-2 {
+  @apply text-3xl font-semibold tracking-tight;
+}
+
+.ms-heading-3 {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.ms-heading-4 {
+  @apply text-xl font-semibold tracking-tight;
+}
+
+.ms-heading-5 {
+  @apply text-lg font-semibold tracking-tight;
+}
+
+.ms-heading-6 {
+  @apply text-base font-semibold tracking-tight;
+}
+
+/* Utility text styles */
+.ms-text-muted {
+  @apply text-muted-foreground;
+}
+
+.ms-text-primary {
+  @apply text-primary;
+}
+
+.ms-text-secondary {
+  @apply text-secondary;
+}
+
+.ms-text-success {
+  @apply text-success;
+}
+
+.ms-text-warning {
+  @apply text-warning;
+}
+
+.ms-text-destructive {
+  @apply text-destructive;
+}
+
+/* Weight utilities */
+.ms-font-light {
+  @apply font-light;
+}
+
+.ms-font-normal {
+  @apply font-normal;
+}
+
+.ms-font-medium {
+  @apply font-medium;
+}
+
+.ms-font-semibold {
+  @apply font-semibold;
+}
+
+.ms-font-bold {
+  @apply font-bold;
+}
+
+/* Special text treatments */
+.ms-text-truncate {
+  @apply truncate;
+}
+
+.ms-text-balance {
+  text-wrap: balance;
+}
+
+.ms-text-pretty {
+  text-wrap: pretty;
+}
+
+/* Links */
+.ms-link {
+  @apply text-primary hover:underline cursor-pointer;
+}
+
+.ms-link-subtle {
+  @apply text-muted-foreground hover:text-foreground hover:underline cursor-pointer;
+}
+
+.ms-link-nav {
+  @apply text-foreground hover:text-primary transition-colors cursor-pointer;
+}
+
+/* Gradients and special effects */
+.ms-text-gradient {
+  @apply bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent;
+}
+
+.ms-text-gradient-purple {
+  @apply bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent;
+}
+
+.ms-text-gradient-green {
+  @apply bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent;
+}
+
+.ms-text-gradient-gold {
+  @apply bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent;
+}
+
+/* Code and preformatted text */
+.ms-code {
+  @apply bg-muted/50 rounded px-1.5 py-0.5 font-mono text-sm;
+}
+
+.ms-pre {
+  @apply bg-muted/30 rounded-lg p-4 font-mono text-sm overflow-x-auto;
+}
+
+/* Badges and labels */
+.ms-badge-text {
+  @apply inline-flex items-center rounded-full bg-muted/30 px-2 py-0.5 text-xs font-medium;
+}
+
+/* Responsive typography */
+.ms-text-responsive {
+  @apply text-sm sm:text-base;
+}
+
+.ms-heading-responsive {
+  @apply text-xl sm:text-2xl md:text-3xl;
+}
+
+/* Interactive text */
+.ms-text-interactive {
+  @apply cursor-pointer hover:underline transition-all;
+}
+
+.ms-text-interactive-subtle {
+  @apply cursor-pointer hover:text-primary transition-colors;
+}
+
+/* Text with icons */
+.ms-text-with-icon {
+  @apply flex items-center gap-1.5;
+}
+
+/* Long form text */
+.ms-prose {
+  @apply space-y-4 leading-7;
+}
+
+.ms-prose h2 {
+  @apply text-xl font-semibold mt-6 mb-2;
+}
+
+.ms-prose h3 {
+  @apply text-lg font-semibold mt-5 mb-2;
+}
+
+.ms-prose p {
+  @apply my-3;
+}
+
+.ms-prose ul {
+  @apply list-disc pl-6 my-3;
+}
+
+.ms-prose ol {
+  @apply list-decimal pl-6 my-3;
+}
+
+.ms-prose code {
+  @apply bg-muted/50 rounded px-1.5 py-0.5 font-mono text-sm;
+}
+
+.ms-prose a {
+  @apply text-primary hover:underline;
+}
+
+.ms-prose blockquote {
+  @apply border-l-4 border-muted pl-4 italic;
+}
+
+/* Fluid typography */
+.ms-fluid-text-sm {
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  line-height: 1.5;
+}
+
+.ms-fluid-text-base {
+  font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  line-height: 1.5;
+}
+
+.ms-fluid-text-lg {
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  line-height: 1.5;
+}
+
+.ms-fluid-heading {
+  font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  line-height: 1.2;
+}
+
+.ms-fluid-title {
+  font-size: clamp(2rem, 1.8rem + 1vw, 3rem);
+  line-height: 1.1;
 }

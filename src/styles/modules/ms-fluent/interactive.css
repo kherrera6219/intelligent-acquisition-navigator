@@ -1,34 +1,268 @@
 
-/* Interactive Components */
+/* Microsoft Fluent UI Interactive Components */
+
+/* Interactive cards - scale and shadow effects on hover */
+.ms-card-interactive {
+  @apply transition-all duration-200 hover:shadow-md;
+  transform: translateY(0);
+}
+
+.ms-card-interactive:hover {
+  transform: translateY(-2px);
+}
+
+/* Button variants */
 .ms-button {
   @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors;
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2;
-  @apply disabled:opacity-50 disabled:pointer-events-none;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2;
+  @apply disabled:pointer-events-none disabled:opacity-50;
+  @apply h-10 px-4 py-2;
+}
+
+.ms-button-sm {
+  @apply h-8 px-3 text-xs;
+}
+
+.ms-button-lg {
+  @apply h-12 px-6 text-base;
 }
 
 .ms-button-primary {
-  @apply bg-primary text-white hover:bg-primary/90;
+  @apply bg-primary text-primary-foreground hover:bg-primary/90;
 }
 
 .ms-button-secondary {
-  @apply bg-secondary text-white hover:bg-secondary/90;
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
 }
 
 .ms-button-outline {
-  @apply border border-gray-600 bg-transparent hover:bg-white/5;
+  @apply border border-input bg-background hover:bg-accent/10 hover:text-accent-foreground;
 }
 
 .ms-button-ghost {
-  @apply text-gray-300 hover:text-white hover:bg-white/5;
+  @apply hover:bg-accent/10 hover:text-accent-foreground;
 }
 
-/* Inputs */
+.ms-button-link {
+  @apply text-primary underline-offset-2 hover:underline;
+}
+
+.ms-button-destructive {
+  @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
+}
+
+.ms-button-success {
+  @apply bg-success text-white hover:bg-success/90;
+}
+
+.ms-button-warning {
+  @apply bg-warning text-white hover:bg-warning/90;
+}
+
+/* Icon button */
+.ms-icon-button {
+  @apply rounded-full p-2 inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/10 transition-colors;
+}
+
+.ms-icon-button-sm {
+  @apply p-1.5;
+}
+
+.ms-icon-button-lg {
+  @apply p-2.5;
+}
+
+/* Interactive navigation */
+.ms-nav-item {
+  @apply flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors;
+}
+
+.ms-nav-item-active {
+  @apply bg-accent/10 text-foreground font-medium;
+}
+
+.ms-nav-item-inactive {
+  @apply text-muted-foreground hover:text-foreground hover:bg-accent/5;
+}
+
+/* Accordions */
+.ms-accordion {
+  @apply border border-border rounded-lg overflow-hidden;
+}
+
+.ms-accordion-item {
+  @apply py-4 px-5 cursor-pointer hover:bg-muted/5 transition-colors;
+}
+
+.ms-accordion-item[data-state=open] {
+  @apply bg-muted/5;
+}
+
+.ms-accordion-trigger {
+  @apply flex items-center justify-between w-full font-medium;
+}
+
+.ms-accordion-content {
+  @apply pt-2 pb-4 px-5 text-sm text-muted-foreground;
+}
+
+/* Tabs */
+.ms-tabs {
+  @apply flex flex-col w-full;
+}
+
+.ms-tabs-list {
+  @apply flex border-b border-border;
+}
+
+.ms-tabs-trigger {
+  @apply px-4 py-2 text-sm font-medium border-b-2 border-transparent text-muted-foreground;
+  @apply hover:text-foreground transition-colors;
+  margin-bottom: -1px;
+}
+
+.ms-tabs-trigger[data-state=active] {
+  @apply border-primary text-foreground;
+}
+
+.ms-tabs-content {
+  @apply py-4;
+}
+
+/* Dropdown menus */
+.ms-dropdown {
+  @apply relative inline-block;
+}
+
+.ms-dropdown-content {
+  @apply absolute z-50 min-w-[180px] overflow-hidden rounded-md border bg-popover shadow-md;
+  @apply animate-in fade-in-80 zoom-in-95;
+}
+
+.ms-dropdown-item {
+  @apply relative flex cursor-pointer select-none items-center px-3 py-2 text-sm outline-none;
+  @apply hover:bg-accent/50 hover:text-accent-foreground transition-colors;
+}
+
+/* Interactive forms */
 .ms-input {
-  @apply bg-gray-900/50 border border-gray-700 rounded-md px-3 py-2 text-sm;
-  @apply placeholder:text-gray-500 focus:ring-1 focus:ring-primary/30 focus:border-primary;
+  @apply flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background;
+  @apply placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2;
+  @apply disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.ms-input-sm {
+  @apply h-8 px-2 text-xs;
+}
+
+.ms-input-lg {
+  @apply h-12 px-4 text-base;
 }
 
 .ms-checkbox {
-  @apply h-4 w-4 rounded border-gray-600 bg-gray-900/50 text-primary;
-  @apply focus:ring-primary/30 focus:ring-offset-gray-900;
+  @apply h-4 w-4 rounded border border-input bg-transparent transition-colors;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2;
+  @apply data-[state=checked]:bg-primary data-[state=checked]:border-primary;
+}
+
+.ms-radio {
+  @apply h-4 w-4 rounded-full border border-input bg-transparent transition-colors;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2;
+  @apply data-[state=checked]:bg-primary data-[state=checked]:border-primary;
+}
+
+.ms-switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full border-2 border-transparent;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2;
+  @apply data-[state=checked]:bg-primary data-[state=unchecked]:bg-input;
+}
+
+.ms-switch-thumb {
+  @apply pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform;
+  @apply data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0;
+}
+
+/* Interactive tooltips */
+.ms-tooltip {
+  @apply z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md;
+  @apply animate-in fade-in-50 zoom-in-95;
+}
+
+/* Toast notifications */
+.ms-toast {
+  @apply relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-4 shadow-lg;
+  @apply animate-in slide-in-from-right-full;
+}
+
+.ms-toast-title {
+  @apply text-sm font-semibold;
+}
+
+.ms-toast-description {
+  @apply text-sm opacity-90;
+}
+
+/* Interactive cards with hover states */
+.ms-dashboard-card-interactive {
+  @apply transition-all duration-200;
+  transform: translateY(0);
+}
+
+.ms-dashboard-card-interactive:hover {
+  @apply shadow-lg border-border/70 bg-card/60;
+  transform: translateY(-3px);
+}
+
+/* Hover effects for list items */
+.ms-list-item-hover {
+  @apply py-2 px-3 rounded-md hover:bg-accent/10 transition-colors cursor-pointer;
+}
+
+.ms-list-item-active {
+  @apply bg-accent/20 font-medium;
+}
+
+/* Badge with interactive states */
+.ms-badge-interactive {
+  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium;
+  @apply transition-colors hover:bg-muted/30 cursor-pointer;
+}
+
+/* Interactive elements with focus states */
+.ms-interactive-focus {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2;
+}
+
+/* Badge with pulse animation */
+.ms-badge-pulse {
+  @apply relative inline-flex;
+}
+
+.ms-badge-pulse::after {
+  content: "";
+  @apply absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full;
+  @apply bg-primary animate-ping;
+}
+
+/* Disable transitions for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ms-card-interactive,
+  .ms-dashboard-card-interactive,
+  .ms-button,
+  .ms-nav-item,
+  .ms-dropdown-item,
+  .ms-list-item-hover,
+  .ms-switch-thumb {
+    @apply transition-none transform-none;
+  }
+  
+  .ms-badge-pulse::after {
+    @apply animate-none;
+  }
+  
+  .ms-toast,
+  .ms-dropdown-content,
+  .ms-tooltip {
+    @apply animate-none;
+  }
 }

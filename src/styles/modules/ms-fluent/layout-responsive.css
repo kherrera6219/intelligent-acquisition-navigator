@@ -1,0 +1,186 @@
+
+/* Microsoft Fluent UI Responsive Layout System */
+
+/* Responsive container width adjustments */
+.ms-container {
+  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ms-container-sm {
+  @apply w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ms-container-lg {
+  @apply w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Responsive grid systems */
+.ms-grid-responsive {
+  @apply grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6;
+}
+
+.ms-grid-cards {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6;
+}
+
+.ms-grid-split {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8;
+}
+
+.ms-grid-sidebar {
+  @apply grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-3 sm:gap-6;
+}
+
+.ms-grid-dashboard {
+  @apply grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-3 sm:gap-4 md:gap-6;
+}
+
+/* Responsive spacing - apply these to section containers */
+.ms-section {
+  @apply py-4 sm:py-6 md:py-8 lg:py-12;
+}
+
+.ms-section-sm {
+  @apply py-3 sm:py-4 md:py-6;
+}
+
+.ms-section-lg {
+  @apply py-6 sm:py-10 md:py-16 lg:py-20;
+}
+
+/* Responsive flex layouts */
+.ms-flex-responsive {
+  @apply flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4;
+}
+
+.ms-flex-col-responsive {
+  @apply flex flex-col gap-2 sm:gap-4;
+}
+
+/* Stack utilities for consistent spacing */
+.ms-h-stack {
+  @apply flex flex-row items-center gap-3;
+}
+
+.ms-h-stack-sm {
+  @apply flex flex-row items-center gap-2;
+}
+
+.ms-h-stack-lg {
+  @apply flex flex-row items-center gap-4;
+}
+
+.ms-v-stack {
+  @apply flex flex-col gap-3;
+}
+
+.ms-v-stack-sm {
+  @apply flex flex-col gap-2;
+}
+
+.ms-v-stack-lg {
+  @apply flex flex-col gap-4;
+}
+
+/* Responsive text sizes */
+.ms-text-responsive {
+  @apply text-sm sm:text-base;
+}
+
+.ms-title-responsive {
+  @apply text-lg sm:text-xl md:text-2xl;
+}
+
+.ms-heading-responsive {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+/* Responsive card padding */
+.ms-card-padding {
+  @apply p-3 sm:p-4 md:p-6;
+}
+
+/* Hide/show based on breakpoint */
+.ms-hidden-xs {
+  @apply hidden xs:block;
+}
+
+.ms-hidden-sm {
+  @apply hidden sm:block;
+}
+
+.ms-hidden-md {
+  @apply hidden md:block;
+}
+
+.ms-hidden-lg {
+  @apply hidden lg:block;
+}
+
+.ms-visible-xs {
+  @apply block xs:hidden;
+}
+
+.ms-visible-sm {
+  @apply block sm:hidden;
+}
+
+.ms-visible-md {
+  @apply block md:hidden;
+}
+
+.ms-visible-lg {
+  @apply block lg:hidden;
+}
+
+/* Responsive widths */
+.ms-w-responsive {
+  @apply w-full sm:w-auto;
+}
+
+/* Microsoft Fluent responsive shadows - increase depth with screen size */
+.ms-shadow-responsive {
+  @apply shadow-sm sm:shadow md:shadow-md;
+}
+
+/* Microsoft Fluent responsive borders - more pronounced on larger screens */
+.ms-border-responsive {
+  @apply border sm:border-2 rounded-md sm:rounded-lg;
+}
+
+/* Responsive image handling */
+.ms-img-responsive {
+  @apply w-full h-auto object-cover;
+  aspect-ratio: 16 / 9;
+}
+
+/* Fluid typography scaling */
+.ms-fluid-type {
+  font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1.125rem);
+  line-height: 1.5;
+}
+
+.ms-fluid-heading {
+  font-size: clamp(1.5rem, 1.3rem + 1vw, 2.5rem);
+  line-height: 1.2;
+}
+
+/* Microsoft Fluent Dashboard Card with responsive styling */
+.ms-dashboard-card {
+  @apply bg-card/40 backdrop-blur-sm border border-border/40 rounded-lg transition-all duration-200;
+  @apply hover:border-border/60 hover:shadow-md hover:bg-card/50;
+  @apply p-3 sm:p-4 md:p-5;
+}
+
+/* Microsoft Fluent Stats Card with responsive styling */
+.ms-stats-card {
+  @apply bg-card/30 backdrop-blur-sm border border-border/30 rounded-lg transition-all duration-200;
+  @apply hover:border-border/50 hover:shadow-md hover:translate-y-[-2px];
+  @apply p-3 sm:p-4;
+}
+
+/* Microsoft Fluent responsive banner */
+.ms-banner-responsive {
+  @apply w-full px-3 py-2 sm:px-4 sm:py-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0;
+  @apply text-xs sm:text-sm border rounded-lg;
+}

@@ -1,3 +1,4 @@
+
 @import './theme/index.css';
 @import './modules/base.css';
 @import './modules/components.css';
@@ -9,6 +10,13 @@
 @import './modules/microsoft-fluent.css';
 @import './modules/scrollbar.css';
 @import './modules/ms-dashboard.css';
+@import './modules/ms-fluent/layout-responsive.css';
+@import './modules/ms-fluent/responsive.css';
+@import './modules/ms-fluent/layout.css';
+@import './modules/ms-fluent/core.css';
+@import './modules/ms-fluent/typography.css';
+@import './modules/ms-fluent/interactive.css';
+@import './modules/responsive.css';
 
 /* Network status indicators */
 .network-status-online {
@@ -95,4 +103,65 @@
 
 .skip-link:focus {
   top: 0;
+}
+
+/* Responsive design helpers */
+.responsive-width {
+  width: clamp(320px, 90vw, 1200px);
+  margin: 0 auto;
+}
+
+/* Fluid spacing helpers */
+.fluid-padding {
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+
+.fluid-margin {
+  margin: clamp(1rem, 3vw, 2.5rem);
+}
+
+/* Media query breakpoint indicator (for development) */
+.breakpoint-indicator {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 4px 8px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 12px;
+  z-index: 9999;
+}
+
+.breakpoint-indicator::after {
+  content: "xs";
+}
+
+@media (min-width: 475px) {
+  .breakpoint-indicator::after {
+    content: "sm";
+  }
+}
+
+@media (min-width: 640px) {
+  .breakpoint-indicator::after {
+    content: "md";
+  }
+}
+
+@media (min-width: 768px) {
+  .breakpoint-indicator::after {
+    content: "lg";
+  }
+}
+
+@media (min-width: 1024px) {
+  .breakpoint-indicator::after {
+    content: "xl";
+  }
+}
+
+@media (min-width: 1280px) {
+  .breakpoint-indicator::after {
+    content: "2xl";
+  }
 }
