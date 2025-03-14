@@ -1,100 +1,100 @@
 
-import { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useState, useEffect } from 'react';
 import { Activity } from '@/types/dashboard';
-import { FileText, MessageSquare, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { FileText, Code, MessageSquare, GitPullRequest, Calendar } from 'lucide-react';
+
+type ActivityCategory = 'document' | 'code' | 'message' | 'pull-request' | 'calendar';
+
+// Mock activity data - in a real app, this would come from an API
+const mockActivities: Activity[] = [
+  {
+    id: '1',
+    title: 'Updated proposal document',
+    description: 'Made revisions to the federal acquisition proposal',
+    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+    category: 'document',
+    user: {
+      name: 'Alex Johnson',
+      avatar: '/avatars/alex.jpg'
+    }
+  },
+  {
+    id: '2',
+    title: 'Commented on PR #342',
+    description: 'Added feedback on the new compliance feature',
+    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(), // 2 hours ago
+    category: 'pull-request',
+    user: {
+      name: 'Morgan Lee',
+      avatar: '/avatars/morgan.jpg'
+    }
+  },
+  {
+    id: '3',
+    title: 'Scheduled meeting with procurement team',
+    description: 'Review of Q3 acquisition strategy',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), // 5 hours ago
+    category: 'calendar',
+    user: {
+      name: 'Jamie Smith',
+      avatar: '/avatars/jamie.jpg'
+    }
+  },
+  {
+    id: '4',
+    title: 'Added comments to contract',
+    description: 'Legal review of service agreement terms',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+    category: 'document',
+    user: {
+      name: 'Taylor Wilson',
+      avatar: '/avatars/taylor.jpg'
+    }
+  },
+  {
+    id: '5',
+    title: 'Submitted code review',
+    description: 'Reviewed changes to the compliance validation module',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(), // 1.5 days ago
+    category: 'code',
+    user: {
+      name: 'Jordan Rivers',
+      avatar: '/avatars/jordan.jpg'
+    }
+  }
+];
+
+// Helper function to get icon by activity category
+const getActivityIcon = (category: ActivityCategory) => {
+  switch (category) {
+    case 'document':
+      return <FileText className="text-blue-500" />;
+    case 'code':
+      return <Code className="text-green-500" />;
+    case 'message':
+      return <MessageSquare className="text-purple-500" />;
+    case 'pull-request':
+      return <GitPullRequest className="text-orange-500" />;
+    case 'calendar':
+      return <Calendar className="text-red-500" />;
+    default:
+      return <FileText className="text-gray-500" />;
+  }
+};
 
 export const useRecentActivities = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [filter, setFilter] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        setIsLoading(true);
-        // Fetch activities from Supabase
-        const { data, error } = await supabase
-          .from('activities')
-          .select('*')
-          .order('timestamp', { ascending: false })
-          .limit(30);
-
-        if (error) throw error;
-
-        if (data) {
-          // Transform the data to match our Activity type
-          const formattedActivities: Activity[] = data.map((item) => ({
-            id: item.id,
-            title: item.title,
-            description: item.description || '',
-            timestamp: item.timestamp,
-            category: item.category || 'general',
-            status: item.status as 'pending' | 'in-progress' | 'completed',
-            user: item.user_id || 'Anonymous',
-            icon: getIconForActivity(item.icon_name || 'FileText')
-          }));
-
-          setActivities(formattedActivities);
-        }
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 800));
+        setActivities(mockActivities);
       } catch (err) {
-        console.error('Error fetching activities:', err);
-        setError(err instanceof Error ? err : new Error('Unknown error occurred'));
-        
-        // Fallback to sample data if there's an error
-        setActivities([
-          {
-            id: '1',
-            title: 'Document reviewed',
-            description: 'Federal acquisition document review completed',
-            timestamp: new Date().toISOString(),
-            category: 'document',
-            status: 'completed',
-            user: 'John Doe',
-            icon: <FileText className="text-blue-500" />
-          },
-          {
-            id: '2',
-            title: 'New comment on proposal',
-            description: 'User commented on the federal procurement proposal',
-            timestamp: new Date(Date.now() - 3600000).toISOString(),
-            category: 'comment',
-            status: 'pending',
-            user: 'Jane Smith',
-            icon: <MessageSquare className="text-green-500" />
-          },
-          {
-            id: '3',
-            title: 'Task completed',
-            description: 'Procurement review task marked as complete',
-            timestamp: new Date(Date.now() - 7200000).toISOString(),
-            category: 'task',
-            status: 'completed',
-            user: 'Mark Johnson',
-            icon: <CheckCircle className="text-green-500" />
-          },
-          {
-            id: '4',
-            title: 'Deadline approaching',
-            description: 'Proposal submission deadline in 48 hours',
-            timestamp: new Date(Date.now() - 14400000).toISOString(),
-            category: 'deadline',
-            status: 'in-progress',
-            user: 'System',
-            icon: <Clock className="text-yellow-500" />
-          },
-          {
-            id: '5',
-            title: 'Compliance issue detected',
-            description: 'Possible FAR compliance issue in document #12345',
-            timestamp: new Date(Date.now() - 28800000).toISOString(),
-            category: 'alert',
-            status: 'pending',
-            user: 'Compliance System',
-            icon: <AlertCircle className="text-red-500" />
-          }
-        ]);
+        setError(err instanceof Error ? err : new Error('Failed to fetch activities'));
       } finally {
         setIsLoading(false);
       }
@@ -103,57 +103,10 @@ export const useRecentActivities = () => {
     fetchActivities();
   }, []);
 
-  const getIconForActivity = (iconName: string) => {
-    switch (iconName) {
-      case 'MessageSquare':
-        return <MessageSquare className="text-green-500" />;
-      case 'CheckCircle':
-        return <CheckCircle className="text-green-500" />;
-      case 'Clock':
-        return <Clock className="text-yellow-500" />;
-      case 'AlertCircle':
-        return <AlertCircle className="text-red-500" />;
-      case 'FileText':
-      default:
-        return <FileText className="text-blue-500" />;
-    }
-  };
-
-  // Extract unique categories from activities
-  const categories = useMemo(() => {
-    const uniqueCategories = new Set<string>();
-    activities.forEach(activity => {
-      if (activity.category) {
-        uniqueCategories.add(activity.category);
-      }
-    });
-    return Array.from(uniqueCategories);
-  }, [activities]);
-
-  // Filter activities based on selected filter
-  const filteredActivities = useMemo(() => {
-    if (!filter) return activities;
-    return activities.filter(activity => activity.category === filter);
-  }, [activities, filter]);
-
-  // Function to refresh activities
-  const handleRefresh = () => {
-    setIsLoading(true);
-    // Logic to refresh activities would go here
-    // For now, let's just artificially delay and use the same data
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  };
-
-  return { 
-    activities, 
-    isLoading, 
-    error, 
-    filter, 
-    setFilter, 
-    filteredActivities, 
-    categories, 
-    handleRefresh 
+  return {
+    activities,
+    isLoading,
+    error,
+    getActivityIcon
   };
 };

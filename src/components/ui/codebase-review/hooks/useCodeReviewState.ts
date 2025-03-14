@@ -17,7 +17,7 @@ export const useCodeReviewState = (initialIssues: IssueItemType[]) => {
   const completionPercentage = Math.round((completed / total) * 100);
 
   // Get all unique categories
-  const categories = ['all', ...new Set(issues.map(issue => issue.category))];
+  const categories = ['all', ...Array.from(new Set(issues.map(issue => issue.category)))];
 
   // Filter issues
   const filteredIssues = issues.filter(issue => {

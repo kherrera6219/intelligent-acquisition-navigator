@@ -1,12 +1,18 @@
 
 import React from 'react';
-import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CodeReviewFiltersProps {
-  filter: 'all' | 'pending' | 'in-progress' | 'completed' | string;
-  setFilter: (filter: string) => void;
+  filter: string;
+  setFilter: (value: string) => void;
   categoryFilter: string;
-  setCategoryFilter: (filter: string) => void;
+  setCategoryFilter: (value: string) => void;
   categories: string[];
 }
 
@@ -18,35 +24,46 @@ export const CodeReviewFilters: React.FC<CodeReviewFiltersProps> = ({
   categories
 }) => {
   return (
-    <div className="flex flex-wrap gap-2 mb-6">
-      <div className="flex items-center mr-4">
-        <Label htmlFor="status-filter" className="mr-2">Status:</Label>
-        <select 
-          id="status-filter"
-          className="bg-background border border-input rounded-md px-3 py-1 text-sm"
+    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex-1">
+        <label htmlFor="status-filter" className="block text-sm font-medium mb-2">
+          Filter by Status
+        </label>
+        <Select
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
+          onValueChange={setFilter}
         >
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="in-progress">In Progress</option>
-          <option value="completed">Completed</option>
-        </select>
+          <SelectTrigger id="status-filter" className="w-full">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Issues</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="in-progress">In Progress</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <div className="flex items-center">
-        <Label htmlFor="category-filter" className="mr-2">Category:</Label>
-        <select 
-          id="category-filter"
-          className="bg-background border border-input rounded-md px-3 py-1 text-sm"
+      
+      <div className="flex-1">
+        <label htmlFor="category-filter" className="block text-sm font-medium mb-2">
+          Filter by Category
+        </label>
+        <Select
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
+          onValueChange={setCategoryFilter}
         >
-          {categories.map(category => (
-            <option key={category} value={category}>
-              {category === 'all' ? 'All Categories' : category}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger id="category-filter" className="w-full">
+            <SelectValue placeholder="Filter by category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((category) => (
+              <SelectItem key={category} value={category}>
+                {category === 'all' ? 'All Categories' : category}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

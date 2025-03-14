@@ -89,6 +89,46 @@ const initialIssues = [
     description: 'Add better documentation for shared components.',
     severity: 'low' as const,
     status: 'pending' as const,
+  },
+  {
+    id: 'MS-001',
+    category: 'Microsoft Standards',
+    title: 'Adopt Microsoft Fluent design system',
+    description: 'Implement Microsoft Fluent UI design patterns for consistency.',
+    severity: 'medium' as const,
+    status: 'pending' as const,
+  },
+  {
+    id: 'MS-002',
+    category: 'Microsoft Standards',
+    title: 'Azure monitoring integration',
+    description: 'Add Azure Application Insights for monitoring and telemetry.',
+    severity: 'high' as const,
+    status: 'pending' as const,
+  },
+  {
+    id: 'MS-003',
+    category: 'Microsoft Standards',
+    title: 'Microsoft Graph API integration',
+    description: 'Implement Microsoft Graph API for user profiles and authentication.',
+    severity: 'medium' as const,
+    status: 'pending' as const,
+  },
+  {
+    id: 'PERF-002',
+    category: 'Performance',
+    title: 'Web vitals optimization',
+    description: 'Improve Core Web Vitals (LCP, FID, CLS) scores.',
+    severity: 'high' as const,
+    status: 'pending' as const,
+  },
+  {
+    id: 'A11Y-001',
+    category: 'Accessibility',
+    title: 'WCAG 2.1 AA compliance',
+    description: 'Ensure compliance with WCAG 2.1 AA standards for accessibility.',
+    severity: 'high' as const,
+    status: 'pending' as const,
   }
 ];
 
