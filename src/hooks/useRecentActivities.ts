@@ -1,24 +1,25 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Activity } from '@/types/dashboard';
 import { FileText, MessageSquare, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 export const useRecentActivities = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [filter, setFilter] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        setLoading(true);
+        setIsLoading(true);
         // Fetch activities from Supabase
         const { data, error } = await supabase
           .from('activities')
           .select('*')
           .order('timestamp', { ascending: false })
-          .limit(5);
+          .limit(30);
 
         if (error) throw error;
 
@@ -95,7 +96,7 @@ export const useRecentActivities = () => {
           }
         ]);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -118,5 +119,41 @@ export const useRecentActivities = () => {
     }
   };
 
-  return { activities, loading, error };
+  // Extract unique categories from activities
+  const categories = useMemo(() => {
+    const uniqueCategories = new Set<string>();
+    activities.forEach(activity => {
+      if (activity.category) {
+        uniqueCategories.add(activity.category);
+      }
+    });
+    return Array.from(uniqueCategories);
+  }, [activities]);
+
+  // Filter activities based on selected filter
+  const filteredActivities = useMemo(() => {
+    if (!filter) return activities;
+    return activities.filter(activity => activity.category === filter);
+  }, [activities, filter]);
+
+  // Function to refresh activities
+  const handleRefresh = () => {
+    setIsLoading(true);
+    // Logic to refresh activities would go here
+    // For now, let's just artificially delay and use the same data
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  };
+
+  return { 
+    activities, 
+    isLoading, 
+    error, 
+    filter, 
+    setFilter, 
+    filteredActivities, 
+    categories, 
+    handleRefresh 
+  };
 };
