@@ -1,7 +1,7 @@
 
-import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
+import { lazy } from "react";
 
 // Lazy-load acquisition components for better performance
 const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
