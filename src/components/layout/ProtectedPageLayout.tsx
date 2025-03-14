@@ -3,6 +3,7 @@ import React from 'react';
 import { AppLayout } from './AppLayout';
 import { NetworkErrorHandler } from '@/components/ui/universal/NetworkErrorHandler';
 import { OfflineStatusIndicator } from '@/components/ui/universal/OfflineStatusIndicator';
+import { GlobalNetworkErrorBanner } from '@/components/ui/universal/GlobalNetworkErrorBanner';
 
 interface ProtectedPageLayoutProps {
   children: React.ReactNode;
@@ -42,6 +43,15 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
 
   return (
     <AppLayout showSidebar={showSidebar}>
+      {/* Global network error banner that appears at the top of the page */}
+      {error && (
+        <GlobalNetworkErrorBanner 
+          error={error} 
+          onRetry={onRetry}
+          isRetrying={isLoading}
+        />
+      )}
+      
       {withErrorBoundary ? (
         <NetworkErrorHandler 
           autoRetry={true} 

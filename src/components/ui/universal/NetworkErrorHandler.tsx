@@ -102,7 +102,7 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
 
   if (alertPosition === 'top') {
     return (
-      <div className={cn("space-y-4", className)}>
+      <div className={cn("space-y-4", className)} role="alert" aria-live="assertive">
         <Alert variant="destructive" className="mb-4">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Connection Error</AlertTitle>
@@ -149,11 +149,10 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-4", className)} role="alert" aria-live="assertive">
       <div 
         className="bg-card/50 p-6 rounded-lg border border-red-800/30 flex flex-col items-center justify-center text-center"
         role="status"
-        aria-live="polite"
       >
         <WifiOff className="h-10 w-10 text-red-500/80 mb-3" />
         <h3 className="text-lg font-semibold mb-1">Network Error</h3>

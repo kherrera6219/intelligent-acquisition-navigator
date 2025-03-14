@@ -10,6 +10,7 @@ import { FederalTabNavigation } from '@/components/federal/FederalTabNavigation'
 import { FederalTabContent } from '@/components/federal/FederalTabContent';
 import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
 import { InternalFooter } from '@/components/layout/InternalFooter';
+import { useGlobalErrorHandling } from '@/hooks/useGlobalErrorHandling';
 
 const FederalAcquisitionPage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,14 +18,23 @@ const FederalAcquisitionPage = () => {
   const [chatMessages, setChatMessages] = useState<FederalChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const [networkError, setNetworkError] = useState<Error | null>(null);
   const { toast } = useToast();
+  
+  const { 
+    error: networkError, 
+    isRetrying,
+    executeWithErrorHandling, 
+    retryOperation, 
+    clearError 
+  } = useGlobalErrorHandling({
+    showToast: true,
+    autoRetry: false
+  });
   
   const { executeOperation } = useNetworkOperation({
     maxRetries: 2,
     onError: (error) => {
       console.error('Failed to get AI response:', error);
-      setNetworkError(error);
     }
   });
   
@@ -67,12 +77,17 @@ const FederalAcquisitionPage = () => {
   ]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    const initializeData = async () => {
+      await executeWithErrorHandling(async () => {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setIsLoading(false);
+        return true;
+      });
+    };
     
-    return () => clearTimeout(timer);
-  }, []);
+    initializeData();
+  }, [executeWithErrorHandling]);
 
   const handleReportCardClick = (index: number) => {
     toast({
@@ -98,31 +113,22 @@ const FederalAcquisitionPage = () => {
     
     setChatMessages(prev => [...prev, userMessage]);
     setIsSending(true);
-    setNetworkError(null);
+    clearError();
     
-    await executeOperation(async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        const aiMessage: FederalChatMessage = {
-          id: uuidv4(),
-          content: `This is a simulated response to your query: "${message}". In a real application, this would come from an AI service.`,
-          role: 'assistant',
-          timestamp: new Date()
-        };
-        
-        setChatMessages(prev => [...prev, aiMessage]);
-      } catch (error) {
-        console.error('Error in AI response:', error);
-        setNetworkError(error instanceof Error ? error : new Error('Unknown error'));
-        toast({
-          title: "Failed to get response",
-          description: "There was a problem getting a response from the AI. Please try again.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsSending(false);
-      }
+    await executeWithErrorHandling(async () => {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const aiMessage: FederalChatMessage = {
+        id: uuidv4(),
+        content: `This is a simulated response to your query: "${message}". In a real application, this would come from an AI service.`,
+        role: 'assistant',
+        timestamp: new Date()
+      };
+      
+      setChatMessages(prev => [...prev, aiMessage]);
+      setIsSending(false);
+      return aiMessage;
     });
   };
 
@@ -134,19 +140,14 @@ const FederalAcquisitionPage = () => {
     });
   };
 
-  const handleNetworkErrorReset = async () => {
-    setNetworkError(null);
-    setIsLoading(true);
-    try {
+  const handleNetworkErrorReset = () => {
+    retryOperation(async () => {
+      setIsLoading(true);
       // Attempt to refresh data
       await new Promise(resolve => setTimeout(resolve, 1000)); 
-      // This would be a real data fetch in production
-    } catch (error) {
-      console.error("Error refreshing data:", error);
-      setNetworkError(error instanceof Error ? error : new Error('Failed to refresh data'));
-    } finally {
       setIsLoading(false);
-    }
+      return true;
+    });
   };
 
   const handleFileUpload = (file: File) => {
@@ -166,7 +167,7 @@ const FederalAcquisitionPage = () => {
         <ProtectedPageLayout
           title="Federal Acquisition Management"
           description="Manage and monitor federal acquisition compliance, documentation, and procedures."
-          isLoading={isLoading}
+          isLoading={isLoading || isRetrying}
           error={networkError}
           withCard={false}
           breadcrumbs={[
