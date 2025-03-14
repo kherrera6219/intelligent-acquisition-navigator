@@ -1,4 +1,3 @@
-
 import { PricingPlan } from './PricingPlansSection';
 
 export const pricingPlans: PricingPlan[] = [
@@ -75,5 +74,29 @@ export const faqItems = [
   {
     question: "Do you offer discounts?",
     answer: "We offer discounts for annual billing and special pricing for educational institutions and non-profits."
+  }
+];
+
+export const testimonials = [
+  {
+    name: "Sarah Johnson",
+    role: "Federal Contracting Officer",
+    content: "ProcurityIQ has transformed our procurement process. We've reduced review time by 72% and improved compliance accuracy by 98%.",
+    image: "/avatars/sarah.jpg",
+    score: 5
+  },
+  {
+    name: "Michael Chen",
+    role: "City Procurement Manager",
+    content: "The AI-powered compliance checks have saved our department countless hours and helped us avoid several potential issues before they became problems.",
+    image: "/avatars/michael.jpg",
+    score: 5
+  },
+  {
+    name: "Jamal Williams",
+    role: "State Acquisition Director",
+    content: "We've been able to standardize our procurement processes across 12 different departments thanks to the platform's flexibility and powerful knowledge base.",
+    image: "/avatars/jamal.jpg",
+    score: 4
   }
 ];

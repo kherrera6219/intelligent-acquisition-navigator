@@ -5,8 +5,9 @@ import { Container } from '@/components/ui/universal/Container';
 import { PricingHeader } from '@/components/pricing/PricingHeader';
 import { PricingPlansSection } from '@/components/pricing/PricingPlansSection';
 import { EnterpriseSection } from '@/components/pricing/EnterpriseSection';
+import { TestimonialsSection } from '@/components/pricing/TestimonialsSection';
 import { FAQSection } from '@/components/pricing/FAQSection';
-import { pricingPlans, faqItems } from '@/components/pricing/pricingData';
+import { pricingPlans, faqItems, testimonials } from '@/components/pricing/pricingData';
 
 const PricingPage: React.FC = () => {
   return (
@@ -18,6 +19,8 @@ const PricingPage: React.FC = () => {
         />
         
         <PricingPlansSection plans={pricingPlans} />
+        
+        <TestimonialsSection testimonials={testimonials} />
         
         <EnterpriseSection />
         
