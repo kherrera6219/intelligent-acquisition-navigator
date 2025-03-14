@@ -6,10 +6,12 @@ import { GlobalErrorBoundary } from '@/components/error/GlobalErrorBoundary';
 import { ImprovementProvider } from '@/contexts/ImprovementContext';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { Helmet } from 'react-helmet';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { Alert } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 const ImproveApp: React.FC = () => {
-  const isOnline = useNetworkStatus();
+  const { isOnline } = useNetworkMonitor();
 
   useEffect(() => {
     // Add PWA install prompt handler
@@ -68,10 +70,11 @@ const ImproveApp: React.FC = () => {
             />
             
             {!isOnline && (
-              <div className="bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 mb-4 rounded" role="alert">
+              <Alert variant="warning" className="bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 mb-4 rounded" role="alert">
+                <AlertTriangle className="h-4 w-4" />
                 <p className="font-bold">You are currently offline</p>
                 <p>Some features may be limited. Changes will sync when you're back online.</p>
-              </div>
+              </Alert>
             )}
             
             <div className="mt-8">

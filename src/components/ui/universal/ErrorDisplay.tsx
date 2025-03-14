@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { AlertTriangle, Bug, RefreshCw, Shield, Wifi, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/universal/Card";
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 interface ErrorDisplayProps {
   error?: Error | null;
@@ -19,7 +19,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   resetError,
   className
 }) => {
-  const isOnline = useNetworkStatus();
+  const { isOnline } = useNetworkMonitor();
   const isNetworkError = error?.message.includes('network') || 
                          error?.message.includes('fetch') || 
                          error?.message.includes('connection');

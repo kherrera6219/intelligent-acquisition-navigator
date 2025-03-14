@@ -2,7 +2,7 @@
 import React from 'react';
 import { AlertTriangle, Wifi, WifiOff } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -19,7 +19,7 @@ export const GlobalNetworkErrorBanner: React.FC<GlobalNetworkErrorBannerProps> =
   isRetrying = false,
   className
 }) => {
-  const isOnline = useNetworkStatus();
+  const { isOnline } = useNetworkMonitor();
   
   if (!error) return null;
   

@@ -3,15 +3,22 @@ import React from 'react';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
 import { WifiOff, Wifi, RefreshCw, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { Progress } from '@/components/ui/progress';
 
-export function NetworkStatusBanner() {
-  const { isOnline, reconnecting, supabaseConnected, lastSyncTime } = useNetworkMonitor();
-  const { pendingCount, isSyncing, syncProgress, syncOfflineData } = useOfflineSync();
+export interface NetworkStatusBannerProps {
+  isOnline?: boolean;
+}
+
+export function NetworkStatusBanner(props: NetworkStatusBannerProps) {
+  const { isOnline: isOnlineFromProps } = props;
+  const networkInfo = useNetworkMonitor();
+  
+  // Use the prop value if provided, otherwise use the context value
+  const isOnline = isOnlineFromProps !== undefined ? isOnlineFromProps : networkInfo?.isOnline;
+  const { reconnecting, supabaseConnected, lastSyncTime } = networkInfo || {};
   
   // Don't show anything if online and connected
-  if (isOnline && (supabaseConnected || pendingCount === 0) && !isSyncing) {
+  if (isOnline && supabaseConnected) {
     return null;
   }
   
@@ -58,40 +65,11 @@ export function NetworkStatusBanner() {
         </div>
       )}
       
-      {isOnline && pendingCount > 0 && (
-        <div className="bg-yellow-600 text-white py-1 px-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {isSyncing ? (
-              <RefreshCw className="h-4 w-4 animate-spin" aria-hidden="true" />
-            ) : (
-              <Database className="h-4 w-4" aria-hidden="true" />
-            )}
-            <span className="text-sm font-medium">
-              {isSyncing 
-                ? `Syncing offline changes (${syncProgress}%)...` 
-                : `${pendingCount} offline change${pendingCount !== 1 ? 's' : ''} pending sync`}
-            </span>
-          </div>
-          {!isSyncing && (
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/40 text-xs py-1 px-2 h-auto"
-              onClick={syncOfflineData}
-              aria-label="Synchronize offline data now"
-            >
-              Sync Now
-            </Button>
-          )}
-        </div>
-      )}
-      
-      {isSyncing && (
+      {reconnecting && (
         <Progress 
-          value={syncProgress} 
+          value={50} 
           className="h-1" 
-          indicatorClassName="bg-green-500" 
-          aria-label={`Sync progress: ${syncProgress}%`}
+          aria-label="Reconnecting progress"
         />
       )}
     </div>

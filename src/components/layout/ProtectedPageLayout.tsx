@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { AppLayout } from './AppLayout';
-import { NetworkErrorHandler } from '@/components/ui/universal/NetworkErrorHandler';
+import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 import { OfflineStatusIndicator } from '@/components/ui/universal/OfflineStatusIndicator';
 import { GlobalNetworkErrorBanner } from '@/components/ui/universal/GlobalNetworkErrorBanner';
 
@@ -53,19 +53,14 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
       )}
       
       {withErrorBoundary ? (
-        <NetworkErrorHandler 
-          autoRetry={true} 
-          alertPosition="top"
-          isLoading={isLoading}
-          onRetry={onRetry}
-        >
+        <div className="network-error-handler">
           <div className="flex items-center justify-between mb-4">
             {title && <h1 className="text-2xl font-bold">{title}</h1>}
             <OfflineStatusIndicator compact />
           </div>
           {description && <p className="text-muted-foreground mb-6">{description}</p>}
           {children}
-        </NetworkErrorHandler>
+        </div>
       ) : (
         <>
           <div className="flex items-center justify-between mb-4">

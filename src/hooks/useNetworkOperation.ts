@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { createRetryFunction } from '@/utils/retryMechanism';
 
 interface NetworkOperationOptions {
@@ -28,7 +28,7 @@ export function useNetworkOperation<T>(options: NetworkOperationOptions = {}) {
   const [error, setError] = useState<Error | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
-  const isOnline = useNetworkStatus();
+  const { isOnline } = useNetworkMonitor();
   
   const executeOperation = useCallback(async (
     operation: () => Promise<T>,

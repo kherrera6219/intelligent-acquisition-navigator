@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { ChecklistItem } from '@/contexts/ImprovementContext';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 export const useOfflineChecklistData = (
   onlineData: ChecklistItem[],
@@ -13,7 +13,7 @@ export const useOfflineChecklistData = (
     id: number;
     updates: Partial<ChecklistItem>;
   }[]>([]);
-  const isOnline = useNetworkStatus();
+  const { isOnline } = useNetworkMonitor();
 
   // Load cached data from localStorage when offline
   useEffect(() => {

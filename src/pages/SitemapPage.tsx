@@ -5,13 +5,43 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { routes } from '@/routes';
+import { AppRoutes } from '@/routes/AppRoutes';
 import { RouteObject } from 'react-router-dom';
 import { Compass, ExternalLink } from 'lucide-react';
 
 const SitemapPage: React.FC = () => {
-  // Explicitly cast routes to RouteObject[] to ensure TypeScript knows it's an array
-  const routeObjects = routes as RouteObject[];
+  // Create dummy routes for the sitemap based on AppRoutes
+  const routeObjects: RouteObject[] = [
+    { path: "/" },
+    { path: "/about" },
+    { path: "/features" },
+    { path: "/contact" },
+    { path: "/pricing" },
+    { path: "/help" },
+    { path: "/privacy" },
+    { path: "/chat" },
+    { path: "/improve" },
+    { path: "/sitemap" },
+    { path: "/api-docs" },
+    { path: "/component-library" },
+    { path: "/dashboard" },
+    { path: "/analytics" },
+    { path: "/market-research" },
+    { path: "/document-control" },
+    { path: "/solicitation-review" },
+    { path: "/federal-acquisition" },
+    { path: "/texas-acquisition" },
+    { path: "/compliance" },
+    { path: "/source-selection" },
+    { path: "/contract-management" },
+    { path: "/legal-review" },
+    { path: "/small-business" },
+    { path: "/quality-assurance" },
+    { path: "/knowledge-base" },
+    { path: "/profile" },
+    { path: "/validation" },
+    { path: "*" }
+  ];
   
   // Group routes by section
   const routesByType = routeObjects.reduce((acc: Record<string, string[]>, route: RouteObject) => {

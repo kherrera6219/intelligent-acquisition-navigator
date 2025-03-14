@@ -6,7 +6,6 @@ import { AIChatMessage } from "@/types/chat";
 import { getAzureOpenAICompletion } from '@/services/texas/azureOpenAIService';
 import { v4 as uuidv4 } from 'uuid';
 import { useNetworkOperation } from '@/hooks/useNetworkOperation';
-import { NetworkErrorHandler } from '@/components/ui/universal/NetworkErrorHandler';
 import { OfflineSyncStatus } from '@/components/ui/universal/OfflineSyncStatus';
 import { useAuth } from '@/hooks/useAuth';
 import { generateCsrfToken } from '@/utils/csrfProtection';
@@ -15,7 +14,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
+import { UniversalInternalHeader } from '@/components/layout/UniversalInternalHeader';
 import { InternalFooter } from '@/components/layout/InternalFooter';
 
 const TexasAcquisitionPage: React.FC = () => {
@@ -145,31 +144,32 @@ const TexasAcquisitionPage: React.FC = () => {
             </Alert>
           )}
           
-          <NetworkErrorHandler 
-            errorMessage={error?.message}
-            onRetry={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error.message}</AlertDescription>
+            </Alert>
+          )}
+          
+          <TexasChatContainer
+            conversationId={conversationId}
+            messages={messages}
             isLoading={isLoading}
-            autoRetry={true}
-          >
-            <TexasChatContainer
-              conversationId={conversationId}
-              messages={messages}
-              isLoading={isLoading}
-              input={input}
-              selectedAgency={selectedAgency}
-              selectedRole={selectedRole}
-              selectedResponseLevel={selectedResponseLevel}
-              onInputChange={(value) => {
-                setInput(value);
-                if (inputError) validateInput(value);
-              }}
-              onSubmit={handleSubmit}
-              onAgencyChange={setSelectedAgency}
-              onRoleChange={setSelectedRole}
-              onResponseLevelChange={setSelectedResponseLevel}
-              error={error?.message}
-            />
-          </NetworkErrorHandler>
+            input={input}
+            selectedAgency={selectedAgency}
+            selectedRole={selectedRole}
+            selectedResponseLevel={selectedResponseLevel}
+            onInputChange={(value) => {
+              setInput(value);
+              if (inputError) validateInput(value);
+            }}
+            onSubmit={handleSubmit}
+            onAgencyChange={setSelectedAgency}
+            onRoleChange={setSelectedRole}
+            onResponseLevelChange={setSelectedResponseLevel}
+            error={error?.message}
+          />
         </div>
       </div>
       

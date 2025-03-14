@@ -5,7 +5,6 @@ import { Footer } from './Footer';
 import { ExternalFooter } from './ExternalFooter';
 import { InternalFooter } from './InternalFooter';
 import { NetworkStatusBanner } from '../ui/universal/NetworkStatusBanner';
-import { EnhancedNetworkBanner } from '../ui/universal/EnhancedNetworkBanner';
 import { PrivacyBanner } from '../ui/universal/PrivacyBanner';
 import NetworkErrorBoundary from '../ui/universal/NetworkErrorBoundary';
 import CookieConsent from '../CookieConsent';
@@ -24,10 +23,6 @@ interface MainLayoutProps extends PropsWithChildren {
   containerSize?: string;
   forceExternalHeader?: boolean;
   forceExternalFooter?: boolean;
-}
-
-export interface EnhancedNetworkBannerProps {
-  isOnline: boolean;
 }
 
 export interface PrivacyBannerProps {
@@ -158,7 +153,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         )}
         
         {showNetworkStatus && (
-          <EnhancedNetworkBanner isOnline={isOnline} />
+          <NetworkStatusBanner isOnline={isOnline} />
         )}
         
         {showPrivacyNotice && (

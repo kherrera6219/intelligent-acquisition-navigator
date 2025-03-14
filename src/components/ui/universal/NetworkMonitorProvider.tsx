@@ -90,7 +90,7 @@ export const NetworkMonitorProvider: React.FC<{ children: React.ReactNode }> = (
   
   return (
     <NetworkContext.Provider value={contextValue}>
-      {!networkState.isOnline && <NetworkStatusBanner isOnline={networkState.isOnline} />}
+      {!networkState.isOnline && <NetworkStatusBanner />}
       {children}
     </NetworkContext.Provider>
   );

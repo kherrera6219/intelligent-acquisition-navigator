@@ -1,6 +1,6 @@
 
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { useNetworkStatus } from './useNetworkStatus';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { useState, useEffect } from 'react';
 
 export interface QueryCacheOptions {
@@ -22,7 +22,7 @@ export function useQueryWithCache<TData = unknown>(
     offlineOnly = false,
   }: QueryCacheOptions = {}
 ) {
-  const isOnline = useNetworkStatus();
+  const { isOnline } = useNetworkMonitor();
   const [cachedData, setCachedData] = useState<TData | null>(null);
   const [isFetchingFromCache, setIsFetchingFromCache] = useState(false);
 
