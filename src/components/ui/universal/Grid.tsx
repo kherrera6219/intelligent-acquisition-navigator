@@ -1,80 +1,106 @@
 
 import React from 'react';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-interface GridContainerProps {
+interface ContainerProps {
   children: React.ReactNode;
-  fluid?: boolean;
   className?: string;
+  fluid?: boolean;
+  [key: string]: any;
 }
-
-export const Container: React.FC<GridContainerProps> = ({
-  children,
-  fluid = false,
-  className,
-}) => (
-  <div
-    className={cn(
-      fluid ? "container-fluid" : "container",
-      className
-    )}
-  >
-    {children}
-  </div>
-);
 
 interface RowProps {
   children: React.ReactNode;
   className?: string;
+  [key: string]: any;
 }
-
-export const Row: React.FC<RowProps> = ({
-  children,
-  className,
-}) => (
-  <div className={cn("row", className)}>
-    {children}
-  </div>
-);
 
 interface ColProps {
   children: React.ReactNode;
-  xs?: number | "auto";
-  sm?: number | "auto";
-  md?: number | "auto";
-  lg?: number | "auto";
-  xl?: number | "auto";
-  xxl?: number | "auto";
   className?: string;
+  sm?: number;
+  md?: number;
+  lg?: number;
+  xl?: number;
+  [key: string]: any;
 }
 
-export const Col: React.FC<ColProps> = ({
-  children,
-  xs,
+export const Container: React.FC<ContainerProps> = ({ 
+  children, 
+  className, 
+  fluid = false,
+  ...props 
+}) => {
+  return (
+    <div 
+      className={cn(
+        'w-full mx-auto px-4', 
+        fluid ? 'max-w-full' : 'max-w-7xl',
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+export const Row: React.FC<RowProps> = ({ 
+  children, 
+  className,
+  ...props 
+}) => {
+  return (
+    <div 
+      className={cn('flex flex-wrap -mx-4', className)} 
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+export const Col: React.FC<ColProps> = ({ 
+  children, 
+  className,
   sm,
-  md,
+  md, 
   lg,
   xl,
-  xxl,
-  className,
+  ...props 
 }) => {
-  const colClasses = [];
-  
-  // Default col class if no specific breakpoint is provided
-  if (!xs && !sm && !md && !lg && !xl && !xxl) {
-    colClasses.push("col");
-  }
-  
-  // Add responsive classes based on props
-  if (xs) colClasses.push(xs === "auto" ? "col-auto" : `col-${xs}`);
-  if (sm) colClasses.push(sm === "auto" ? "col-sm-auto" : `col-sm-${sm}`);
-  if (md) colClasses.push(md === "auto" ? "col-md-auto" : `col-md-${md}`);
-  if (lg) colClasses.push(lg === "auto" ? "col-lg-auto" : `col-lg-${lg}`);
-  if (xl) colClasses.push(xl === "auto" ? "col-xl-auto" : `col-xl-${xl}`);
-  if (xxl) colClasses.push(xxl === "auto" ? "col-xxl-auto" : `col-xxl-${xxl}`);
+  const getColClasses = () => {
+    const classes = ['px-4'];
+    
+    if (sm) {
+      classes.push(`sm:w-${sm}/12`);
+    }
+    
+    if (md) {
+      classes.push(`md:w-${md}/12`);
+    }
+    
+    if (lg) {
+      classes.push(`lg:w-${lg}/12`);
+    }
+    
+    if (xl) {
+      classes.push(`xl:w-${xl}/12`);
+    }
+    
+    // Default width (if no breakpoints specified)
+    if (!sm && !md && !lg && !xl) {
+      classes.push('w-full');
+    }
+    
+    return classes.join(' ');
+  };
   
   return (
-    <div className={cn(colClasses.join(" "), className)}>
+    <div 
+      className={cn(getColClasses(), className)} 
+      {...props}
+    >
       {children}
     </div>
   );

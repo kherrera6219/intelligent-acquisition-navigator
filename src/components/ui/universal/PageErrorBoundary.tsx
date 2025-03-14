@@ -1,13 +1,10 @@
 
-import React, { Component, ErrorInfo } from 'react';
-import { ErrorDisplay } from './ErrorDisplay';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
-import { Home, RefreshCw } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 
 interface Props {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
+  children: ReactNode;
 }
 
 interface State {
@@ -17,69 +14,76 @@ interface State {
 }
 
 export class PageErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { 
-      hasError: false, 
-      error: null,
-      errorInfo: null
-    };
-  }
-
-  static getDerivedStateFromError(error: Error): Partial<State> {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to console during development
-    console.error('PageErrorBoundary caught an error:', error, errorInfo);
-    
-    // Set the error info in state
-    this.setState({ errorInfo });
-    
-    // TODO: In production, send error to error monitoring service
-    // Example: if (process.env.NODE_ENV === 'production') { sendToErrorMonitoring(error, errorInfo); }
-  }
-
-  resetError = () => {
-    this.setState({ hasError: false, error: null, errorInfo: null });
+  public state: State = {
+    hasError: false,
+    error: null,
+    errorInfo: null
   };
 
-  render() {
-    if (this.state.hasError) {
-      // If a custom fallback is provided, use it
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
+  public static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error, errorInfo: null };
+  }
 
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Uncaught error:', error, errorInfo);
+    this.setState({
+      error,
+      errorInfo
+    });
+  }
+
+  private handleReload = () => {
+    window.location.reload();
+  };
+
+  private handleGoBack = () => {
+    window.history.back();
+  };
+
+  public render() {
+    if (this.state.hasError) {
       return (
-        <div className="flex min-h-[calc(100vh-200px)] items-center justify-center p-4">
-          <div className="max-w-md w-full">
-            <ErrorDisplay 
-              error={this.state.error}
-              errorInfo={this.state.errorInfo}
-              resetError={this.resetError}
-            />
+        <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+          <div className="max-w-md w-full bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-700">
+            <div className="flex justify-center mb-6">
+              <div className="bg-red-500/10 p-3 rounded-full">
+                <AlertTriangle className="h-10 w-10 text-red-500" />
+              </div>
+            </div>
             
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <h1 className="text-2xl font-bold text-center text-white mb-4">Something went wrong</h1>
+            
+            <p className="text-gray-400 text-center mb-6">
+              We're sorry, but there was an error loading this page. Please try refreshing or going back to the previous page.
+            </p>
+            
+            {process.env.NODE_ENV === 'development' && this.state.error && (
+              <div className="mb-6 overflow-auto max-h-40 rounded border border-gray-700 bg-gray-900 p-4">
+                <p className="text-red-400 text-sm font-mono">
+                  {this.state.error.toString()}
+                </p>
+                {this.state.errorInfo && (
+                  <pre className="text-gray-500 text-xs mt-2 font-mono">
+                    {this.state.errorInfo.componentStack}
+                  </pre>
+                )}
+              </div>
+            )}
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={this.resetError}
-                variant="outline"
-                className="w-full sm:w-auto flex items-center gap-2"
+                onClick={this.handleReload} 
+                className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                <RefreshCw className="h-4 w-4" />
-                <span>Try Again</span>
+                Refresh Page
               </Button>
-              
-              <Link to="/" className="w-full sm:w-auto">
-                <Button 
-                  variant="default"
-                  className="w-full flex items-center gap-2"
-                >
-                  <Home className="h-4 w-4" />
-                  <span>Return Home</span>
-                </Button>
-              </Link>
+              <Button 
+                onClick={this.handleGoBack} 
+                variant="outline" 
+                className="border-gray-700 hover:bg-gray-700"
+              >
+                Go Back
+              </Button>
             </div>
           </div>
         </div>

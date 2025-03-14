@@ -1,138 +1,170 @@
 
 import React from 'react';
 import { 
-  BookOpen, 
-  Shield, 
-  LineChart, 
-  BookMarked, 
-  Code, 
-  Sparkles,
-  CheckCircle2, 
-  Database, 
-  Network, 
-  FileSearch, 
-  Crosshair, 
-  BarChartHorizontal 
+  ShieldCheck, BookOpen, Zap, Clock, BarChart3, FileText, 
+  LayoutGrid, Database, Settings, CheckSquare, Users, Lock 
 } from 'lucide-react';
 
-export const featureTabs = [
+export interface FeatureTab {
+  id: string;
+  title: string;
+  description: string;
+  features: Feature[];
+}
+
+export interface Feature {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}
+
+export const featureTabs: FeatureTab[] = [
   {
-    id: 'knowledge-management',
-    title: 'Knowledge Management',
-    description: 'Organize and access comprehensive acquisition knowledge across all government levels.',
+    id: "compliance",
+    title: "Compliance",
+    description: "Ensure adherence to acquisition regulations across all government levels",
     features: [
       {
-        title: 'Federal Acquisition Regulations',
-        description: 'Access comprehensive FAR and agency-specific supplements with AI-powered search and annotation capabilities.',
-        icon: React.createElement(BookOpen, { className: "w-5 h-5 text-blue-400" })
+        title: "Automated Compliance Checks",
+        description: "Automatically scan documents for compliance issues with FAR, DFARS, and agency-specific regulations.",
+        icon: React.createElement(ShieldCheck, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'State & Local Regulations',
-        description: 'Navigate complex state and local procurement rules with jurisdiction-specific guidance and compliance tools.',
-        icon: React.createElement(BookMarked, { className: "w-5 h-5 text-blue-400" })
+        title: "Regulatory Updates",
+        description: "Stay current with automatic updates when regulations change at federal, state, or local levels.",
+        icon: React.createElement(BookOpen, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Cross-Reference Engine',
-        description: 'Instantly find connections between regulations across federal, state, and local levels to ensure full compliance.',
-        icon: React.createElement(Crosshair, { className: "w-5 h-5 text-blue-400" })
+        title: "Real-time Validation",
+        description: "Get instant feedback on compliance issues as you draft acquisition documents.",
+        icon: React.createElement(Zap, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Real-Time Updates',
-        description: 'Stay current with automatic updates when regulations change, with change tracking and historical version comparison.',
-        icon: React.createElement(Network, { className: "w-5 h-5 text-blue-400" })
+        title: "Audit Trail",
+        description: "Maintain comprehensive records of compliance checks and resolutions for auditing purposes.",
+        icon: React.createElement(Clock, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Custom Knowledge Base',
-        description: 'Build your organization\'s acquisition knowledge repository with agency-specific policies, precedents, and best practices.',
-        icon: React.createElement(Database, { className: "w-5 h-5 text-blue-400" })
+        title: "Compliance Analytics",
+        description: "View metrics and insights on compliance performance across your organization.",
+        icon: React.createElement(BarChart3, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Document Analysis',
-        description: 'Extract key information from procurement documents using advanced natural language processing.',
-        icon: React.createElement(FileSearch, { className: "w-5 h-5 text-blue-400" })
+        title: "Compliance Reporting",
+        description: "Generate detailed reports on compliance status for internal reviews and oversight bodies.",
+        icon: React.createElement(FileText, { className: "h-6 w-6 text-blue-500" })
       }
-    ],
-    image: '/images/knowledge-management.jpg'
+    ]
   },
   {
-    id: 'compliance',
-    title: 'Compliance',
-    description: 'Ensure your acquisition processes meet all regulatory requirements with AI-powered compliance tools.',
+    id: "knowledge",
+    title: "Knowledge Management",
+    description: "Access and manage comprehensive acquisition knowledge resources",
     features: [
       {
-        title: 'Compliance Checks',
-        description: 'Automatically verify solicitations and contracts against applicable regulations to identify compliance issues.',
-        icon: React.createElement(CheckCircle2, { className: "w-5 h-5 text-blue-400" })
+        title: "4D Knowledge Framework",
+        description: "Navigate acquisition knowledge through an intuitive four-dimensional structure that maps regulations across jurisdictions.",
+        icon: React.createElement(LayoutGrid, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Risk Assessment',
-        description: 'Identify potential compliance risks and receive mitigation recommendations based on historical patterns.',
-        icon: React.createElement(Shield, { className: "w-5 h-5 text-blue-400" })
+        title: "AI-Powered Search",
+        description: "Find relevant acquisition information quickly with our advanced semantic search capabilities.",
+        icon: React.createElement(Zap, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Audit Trail',
-        description: 'Maintain comprehensive documentation of compliance checks, decisions, and approvals for audit readiness.',
-        icon: React.createElement(BookMarked, { className: "w-5 h-5 text-blue-400" })
+        title: "Knowledge Base",
+        description: "Access a comprehensive library of acquisition regulations, best practices, and guidance documents.",
+        icon: React.createElement(Database, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Regulatory Impact Analysis',
-        description: 'Assess how new or updated regulations impact your acquisition processes and documents.',
-        icon: React.createElement(BarChartHorizontal, { className: "w-5 h-5 text-blue-400" })
+        title: "Customizable Workflows",
+        description: "Create tailored acquisition processes that meet your organization's specific requirements.",
+        icon: React.createElement(Settings, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Automated Reporting',
-        description: 'Generate compliance reports for stakeholders and oversight bodies with detailed analytics and insights.',
-        icon: React.createElement(LineChart, { className: "w-5 h-5 text-blue-400" })
+        title: "Template Library",
+        description: "Access a collection of pre-approved acquisition document templates that ensure compliance.",
+        icon: React.createElement(FileText, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'AI-Powered Recommendations',
-        description: 'Receive intelligent suggestions to improve compliance based on machine learning analysis of successful practices.',
-        icon: React.createElement(Sparkles, { className: "w-5 h-5 text-blue-400" })
+        title: "Version Control",
+        description: "Track changes to acquisition documents with comprehensive version history.",
+        icon: React.createElement(Clock, { className: "h-6 w-6 text-blue-500" })
       }
-    ],
-    image: '/images/compliance.jpg'
+    ]
   },
   {
-    id: 'analytics',
-    title: 'Analytics',
-    description: 'Gain actionable insights from your acquisition data to improve decision-making and outcomes.',
+    id: "intelligence",
+    title: "AI Intelligence",
+    description: "Leverage advanced AI capabilities for smarter acquisition processes",
     features: [
       {
-        title: 'Performance Dashboards',
-        description: 'Visualize key acquisition metrics and KPIs with customizable dashboards for different user roles.',
-        icon: React.createElement(LineChart, { className: "w-5 h-5 text-blue-400" })
+        title: "Predictive Analytics",
+        description: "Forecast acquisition outcomes based on historical data and similar procurements.",
+        icon: React.createElement(BarChart3, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Predictive Analytics',
-        description: 'Forecast procurement timelines, costs, and potential issues based on historical data patterns.',
-        icon: React.createElement(Sparkles, { className: "w-5 h-5 text-blue-400" })
+        title: "Risk Assessment",
+        description: "Identify potential risks in your acquisition strategy with AI-powered analysis.",
+        icon: React.createElement(ShieldCheck, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Comparative Analysis',
-        description: 'Benchmark your acquisition performance against industry standards and similar organizations.',
-        icon: React.createElement(BarChartHorizontal, { className: "w-5 h-5 text-blue-400" })
+        title: "Market Intelligence",
+        description: "Gain insights into supplier capabilities, pricing trends, and market conditions.",
+        icon: React.createElement(LayoutGrid, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Trend Identification',
-        description: 'Discover emerging patterns in your procurement data to inform strategic planning and process improvements.',
-        icon: React.createElement(LineChart, { className: "w-5 h-5 text-blue-400" })
+        title: "Document Generation",
+        description: "Create compliant acquisition documents with AI assistance based on your requirements.",
+        icon: React.createElement(FileText, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Custom Reports',
-        description: 'Create tailored reports for stakeholders at all levels, from executives to procurement specialists.',
-        icon: React.createElement(FileSearch, { className: "w-5 h-5 text-blue-400" })
+        title: "Intelligent Recommendations",
+        description: "Receive AI-powered suggestions for improving acquisition strategies and documents.",
+        icon: React.createElement(Zap, { className: "h-6 w-6 text-blue-500" })
       },
       {
-        title: 'Data Visualization',
-        description: 'Transform complex acquisition data into clear, actionable visualizations that drive informed decisions.',
-        icon: React.createElement(Network, { className: "w-5 h-5 text-blue-400" })
+        title: "Anomaly Detection",
+        description: "Automatically identify unusual patterns or outliers in procurement data that may indicate issues.",
+        icon: React.createElement(CheckSquare, { className: "h-6 w-6 text-blue-500" })
       }
-    ],
-    image: '/images/analytics.jpg'
+    ]
+  },
+  {
+    id: "collaboration",
+    title: "Collaboration",
+    description: "Enable seamless teamwork across your acquisition teams",
+    features: [
+      {
+        title: "Team Workspaces",
+        description: "Create dedicated spaces for acquisition teams to collaborate on projects.",
+        icon: React.createElement(Users, { className: "h-6 w-6 text-blue-500" })
+      },
+      {
+        title: "Role-Based Access",
+        description: "Control document access and editing permissions based on user roles and responsibilities.",
+        icon: React.createElement(Lock, { className: "h-6 w-6 text-blue-500" })
+      },
+      {
+        title: "Review & Approval Workflows",
+        description: "Streamline document reviews with customizable approval processes.",
+        icon: React.createElement(CheckSquare, { className: "h-6 w-6 text-blue-500" })
+      },
+      {
+        title: "Real-Time Collaboration",
+        description: "Work simultaneously on acquisition documents with team members.",
+        icon: React.createElement(Users, { className: "h-6 w-6 text-blue-500" })
+      },
+      {
+        title: "Communication Tools",
+        description: "Discuss acquisition projects with integrated messaging and comment features.",
+        icon: React.createElement(FileText, { className: "h-6 w-6 text-blue-500" })
+      },
+      {
+        title: "Activity Tracking",
+        description: "Monitor team progress and activities on acquisition projects in real-time.",
+        icon: React.createElement(Clock, { className: "h-6 w-6 text-blue-500" })
+      }
+    ]
   }
 ];
-
-// Define exported constants for the individual feature sections
-export const knowledgeFeatures = featureTabs[0].features;
-export const complianceFeatures = featureTabs[1].features;
-export const analyticsFeatures = featureTabs[2].features;

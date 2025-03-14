@@ -1,65 +1,48 @@
 
-import React, { Suspense, useState } from "react";
-import { PageErrorBoundary } from "@/components/ui/universal/PageErrorBoundary";
-import { useHomePageInit } from "@/hooks/useHomePageInit";
-import { HomeError } from "@/components/home/HomeError";
-import { HomeLoading } from "@/components/home/HomeLoading";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { PrivacyBanner } from "@/components/ui/universal/PrivacyBanner";
-import { LandingHero } from "@/components/landing/LandingHero";
-import { FeaturesSection } from "@/components/landing/FeaturesSection";
-import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
-import { CTASection } from "@/components/landing/CTASection";
+import React, { useState, useEffect, useCallback } from 'react';
+import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
+import { HomePageContent } from '@/components/landing/HomePageContent';
 
-const HomePage = () => {
-  const {
-    isLoaded,
-    showBackToTop,
-    isFirstVisit,
-    scrollToTop,
-    error
-  } = useHomePageInit();
-  
-  const [showPrivacyNotice, setShowPrivacyNotice] = useState<boolean>(isFirstVisit);
-  
+const HomePage: React.FC = () => {
+  const [showPrivacyNotice, setShowPrivacyNotice] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
+
+  useEffect(() => {
+    // Check if it's user's first visit
+    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
+    if (!hasVisitedBefore) {
+      setIsFirstVisit(true);
+      setShowPrivacyNotice(true);
+      localStorage.setItem('hasVisitedBefore', 'true');
+    }
+
+    // Set up scroll listener for back-to-top button
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
-    <PageErrorBoundary>
-      <MainLayout 
-        variant="fluent" 
-        showHeader={true} 
-        showFooter={true}
-        showPrivacyBanner={false}
-        forceExternalHeader={true}
-        forceExternalFooter={true}
-        className="bg-background"
-      >
-        <Suspense fallback={<HomeLoading />}>
-          {error ? (
-            <HomeError error={error} />
-          ) : !isLoaded ? (
-            <HomeLoading />
-          ) : (
-            <>
-              <div className="animate-in fade-in-50 duration-500">
-                <LandingHero />
-                <FeaturesSection />
-                <TestimonialsSection />
-                <CTASection />
-              </div>
-              
-              {showPrivacyNotice && (
-                <PrivacyBanner
-                  onLearnMore={() => window.open('/privacy', '_blank')}
-                  onClose={() => setShowPrivacyNotice(false)}
-                  type="standard"
-                  position="bottom"
-                />
-              )}
-            </>
-          )}
-        </Suspense>
-      </MainLayout>
-    </PageErrorBoundary>
+    <ExternalPageLayout 
+      title="Home" 
+      description="Discover how our AI-powered acquisition management platform can streamline your procurement process."
+    >
+      <HomePageContent
+        showPrivacyNotice={showPrivacyNotice}
+        setShowPrivacyNotice={setShowPrivacyNotice}
+        showBackToTop={showBackToTop}
+        isFirstVisit={isFirstVisit}
+        scrollToTop={scrollToTop}
+      />
+    </ExternalPageLayout>
   );
 };
 

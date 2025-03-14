@@ -1,53 +1,37 @@
 
 import React from 'react';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface MsGradientTextProps {
   children: React.ReactNode;
   className?: string;
-  variant?: "primary" | "secondary" | "accent" | "blue" | "purple" | "cyan-blue" | "destructive";
-  as?: keyof JSX.IntrinsicElements;
-  size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+  gradient?: 'primary' | 'secondary' | 'accent' | 'success' | 'custom';
+  customGradient?: string;
 }
 
 export const MsGradientText: React.FC<MsGradientTextProps> = ({
   children,
   className,
-  variant = "primary",
-  as: Component = "span",
-  size = "base",
+  gradient = 'primary',
+  customGradient
 }) => {
-  const gradientVariants = {
-    primary: "bg-gradient-to-r from-primary via-blue-400 to-primary",
-    secondary: "bg-gradient-to-r from-secondary to-green-400",
-    accent: "bg-gradient-to-r from-accent to-yellow-400",
-    blue: "bg-gradient-to-r from-blue-500 to-blue-400",
-    purple: "bg-gradient-to-r from-purple-500 to-pink-500",
-    "cyan-blue": "bg-gradient-to-r from-cyan-400 to-blue-500",
-    destructive: "bg-gradient-to-r from-red-500 to-rose-500"
-  };
-  
-  const sizeClasses = {
-    xs: "text-xs",
-    sm: "text-sm",
-    base: "text-base",
-    lg: "text-lg",
-    xl: "text-xl",
-    "2xl": "text-2xl",
-    "3xl": "text-3xl",
-    "4xl": "text-4xl"
+  const gradients = {
+    primary: 'from-blue-400 to-indigo-600',
+    secondary: 'from-purple-400 to-pink-600',
+    accent: 'from-amber-400 to-orange-600',
+    success: 'from-emerald-400 to-teal-600',
+    custom: customGradient || 'from-blue-400 to-indigo-600',
   };
 
   return (
-    <Component
+    <span
       className={cn(
-        "bg-clip-text text-transparent inline-block animate-in fade-in-50 duration-500",
-        gradientVariants[variant],
-        sizeClasses[size],
+        'bg-clip-text text-transparent bg-gradient-to-r',
+        gradients[gradient],
         className
       )}
     >
       {children}
-    </Component>
+    </span>
   );
 };
