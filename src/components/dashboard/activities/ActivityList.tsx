@@ -3,14 +3,21 @@ import React from 'react';
 import { ActivityItem } from './ActivityItem';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { LucideIcon } from 'lucide-react';
 
+// Update to match the dashboard Activity type
 export interface Activity {
   id: string;
-  icon: React.ReactNode;
   title: string;
   description: string;
   timestamp: Date;
   status: 'success' | 'warning' | 'error' | 'info';
+  icon?: React.ReactNode | LucideIcon;
+  category?: string;
+  user?: {
+    name: string;
+    avatar: string;
+  };
 }
 
 interface ActivityListProps {

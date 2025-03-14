@@ -50,4 +50,7 @@ export interface DashboardCardProps {
     text: string;
     variant: 'default' | 'success' | 'warning' | 'error' | 'info';
   };
+  // Add missing properties that are used in QuickActions.tsx
+  href?: string;
+  icon?: ReactNode;
 }

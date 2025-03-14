@@ -25,6 +25,19 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
     setFilter(category);
   };
 
+  // Convert activities to the format expected by ActivityList
+  const formatActivitiesForList = () => {
+    return filteredActivities.map(activity => ({
+      id: activity.id,
+      title: activity.title,
+      description: activity.description,
+      timestamp: new Date(activity.timestamp),
+      status: activity.status || 'info',
+      icon: activity.icon,
+      category: activity.category
+    }));
+  };
+
   return (
     <MsDashboardCard
       title="Recent Activity"
@@ -63,7 +76,7 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
       
       <ActivityList 
         isLoading={isLoading} 
-        activities={filteredActivities} 
+        activities={formatActivitiesForList()} 
       />
     </MsDashboardCard>
   );

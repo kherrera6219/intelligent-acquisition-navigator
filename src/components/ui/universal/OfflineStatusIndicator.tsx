@@ -1,53 +1,42 @@
 
 import React from 'react';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-import { formatDistanceToNow } from 'date-fns';
+import { Wifi, WifiOff } from 'lucide-react';
 import { Tooltip } from '@/components/ui/tooltip';
-import { NetworkStatusIcon } from './NetworkStatusIcon';
+import { format } from 'date-fns';
 
-interface OfflineStatusIndicatorProps {
-  compact?: boolean;
-  className?: string;
+interface NetworkStatus {
+  isOnline: boolean;
+  isReconnecting: boolean;
+  lastOnlineAt?: Date;
+  lastSyncTime?: Date;
 }
 
-export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({
-  compact = false,
-  className
-}) => {
-  const { isOnline, lastOnlineAt, lastSyncTime } = useNetworkStatus();
-
-  if (compact) {
-    return (
-      <Tooltip content={isOnline ? 'Online' : 'Offline Mode'}>
-        <div className={className}>
-          <NetworkStatusIcon 
-            isOnline={isOnline} 
-            status={isOnline ? 'online' : 'offline'} 
-            className="h-4 w-4" 
-          />
-        </div>
-      </Tooltip>
-    );
+export const OfflineStatusIndicator: React.FC<{ status: NetworkStatus }> = ({ status }) => {
+  const { isOnline, isReconnecting, lastOnlineAt, lastSyncTime } = status;
+  
+  if (isOnline && !isReconnecting) {
+    return null;
   }
-
+  
+  const formattedLastOnline = lastOnlineAt ? format(lastOnlineAt, 'h:mm a') : 'Unknown';
+  const formattedLastSync = lastSyncTime ? format(lastSyncTime, 'h:mm a') : 'No sync yet';
+  
+  const statusText = isReconnecting 
+    ? 'Reconnecting to server...' 
+    : `Offline mode. Last online: ${formattedLastOnline}. Last sync: ${formattedLastSync}`;
+  
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <NetworkStatusIcon 
-        isOnline={isOnline} 
-        status={isOnline ? 'online' : 'offline'} 
-        className="h-5 w-5" 
-      />
-      <span className="text-sm font-medium">
-        {isOnline 
-          ? 'Online' 
-          : `Offline (Last online: ${lastOnlineAt ? formatDistanceToNow(lastOnlineAt, { addSuffix: true }) : 'unknown'})`
-        }
-      </span>
-      {lastSyncTime && (
-        <span className="text-xs text-muted-foreground">
-          Last sync: {formatDistanceToNow(lastSyncTime, { addSuffix: true })}
+    <Tooltip content={statusText}>
+      <div className="inline-flex items-center gap-1.5 text-sm">
+        {isReconnecting ? (
+          <Wifi className="h-4 w-4 text-yellow-500 animate-pulse" />
+        ) : (
+          <WifiOff className="h-4 w-4 text-red-500" />
+        )}
+        <span className={isReconnecting ? 'text-yellow-500' : 'text-red-500'}>
+          {isReconnecting ? 'Reconnecting...' : 'Offline'}
         </span>
-      )}
-    </div>
+      </div>
+    </Tooltip>
   );
 };
