@@ -19,7 +19,7 @@ export const HeroSection: React.FC = () => {
             for Modern Acquisition
           </span>
         </h1>
-        <p className="text-4xl md:text-5xl lg:text-6xl text-[#9b87f5] mb-6">
+        <p className="text-5xl md:text-6xl lg:text-7xl text-[#9b87f5] mb-6 backdrop-blur-sm py-2 px-4 bg-white/5 rounded-lg shadow-lg inline-block">
           ProcurityIQ
         </p>
         <p className="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
