@@ -11,13 +11,16 @@ export const HeroSection: React.FC = () => {
       </div>
       
       <div className="relative z-10 py-16 md:py-24 px-6 max-w-5xl mx-auto text-center">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-2">
           <span className="bg-gradient-to-r from-[#9b87f5] via-[#D946EF] to-[#F97316] bg-clip-text text-transparent">
             Powerful Features
           </span>{" "}
           for Modern Acquisition
         </h1>
-        <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+        <p className="text-xl md:text-2xl text-[#9b87f5] mb-6">
+          ProcurityIQ
+        </p>
+        <p className="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
           Our platform leverages advanced AI technologies to streamline the acquisition process,
           provide compliance guidance, and deliver actionable insights for your organization.
         </p>

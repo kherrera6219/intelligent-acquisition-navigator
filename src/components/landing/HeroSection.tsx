@@ -41,9 +41,13 @@ export const HeroSection = () => {
             <span className="text-white animate-in fade-in-50 slide-in-from-bottom-3 delay-150">
               Acquisition Management
             </span>
+            <br />
+            <span className="text-[#9b87f5] text-2xl md:text-3xl lg:text-4xl animate-in fade-in-50 slide-in-from-bottom-4 delay-200">
+              ProcurityIQ
+            </span>
           </h1>
           
-          <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 animate-in fade-in-50 slide-in-from-bottom-4 delay-300">
+          <p className="max-w-2xl mx-auto text-base md:text-lg text-gray-400 animate-in fade-in-50 slide-in-from-bottom-4 delay-300">
             Streamline your procurement process with AI-powered insights and compliance automation.
           </p>
           
