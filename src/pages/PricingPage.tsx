@@ -212,7 +212,9 @@ const PricingPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <Tooltip content="These plans include unlimited users, priority support, and customized training">
+                <Tooltip 
+                  content="These plans include unlimited users, priority support, and customized training"
+                >
                   <div className="flex items-center">
                     <InfoIcon className="h-4 w-4 mr-1 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground">Enterprise plans include additional benefits</span>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { wrapWithLayout } from "./routeTypes";
 import {
-  LandingPage,
+  HomePage,
   AboutPage,
   FeaturesPage,
   PricingPage,
@@ -16,7 +16,7 @@ import {
 const landingRoutes = [
   {
     path: "/",
-    element: wrapWithLayout(LandingPage, false)
+    element: wrapWithLayout(HomePage, false)
   },
   {
     path: "/about",
