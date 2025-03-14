@@ -24,11 +24,11 @@ export const FeatureTabContent: React.FC<FeatureTabContentProps> = ({
   <div className="pt-10">
     <div className="grid md:grid-cols-2 gap-10 items-center mb-16">
       <div>
-        <h2 className="text-3xl md:text-4xl font-bold mb-5 text-white leading-tight">{title}</h2>
-        <p className="text-xl text-gray-300 mb-8 leading-relaxed">{description}</p>
-        <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-lg py-6 px-8">
+        <h2 className="text-3xl font-bold mb-4 text-white tracking-tight">{title}</h2>
+        <p className="text-lg text-gray-300 mb-8 leading-relaxed">{description}</p>
+        <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-base py-5 px-6">
           Learn More
-          <ArrowRight className="ml-3 h-5 w-5" />
+          <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       </div>
       <div className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 shadow-xl">
