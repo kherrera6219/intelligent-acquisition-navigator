@@ -2,15 +2,15 @@
 import { useState, useEffect } from 'react';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { ChecklistItem } from '@/types/checklist';
-import { useImprovementActions } from './useImprovementActions';
+import { useChecklistData } from '@/hooks/useChecklistData';
 
 export const useOfflineChecklistData = () => {
   const { isOnline } = useNetworkMonitor();
   const [localItems, setLocalItems] = useState<ChecklistItem[]>([]);
   const [pendingChanges, setPendingChanges] = useState<any[]>([]);
   
-  // Get the actions from useImprovementActions
-  const { updateCurrentItem: updateItem } = useImprovementActions();
+  // Get the actions from useChecklistData
+  const { updateItem } = useChecklistData();
 
   useEffect(() => {
     // Load locally stored checklist items on mount
