@@ -38,7 +38,7 @@ export const HeroSection = () => {
               Next-Generation
             </GradientText>
             <br />
-            <span className="text-white animate-in fade-in-50 slide-in-from-bottom-3 delay-150">
+            <span className="text-white text-lg md:text-xl lg:text-2xl animate-in fade-in-50 slide-in-from-bottom-3 delay-150">
               Acquisition Management
             </span>
             <br />

@@ -15,7 +15,9 @@ export const HeroSection: React.FC = () => {
           <span className="bg-gradient-to-r from-[#9b87f5] via-[#D946EF] to-[#F97316] bg-clip-text text-transparent">
             Powerful Features
           </span>{" "}
-          for Modern Acquisition
+          <span className="text-lg md:text-xl lg:text-2xl">
+            for Modern Acquisition
+          </span>
         </h1>
         <p className="text-4xl md:text-5xl lg:text-6xl text-[#9b87f5] mb-6">
           ProcurityIQ
