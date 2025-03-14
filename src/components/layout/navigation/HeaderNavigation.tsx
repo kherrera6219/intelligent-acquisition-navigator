@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
-import { ChevronDown, Home, FileText, Map, HelpCircle, GlobeLock, Flag } from 'lucide-react';
+import { ChevronDown, Home, FileText, Map, HelpCircle, GlobeLock, Flag, Book, Shield, BarChart2 } from 'lucide-react';
 
 export const HeaderNavigation: React.FC = () => {
   const { pathname } = useLocation();
@@ -15,10 +15,14 @@ export const HeaderNavigation: React.FC = () => {
   // Main menu items for our dropdown
   const mainMenuItems = [
     { label: 'Home', href: '/', icon: Home },
-    { label: 'Main Dashboard', href: '/dashboard', icon: Home },
+    { label: 'Dashboard', href: '/dashboard', icon: Home },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag },
+    { label: 'Knowledge Base', href: '/knowledge-base', icon: Book },
     { label: 'Solicitation Review', href: '/solicitation-review', icon: FileText },
+    { label: 'Market Research', href: '/market-research', icon: FileText },
+    { label: 'Compliance', href: '/compliance', icon: Shield },
+    { label: 'Analytics', href: '/analytics', icon: BarChart2 },
     { label: 'Sitemap', href: '/sitemap', icon: Map },
     { label: 'Help', href: '/help', icon: HelpCircle }
   ];

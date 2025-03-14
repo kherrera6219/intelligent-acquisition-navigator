@@ -16,14 +16,20 @@ const SitemapPage: React.FC = () => {
             <li><Link to="/features" className="text-blue-500 hover:underline">Features</Link></li>
             <li><Link to="/contact" className="text-blue-500 hover:underline">Contact</Link></li>
             <li><Link to="/pricing" className="text-blue-500 hover:underline">Pricing</Link></li>
+            <li><Link to="/help" className="text-blue-500 hover:underline">Help</Link></li>
+            <li><Link to="/privacy" className="text-blue-500 hover:underline">Privacy Policy</Link></li>
+            <li><Link to="/chat" className="text-blue-500 hover:underline">Chat</Link></li>
+            <li><Link to="/improve" className="text-blue-500 hover:underline">Improve App</Link></li>
           </ul>
         </div>
         
         <div>
           <h2 className="text-xl font-semibold mb-4">User Account</h2>
           <ul className="space-y-2">
-            <li><Link to="/dashboard" className="text-blue-500 hover:underline">Dashboard</Link></li>
+            <li><Link to="/auth" className="text-blue-500 hover:underline">Login/Register</Link></li>
+            <li><Link to="/auth/forgot-password" className="text-blue-500 hover:underline">Forgot Password</Link></li>
             <li><Link to="/profile" className="text-blue-500 hover:underline">Profile</Link></li>
+            <li><Link to="/dashboard" className="text-blue-500 hover:underline">Dashboard</Link></li>
             <li><Link to="/settings" className="text-blue-500 hover:underline">Settings</Link></li>
           </ul>
         </div>
@@ -32,6 +38,7 @@ const SitemapPage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">Acquisition</h2>
           <ul className="space-y-2">
             <li><Link to="/federal-acquisition" className="text-blue-500 hover:underline">Federal Acquisition</Link></li>
+            <li><Link to="/texas-acquisition" className="text-blue-500 hover:underline">Texas Acquisition</Link></li>
             <li><Link to="/market-research" className="text-blue-500 hover:underline">Market Research</Link></li>
             <li><Link to="/solicitation-review" className="text-blue-500 hover:underline">Solicitation Review</Link></li>
             <li><Link to="/document-control" className="text-blue-500 hover:underline">Document Control</Link></li>
@@ -49,31 +56,23 @@ const SitemapPage: React.FC = () => {
           <ul className="space-y-2">
             <li><Link to="/analytics" className="text-blue-500 hover:underline">Analytics Dashboard</Link></li>
             <li><Link to="/proposals" className="text-blue-500 hover:underline">Proposals</Link></li>
+            <li><Link to="/validation" className="text-blue-500 hover:underline">Validation</Link></li>
           </ul>
         </div>
         
         <div>
-          <h2 className="text-xl font-semibold mb-4">Help & Resources</h2>
+          <h2 className="text-xl font-semibold mb-4">Knowledge Base</h2>
           <ul className="space-y-2">
-            <li><Link to="/help" className="text-blue-500 hover:underline">Help Center</Link></li>
             <li><Link to="/knowledge-base" className="text-blue-500 hover:underline">Knowledge Base</Link></li>
-            <li><Link to="/api-docs" className="text-blue-500 hover:underline">API Documentation</Link></li>
-          </ul>
-        </div>
-        
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Legal</h2>
-          <ul className="space-y-2">
-            <li><Link to="/privacy" className="text-blue-500 hover:underline">Privacy Policy</Link></li>
-            <li><Link to="/terms" className="text-blue-500 hover:underline">Terms of Service</Link></li>
+            <li><Link to="/federal-knowledge-base" className="text-blue-500 hover:underline">Federal Knowledge Base</Link></li>
           </ul>
         </div>
         
         <div>
           <h2 className="text-xl font-semibold mb-4">Developer Resources</h2>
           <ul className="space-y-2">
+            <li><Link to="/api-docs" className="text-blue-500 hover:underline">API Documentation</Link></li>
             <li><Link to="/component-library" className="text-blue-500 hover:underline">Component Library</Link></li>
-            <li><Link to="/validation" className="text-blue-500 hover:underline">Validation</Link></li>
           </ul>
         </div>
       </div>

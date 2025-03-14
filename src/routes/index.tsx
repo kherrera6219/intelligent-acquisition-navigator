@@ -1,8 +1,12 @@
 
 import React from 'react';
-import { createBrowserRouter } from 'react-router-dom';
-import { BrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './AppRoutes';
+import authRoutes from './authRoutes';
+import dashboardRoutes from './dashboardRoutes';
+import acquisitionRoutes from './acquisitionRoutes';
+import settingsRoutes from './settingsRoutes';
 
 // Export the Router component for direct use in JSX contexts
 export const Router: React.FC = () => {
@@ -13,10 +17,13 @@ export const Router: React.FC = () => {
   );
 };
 
-// Create a router instance for RouterProvider
-export const browserRouter = createBrowserRouter([
+// Combine all routes for the browser router
+const combinedRoutes = [
   {
-    path: "*",
+    path: "/",
     element: <AppRoutes />
   }
-]);
+];
+
+// Create a router instance for RouterProvider
+export const browserRouter = createBrowserRouter(combinedRoutes);

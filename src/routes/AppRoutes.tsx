@@ -1,10 +1,15 @@
 
 import React, { Suspense } from 'react';
-import { RouteObject } from 'react-router-dom';
+import { Routes, Route } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
 import { lazy } from "react";
-import { Routes, Route } from "react-router-dom";
 import { LoadingPage } from "@/components/LoadingPage";
+
+// Import route collections
+import authRoutes from './authRoutes';
+import dashboardRoutes from './dashboardRoutes';
+import acquisitionRoutes from './acquisitionRoutes';
+import settingsRoutes from './settingsRoutes';
 
 // Lazy load pages
 const HomePage = lazy(() => import("@/pages/HomePage"));
@@ -20,29 +25,11 @@ const ImproveApp = lazy(() => import("@/pages/ImproveApp"));
 const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
 const ApiDocsPage = lazy(() => import("@/pages/developer/ApiDocsPage"));
 const ComponentLibraryPage = lazy(() => import("@/pages/developer/ComponentLibraryPage"));
-const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
-const AnalyticsPage = lazy(() => import("@/pages/analytics/AnalyticsPage"));
-
-// Acquisition pages - standardized imports
-const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
-const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
-const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage"));
-const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage"));
-const CompliancePage = lazy(() => import("@/pages/acquisition/CompliancePage"));
-const SourceSelectionPage = lazy(() => import("@/pages/acquisition/SourceSelectionPage"));
-const ContractManagementPage = lazy(() => import("@/pages/acquisition/ContractManagementPage"));
-const LegalReviewPage = lazy(() => import("@/pages/acquisition/LegalReviewPage"));
-const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPage"));
-const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
-
-// Other specific pages
 const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
-const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const ValidationPage = lazy(() => import("@/pages/ValidationPage"));
-const ProposalsPage = lazy(() => import("@/pages/ProposalsPage"));
-const ProposalDetailPage = lazy(() => import("@/pages/ProposalDetailPage"));
 
-const appRoutes: RouteObject[] = [
+// Combine main routes
+const mainRoutes = [
   {
     path: "/",
     element: wrapWithLayout(HomePage, false)
@@ -96,72 +83,12 @@ const appRoutes: RouteObject[] = [
     element: wrapWithLayout(ComponentLibraryPage, false)
   },
   {
-    path: "/dashboard",
-    element: wrapWithLayout(DashboardPage)
-  },
-  {
-    path: "/analytics",
-    element: wrapWithLayout(AnalyticsPage)
-  },
-  {
-    path: "/market-research",
-    element: wrapWithLayout(MarketResearchPage)
-  },
-  {
-    path: "/document-control",
-    element: wrapWithLayout(DocumentControlPage)
-  },
-  {
-    path: "/solicitation-review",
-    element: wrapWithLayout(SolicitationReviewPage)
-  },
-  {
-    path: "/federal-acquisition",
-    element: wrapWithLayout(FederalAcquisitionPage)
-  },
-  {
-    path: "/compliance",
-    element: wrapWithLayout(CompliancePage)
-  },
-  {
-    path: "/source-selection",
-    element: wrapWithLayout(SourceSelectionPage)
-  },
-  {
-    path: "/contract-management",
-    element: wrapWithLayout(ContractManagementPage)
-  },
-  {
-    path: "/legal-review",
-    element: wrapWithLayout(LegalReviewPage)
-  },
-  {
-    path: "/small-business",
-    element: wrapWithLayout(SmallBusinessPage)
-  },
-  {
-    path: "/quality-assurance",
-    element: wrapWithLayout(QualityAssurancePage)
-  },
-  {
     path: "/knowledge-base",
     element: wrapWithLayout(KnowledgeBasePage)
   },
   {
-    path: "/profile",
-    element: wrapWithLayout(ProfilePage)
-  },
-  {
     path: "/validation",
     element: wrapWithLayout(ValidationPage)
-  },
-  {
-    path: "/proposals",
-    element: wrapWithLayout(ProposalsPage)
-  },
-  {
-    path: "/proposals/:id",
-    element: wrapWithLayout(ProposalDetailPage)
   },
   {
     path: "*",
@@ -173,8 +100,29 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<LoadingPage />}>
       <Routes>
-        {appRoutes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
+        {/* Main routes */}
+        {mainRoutes.map((route, index) => (
+          <Route key={`main-${index}`} path={route.path} element={route.element} />
+        ))}
+        
+        {/* Auth routes */}
+        {authRoutes.map((route, index) => (
+          <Route key={`auth-${index}`} path={route.path} element={route.element} />
+        ))}
+        
+        {/* Dashboard routes */}
+        {dashboardRoutes.map((route, index) => (
+          <Route key={`dashboard-${index}`} path={route.path} element={route.element} />
+        ))}
+        
+        {/* Acquisition routes */}
+        {acquisitionRoutes.map((route, index) => (
+          <Route key={`acquisition-${index}`} path={route.path} element={route.element} />
+        ))}
+        
+        {/* Settings routes */}
+        {settingsRoutes.map((route, index) => (
+          <Route key={`settings-${index}`} path={route.path} element={route.element} />
         ))}
       </Routes>
     </Suspense>
