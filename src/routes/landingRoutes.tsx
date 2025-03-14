@@ -9,7 +9,8 @@ import {
   ContactPage,
   HelpPage,
   PrivacyPage,
-  SitemapPage
+  SitemapPage,
+  NotFoundPage
 } from './lazyComponents';
 
 const landingRoutes = [
@@ -44,6 +45,10 @@ const landingRoutes = [
   {
     path: "/sitemap",
     element: wrapWithLayout(SitemapPage, false)
+  },
+  {
+    path: "*",
+    element: wrapWithLayout(NotFoundPage, false)
   }
 ];
 
