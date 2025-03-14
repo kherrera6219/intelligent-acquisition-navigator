@@ -27,3 +27,7 @@ const TooltipContent = React.forwardRef<
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+
+// Re-export our custom tooltip component as CustomTooltip
+// This ensures we have both shadcn compatibility and our custom tooltip
+export { Tooltip as CustomTooltip } from './tooltip/Tooltip';

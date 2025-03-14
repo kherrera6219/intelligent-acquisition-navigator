@@ -49,17 +49,15 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
       )}
       role="listitem"
     >
-      {IconComponent && typeof IconComponent === 'function' ? (
+      {IconComponent && (
         <div className={cn("p-2 rounded-full", getStatusColorClass())}>
-          {React.createElement(IconComponent as React.ComponentType, { 
-            className: "h-5 w-5"
-          })}
+          {React.isValidElement(IconComponent) ? (
+            IconComponent
+          ) : typeof IconComponent === 'function' ? (
+            <IconComponent className="h-5 w-5" />
+          ) : null}
         </div>
-      ) : IconComponent ? (
-        <div className={cn("p-2 rounded-full", getStatusColorClass())}>
-          {IconComponent}
-        </div>
-      ) : null}
+      )}
       
       <div className="flex-1 min-w-0">
         <h4 className="text-sm font-medium truncate">{title}</h4>
