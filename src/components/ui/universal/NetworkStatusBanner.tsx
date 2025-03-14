@@ -11,7 +11,7 @@ export const NetworkStatusBanner = () => {
   const { health, isChecking, checkHealth } = useSupabaseHealth();
   
   // Determine if Supabase connection is available - handle potential undefined properties
-  const supabaseConnected = health?.status === 'available';
+  const supabaseConnected = health?.isAvailable === true;
 
   // Only show banner if there's an issue or we're reconnecting
   if (isOnline && supabaseConnected && !isReconnecting) {
