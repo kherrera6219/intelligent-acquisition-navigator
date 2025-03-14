@@ -188,7 +188,7 @@ const MarketResearchPage = () => {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="w-[100px]">ID</TableHead>
+                            <TableHead>ID</TableHead>
                             <TableHead>Company</TableHead>
                             <TableHead>Sector</TableHead>
                             <TableHead>Location</TableHead>
