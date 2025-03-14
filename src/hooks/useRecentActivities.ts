@@ -68,17 +68,17 @@ const mockActivities: Activity[] = [
 const getActivityIcon = (category: ActivityCategory) => {
   switch (category) {
     case 'document':
-      return <FileText className="text-blue-500" />;
+      return { component: FileText, className: "text-blue-500" };
     case 'code':
-      return <Code className="text-green-500" />;
+      return { component: Code, className: "text-green-500" };
     case 'message':
-      return <MessageSquare className="text-purple-500" />;
+      return { component: MessageSquare, className: "text-purple-500" };
     case 'pull-request':
-      return <GitPullRequest className="text-orange-500" />;
+      return { component: GitPullRequest, className: "text-orange-500" };
     case 'calendar':
-      return <Calendar className="text-red-500" />;
+      return { component: Calendar, className: "text-red-500" };
     default:
-      return <FileText className="text-gray-500" />;
+      return { component: FileText, className: "text-gray-500" };
   }
 };
 
@@ -94,12 +94,15 @@ export const useRecentActivities = () => {
   // Apply filter to activities
   const filteredActivities = activities.filter(activity => 
     filter ? activity.category === filter : true
-  ).map(activity => ({
-    ...activity,
-    icon: getActivityIcon(activity.category as ActivityCategory),
-    status: Math.random() > 0.7 ? 'warning' : Math.random() > 0.4 ? 'success' : 'info',
-    timestamp: new Date(activity.timestamp) // Convert ISO string to Date object
-  }));
+  ).map(activity => {
+    const icon = getActivityIcon(activity.category as ActivityCategory);
+    return {
+      ...activity,
+      icon: icon.component,
+      status: Math.random() > 0.7 ? 'warning' : Math.random() > 0.4 ? 'success' : 'info',
+      timestamp: new Date(activity.timestamp) // Convert ISO string to Date object
+    };
+  });
 
   // Function to refresh activities
   const handleRefresh = async () => {
