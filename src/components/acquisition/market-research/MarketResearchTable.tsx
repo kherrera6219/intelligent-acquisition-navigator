@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody } from '@/components/ui/table';
+import { TableCell } from '@/components/ui/table-cell';
 
 export interface MarketResearchItem {
   id: string;
@@ -102,7 +103,7 @@ const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell className="text-center py-4" colSpan={5}>
+              <TableCell colSpan={5} className="text-center py-4">
                 No market research data found
               </TableCell>
             </TableRow>
