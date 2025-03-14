@@ -20,7 +20,7 @@ export const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 
 // Dashboard pages
 export const DashboardHomePage = lazy(() => import("@/pages/dashboard/DashboardHomePage"));
-export const AnalyticsPage = lazy(() => import("@/pages/analytics/AnalyticsPage"));
+export const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
 
 // Proposals pages
 export const ProposalsPage = lazy(() => import("@/pages/proposals/ProposalsPage"));

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 import { Container } from '@/components/ui/universal/Container';
@@ -6,12 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Check, Plus, AlertCircle, HelpCircle } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip";
 
 interface PricingPlan {
   name: string;
@@ -134,16 +128,9 @@ const PricingPage: React.FC = () => {
                       <span className={feature.included ? "text-gray-300" : "text-gray-500"}>
                         {feature.text}
                         {feature.tooltip && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <HelpCircle className="h-4 w-4 inline-block ml-1 opacity-70" />
-                              </TooltipTrigger>
-                              <TooltipContent className="bg-gray-700 text-white border-gray-600">
-                                <p>{feature.tooltip}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          <Tooltip content={feature.tooltip}>
+                            <HelpCircle className="h-4 w-4 inline-block ml-1 opacity-70" />
+                          </Tooltip>
                         )}
                       </span>
                     </li>
