@@ -7,34 +7,35 @@ import { MetricsChart } from '@/components/MetricsChart';
 import { useMetrics } from '@/hooks/useMetrics';
 import { Card } from '@/components/ui/universal/Card';
 import { GradientText } from '@/components/ui/universal/GradientText';
-
-// Sample metrics data for demonstration
-const sampleMetricsData = {
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-  datasets: [
-    {
-      label: 'Compliance Score',
-      data: [92, 95, 94, 98, 97, 99],
-      borderColor: 'rgba(75, 192, 192, 1)',
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-    },
-    {
-      label: 'Processing Time (days)',
-      data: [12, 10, 8, 7, 6, 5],
-      borderColor: 'rgba(153, 102, 255, 1)',
-      backgroundColor: 'rgba(153, 102, 255, 0.2)',
-    }
-  ]
-};
+import { performanceData } from '@/data/performanceData';
 
 const AnalyticsPage = () => {
   // In a real app, we would fetch actual metrics
   // const { data: metricsData, isLoading, error } = useMetrics();
   
+  // Prepare the data in the format expected by MetricsChart
+  const formattedData = {
+    labels: performanceData.map(item => item.month),
+    datasets: [
+      {
+        label: 'Compliance Score',
+        data: performanceData.map(item => item.compliance),
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      },
+      {
+        label: 'Processing Time (days)',
+        data: performanceData.map(item => item.efficiency),
+        borderColor: 'rgba(153, 102, 255, 1)',
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+      }
+    ]
+  };
+  
   return (
     <PageErrorBoundary>
       <ProtectedPageLayout 
-        title={<GradientText>Analytics Dashboard</GradientText>}
+        title="Analytics Dashboard"
         description="Monitor key performance indicators and metrics for your acquisition process."
       >
         <Container>
@@ -42,7 +43,7 @@ const AnalyticsPage = () => {
             <Col lg={8} className="mb-6">
               <Card variant="metal" className="p-6">
                 <h2 className="text-xl font-semibold mb-4">Performance Trends</h2>
-                <MetricsChart data={sampleMetricsData} />
+                <MetricsChart data={formattedData} />
               </Card>
             </Col>
             

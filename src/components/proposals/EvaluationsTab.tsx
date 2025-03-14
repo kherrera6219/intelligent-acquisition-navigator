@@ -21,7 +21,7 @@ export const EvaluationsTab: React.FC<EvaluationsTabProps> = ({
           {evaluations.map((evaluation) => (
             <Card key={evaluation.id} className="p-4">
               <div className="flex justify-between items-start mb-2">
-                <StarRating value={evaluation.rating} readOnly size="sm" />
+                <StarRating score={evaluation.rating} readOnly size="sm" />
                 <span className="text-sm text-gray-400">
                   {formatDate(evaluation.date || evaluation.createdAt)}
                 </span>

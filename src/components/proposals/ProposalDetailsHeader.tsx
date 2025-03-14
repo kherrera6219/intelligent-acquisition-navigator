@@ -72,7 +72,7 @@ const ProposalDetailsHeader: React.FC<ProposalDetailsHeaderProps> = ({
           {averageRating > 0 && (
             <div className="flex items-center gap-1">
               <span>Rating:</span>
-              <StarRating value={averageRating} readOnly size="sm" />
+              <StarRating score={averageRating} readOnly size="sm" />
               <span>({proposal.evaluations.length})</span>
             </div>
           )}

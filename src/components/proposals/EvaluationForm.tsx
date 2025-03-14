@@ -32,7 +32,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
           <Label htmlFor="rating">Rating</Label>
           <div className="mt-2">
             <StarRating 
-              value={rating} 
+              score={rating} 
               onChange={setRating} 
               size="md" 
             />
