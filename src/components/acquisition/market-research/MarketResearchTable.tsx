@@ -10,7 +10,6 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Pagination } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
 
 interface MarketResearchItem {
@@ -51,6 +50,8 @@ export const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
     }
   };
 
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
   return (
     <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
       <Table>
@@ -85,7 +86,7 @@ export const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell className="text-center py-8" colSpan={6}>
+              <TableCell colSpan={6} className="text-center py-8">
                 <div className="flex flex-col items-center justify-center text-gray-500">
                   <p>No market research data found</p>
                   <p className="text-sm mt-1">Try adjusting your filters</p>
@@ -97,11 +98,31 @@ export const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
       </Table>
 
       <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={Math.ceil(totalItems / itemsPerPage)}
-          onPageChange={onPageChange}
-        />
+        <nav className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-500">
+              Showing page {currentPage} of {totalPages}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage <= 1}
+            >
+              Previous
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage >= totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </nav>
       </div>
     </div>
   );

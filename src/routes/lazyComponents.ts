@@ -24,6 +24,6 @@ export const ValidationPage = lazy(() => import('@/pages/ValidationPage'));
 export const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardHomePage'));
 export const ProposalDetailPage = lazy(() => import('@/pages/proposals/ProposalDetailPage'));
 export const ProposalsPage = lazy(() => import('@/pages/proposals/ProposalsPage'));
-export const TexasAcquisitionPage = lazy(() => import('@/pages/TexasAcquisitionPage'));
-export const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage')); // Fixed import path
+export const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
 export const FederalAcquisitionPage = lazy(() => import('@/pages/acquisition/FederalAcquisitionPage'));
+export const TexasAcquisitionPage = lazy(() => import('@/pages/acquisition/TexasAcquisition'));

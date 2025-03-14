@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, BarChart2, FileText, Map, HelpCircle, GlobeLock, Book, Building, Shield, Settings } from 'lucide-react';
+import { ChevronDown, BarChart2, FileText, Map, HelpCircle, Book, Building, Shield, Settings } from 'lucide-react';
 
 interface MobileMenuProps {
   isMobileMenuOpen: boolean;
@@ -22,9 +22,9 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   // Consolidated menu items
   const mainMenuItems = [
     { label: 'Dashboard', href: '/dashboard', icon: BarChart2 },
-    { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
+    { label: 'Federal Acquisition', href: '/federal-acquisition', icon: Building },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Building },
-    { label: 'Market Research', href: '/market-research', icon: Building },
+    { label: 'Market Research', href: '/market-research', icon: FileText },
     { label: 'Knowledge Base', href: '/knowledge-base', icon: Book },
     { label: 'Compliance', href: '/compliance', icon: Shield },
     { label: 'Analytics', href: '/analytics', icon: BarChart2 },

@@ -8,7 +8,6 @@ import {
   HelpCircle,
   Map,
   BookOpen,
-  Scale,
   Building
 } from 'lucide-react';
 
@@ -40,13 +39,6 @@ export const navigationItems = [
     route: '/compliance',
     permission: 'VIEW_AUDIT_LOGS' as const,
     description: 'Monitor compliance and audit logs'
-  },
-  {
-    icon: Scale,
-    label: 'Legal Review',
-    route: '/legal-review',
-    permission: 'LEGAL_REVIEW' as const,
-    description: 'Review and approve legal documents'
   },
   { 
     icon: BarChart2, 
