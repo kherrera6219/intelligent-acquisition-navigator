@@ -14,22 +14,28 @@ const mockReports: ReportCardProps[] = [
     title: "Federal Acquisition Regulation Analysis",
     description: "Analysis of recent FAR updates and their impact on procurement processes",
     date: "2023-05-15",
-    status: "complete",
-    confidenceScore: 95
+    status: "completed",
+    confidenceScore: 95,
+    score: 95,
+    lastUpdated: "2023-05-15"
   },
   {
     title: "DFARS Compliance Review",
     description: "Evaluation of defense procurement compliance with current DFARS requirements",
     date: "2023-04-22",
-    status: "in-progress",
-    confidenceScore: 87
+    status: "review",
+    confidenceScore: 87,
+    score: 87,
+    lastUpdated: "2023-04-22"
   },
   {
     title: "Small Business Set-Aside Analysis",
     description: "Review of small business set-aside opportunities under federal regulations",
     date: "2023-03-10",
-    status: "draft",
-    confidenceScore: 74
+    status: "pending",
+    confidenceScore: 74,
+    score: 74,
+    lastUpdated: "2023-03-10"
   }
 ];
 

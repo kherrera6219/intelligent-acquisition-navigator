@@ -10,6 +10,8 @@ export interface ReportCardProps {
   status: 'pending' | 'completed' | 'review' | 'approved';
   confidenceScore?: number;
   lastUpdated?: string;
+  description?: string;
+  date?: string;
   className?: string;
   onClick?: () => void;
 }
