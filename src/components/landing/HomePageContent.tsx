@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { PrivacyNotice } from './PrivacyNotice';
 import { BackToTopButton } from '@/components/ui/navigation/BackToTopButton';
 import { HelpButton } from '@/components/ui/navigation/HelpButton';
-import { HomeHero } from './HomeHero';
+import { HeroSection } from './HeroSection';
 import { HomeFeatures } from './HomeFeatures';
 import { HomeCta } from './HomeCta';
 import { CTASection } from './CTASection';
@@ -34,7 +34,7 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
       <div className="flex flex-col w-full min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800">
         {/* Hero Section */}
         <section id="hero" className="w-full">
-          <HomeHero />
+          <HeroSection />
         </section>
 
         {/* Features Section */}

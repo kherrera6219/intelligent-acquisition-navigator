@@ -9,7 +9,7 @@ interface TableFooterProps {
 
 export const TableFooter: React.FC<TableFooterProps> = ({ children, className }) => {
   return (
-    <tfoot className={cn("bg-muted/50", className)}>
+    <tfoot className={cn("bg-muted/50 border-t font-medium", className)}>
       {children}
     </tfoot>
   );
