@@ -1,95 +1,76 @@
 
-import { addPendingRequest, getCachedResponse, cacheResponse } from '@/utils/offlineStorage';
+import { addPendingRequest } from './offlineStorage';
 
-interface OfflineOptions {
-  cacheKey?: string;
-  cacheMaxAge?: number;
-  offlinePriority?: number;
-  bypassCache?: boolean;
-  processOffline?: boolean;
-}
-
-/**
- * Enhanced fetch with offline support
- * - Caches successful responses
- * - Returns cached responses when offline
- * - Queues requests for later when offline
- */
+// Wrapper around fetch that tracks failed requests when offline
 export const offlineFetch = async (
-  url: RequestInfo,
-  options: RequestInit & { offlineOptions?: OfflineOptions } = {}
+  input: RequestInfo | URL,
+  init?: RequestInit
 ): Promise<Response> => {
-  const {
-    offlineOptions = {},
-    ...fetchOptions
-  } = options;
-
-  const {
-    cacheKey = typeof url === 'string' ? url : url.url,
-    cacheMaxAge = 3600000, // 1 hour default
-    offlinePriority = 0,
-    bypassCache = false,
-    processOffline = true
-  } = offlineOptions;
-
-  // Try to get from cache first (unless bypass is set)
-  if (!bypassCache) {
-    const cachedData = await getCachedResponse(cacheKey);
-    if (cachedData) {
-      // Return cached response
-      return new Response(JSON.stringify(cachedData.body), {
-        status: cachedData.status,
-        statusText: cachedData.statusText,
-        headers: cachedData.headers
-      });
-    }
-  }
-
   try {
-    // Try the actual network request
-    const response = await fetch(url, fetchOptions);
-    
-    // Only cache successful responses
-    if (response.ok) {
-      // Clone the response as it can only be consumed once
-      const clonedResponse = response.clone();
-      
-      // Cache the response data
-      const responseData = {
-        body: await clonedResponse.json(),
-        status: clonedResponse.status,
-        statusText: clonedResponse.statusText,
-        headers: Object.fromEntries(clonedResponse.headers.entries())
-      };
-      
-      await cacheResponse(cacheKey, responseData, cacheMaxAge);
-    }
-    
+    const response = await fetch(input, init);
     return response;
   } catch (error) {
-    // Assume it's a network error
-    console.error('Network request failed:', error);
-    
-    // Try to get from cache as a fallback
-    const cachedData = await getCachedResponse(cacheKey);
-    if (cachedData) {
-      // Return cached response with a custom header indicating it's from cache
-      return new Response(JSON.stringify(cachedData.body), {
-        status: cachedData.status,
-        statusText: cachedData.statusText,
-        headers: {
-          ...cachedData.headers,
-          'X-From-Cache': 'true'
-        }
+    // If fetch failed and we're offline, store the request for later
+    if (!navigator.onLine) {
+      const url = typeof input === 'string' ? input : input.url;
+      
+      await addPendingRequest({
+        url,
+        method: init?.method || 'GET',
+        body: init?.body ? JSON.parse(init.body.toString()) : undefined,
+        headers: init?.headers ? Object.fromEntries(new Headers(init.headers).entries()) : undefined
       });
+      
+      throw new Error('Request failed: you are offline. Request has been saved for later synchronization.');
     }
     
-    // If processOffline is true, queue the request for later processing
-    if (processOffline) {
-      await addPendingRequest(url, fetchOptions, offlinePriority);
+    throw error;
+  }
+};
+
+// For GET requests that should use cached data when offline
+export const fetchWithOfflineSupport = async <T>(
+  url: string,
+  options?: RequestInit & { 
+    cacheKey?: string;
+    fallbackData?: T;
+  }
+): Promise<T> => {
+  // Use the URL as the cache key if none is provided
+  const cacheKey = options?.cacheKey || url;
+  
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
     }
     
-    // No cached data and offline, throw error
-    throw new Error('Network request failed and no cached data available');
+    const data = await response.json();
+    
+    // Cache the successful response
+    localStorage.setItem(cacheKey, JSON.stringify({
+      data,
+      timestamp: Date.now()
+    }));
+    
+    return data;
+  } catch (error) {
+    // If we're offline, try to use cached data
+    if (!navigator.onLine) {
+      const cachedResponse = localStorage.getItem(cacheKey);
+      
+      if (cachedResponse) {
+        const { data } = JSON.parse(cachedResponse);
+        return data;
+      }
+      
+      // If we have fallback data, use it
+      if (options?.fallbackData) {
+        return options.fallbackData;
+      }
+    }
+    
+    // Re-throw the error if we can't handle it
+    throw error;
   }
 };

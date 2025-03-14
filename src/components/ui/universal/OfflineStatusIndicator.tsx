@@ -1,94 +1,92 @@
 
 import React from 'react';
-import { Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { WifiOff, Wifi, RefreshCw } from 'lucide-react';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
+import { Tooltip } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
 
 interface OfflineStatusIndicatorProps {
-  compact?: boolean;
-  showButton?: boolean;
+  className?: string;
+  showLabel?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({
-  compact = false,
-  showButton = false,
+  className = '',
+  showLabel = false,
+  size = 'md'
 }) => {
-  const { isOnline, reconnecting, supabaseConnected, lastSyncTime, lastOnlineTime } = useNetworkMonitor();
+  const { isOnline, isReconnecting, supabaseConnected, lastSyncTime } = useNetworkMonitor();
 
-  // Don't show anything if we're online and connected
-  if (isOnline && supabaseConnected && !reconnecting && compact) {
-    return null;
-  }
+  const getIconSize = () => {
+    switch (size) {
+      case 'sm': return 'h-3 w-3';
+      case 'lg': return 'h-5 w-5';
+      case 'md':
+      default: return 'h-4 w-4';
+    }
+  };
 
-  const getStatusText = () => {
-    if (!isOnline) {
-      return 'Offline';
+  const getFontSize = () => {
+    switch (size) {
+      case 'sm': return 'text-xs';
+      case 'lg': return 'text-base';
+      case 'md':
+      default: return 'text-sm';
     }
-    if (reconnecting) {
-      return 'Reconnecting...';
-    }
-    if (!supabaseConnected) {
-      return 'Connection limited';
-    }
+  };
+
+  const getLabelText = () => {
+    if (!isOnline) return 'Offline';
+    if (isReconnecting) return 'Reconnecting...';
+    if (!supabaseConnected) return 'Limited Connectivity';
     return 'Online';
   };
 
   const getTooltipText = () => {
     if (!isOnline) {
-      return 'You are currently offline. Changes will be saved locally and synced when you reconnect.';
+      return 'You are currently offline. Some features may be unavailable.';
     }
-    if (reconnecting) {
-      return 'Attempting to reconnect to the server...';
+    
+    if (isReconnecting) {
+      return 'Reconnecting to the server...';
     }
+    
     if (!supabaseConnected) {
-      return 'Connection to the database is limited. Some features may not work properly.';
+      return 'Connected to the internet, but unable to reach the server.';
     }
-    return `Online. Last synced: ${lastSyncTime ? format(lastSyncTime, 'MMM d, h:mm a') : 'Never'}`;
-  };
-
-  const getIcon = () => {
-    if (!isOnline) {
-      return <WifiOff className="h-4 w-4" />;
-    }
-    if (reconnecting) {
-      return <RefreshCw className="h-4 w-4 animate-spin" />;
-    }
-    if (!supabaseConnected) {
-      return <Wifi className="h-4 w-4 text-amber-500" />;
-    }
-    return <Wifi className="h-4 w-4 text-green-500" />;
+    
+    return lastSyncTime 
+      ? `Online. Last synchronized: ${format(lastSyncTime, 'MMM d, yyyy h:mm:ss a')}`
+      : 'Online. All systems operational.';
   };
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            className={`flex items-center space-x-2 ${
-              compact ? 'text-sm' : 'text-base p-2'
-            } ${!isOnline ? 'text-red-500' : reconnecting ? 'text-amber-500' : !supabaseConnected ? 'text-amber-500' : 'text-green-500'}`}
-          >
-            {getIcon()}
-            {!compact && <span>{getStatusText()}</span>}
-            {showButton && isOnline && !supabaseConnected && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="ml-2 h-6 w-6 p-0"
-                onClick={() => window.location.reload()}
-              >
-                <RefreshCw className="h-3 w-3" />
-                <span className="sr-only">Retry connection</span>
-              </Button>
-            )}
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          {getTooltipText()}
-        </TooltipContent>
+    <div className={`flex items-center gap-1 ${className}`}>
+      <Tooltip content={getTooltipText()}>
+        <div className="flex items-center">
+          {!isOnline ? (
+            <WifiOff className={`${getIconSize()} text-destructive`} />
+          ) : isReconnecting ? (
+            <RefreshCw className={`${getIconSize()} text-warning animate-spin`} />
+          ) : !supabaseConnected ? (
+            <Wifi className={`${getIconSize()} text-warning`} />
+          ) : (
+            <Wifi className={`${getIconSize()} text-success`} />
+          )}
+          
+          {showLabel && (
+            <span className={`ml-1 ${getFontSize()} ${
+              !isOnline ? 'text-destructive' : 
+              isReconnecting ? 'text-warning' : 
+              !supabaseConnected ? 'text-warning' : 
+              'text-success'
+            }`}>
+              {getLabelText()}
+            </span>
+          )}
+        </div>
       </Tooltip>
-    </TooltipProvider>
+    </div>
   );
 };

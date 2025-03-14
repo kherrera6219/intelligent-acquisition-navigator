@@ -1,44 +1,59 @@
 
-import { cacheResponse, getCachedResponse } from './offlineStorage';
+import { storeData, getData, hasData } from './offlineStorage';
+
+interface CachedFetchOptions {
+  cacheKey: string;
+  cacheMaxAge?: number;
+  bypassCache?: boolean;
+  data?: any; // For saving data to cache
+}
 
 /**
- * Performs a network request with caching capabilities
+ * Retrieves or stores data in cache (IndexedDB)
+ * Can be used either to get cached data or to store new data
  */
 export const cachedFetch = async <T>(
-  url: string,
-  options: RequestInit & {
-    cacheKey?: string;
-    cacheMaxAge?: number; // milliseconds
-    bypassCache?: boolean;
-  } = {}
-): Promise<T> => {
+  key: string,
+  options: CachedFetchOptions
+): Promise<T | null> => {
   const {
-    cacheKey = url,
+    cacheKey,
     cacheMaxAge = 3600000, // 1 hour default
     bypassCache = false,
-    ...fetchOptions
+    data
   } = options;
 
-  // Try to get from cache if not bypassing
-  if (!bypassCache) {
-    const cachedData = await getCachedResponse(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
+  // If data is provided, store it in cache
+  if (data) {
+    await storeData(cacheKey, {
+      data,
+      timestamp: Date.now()
+    });
+    return data as T;
   }
 
-  // Perform network request
-  const response = await fetch(url, fetchOptions);
-  
-  if (!response.ok) {
-    throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+  // If we're bypassing cache, return null
+  if (bypassCache) {
+    return null;
   }
-  
-  // Parse response
-  const data = await response.json();
-  
-  // Cache the response
-  await cacheResponse(cacheKey, data, cacheMaxAge);
-  
-  return data as T;
+
+  // Check if we have cached data
+  const hasCachedData = await hasData(cacheKey);
+  if (!hasCachedData) {
+    return null;
+  }
+
+  // Get cached data
+  const cached = await getData(cacheKey);
+  if (!cached) {
+    return null;
+  }
+
+  // Check if cache is still valid
+  const now = Date.now();
+  if (cached.timestamp && (now - cached.timestamp > cacheMaxAge)) {
+    return null; // Cache is expired
+  }
+
+  return cached.data as T;
 };

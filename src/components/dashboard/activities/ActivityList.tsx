@@ -2,6 +2,7 @@
 import React from 'react';
 import { ActivityItem } from './ActivityItem';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export interface Activity {
   id: string;
@@ -14,6 +15,7 @@ export interface Activity {
 
 interface ActivityListProps {
   activities: Activity[];
+  isLoading?: boolean;
   title?: string;
   emptyMessage?: string;
   className?: string;
@@ -22,6 +24,7 @@ interface ActivityListProps {
 
 export const ActivityList: React.FC<ActivityListProps> = ({
   activities,
+  isLoading = false,
   title = 'Recent Activities',
   emptyMessage = 'No recent activities',
   className = '',
@@ -29,28 +32,48 @@ export const ActivityList: React.FC<ActivityListProps> = ({
 }) => {
   const displayActivities = maxItems ? activities.slice(0, maxItems) : activities;
 
-  return (
-    <Card className={`p-4 ${className}`}>
-      <h3 className="text-lg font-medium mb-4">{title}</h3>
-      
-      {displayActivities.length === 0 ? (
+  if (isLoading) {
+    return (
+      <Card className={`p-4 ${className}`}>
+        <h3 className="text-lg font-medium mb-4">{title}</h3>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-start gap-3 p-3">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="space-y-2 flex-1">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    );
+  }
+
+  if (!isLoading && displayActivities.length === 0) {
+    return (
+      <Card className={`p-4 ${className}`}>
+        <h3 className="text-lg font-medium mb-4">{title}</h3>
         <div className="text-center py-8 text-muted-foreground">
           {emptyMessage}
         </div>
-      ) : (
-        <div className="space-y-2">
-          {displayActivities.map((activity, index) => (
-            <ActivityItem
-              key={activity.id}
-              icon={activity.icon}
-              title={activity.title}
-              description={activity.description}
-              timestamp={activity.timestamp}
-              status={activity.status}
-            />
-          ))}
-        </div>
-      )}
-    </Card>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-2" role="list" aria-label={title}>
+      {displayActivities.map((activity) => (
+        <ActivityItem
+          key={activity.id}
+          icon={activity.icon}
+          title={activity.title}
+          description={activity.description}
+          timestamp={activity.timestamp}
+          status={activity.status}
+        />
+      ))}
+    </div>
   );
 };

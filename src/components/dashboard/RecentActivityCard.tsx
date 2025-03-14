@@ -58,12 +58,10 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
     >
       {error && <ActivityError message={error} />}
       
-      <div className="ms-timeline" role="list" aria-label="Recent activities">
-        <ActivityList 
-          isLoading={isLoading} 
-          activities={filteredActivities} 
-        />
-      </div>
+      <ActivityList 
+        isLoading={isLoading} 
+        activities={filteredActivities} 
+      />
     </MsDashboardCard>
   );
 };

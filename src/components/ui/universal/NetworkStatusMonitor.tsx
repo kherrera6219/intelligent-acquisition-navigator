@@ -1,18 +1,27 @@
 
-import React from 'react';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
+import { NetworkStatusBanner } from './NetworkStatusBanner';
 
-export const NetworkStatusMonitor: React.FC = () => {
-  const { isOnline, isReconnecting, lastOnlineTime } = useNetworkMonitor();
+export const NetworkStatusMonitor = () => {
+  const { isOnline, isReconnecting, supabaseConnected } = useNetworkMonitor();
   
-  // This component is primarily for monitoring - it renders nothing visible
+  // Don't show the banner if all is well
+  if (isOnline && !isReconnecting && supabaseConnected) {
+    return null;
+  }
+  
   return (
-    <div className="hidden" aria-hidden="true">
-      <div id="network-status-data" 
-        data-is-online={isOnline.toString()} 
-        data-is-reconnecting={isReconnecting.toString()} 
-        data-last-online={lastOnlineTime?.toISOString() || ""}
-      />
-    </div>
+    <NetworkStatusBanner 
+      isOffline={!isOnline}
+      isReconnecting={isReconnecting}
+      message={
+        !isOnline 
+          ? "You're offline. Some features may be unavailable." 
+          : isReconnecting 
+            ? "Reconnecting to the server..." 
+            : "Limited connectivity. Some features may be unavailable."
+      }
+      variant={!isOnline ? 'destructive' : 'warning'}
+    />
   );
 };

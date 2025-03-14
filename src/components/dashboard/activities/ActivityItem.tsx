@@ -51,28 +51,22 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
       </div>
       <div className="flex flex-col items-end gap-1 flex-shrink-0">
         <TooltipProvider>
-          <Tooltip>
+          <Tooltip content={`Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`}>
             <TooltipTrigger asChild>
               <div className="flex items-center">
                 {getStatusIcon()}
               </div>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>Status: {status.charAt(0).toUpperCase() + status.slice(1)}</p>
-            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
         <TooltipProvider>
-          <Tooltip>
+          <Tooltip content={format(timestamp, 'MMM d, yyyy h:mm:ss a')}>
             <TooltipTrigger asChild>
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
                 <span>{format(timestamp, 'h:mm a')}</span>
               </div>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>{format(timestamp, 'MMM d, yyyy h:mm:ss a')}</p>
-            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
