@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Navigate } from 'react-router-dom';
 import { AppRoutes } from './AppRoutes';
 
 // Export the Router component for direct use in JSX contexts

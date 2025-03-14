@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
 import { ChevronDown, Home, FileText, Map, HelpCircle, GlobeLock, Flag } from 'lucide-react';
@@ -10,9 +10,11 @@ export const HeaderNavigation: React.FC = () => {
   const { userRole } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   
   // Main menu items for our dropdown
   const mainMenuItems = [
+    { label: 'Home', href: '/', icon: Home },
     { label: 'Main Dashboard', href: '/dashboard', icon: Home },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag },

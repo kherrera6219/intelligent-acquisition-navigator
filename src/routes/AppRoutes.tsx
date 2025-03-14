@@ -1,3 +1,4 @@
+
 import React, { Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 import { wrapWithLayout } from "./routeTypes";
@@ -44,6 +45,10 @@ const ProposalDetailPage = lazy(() => import("@/pages/ProposalDetailPage"));
 const appRoutes: RouteObject[] = [
   {
     path: "/",
+    element: wrapWithLayout(HomePage, false)
+  },
+  {
+    path: "/home",
     element: wrapWithLayout(HomePage, false)
   },
   {
