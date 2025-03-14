@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   ShieldCheck, BookOpen, Zap, Clock, BarChart3, FileText, 
@@ -166,5 +165,40 @@ export const featureTabs: FeatureTab[] = [
         icon: React.createElement(Clock, { className: "h-6 w-6 text-blue-500" })
       }
     ]
+  }
+];
+
+export const complianceFeatures = featureTabs.find(tab => tab.id === "compliance")?.features || [];
+export const knowledgeFeatures = featureTabs.find(tab => tab.id === "knowledge")?.features || [];
+export const analyticsFeatures = [
+  {
+    title: "Predictive Analytics",
+    description: "Forecast acquisition outcomes based on historical data and similar procurements.",
+    icon: React.createElement(BarChart3, { className: "h-6 w-6 text-blue-500" })
+  },
+  {
+    title: "Risk Assessment",
+    description: "Identify potential risks in your acquisition strategy with AI-powered analysis.",
+    icon: React.createElement(ShieldCheck, { className: "h-6 w-6 text-blue-500" })
+  },
+  {
+    title: "Market Intelligence",
+    description: "Gain insights into supplier capabilities, pricing trends, and market conditions.",
+    icon: React.createElement(LayoutGrid, { className: "h-6 w-6 text-blue-500" })
+  },
+  {
+    title: "Document Generation",
+    description: "Create compliant acquisition documents with AI assistance based on your requirements.",
+    icon: React.createElement(FileText, { className: "h-6 w-6 text-blue-500" })
+  },
+  {
+    title: "Intelligent Recommendations",
+    description: "Receive AI-powered suggestions for improving acquisition strategies and documents.",
+    icon: React.createElement(Zap, { className: "h-6 w-6 text-blue-500" })
+  },
+  {
+    title: "Anomaly Detection",
+    description: "Automatically identify unusual patterns or outliers in procurement data that may indicate issues.",
+    icon: React.createElement(CheckSquare, { className: "h-6 w-6 text-blue-500" })
   }
 ];

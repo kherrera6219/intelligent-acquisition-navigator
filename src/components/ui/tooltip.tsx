@@ -9,6 +9,7 @@ export interface TooltipProps {
   side?: 'top' | 'right' | 'bottom' | 'left';
   align?: 'start' | 'center' | 'end';
   className?: string;
+  delayDuration?: number;
 }
 
 const TooltipProvider = TooltipPrimitive.Provider;
@@ -31,9 +32,9 @@ const TooltipContent = React.forwardRef<
 ));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-const Tooltip = ({ content, children, side = 'top', align = 'center', className }: TooltipProps) => (
+const Tooltip = ({ content, children, side = 'top', align = 'center', className, delayDuration }: TooltipProps) => (
   <TooltipProvider>
-    <TooltipRoot>
+    <TooltipRoot delayDuration={delayDuration}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent side={side} align={align} className={className}>
         {content}

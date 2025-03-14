@@ -7,14 +7,19 @@ interface MsGradientTextProps {
   className?: string;
   gradient?: 'primary' | 'secondary' | 'accent' | 'success' | 'custom';
   customGradient?: string;
+  variant?: string; // Added variant prop for backward compatibility
 }
 
 export const MsGradientText: React.FC<MsGradientTextProps> = ({
   children,
   className,
   gradient = 'primary',
-  customGradient
+  customGradient,
+  variant
 }) => {
+  // If variant is provided, use it to determine gradient
+  const effectiveGradient = variant ? variant : gradient;
+  
   const gradients = {
     primary: 'from-blue-400 to-indigo-600',
     secondary: 'from-purple-400 to-pink-600',
@@ -27,7 +32,7 @@ export const MsGradientText: React.FC<MsGradientTextProps> = ({
     <span
       className={cn(
         'bg-clip-text text-transparent bg-gradient-to-r',
-        gradients[gradient],
+        gradients[effectiveGradient as keyof typeof gradients] || gradients.primary,
         className
       )}
     >

@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 import { Container } from '@/components/ui/universal/Container';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Check, Plus, AlertCircle, HelpCircle } from 'lucide-react';
+import { Check, Plus, AlertCircle, HelpCircle, InfoIcon } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -213,6 +212,12 @@ const PricingPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
+                <Tooltip content="These plans include unlimited users, priority support, and customized training">
+                  <div className="flex items-center">
+                    <InfoIcon className="h-4 w-4 mr-1 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">Enterprise plans include additional benefits</span>
+                  </div>
+                </Tooltip>
               </div>
             </div>
           </Card>

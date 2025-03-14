@@ -46,7 +46,7 @@ export const LandingHero = () => {
           
           {/* Main heading */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-            Transform <MsGradientText variant="primary">Acquisition Management</MsGradientText> with AI
+            Transform <MsGradientText gradient="primary">Acquisition Management</MsGradientText> with AI
           </h1>
           
           {/* Subtitle */}

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { Container, Row, Col } from '@/components/ui/universal/Grid';
-import { FlexColumn } from '@/components/ui/universal/Flexbox';
+import { Flex } from '@/components/ui/universal/Flexbox';
 
 export const HomeHero: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ export const HomeHero: React.FC = () => {
       <Container>
         <Row>
           <Col lg={6} className="mb-8 lg:mb-0">
-            <FlexColumn className="h-full justify-center">
+            <Flex direction="column" className="h-full justify-center">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
                 Intelligent Acquisition Navigator
               </h1>
@@ -30,7 +30,7 @@ export const HomeHero: React.FC = () => {
                   </Button>
                 </Link>
               </div>
-            </FlexColumn>
+            </Flex>
           </Col>
           <Col lg={6}>
             <div className="metallic-card p-6 rounded-xl">

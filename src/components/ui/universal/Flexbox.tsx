@@ -102,3 +102,19 @@ export const FlexBetween: React.FC<FlexBetweenProps> = ({
     </Flex>
   );
 };
+
+export const FlexColumn: React.FC<FlexProps> = ({ 
+  children, 
+  className,
+  ...props 
+}) => {
+  return (
+    <Flex
+      direction="column"
+      className={className}
+      {...props}
+    >
+      {children}
+    </Flex>
+  );
+};
