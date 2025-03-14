@@ -1,7 +1,12 @@
 
 import React from 'react';
 import { AlertCircle, InfoIcon } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 interface ComplianceInfoProps {
   items: Array<{
