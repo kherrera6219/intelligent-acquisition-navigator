@@ -12,6 +12,7 @@ export default function FeaturesPage() {
     <ExternalPageLayout 
       title="Features"
       description="Explore the comprehensive features of our acquisition knowledge platform."
+      showFooter={true}
     >
       <Container className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}

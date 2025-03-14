@@ -11,6 +11,7 @@ import { CTASection } from './CTASection';
 import { TestimonialsSection } from './TestimonialsSection';
 import { FeaturesSection } from './FeaturesSection';
 import { ComparisonTable } from '@/components/features/ComparisonTable';
+import { UniversalExternalFooter } from '@/components/layout/UniversalExternalFooter';
 
 interface HomePageContentProps {
   showPrivacyNotice: boolean;
@@ -71,6 +72,9 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
         <section id="additional-cta" className="w-full">
           <CTASection />
         </section>
+
+        {/* Universal External Footer */}
+        <UniversalExternalFooter />
 
         {/* Privacy Notice */}
         {showPrivacyNotice && (

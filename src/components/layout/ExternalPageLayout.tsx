@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExternalFooter } from './ExternalFooter';
+import { UniversalExternalFooter } from './UniversalExternalFooter';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { useThemeTransition } from '@/hooks/use-theme-transition';
 
@@ -54,7 +54,7 @@ export const ExternalPageLayout: React.FC<ExternalPageLayoutProps> = ({
           {children}
         </main>
         
-        {showFooter && <ExternalFooter />}
+        {showFooter && <UniversalExternalFooter />}
       </div>
     </ThemeProvider>
   );

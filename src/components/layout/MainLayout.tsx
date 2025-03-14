@@ -2,7 +2,7 @@
 import React, { PropsWithChildren, useState, useEffect } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { ExternalFooter } from './ExternalFooter';
+import { UniversalExternalFooter } from './UniversalExternalFooter';
 import { InternalFooter } from './InternalFooter';
 import { NetworkStatusMonitor } from '../ui/universal/NetworkStatusMonitor';
 import { PrivacyBanner } from '../ui/universal/PrivacyBanner';
@@ -165,7 +165,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         </main>
         
         {showFooter && (
-          forceExternalFooter ? <ExternalFooter /> : (isExternalRoute ? <ExternalFooter /> : <InternalFooter />)
+          forceExternalFooter ? <UniversalExternalFooter /> : (isExternalRoute ? <UniversalExternalFooter /> : <InternalFooter />)
         )}
         
         {shouldShowCookieConsent && <CookieConsent />}
