@@ -1,4 +1,3 @@
-
 import { lazy } from "react";
 
 // Lazily load pages for better initial load performance
@@ -14,3 +13,6 @@ export const ProposalsPage = lazy(() => import("../pages/ProposalsPage"));
 export const AnalyticsPage = lazy(() => import("../pages/AnalyticsPage"));
 export const KnowledgeBasePage = lazy(() => import("../pages/KnowledgeBasePage"));
 export const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
+
+// Add validation page import
+export const LazyValidationPage = lazy(() => import('../pages/ValidationPage'));

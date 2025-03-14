@@ -1,8 +1,12 @@
-
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
 import { wrapWithLayout } from "./routeTypes";
 import { lazy } from "react";
+import { Suspense } from "react";
+import { Routes, Route } from "react-router-dom";
+import { LoadingPage } from "@/components/LoadingPage";
+import { LazyValidationPage } from "@/pages/ValidationPage";
+import { LazyNotFoundPage } from "@/pages/NotFoundPage";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const AboutPage = lazy(() => import("@/pages/About"));
@@ -31,7 +35,7 @@ const LegalReviewPage = lazy(() => import("@/pages/acquisition/LegalReviewPage")
 const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPage"));
 const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
 const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
-const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
+const ProfilePage = lazy(() => import("@/pages/Profile"));
 
 const appRoutes: RouteObject[] = [
   {
@@ -148,4 +152,20 @@ const appRoutes: RouteObject[] = [
   }
 ];
 
-export default appRoutes;
+export function AppRoutes() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <Routes>
+        {appRoutes.map((route, index) => (
+          <Route key={index} {...route} />
+        ))}
+        <Route path="/validation" element={
+          <Suspense fallback={<LoadingPage />}>
+            <LazyValidationPage />
+          </Suspense>
+        } />
+        <Route path="*" element={<LazyNotFoundPage />} />
+      </Routes>
+    </Suspense>
+  );
+}
