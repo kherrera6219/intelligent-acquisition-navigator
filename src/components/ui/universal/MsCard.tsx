@@ -5,11 +5,13 @@ import { cn } from "@/lib/utils";
 interface MsCardProps {
   children: React.ReactNode;
   className?: string;
-  variant?: "default" | "primary" | "secondary" | "outline" | "elevated";
+  variant?: "default" | "primary" | "secondary" | "outline" | "elevated" | "glass" | "destructive";
   interactive?: boolean;
+  hoverable?: boolean;
   clickable?: boolean;
   onClick?: () => void;
   padding?: boolean | "none" | "sm" | "md" | "lg";
+  border?: boolean;
 }
 
 export const MsCard: React.FC<MsCardProps> = ({
@@ -17,16 +19,20 @@ export const MsCard: React.FC<MsCardProps> = ({
   className,
   variant = "default",
   interactive = false,
+  hoverable = false,
   clickable = false,
   onClick,
   padding = true,
+  border = true,
 }) => {
   const variantClasses = {
-    default: "ms-fluent-card",
-    primary: "ms-fluent-card border-primary/20",
-    secondary: "ms-fluent-card border-secondary/20",
+    default: "ms-fluent-card bg-card/40",
+    primary: "ms-fluent-card border-primary/20 bg-primary/5",
+    secondary: "ms-fluent-card border-secondary/20 bg-secondary/5",
     outline: "border border-gray-700 bg-transparent",
-    elevated: "ms-fluent-card ms-depth-16"
+    elevated: "ms-fluent-card ms-depth-16 bg-card/50",
+    glass: "backdrop-blur-md bg-white/5 border-white/10",
+    destructive: "ms-fluent-card border-destructive/20 bg-destructive/5"
   };
 
   const getPaddingClass = () => {
@@ -40,10 +46,13 @@ export const MsCard: React.FC<MsCardProps> = ({
     <div
       className={cn(
         "rounded-xl",
+        border && "border",
         variantClasses[variant],
         getPaddingClass(),
-        interactive && "transition-transform hover:-translate-y-1 hover:shadow-xl duration-200",
+        interactive && "transition-transform active:scale-[0.98]",
+        hoverable && "transition-all duration-200 hover:-translate-y-1 hover:shadow-xl",
         clickable && "cursor-pointer",
+        "animate-in fade-in-50 duration-300",
         className
       )}
       onClick={clickable ? onClick : undefined}

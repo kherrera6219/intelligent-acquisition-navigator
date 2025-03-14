@@ -20,8 +20,10 @@ export const ChecklistItem: React.FC<ChecklistItemProps> = memo(({
     className={cn(
       "p-3 sm:p-4 transition-all duration-300 cursor-pointer hover:bg-white/5",
       "transform hover:-translate-y-0.5 hover:shadow-lg border-2",
-      item.completed ? "bg-green-950/10 border-green-800/20 hover:border-green-500/30" : "hover:border-primary/30",
-      isCurrentItem && "border-primary"
+      item.completed ? 
+        "bg-green-950/10 border-green-800/20 hover:border-green-500/30 shadow-sm shadow-green-900/5" : 
+        "hover:border-primary/30 shadow-sm",
+      isCurrentItem && "border-primary shadow-md shadow-primary/10"
     )}
     onClick={onToggle}
   >
@@ -31,7 +33,7 @@ export const ChecklistItem: React.FC<ChecklistItemProps> = memo(({
         item.completed ? "text-green-500" : "text-primary"
       )}>
         {item.completed ? (
-          <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6" />
+          <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 animate-in zoom-in-50 duration-300" />
         ) : (
           <Circle className="h-5 w-5 sm:h-6 sm:w-6" />
         )}

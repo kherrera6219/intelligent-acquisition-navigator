@@ -1,51 +1,49 @@
 
-/* Microsoft Fluent UI inspired component styles */
+/* Microsoft Fluent UI inspired component styles - ShadCN/UI Themed */
 
 /* Button styles */
 .ms-button {
   @apply rounded-md font-medium transition-all duration-200 relative 
-         focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-1
+         focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1
          active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
 }
 
 .ms-button-primary {
-  @apply bg-blue-600 hover:bg-blue-700 text-white;
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20;
 }
 
 .ms-button-secondary {
-  @apply bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100;
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm shadow-secondary/20;
 }
 
 .ms-button-outline {
-  @apply border border-gray-300 bg-transparent hover:bg-gray-100 text-gray-800
-         dark:border-gray-600 dark:hover:bg-gray-800 dark:text-gray-200;
+  @apply border border-border bg-background hover:bg-secondary/10 text-foreground;
 }
 
 .ms-button-ghost {
-  @apply bg-transparent hover:bg-gray-100 text-gray-800
-         dark:hover:bg-gray-800 dark:text-gray-200;
+  @apply bg-transparent hover:bg-secondary/10 text-foreground;
 }
 
-.ms-button-danger {
-  @apply bg-red-600 hover:bg-red-700 text-white;
+.ms-button-destructive {
+  @apply bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm shadow-destructive/20;
 }
 
 /* Card styles */
 .ms-card {
-  @apply rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden
-         dark:border-gray-800 dark:bg-gray-900 transition-all duration-200;
+  @apply rounded-lg border border-border bg-card/50 text-card-foreground shadow-sm overflow-hidden
+         transition-all duration-200;
 }
 
 .ms-card-hover {
-  @apply hover:shadow-md hover:translate-y-[-2px] transition-all duration-200;
+  @apply hover:shadow-md hover:-translate-y-1 transition-all duration-200;
 }
 
 .ms-card-interactive {
-  @apply cursor-pointer hover:shadow-md hover:translate-y-[-2px] transition-all duration-200;
+  @apply cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 active:scale-[0.99];
 }
 
 .ms-card-header {
-  @apply p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900;
+  @apply p-4 border-b border-border;
 }
 
 .ms-card-body {
@@ -53,28 +51,28 @@
 }
 
 .ms-card-footer {
-  @apply p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900;
+  @apply p-4 border-t border-border;
 }
 
 /* Form elements */
 .ms-input {
-  @apply w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700
-         bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
-         focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500;
+  @apply w-full px-3 py-2 rounded-md border border-input
+         bg-background text-foreground
+         focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50;
 }
 
 .ms-input-error {
-  @apply border-red-500 focus:ring-red-500/50 focus:border-red-500;
+  @apply border-destructive focus:ring-destructive/50 focus:border-destructive/50;
 }
 
 .ms-label {
-  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+  @apply block text-sm font-medium text-foreground mb-1;
 }
 
 .ms-select {
-  @apply w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700
-         bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
-         focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500;
+  @apply w-full px-3 py-2 rounded-md border border-input
+         bg-background text-foreground
+         focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50;
 }
 
 /* Badge styles */
@@ -83,23 +81,23 @@
 }
 
 .ms-badge-primary {
-  @apply bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-300;
+  @apply bg-primary/10 text-primary border border-primary/20;
 }
 
 .ms-badge-success {
-  @apply bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300;
+  @apply bg-green-500/10 text-green-500 border border-green-500/20;
 }
 
 .ms-badge-warning {
-  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-300;
+  @apply bg-yellow-500/10 text-yellow-500 border border-yellow-500/20;
 }
 
 .ms-badge-danger {
-  @apply bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-300;
+  @apply bg-destructive/10 text-destructive border border-destructive/20;
 }
 
 .ms-badge-neutral {
-  @apply bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-300;
+  @apply bg-secondary/20 text-foreground border border-border;
 }
 
 /* Alert styles */
@@ -108,29 +106,28 @@
 }
 
 .ms-alert-info {
-  @apply bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300;
+  @apply bg-blue-500/10 text-blue-500 border border-blue-500/20;
 }
 
 .ms-alert-success {
-  @apply bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300;
+  @apply bg-green-500/10 text-green-500 border border-green-500/20;
 }
 
 .ms-alert-warning {
-  @apply bg-yellow-50 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300;
+  @apply bg-yellow-500/10 text-yellow-500 border border-yellow-500/20;
 }
 
 .ms-alert-danger {
-  @apply bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300;
+  @apply bg-destructive/10 text-destructive border border-destructive/20;
 }
 
 /* Panel styles */
 .ms-panel {
-  @apply rounded-lg border border-gray-200 bg-white p-4
-         dark:border-gray-800 dark:bg-gray-900;
+  @apply rounded-lg border border-border bg-card/50 p-4;
 }
 
 .ms-panel-header {
-  @apply flex justify-between items-center mb-4 pb-2 border-b border-gray-200 dark:border-gray-800;
+  @apply flex justify-between items-center mb-4 pb-2 border-b border-border;
 }
 
 .ms-panel-title {
@@ -147,7 +144,7 @@
   @apply bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20
          rounded-md transition-all duration-200 font-medium relative overflow-hidden
          focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-1
-         active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+         active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-sm;
 }
 
 .ms-fluent-button::before {
@@ -204,7 +201,7 @@
 }
 
 .ms-divider {
-  @apply h-px w-full bg-gray-200 dark:bg-gray-800 my-4;
+  @apply h-px w-full bg-border my-4;
 }
 
 .ms-container {
@@ -213,12 +210,16 @@
 
 /* Navigation elements */
 .ms-nav-item {
-  @apply text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white
+  @apply text-muted-foreground hover:text-foreground
          transition-colors py-1 px-2 rounded;
 }
 
 .ms-nav-item-active {
-  @apply bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white font-medium;
+  @apply bg-secondary/50 text-foreground font-medium;
+}
+
+.ms-nav-item-inactive {
+  @apply text-muted-foreground hover:text-foreground hover:bg-secondary/30;
 }
 
 /* Page specific */
@@ -231,7 +232,7 @@
 }
 
 .ms-content-card {
-  @apply bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10;
+  @apply bg-card/20 backdrop-blur-sm rounded-lg p-6 border border-border/50 shadow-sm;
 }
 
 /* Dashboard components */
