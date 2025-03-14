@@ -7,13 +7,15 @@ interface ContainerProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   as?: React.ElementType;
+  id?: string;
 }
 
 export const Container: React.FC<ContainerProps> = ({
   children,
   className,
   size = 'lg',
-  as: Component = 'div'
+  as: Component = 'div',
+  id
 }) => {
   const sizeClasses = {
     sm: 'max-w-3xl',
@@ -26,6 +28,7 @@ export const Container: React.FC<ContainerProps> = ({
 
   return (
     <Component 
+      id={id}
       className={cn(
         'mx-auto px-4 sm:px-6 lg:px-8',
         sizeClasses[size],

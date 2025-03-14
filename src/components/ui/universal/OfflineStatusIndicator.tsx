@@ -1,65 +1,81 @@
 
 import React from 'react';
-import { WifiOff, Wifi, RefreshCw } from 'lucide-react';
+import { Wifi, WifiOff, Loader } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface OfflineStatusIndicatorProps {
   className?: string;
-  showLabel?: boolean;
   compact?: boolean;
-  iconOnly?: boolean;
 }
 
 export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({
   className,
-  showLabel = true,
-  compact = false,
-  iconOnly = false
+  compact = false
 }) => {
-  const { isOnline, reconnecting } = useNetworkMonitor();
+  const { isOnline, isReconnecting, lastOnlineTime } = useNetworkMonitor();
   
-  const iconSize = compact ? 'h-3 w-3' : 'h-4 w-4';
-  const baseClasses = 'inline-flex items-center gap-1.5 rounded-full';
-  const variantClasses = isOnline
-    ? 'text-green-400'
-    : 'text-red-400';
-  
-  // If iconOnly, just render the icon
-  if (iconOnly) {
-    if (reconnecting) {
-      return <RefreshCw className={cn(iconSize, 'text-yellow-400 animate-spin', className)} aria-label="Reconnecting" />;
+  const statusIcon = () => {
+    if (isReconnecting) {
+      return <Loader className="h-4 w-4 text-yellow-500 animate-spin" aria-hidden="true" />;
     }
     
-    return isOnline
-      ? <Wifi className={cn(iconSize, 'text-green-400', className)} aria-label="Online" />
-      : <WifiOff className={cn(iconSize, 'text-red-400', className)} aria-label="Offline" />;
-  }
+    if (isOnline) {
+      return <Wifi className="h-4 w-4 text-green-500" aria-hidden="true" />;
+    }
+    
+    return <WifiOff className="h-4 w-4 text-red-500" aria-hidden="true" />;
+  };
   
-  const containerClasses = cn(
-    baseClasses,
-    variantClasses,
-    compact ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-sm',
-    className
-  );
+  const statusText = () => {
+    if (isReconnecting) {
+      return "Reconnecting...";
+    }
+    
+    if (isOnline) {
+      return "Online";
+    }
+    
+    return "Offline";
+  };
   
-  // If reconnecting, show that state
-  if (reconnecting) {
-    return (
-      <div className={cn(containerClasses, 'text-yellow-400 bg-yellow-500/10')} role="status">
-        <RefreshCw className={cn(iconSize, 'animate-spin')} aria-hidden="true" />
-        {showLabel && <span>Reconnecting</span>}
-      </div>
-    );
-  }
+  const tooltipText = () => {
+    if (isReconnecting) {
+      return "Trying to reconnect to the network...";
+    }
+    
+    if (isOnline) {
+      return "Connected to the network";
+    }
+    
+    if (lastOnlineTime) {
+      return `Offline. Last connected: ${lastOnlineTime.toLocaleString()}`;
+    }
+    
+    return "Offline. No recent connection.";
+  };
   
   return (
-    <div className={cn(containerClasses, isOnline ? 'bg-green-500/10' : 'bg-red-500/10')} role="status">
-      {isOnline 
-        ? <Wifi className={iconSize} aria-hidden="true" />
-        : <WifiOff className={iconSize} aria-hidden="true" />
-      }
-      {showLabel && <span>{isOnline ? 'Online' : 'Offline'}</span>}
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          className={cn(
+            "flex items-center gap-2",
+            isOnline ? "network-status-online" : "network-status-offline",
+            isReconnecting && "network-status-reconnecting",
+            className
+          )}
+          aria-live="polite"
+          role="status"
+        >
+          {statusIcon()}
+          {!compact && <span className="text-sm">{statusText()}</span>}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        <p>{tooltipText()}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 };

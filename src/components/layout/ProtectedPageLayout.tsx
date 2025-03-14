@@ -53,25 +53,27 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
         />
       )}
       
-      {withErrorBoundary ? (
-        <div className="network-error-handler">
-          <div className="flex items-center justify-between mb-4">
-            {title && <h1 className="text-2xl font-bold">{title}</h1>}
-            <OfflineStatusIndicator compact />
+      <main id="main-content" tabIndex={-1}>
+        {withErrorBoundary ? (
+          <div className="network-error-handler">
+            <div className="flex items-center justify-between mb-4">
+              {title && <h1 className="text-2xl font-bold">{title}</h1>}
+              <OfflineStatusIndicator compact />
+            </div>
+            {description && <p className="text-muted-foreground mb-6">{description}</p>}
+            {children}
           </div>
-          {description && <p className="text-muted-foreground mb-6">{description}</p>}
-          {children}
-        </div>
-      ) : (
-        <>
-          <div className="flex items-center justify-between mb-4">
-            {title && <h1 className="text-2xl font-bold">{title}</h1>}
-            <OfflineStatusIndicator compact />
-          </div>
-          {description && <p className="text-muted-foreground mb-6">{description}</p>}
-          {children}
-        </>
-      )}
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-4">
+              {title && <h1 className="text-2xl font-bold">{title}</h1>}
+              <OfflineStatusIndicator compact />
+            </div>
+            {description && <p className="text-muted-foreground mb-6">{description}</p>}
+            {children}
+          </>
+        )}
+      </main>
     </AppLayout>
   );
 };

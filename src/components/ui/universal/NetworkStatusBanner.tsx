@@ -1,52 +1,52 @@
 
 import React from 'react';
-import { AlertCircle, Wifi, WifiOff } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { AlertCircle, WifiOff, Loader } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useNetworkMonitor } from './NetworkMonitorProvider';
 
-export interface NetworkStatusBannerProps {
+interface NetworkStatusBannerProps {
   isOffline?: boolean;
   isReconnecting?: boolean;
-  message?: string;
-  actionLabel?: string;
-  onAction?: () => void;
-  isLoading?: boolean;
-  variant?: "default" | "destructive";
+  className?: string;
 }
 
 export const NetworkStatusBanner: React.FC<NetworkStatusBannerProps> = ({
-  isOffline,
-  isReconnecting,
-  message,
-  actionLabel,
-  onAction,
-  isLoading = false,
-  variant = "destructive"
+  isOffline: propIsOffline,
+  isReconnecting: propIsReconnecting,
+  className
 }) => {
-  const statusMessage = message || (isOffline ? 'You are currently offline.' : (isReconnecting ? 'Reconnecting...' : ''));
-  
-  // Only render if there's a message to show
-  if (!statusMessage && !isOffline && !isReconnecting) return null;
+  // Use props if provided, otherwise get from context
+  const networkContext = useNetworkMonitor();
+  const isOffline = propIsOffline !== undefined ? propIsOffline : !networkContext.isOnline;
+  const isReconnecting = propIsReconnecting !== undefined ? propIsReconnecting : networkContext.isReconnecting;
+
+  if (!isOffline) {
+    return null;
+  }
 
   return (
-    <Alert variant={variant} className="mb-4" role="alert">
-      <div className="flex items-center gap-2">
-        {isOffline ? <WifiOff className="h-4 w-4" /> : 
-         isReconnecting ? <Wifi className="h-4 w-4 animate-pulse" /> : 
-         <AlertCircle className="h-4 w-4" />}
-        <AlertDescription className="flex-grow">{statusMessage}</AlertDescription>
-        {actionLabel && onAction && (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={onAction}
-            disabled={isLoading}
-            className="ml-2"
-          >
-            {isLoading ? "Loading..." : actionLabel}
-          </Button>
+    <div 
+      className={cn(
+        "fixed top-0 left-0 w-full z-50 p-2 text-center bg-red-700 text-white",
+        isReconnecting && "bg-yellow-700",
+        className
+      )}
+      role="alert"
+      aria-live="assertive"
+    >
+      <div className="flex items-center justify-center gap-2">
+        {isReconnecting ? (
+          <>
+            <Loader className="animate-spin h-4 w-4" aria-hidden="true" />
+            <span>Reconnecting to network...</span>
+          </>
+        ) : (
+          <>
+            <WifiOff className="h-4 w-4" aria-hidden="true" />
+            <span>You are offline. Some features may be unavailable.</span>
+          </>
         )}
       </div>
-    </Alert>
+    </div>
   );
 };
