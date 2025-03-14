@@ -7,6 +7,7 @@ import { useSessionState } from '@/hooks/useSessionState';
 import { useSessionManagement } from '@/hooks/useSessionManagement';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 import { supabase } from '@/integrations/supabase/client';
+import { devConfig } from '@/config/devConfig';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { 
@@ -37,12 +38,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   
   const { isOnline } = useNetworkMonitor();
 
-  // Use the session management hook
+  // Use the session management hook if not in development mode
   useSessionManagement(
     signOut,
     lastActivity,
     SESSION_DURATION,
-    showSessionWarning
+    devConfig.DISABLE_SESSION_TIMEOUT ? false : showSessionWarning
   );
 
   useEffect(() => {
@@ -68,18 +69,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         user,
         isLoading,
-        isAuthenticated,
+        isAuthenticated: devConfig.BYPASS_AUTH ? true : isAuthenticated, // Always return true in dev mode
         login,
         signup,
         signOut,
-        userRole,
-        isAuthorized,
+        userRole: devConfig.BYPASS_AUTH ? 'admin' : userRole, // Assume admin role in dev mode
+        isAuthorized: devConfig.BYPASS_AUTH ? () => true : isAuthorized, // Always return true in dev mode
         resendVerificationEmail: handleResendVerificationEmail,
         resetPassword,
         updatePassword,
         isProcessing,
         sessionTimeRemaining,
-        showSessionWarning,
+        showSessionWarning: devConfig.DISABLE_SESSION_TIMEOUT ? false : showSessionWarning,
         refreshSession,
         isOnline
       }}

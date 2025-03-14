@@ -7,6 +7,7 @@ import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { SessionTimeoutWarning } from "@/components/auth/SessionTimeoutWarning";
 import { PageLoader } from "@/components/ui/universal/PageLoader";
 import { SkipLinks } from "@/components/ui/universal/SkipLinks";
+import { devConfig } from "@/config/devConfig";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -20,6 +21,22 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
   if (isLoading) {
     return <PageLoader message="Loading..." />;
+  }
+
+  // Skip authentication in development mode
+  if (devConfig.BYPASS_AUTH) {
+    return (
+      <>
+        <SkipLinks />
+        {devConfig.SHOW_DEV_INDICATORS && (
+          <div className="bg-yellow-500/20 border-y border-yellow-500/30 p-2 text-center text-sm text-yellow-800 dark:text-yellow-200">
+            <strong>Development Mode:</strong> Authentication checks are disabled
+          </div>
+        )}
+        <NetworkStatusBanner />
+        {children}
+      </>
+    );
   }
 
   if (!isAuthenticated) {
@@ -55,7 +72,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
       <SkipLinks />
       <NetworkStatusBanner />
       <VerificationBanner />
-      <SessionTimeoutWarning />
+      {!devConfig.DISABLE_SESSION_TIMEOUT && <SessionTimeoutWarning />}
       {children}
     </>
   );
