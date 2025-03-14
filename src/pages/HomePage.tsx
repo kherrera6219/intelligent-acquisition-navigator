@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 import { HomePageContent } from '@/components/landing/HomePageContent';
 
 const HomePage: React.FC = () => {
@@ -31,18 +30,13 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <ExternalPageLayout 
-      title="Home" 
-      description="Discover how our AI-powered acquisition management platform can streamline your procurement process."
-    >
-      <HomePageContent
-        showPrivacyNotice={showPrivacyNotice}
-        setShowPrivacyNotice={setShowPrivacyNotice}
-        showBackToTop={showBackToTop}
-        isFirstVisit={isFirstVisit}
-        scrollToTop={scrollToTop}
-      />
-    </ExternalPageLayout>
+    <HomePageContent
+      showPrivacyNotice={showPrivacyNotice}
+      setShowPrivacyNotice={setShowPrivacyNotice}
+      showBackToTop={showBackToTop}
+      isFirstVisit={isFirstVisit}
+      scrollToTop={scrollToTop}
+    />
   );
 };
 
