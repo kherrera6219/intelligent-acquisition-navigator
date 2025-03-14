@@ -4,6 +4,14 @@
  * This helps style focus states differently for keyboard vs. mouse users
  */
 
+// Used to check if keyboard navigation is being used
+export function isKeyboardUser(): boolean {
+  // Only run in the browser
+  if (typeof document === 'undefined') return false;
+  
+  return document.body.classList.contains('keyboard-user');
+}
+
 export function initKeyboardNavigationDetector(): void {
   // Only run in the browser
   if (typeof document === 'undefined') return;
@@ -32,11 +40,13 @@ export function initKeyboardNavigationDetector(): void {
   // Initialize the event listener
   window.addEventListener('keydown', handleFirstTab);
 
-  // Clean up function if needed
-  return () => {
+  // Clean up function
+  const cleanup = () => {
     window.removeEventListener('keydown', handleFirstTab);
     window.removeEventListener('mousedown', handleMouseDown);
   };
+  
+  return cleanup;
 }
 
 // Auto-initialize when imported

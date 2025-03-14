@@ -115,7 +115,11 @@ export function NetworkErrorHandler({
   if (!isOnline) {
     return (
       <>
-        <Card className={`p-4 border border-yellow-500/20 bg-yellow-500/5 ${positionClasses} ${className}`} role="alert" aria-live="assertive">
+        <div 
+          className={`p-4 border border-yellow-500/20 bg-yellow-500/5 ${positionClasses} ${className} rounded-lg shadow-sm`}
+          role="alert" 
+          aria-live="assertive"
+        >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <WifiOff className="h-5 w-5 text-yellow-500" aria-hidden="true" />
@@ -136,7 +140,7 @@ export function NetworkErrorHandler({
               <span>Try Again</span>
             </Button>
           </div>
-        </Card>
+        </div>
         {children}
       </>
     );
@@ -145,7 +149,11 @@ export function NetworkErrorHandler({
   if (errorMessage) {
     return (
       <>
-        <Card className={`p-4 border border-red-500/20 bg-red-500/5 ${positionClasses} ${className}`} role="alert" aria-live="assertive">
+        <div 
+          className={`p-4 border border-red-500/20 bg-red-500/5 ${positionClasses} ${className} rounded-lg shadow-sm`}
+          role="alert"
+          aria-live="assertive"
+        >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 text-red-500" aria-hidden="true" />
@@ -173,7 +181,7 @@ export function NetworkErrorHandler({
               </Button>
             )}
           </div>
-        </Card>
+        </div>
         {children}
       </>
     );

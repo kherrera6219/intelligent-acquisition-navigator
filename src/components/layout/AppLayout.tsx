@@ -4,6 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 import { NavigationSidebar } from './NavigationSidebar';
+import { SkipLinks } from '@/components/ui/universal/SkipLinks';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -16,7 +17,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 }) => {
   return (
     <div className="ms-app-layout min-h-screen">
-      <Header className="ms-app-header" />
+      <SkipLinks />
+      <Header />
       
       {showSidebar && (
         <aside className="ms-app-sidebar" id="navigation">

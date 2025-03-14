@@ -8,14 +8,26 @@ interface ProtectedPageLayoutProps {
   children: React.ReactNode;
   showSidebar?: boolean;
   title?: string;
+  description?: string; // Add description prop
   withErrorBoundary?: boolean;
+  isLoading?: boolean;
+  error?: Error | null;
+  breadcrumbs?: Array<{label: string; href: string}>;
+  action?: React.ReactNode;
+  fullWidth?: boolean;
+  backLink?: {label: string; href: string};
+  withCard?: boolean;
+  tags?: Array<{label: string; color: string}>;
 }
 
 export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   children,
   showSidebar = true,
   title,
-  withErrorBoundary = true
+  description,
+  withErrorBoundary = true,
+  // We're not using the other props in this component, but they're defined
+  // in the interface for type safety with page components
 }) => {
   React.useEffect(() => {
     // Update document title if provided
@@ -32,6 +44,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
             {title && <h1 className="text-2xl font-bold">{title}</h1>}
             <OfflineStatusIndicator compact />
           </div>
+          {description && <p className="text-muted-foreground mb-6">{description}</p>}
           {children}
         </NetworkErrorHandler>
       ) : (
@@ -40,6 +53,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
             {title && <h1 className="text-2xl font-bold">{title}</h1>}
             <OfflineStatusIndicator compact />
           </div>
+          {description && <p className="text-muted-foreground mb-6">{description}</p>}
           {children}
         </>
       )}

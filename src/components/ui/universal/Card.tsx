@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from "@/lib/utils";
 
-interface CardProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
   interactive?: boolean;
@@ -14,7 +14,7 @@ interface CardProps {
   textColor?: 'default' | 'black';
 }
 
-export const Card: React.FC<CardProps> = ({
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(({
   children,
   className,
   interactive = false,
@@ -24,7 +24,8 @@ export const Card: React.FC<CardProps> = ({
   variant = 'default',
   padding = 'md',
   textColor = 'default',
-}) => {
+  ...props
+}, ref) => {
   const variantClasses = {
     default: "bg-secondary/50 border-border",
     glass: "bg-white/5 backdrop-blur-sm border-white/10",
@@ -57,6 +58,7 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <div
+      ref={ref}
       className={cn(
         "rounded-lg border",
         getPaddingClass(),
@@ -75,10 +77,13 @@ export const Card: React.FC<CardProps> = ({
         className
       )}
       onClick={onClick}
-      role={interactive ? "button" : undefined}
-      tabIndex={interactive ? 0 : undefined}
+      role={interactive ? "button" : props.role}
+      tabIndex={interactive ? 0 : props.tabIndex}
+      {...props}
     >
       {children}
     </div>
   );
-};
+});
+
+Card.displayName = "Card";
