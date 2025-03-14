@@ -21,8 +21,8 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
   <Link to={href} className="block h-full">
     <Card 
       variant="glass" 
-      hoverable 
-      className="h-full flex flex-col"
+      hoverable={true}
+      className="h-full flex flex-col p-4"
     >
       <div className={`w-12 h-12 rounded-full bg-white/10 ${color} flex items-center justify-center mb-4`}>
         <Icon className="h-6 w-6" />

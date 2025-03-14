@@ -5,8 +5,8 @@ interface MsFluentDashboardLayoutProps {
   children: ReactNode;
   title: string;
   description?: string;
-  header: ReactNode;
-  footer: ReactNode;
+  header?: ReactNode;
+  footer?: ReactNode;
   sidebar?: ReactNode;
 }
 
@@ -20,7 +20,7 @@ export const MsFluentDashboardLayout: React.FC<MsFluentDashboardLayoutProps> = (
 }) => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
+      {/* Header (optional) */}
       {header}
       
       {/* Main Content */}
@@ -47,7 +47,7 @@ export const MsFluentDashboardLayout: React.FC<MsFluentDashboardLayoutProps> = (
         </main>
       </div>
       
-      {/* Footer */}
+      {/* Footer (optional) */}
       {footer}
     </div>
   );

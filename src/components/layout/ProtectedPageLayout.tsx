@@ -1,18 +1,22 @@
 
 import React, { ReactNode } from 'react';
-import { Card } from '@/components/ui/universal/Card';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/ui/universal/Breadcrumbs';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
-import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
+import { cn } from '@/lib/utils';
 
-interface ProtectedPageLayoutProps {
+export interface ProtectedPageLayoutProps {
   children: ReactNode;
   title: string;
   description?: string;
   isLoading?: boolean;
-  error?: Error | null;
   action?: ReactNode;
+  fullWidth?: boolean;
   breadcrumbs?: BreadcrumbItem[];
+  backLink?: {
+    label: string;
+    href: string;
+  };
 }
 
 export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
@@ -20,41 +24,40 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   title,
   description,
   isLoading = false,
-  error = null,
   action,
-  breadcrumbs
+  fullWidth = false,
+  breadcrumbs,
+  backLink
 }) => {
   return (
-    <div className="px-6 py-4 max-w-7xl mx-auto">
-      <NetworkStatusBanner />
-      
-      {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-      
-      <header className="mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <AppLayout>
+      <div className={cn("py-4", !fullWidth && "container mx-auto")}>
+        {/* Breadcrumbs */}
+        {breadcrumbs && breadcrumbs.length > 0 && (
+          <Breadcrumbs items={breadcrumbs} className="mb-6" />
+        )}
+        
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-balance">{title}</h1>
-            {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
+            <h1 className="text-2xl font-semibold text-foreground">{title}</h1>
+            {description && (
+              <p className="text-muted-foreground mt-1">{description}</p>
+            )}
           </div>
           
           {action && (
-            <div className="flex-shrink-0">
-              {action}
-            </div>
+            <div className="flex-shrink-0">{action}</div>
           )}
         </div>
-      </header>
-      
-      {isLoading ? (
-        <LoadingState message="Loading content..." className="min-h-[300px]" />
-      ) : error ? (
-        <Card className="p-6 border-destructive/30 bg-destructive/10">
-          <h2 className="text-lg font-medium mb-2">Error</h2>
-          <p className="text-sm text-muted-foreground">{error.message}</p>
-        </Card>
-      ) : (
-        children
-      )}
-    </div>
+        
+        {/* Page Content */}
+        {isLoading ? (
+          <LoadingState className="my-12" />
+        ) : (
+          children
+        )}
+      </div>
+    </AppLayout>
   );
 };

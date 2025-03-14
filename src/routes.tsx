@@ -1,348 +1,208 @@
 import React from 'react';
-import { createBrowserRouter, Outlet } from 'react-router-dom';
-import { ProtectedPageLayout } from './components/layout/ProtectedPageLayout';
-import { ExternalPageLayout } from './components/layout/ExternalPageLayout';
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import { AppRoutes } from './routes/AppRoutes';
+import { Navigate, RouteObject } from 'react-router-dom';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 
-// Simple wrapper for public routes
-const PublicWrapper = () => {
-  return <Outlet />;
-};
+// Lazy load pages for better performance
+const HomePage = React.lazy(() => import('@/pages/HomePage'));
+const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
+const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
+const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'));
+const ForgotPasswordPage = React.lazy(() => import('@/pages/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('@/pages/ResetPasswordPage'));
+const NotFoundPage = React.lazy(() => import('@/pages/NotFoundPage'));
+const ProposalsPage = React.lazy(() => import('@/pages/ProposalsPage'));
+const ProposalDetailPage = React.lazy(() => import('@/pages/ProposalDetailPage'));
+const DocumentsPage = React.lazy(() => import('@/pages/DocumentsPage'));
+const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
+const UserProfilePage = React.lazy(() => import('@/pages/UserProfilePage'));
+const KnowledgeBasePage = React.lazy(() => import('@/pages/KnowledgeBasePage'));
+const FederalKnowledgeBasePage = React.lazy(() => import('@/pages/FederalKnowledgeBasePage'));
+const TexasAcquisition = React.lazy(() => import('@/pages/acquisition/TexasAcquisition'));
+const ChatPage = React.lazy(() => import('@/pages/ChatPage'));
+const FederalAcquisitionPage = React.lazy(() => import('@/pages/acquisition/FederalAcquisitionPage'));
+const ContractManagementPage = React.lazy(() => import('@/pages/acquisition/ContractManagementPage'));
+const MarketResearchPage = React.lazy(() => import('@/pages/acquisition/MarketResearchPage'));
+const SourceSelectionPage = React.lazy(() => import('@/pages/acquisition/SourceSelectionPage'));
+const CompliancePage = React.lazy(() => import('@/pages/acquisition/CompliancePage'));
+const TexasAcquisitionPage = React.lazy(() => import('@/pages/TexasAcquisitionPage'));
 
-// Create browser router with proper route configuration
-export const browserRouter = createBrowserRouter([
+export const routes: RouteObject[] = [
+  // Public routes
   {
-    path: "/",
-    element: <PublicWrapper />,
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: HomePage } = await import('./pages/HomePage');
-          return { Component: HomePage };
-        }
-      },
-      {
-        path: "auth/*",
-        async lazy() {
-          const { default: AuthenticationPage } = await import('./pages/auth/AuthenticationPage');
-          return { 
-            Component: () => (
-              <ExternalPageLayout 
-                showHeader={false} 
-                showFooter={false}
-              >
-                <AuthenticationPage />
-              </ExternalPageLayout>
-            )
-          };
-        }
-      },
-      {
-        path: "about",
-        element: (
-          <ExternalPageLayout>
-            <Outlet />
-          </ExternalPageLayout>
-        ),
-        children: [
-          {
-            index: true,
-            async lazy() {
-              const { default: AboutPage } = await import('./pages/AboutPage');
-              return { Component: AboutPage };
-            }
-          }
-        ]
-      },
-      {
-        path: "features",
-        element: (
-          <ExternalPageLayout>
-            <Outlet />
-          </ExternalPageLayout>
-        ),
-        children: [
-          {
-            index: true,
-            async lazy() {
-              const { default: FeaturesPage } = await import('./pages/FeaturesPage');
-              return { Component: FeaturesPage };
-            }
-          }
-        ]
-      },
-      {
-        path: "pricing",
-        element: (
-          <ExternalPageLayout>
-            <Outlet />
-          </ExternalPageLayout>
-        ),
-        children: [
-          {
-            index: true,
-            async lazy() {
-              const { default: PricingPage } = await import('./pages/PricingPage');
-              return { Component: PricingPage };
-            }
-          }
-        ]
-      },
-      {
-        path: "contact",
-        element: (
-          <ExternalPageLayout>
-            <Outlet />
-          </ExternalPageLayout>
-        ),
-        children: [
-          {
-            index: true,
-            async lazy() {
-              const { default: ContactPage } = await import('./pages/ContactPage');
-              return { Component: ContactPage };
-            }
-          }
-        ]
-      },
-      {
-        path: "help",
-        element: (
-          <ExternalPageLayout>
-            <Outlet />
-          </ExternalPageLayout>
-        ),
-        children: [
-          {
-            index: true,
-            async lazy() {
-              const { default: HelpPage } = await import('./pages/HelpPage');
-              return { Component: HelpPage };
-            }
-          }
-        ]
-      },
-      {
-        path: "privacy",
-        element: (
-          <ExternalPageLayout>
-            <Outlet />
-          </ExternalPageLayout>
-        ),
-        children: [
-          {
-            index: true,
-            async lazy() {
-              const { default: PrivacyPage } = await import('./pages/PrivacyPage');
-              return { Component: PrivacyPage };
-            }
-          }
-        ]
-      },
-      {
-        path: "terms",
-        element: (
-          <ExternalPageLayout>
-            <Outlet />
-          </ExternalPageLayout>
-        ),
-        children: [
-          {
-            index: true,
-            async lazy() {
-              const { default: PrivacyPage } = await import('./pages/PrivacyPage');
-              return { 
-                Component: () => <PrivacyPage pageType="terms" /> 
-              };
-            }
-          }
-        ]
-      },
-      {
-        path: "sitemap",
-        element: (
-          <ExternalPageLayout>
-            <Outlet />
-          </ExternalPageLayout>
-        ),
-        children: [
-          {
-            index: true,
-            async lazy() {
-              const { default: SitemapPage } = await import('./pages/SitemapPage');
-              return { Component: SitemapPage };
-            }
-          }
-        ]
-      }
-    ]
+    path: '/',
+    element: <HomePage />,
   },
   {
-    path: "/dashboard",
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPasswordPage />,
+  },
+  // Protected routes
+  {
+    path: '/dashboard',
     element: (
       <ProtectedRoute>
-        <ProtectedPageLayout>
-          <Outlet />
+        <DashboardPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/proposals',
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout title="Proposals">
+          <ProposalsPage />
         </ProtectedPageLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: DashboardHomePage } = await import('./pages/dashboard/DashboardHomePage');
-          return { Component: DashboardHomePage };
-        }
-      }
-    ]
   },
   {
-    path: "/analytics",
+    path: '/proposals/:id',
     element: (
       <ProtectedRoute>
-        <ProtectedPageLayout>
-          <Outlet />
+        <ProtectedPageLayout title="Proposal Details">
+          <ProposalDetailPage />
         </ProtectedPageLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: AnalyticsPage } = await import('./pages/AnalyticsPage');
-          return { Component: AnalyticsPage };
-        }
-      }
-    ]
   },
   {
-    path: "/settings",
+    path: '/documents',
     element: (
       <ProtectedRoute>
-        <ProtectedPageLayout>
-          <Outlet />
+        <ProtectedPageLayout title="Documents">
+          <DocumentsPage />
         </ProtectedPageLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: SettingsPage } = await import('./pages/SettingsPage');
-          return { Component: SettingsPage };
-        }
-      }
-    ]
   },
   {
-    path: "/profile",
+    path: '/settings',
     element: (
       <ProtectedRoute>
-        <ProtectedPageLayout>
-          <Outlet />
+        <ProtectedPageLayout title="Settings">
+          <SettingsPage />
         </ProtectedPageLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: ProfilePage } = await import('./pages/ProfilePage');
-          return { Component: ProfilePage };
-        }
-      }
-    ]
   },
   {
-    path: "/federal-acquisition",
+    path: '/profile',
     element: (
       <ProtectedRoute>
-        <ProtectedPageLayout>
-          <Outlet />
+        <ProtectedPageLayout title="User Profile">
+          <UserProfilePage />
         </ProtectedPageLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: FederalAcquisitionPage } = await import('./pages/acquisition/FederalAcquisitionPage');
-          return { Component: FederalAcquisitionPage };
-        }
-      }
-    ]
   },
   {
-    path: "/texas-acquisition",
+    path: '/knowledge-base',
     element: (
       <ProtectedRoute>
-        <ProtectedPageLayout>
-          <Outlet />
+        <ProtectedPageLayout title="Knowledge Base">
+          <KnowledgeBasePage />
         </ProtectedPageLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: TexasAcquisitionPage } = await import('./pages/acquisition/TexasAcquisition');
-          return { Component: TexasAcquisitionPage };
-        }
-      }
-    ]
   },
   {
-    path: "/knowledge-base",
+    path: '/federal-knowledge-base',
     element: (
       <ProtectedRoute>
-        <ProtectedPageLayout>
-          <Outlet />
+        <ProtectedPageLayout title="Federal Knowledge Base">
+          <FederalKnowledgeBasePage />
         </ProtectedPageLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: KnowledgeBasePage } = await import('./pages/KnowledgeBasePage');
-          return { Component: KnowledgeBasePage };
-        }
-      }
-    ]
   },
   {
-    path: "/proposals",
+    path: '/texas-acquisition',
     element: (
       <ProtectedRoute>
-        <ProtectedPageLayout>
-          <Outlet />
+        <TexasAcquisition />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/chat',
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout title="AI Chat Assistant">
+          <ChatPage />
         </ProtectedPageLayout>
       </ProtectedRoute>
     ),
-    children: [
-      {
-        index: true,
-        async lazy() {
-          const { default: ProposalsPage } = await import('./pages/ProposalsPage');
-          return { Component: ProposalsPage };
-        }
-      },
-      {
-        path: ":id",
-        async lazy() {
-          const { default: ProposalDetailPage } = await import('./pages/ProposalDetailPage');
-          return { Component: ProposalDetailPage };
-        }
-      }
-    ]
   },
   {
-    path: "*",
-    async lazy() {
-      const { default: NotFoundPage } = await import('./pages/NotFoundPage');
-      return { Component: NotFoundPage };
-    }
-  }
-]);
+    path: '/federal-acquisition',
+    element: (
+      <ProtectedRoute>
+        <FederalAcquisitionPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/texas-acquisition-chat',
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout title="Texas Acquisition Chat">
+          <TexasAcquisitionPage />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/contract-management',
+    element: (
+      <ProtectedRoute>
+        <ContractManagementPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/market-research',
+    element: (
+      <ProtectedRoute>
+        <ProtectedPageLayout title="Market Research">
+          <MarketResearchPage />
+        </ProtectedPageLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/source-selection',
+    element: (
+      <ProtectedRoute>
+        <SourceSelectionPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/compliance',
+    element: (
+      <ProtectedRoute>
+        <CompliancePage />
+      </ProtectedRoute>
+    ),
+  },
+  // 404 route
+  {
+    path: '*',
+    element: <NotFoundPage />,
+  },
+];
+
+export default routes;

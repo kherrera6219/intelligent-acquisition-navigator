@@ -1,14 +1,12 @@
 import React, { Suspense } from 'react';
-import { Routes, Route, Navigate } from "react-router-dom";
-import { LoadingPage } from "@/components/LoadingPage";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { MainLayout } from "@/components/layout/MainLayout";
-import { ExternalPageLayout } from "@/components/layout/ExternalPageLayout";
-import { ProtectedPageLayout } from "@/components/layout/ProtectedPageLayout";
-import { AppLayout } from "@/components/layout/AppLayout";
-import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
-import { InternalFooter } from "@/components/layout/InternalFooter";
-import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
+import { useRoutes, Navigate, RouteObject } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { LoadingState } from '@/components/ui/universal/LoadingState';
+import routes from '@/routes';
+
+interface ProtectedRouteProps {
+  element: React.ReactNode;
+}
 
 // Import route collections
 import landingRoutes from './landingRoutes';
@@ -29,157 +27,53 @@ const ActivityPage = lazy(() => import('@/pages/ActivityPage'));
 const CodeReviewPage = lazy(() => import('@/pages/CodeReviewPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 
-export function AppRoutes() {
-  return (
-    <Suspense fallback={<LoadingPage />}>
-      <Routes>
-        {/* Landing routes */}
-        {landingRoutes.map((route, index) => (
-          <Route 
-            key={`landing-${index}`} 
-            path={route.path} 
-            element={
-              <ExternalPageLayout>
-                {route.element}
-              </ExternalPageLayout>
-            } 
-          />
-        ))}
-        
-        {/* Auth routes */}
-        {authRoutes.map((route, index) => (
-          <Route 
-            key={`auth-${index}`} 
-            path={route.path} 
-            element={
-              <ExternalPageLayout 
-                showHeader={false} 
-                showFooter={false}
-              >
-                {route.element}
-              </ExternalPageLayout>
-            } 
-          />
-        ))}
-        
-        {/* Protected routes */}
-        <Route element={<ProtectedRoute children={null} />}>
-          {/* Dashboard */}
-          <Route path="/dashboard" element={<DashboardPage />} />
+export const AppRoutes: React.FC = () => {
+  const { user, isLoading } = useAuth();
+  
+  // Process routes to handle protection based on auth state
+  const processedRoutes = React.useMemo(() => {
+    if (isLoading) {
+      return routes.map(route => ({
+        ...route,
+        element: <LoadingState message="Loading authentication..." />
+      }));
+    }
 
-          {/* Dashboard routes with internal layout */}
-          {dashboardRoutes.map((route, index) => (
-            <Route 
-              key={`dashboard-${index}`} 
-              path={route.path} 
-              element={
-                <>
-                  <UniversalInternalHeader />
-                  <NetworkStatusBanner />
-                  <ProtectedPageLayout title={route.title || ""}>
-                    {route.element}
-                  </ProtectedPageLayout>
-                  <InternalFooter />
-                </>
-              } 
-            />
-          ))}
-          
-          {/* Acquisition routes with internal layout */}
-          {acquisitionRoutes.map((route, index) => (
-            <Route 
-              key={`acquisition-${index}`} 
-              path={route.path} 
-              element={
-                <>
-                  <UniversalInternalHeader />
-                  <NetworkStatusBanner />
-                  <ProtectedPageLayout title={route.title || ""}>
-                    {route.element}
-                  </ProtectedPageLayout>
-                  <InternalFooter />
-                </>
-              } 
-            />
-          ))}
-          
-          {/* Settings routes with internal layout */}
-          {settingsRoutes.map((route, index) => (
-            <Route 
-              key={`settings-${index}`} 
-              path={route.path} 
-              element={
-                <>
-                  <UniversalInternalHeader />
-                  <NetworkStatusBanner />
-                  <ProtectedPageLayout title={route.title || ""}>
-                    {route.element}
-                  </ProtectedPageLayout>
-                  <InternalFooter />
-                </>
-              } 
-            />
-          ))}
-          
-          {/* Other protected routes */}
-          <Route 
-            path="/activity" 
-            element={
-              <AppLayout>
-                <ActivityPage />
-              </AppLayout>
-            } 
-          />
-          
-          <Route 
-            path="/knowledge-base" 
-            element={
-              <AppLayout>
-                <KnowledgeBasePage />
-              </AppLayout>
-            } 
-          />
-          
-          <Route 
-            path="/chat" 
-            element={
-              <AppLayout>
-                <ChatPage />
-              </AppLayout>
-            } 
-          />
-          
-          <Route 
-            path="/improve" 
-            element={
-              <AppLayout>
-                <ImproveApp />
-              </AppLayout>
-            } 
-          />
-          
-          <Route 
-            path="/validation" 
-            element={
-              <AppLayout>
-                <ValidationPage />
-              </AppLayout>
-            } 
-          />
-          
-          <Route 
-            path="/code-review" 
-            element={
-              <AppLayout>
-                <CodeReviewPage />
-              </AppLayout>
-            } 
-          />
-        </Route>
-        
-        {/* Not Found */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+    return routes.map(route => {
+      // Skip if the route has already been processed or doesn't contain "protect" metadata
+      const routePath = route.path;
+      
+      if (routePath === '/login' || routePath === '/register' || routePath === '/forgot-password') {
+        // Redirect to dashboard if already logged in
+        if (user) {
+          return {
+            ...route,
+            element: <Navigate to="/dashboard" replace />
+          };
+        }
+      }
+      
+      if (routePath?.startsWith('/dashboard') || 
+          routePath?.startsWith('/proposals') || 
+          routePath?.startsWith('/documents')) {
+        // Protected routes
+        if (!user) {
+          return {
+            ...route,
+            element: <Navigate to="/login" replace />
+          };
+        }
+      }
+      
+      return route;
+    });
+  }, [user, isLoading]);
+
+  const element = useRoutes(processedRoutes);
+
+  return (
+    <Suspense fallback={<LoadingState message="Loading page..." />}>
+      {element}
     </Suspense>
   );
-}
+};
