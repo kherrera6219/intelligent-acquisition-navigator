@@ -1,3 +1,4 @@
+
 import { PricingPlan } from './PricingPlansSection';
 
 export const pricingPlans: PricingPlan[] = [
@@ -17,7 +18,8 @@ export const pricingPlans: PricingPlan[] = [
       { text: "Custom workflows", included: false },
       { text: "API access", included: false },
     ],
-    ctaText: "Start 14-Day Free Trial"
+    ctaText: "Start 14-Day Free Trial",
+    highlighted: false
   },
   {
     name: "Professional",
@@ -36,7 +38,8 @@ export const pricingPlans: PricingPlan[] = [
       { text: "API access", included: false, tooltip: "Available in Enterprise plan only" },
     ],
     popular: true,
-    ctaText: "Start 14-Day Free Trial"
+    ctaText: "Start 14-Day Free Trial",
+    highlighted: true
   },
   {
     name: "Enterprise",
@@ -54,7 +57,8 @@ export const pricingPlans: PricingPlan[] = [
       { text: "Advanced security controls", included: true },
       { text: "Full API access", included: true },
     ],
-    ctaText: "Contact Sales"
+    ctaText: "Contact Sales",
+    highlighted: false
   }
 ];
 
@@ -74,6 +78,14 @@ export const faqItems = [
   {
     question: "Do you offer discounts?",
     answer: "We offer discounts for annual billing and special pricing for educational institutions and non-profits."
+  },
+  {
+    question: "Is my data secure?",
+    answer: "Yes, we take security seriously. Our platform is FedRAMP authorized and complies with all relevant security standards for government data."
+  },
+  {
+    question: "Can I get a custom quote for my organization?",
+    answer: "Absolutely. Contact our sales team for a custom quote tailored to your organization's specific needs and scale."
   }
 ];
 
