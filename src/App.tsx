@@ -10,9 +10,6 @@ import { NetworkStatusMonitor } from '@/components/ui/universal/NetworkStatusMon
 import { NetworkMonitorProvider } from '@/components/ui/universal/NetworkMonitorProvider';
 import { initOfflineDB, clearExpiredCache } from '@/utils/offlineStorage';
 import { generateCsrfToken } from '@/utils/csrfProtection';
-import { supabase } from '@/integrations/supabase/client';
-import { checkSupabaseConnection } from '@/utils/supabaseHelper';
-import { SkipLinks } from '@/components/ui/universal/SkipLinks';
 import { browserRouter } from './routes/index';
 
 function App() {
@@ -27,30 +24,12 @@ function App() {
         await initOfflineDB();
         // Clear expired cache items
         await clearExpiredCache();
-        
-        // Check Supabase connection status
-        const isConnected = await checkSupabaseConnection();
-        console.log('Supabase connection:', isConnected ? 'Connected' : 'Disconnected');
       } catch (error) {
         console.error('Error initializing offline storage:', error);
       }
     };
     
     setupOfflineStorage();
-    
-    // Set up supabase auth listener for session persistence
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') {
-        console.log('User signed in: ', session?.user?.id);
-      } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out');
-      }
-    });
-    
-    // Cleanup subscription when unmounting
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
   
   return (
@@ -58,7 +37,6 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <NetworkMonitorProvider>
-            <SkipLinks />
             <NetworkStatusMonitor />
             <RouterProvider router={browserRouter} />
             <CookieConsent />

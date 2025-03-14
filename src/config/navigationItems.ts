@@ -7,13 +7,9 @@ import {
   Settings, 
   HelpCircle,
   Map,
-  FileCheck,
-  Users,
   Book,
   Building2,
   Scale,
-  ClipboardCheck,
-  AlertCircle,
   BookOpen,
   Flag
 } from 'lucide-react';
@@ -35,24 +31,10 @@ export const navigationItems = [
   },
   { 
     icon: FileText, 
-    label: 'Solicitation Review', 
-    route: '/solicitation-review',
-    permission: 'READ_SOLICITATIONS' as const,
-    description: 'Review and manage solicitations'
-  },
-  {
-    icon: FileCheck,
-    label: 'Source Selection',
-    route: '/source-selection',
-    permission: 'MANAGE_EVALUATIONS' as const,
-    description: 'Manage source selection evaluations'
-  },
-  {
-    icon: Building2,
-    label: 'Contract Management',
-    route: '/contract-management',
-    permission: 'MANAGE_CONTRACTS' as const,
-    description: 'Oversee contract execution and modifications'
+    label: 'Market Research', 
+    route: '/market-research',
+    permission: null,
+    description: 'Research market information'
   },
   { 
     icon: Shield, 
@@ -67,20 +49,6 @@ export const navigationItems = [
     route: '/legal-review',
     permission: 'LEGAL_REVIEW' as const,
     description: 'Review and approve legal documents'
-  },
-  {
-    icon: Users,
-    label: 'Small Business',
-    route: '/small-business',
-    permission: 'SMALL_BUSINESS_REVIEW' as const,
-    description: 'Small business program management'
-  },
-  {
-    icon: ClipboardCheck,
-    label: 'Quality Assurance',
-    route: '/quality-assurance',
-    permission: 'QA_ACCESS' as const,
-    description: 'Quality assurance and inspections'
   },
   { 
     icon: BarChart2, 
@@ -109,6 +77,13 @@ export const navigationItems = [
     route: '/sitemap',
     permission: null,
     description: 'View complete site structure'
+  },
+  { 
+    icon: Flag, 
+    label: 'Federal Acquisition', 
+    route: '/federal-acquisition',
+    permission: null,
+    description: 'Federal-specific procurement guidance'
   },
   { 
     icon: Flag, 

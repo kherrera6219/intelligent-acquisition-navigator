@@ -1,5 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
 import { ChevronDown, Home, FileText, Map, HelpCircle, GlobeLock, Flag, Book, Shield, BarChart2 } from 'lucide-react';
@@ -10,15 +11,14 @@ export const HeaderNavigation: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
-  // Main menu items for our dropdown - synchronized with Navigation.tsx links
+  // Main menu items for our dropdown - consolidated list
   const mainMenuItems = [
     { label: 'Home', href: '/', icon: Home, description: "Public landing page" },
     { label: 'Dashboard', href: '/dashboard', icon: Home, description: "Main dashboard" },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock, description: "Federal acquisition information" },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag, description: "Texas acquisition information" },
-    { label: 'Knowledge Base', href: '/knowledge-base', icon: Book, description: "Browse knowledge resources" },
-    { label: 'Solicitation Review', href: '/solicitation-review', icon: FileText, description: "Review solicitations" },
     { label: 'Market Research', href: '/market-research', icon: FileText, description: "Research market information" },
+    { label: 'Knowledge Base', href: '/knowledge-base', icon: Book, description: "Browse knowledge resources" },
     { label: 'Compliance', href: '/compliance', icon: Shield, description: "View compliance information" },
     { label: 'Analytics', href: '/analytics', icon: BarChart2, description: "View analytics data" },
     { label: 'Sitemap', href: '/sitemap', icon: Map, description: "View all pages" },

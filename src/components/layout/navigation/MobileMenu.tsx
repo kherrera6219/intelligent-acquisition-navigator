@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, BarChart2, FileText, Map, HelpCircle, GlobeLock, Flag, BookOpen, ClipboardCheck, FileSearch, Building, Shield, Scale, Users, Building2, Settings } from 'lucide-react';
+import { ChevronDown, BarChart2, FileText, Map, HelpCircle, GlobeLock, Flag, BookOpen, Building, Shield, Settings } from 'lucide-react';
 
 interface MobileMenuProps {
   isMobileMenuOpen: boolean;
@@ -19,25 +19,18 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   const { userRole } = useAuth();
   const [isMainDropdownOpen, setIsMainDropdownOpen] = useState(false);
   
+  // Consolidated menu items
   const mainMenuItems = [
     { label: 'Dashboard', href: '/dashboard', icon: BarChart2 },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: GlobeLock },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Flag },
-    { label: 'Solicitation Review', href: '/solicitation-review', icon: FileText },
-    { label: 'Document Control', href: '/document-control', icon: FileSearch },
     { label: 'Market Research', href: '/market-research', icon: Building },
     { label: 'Knowledge Base', href: '/knowledge-base', icon: BookOpen },
     { label: 'Compliance', href: '/compliance', icon: Shield },
-    { label: 'Legal Review', href: '/legal-review', icon: Scale },
-    { label: 'Small Business', href: '/small-business', icon: Users },
-    { label: 'Quality Assurance', href: '/quality-assurance', icon: ClipboardCheck },
-    { label: 'Contract Management', href: '/contract-management', icon: Building2 },
-    { label: 'Source Selection', href: '/source-selection', icon: FileText },
     { label: 'Analytics', href: '/analytics', icon: BarChart2 },
-    { label: 'Features', href: '/features', icon: BookOpen },
-    { label: 'Pricing', href: '/pricing', icon: BookOpen },
+    { label: 'Features', href: '/features', icon: FileText },
     { label: 'About', href: '/about', icon: BookOpen },
-    { label: 'Contact', href: '/contact', icon: BookOpen },
+    { label: 'Contact', href: '/contact', icon: FileText },
     { label: 'Settings', href: '/settings', icon: Settings },
     { label: 'Sitemap', href: '/sitemap', icon: Map },
     { label: 'Help', href: '/help', icon: HelpCircle },

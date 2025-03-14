@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, ChevronRight, Menu, X, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { ChevronRight, Menu, X, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -27,21 +27,14 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ className 
     localStorage.setItem('sidebar-minimized', isMinimized.toString());
   }, [isMinimized]);
   
+  // Consolidated navigation items
   const navItems = [
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Knowledge Base', href: '/knowledge-base' },
-    { name: 'Federal Knowledge', href: '/federal-knowledge-base' },
     { name: 'Federal Acquisition', href: '/federal-acquisition' },
     { name: 'Texas Acquisition', href: '/texas-acquisition' },
-    { name: 'Solicitation Review', href: '/solicitation-review' },
-    { name: 'Document Control', href: '/document-control' },
     { name: 'Market Research', href: '/market-research' },
     { name: 'Compliance', href: '/compliance' },
-    { name: 'Legal Review', href: '/legal-review' },
-    { name: 'Small Business', href: '/small-business' },
-    { name: 'Quality Assurance', href: '/quality-assurance' },
-    { name: 'Source Selection', href: '/source-selection' },
-    { name: 'Contract Management', href: '/contract-management' },
     { name: 'Settings', href: '/settings' },
   ];
   
