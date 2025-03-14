@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { FederalChatContainer } from '@/components/federal/FederalChatContainer';
 import { FederalTabNavigation } from '@/components/federal/FederalTabNavigation';
@@ -51,14 +51,28 @@ const FederalAcquisitionPage: React.FC = () => {
     successMessage: 'Federal acquisition data loaded successfully.'
   });
 
+  // Load initial data when the component mounts
+  useEffect(() => {
+    loadTabData(activeTab);
+  }, []);
+
   const handleTabChange = (tabId: 'chat' | 'reports') => {
     setActiveTab(tabId);
+    loadTabData(tabId);
   };
 
   const handleNewReport = () => {
     toast({
       title: "Create Report",
       description: "Creating a new report...",
+      variant: "default"
+    });
+  };
+
+  const handleReportClick = (index: number) => {
+    toast({
+      title: "Report Selected",
+      description: `Viewing details for "${mockReports[index].title}"`,
       variant: "default"
     });
   };
@@ -101,15 +115,9 @@ const FederalAcquisitionPage: React.FC = () => {
         )}
         
         {activeTab === 'reports' && (
-          <FederalReportCardGrid reports={mockReports} />
-        )}
-        
-        {activeTab !== 'chat' && activeTab !== 'reports' && (
-          <FederalTabContent 
-            activeTab="reports"
-            reports={mockReports}
-            isLoading={isLoading}
-            error={error?.message}
+          <FederalReportCardGrid 
+            reports={mockReports} 
+            onCardClick={handleReportClick}
           />
         )}
       </div>

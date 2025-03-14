@@ -22,6 +22,7 @@ export const FederalReportCard: React.FC<ReportCardProps> = ({
   status,
   confidenceScore = 0,
   lastUpdated,
+  description,
   className,
   onClick,
 }) => {
@@ -69,6 +70,10 @@ export const FederalReportCard: React.FC<ReportCardProps> = ({
           <span>{statusText[status]}</span>
         </div>
       </div>
+
+      {description && (
+        <p className="text-sm text-gray-400 mb-3 line-clamp-2">{description}</p>
+      )}
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex flex-col">
