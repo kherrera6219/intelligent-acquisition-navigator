@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
-import { browserRouter } from './routes';
+import { browserRouter } from './routes/index';
 import { Toaster } from './components/ui/toaster';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { NetworkMonitorProvider } from './components/ui/universal/NetworkMonitorProvider'; 

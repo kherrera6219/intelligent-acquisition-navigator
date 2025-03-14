@@ -2,63 +2,39 @@
 import React from 'react';
 import { FileText, Calendar, User, Tag } from 'lucide-react';
 
-export interface Document {
+interface Document {
   id: string;
   title: string;
   type: string;
-  status: 'draft' | 'published' | 'archived';
-  lastModified: string;
-  author: string;
+  status: string;
+  lastModified?: string;
+  author?: string;
+  uploadedAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  size?: number;
 }
 
 export interface DocumentListProps {
-  category: 'all' | 'drafts' | 'published' | 'archived';
-  searchTerm: string;
+  documents: Document[];
+  category?: 'all' | 'drafts' | 'published' | 'archived';
+  searchTerm?: string;
 }
 
-export const DocumentList: React.FC<DocumentListProps> = ({ category, searchTerm }) => {
-  // Mock data
-  const documents: Document[] = [
-    { 
-      id: '1', 
-      title: 'Request for Proposal - IT Services', 
-      type: 'RFP', 
-      status: 'published', 
-      lastModified: '2024-04-15', 
-      author: 'John Smith' 
-    },
-    { 
-      id: '2', 
-      title: 'Statement of Work - Cloud Migration', 
-      type: 'SOW', 
-      status: 'draft', 
-      lastModified: '2024-04-10', 
-      author: 'Jane Doe' 
-    },
-    { 
-      id: '3', 
-      title: 'Contract - Software Licensing', 
-      type: 'Contract', 
-      status: 'published', 
-      lastModified: '2024-03-22', 
-      author: 'Robert Johnson' 
-    },
-    { 
-      id: '4', 
-      title: 'Vendor Evaluation - Hardware Suppliers', 
-      type: 'Evaluation', 
-      status: 'archived', 
-      lastModified: '2023-11-05', 
-      author: 'Sarah Williams' 
-    },
-  ];
-
+export const DocumentList: React.FC<DocumentListProps> = ({ 
+  documents, 
+  category = 'all', 
+  searchTerm = '' 
+}) => {
   // Filter documents based on category and search term
   const filteredDocuments = documents.filter(doc => {
-    const matchesCategory = category === 'all' || doc.status === category;
+    const matchesCategory = category === 'all' || 
+      (doc.status && doc.status.toLowerCase() === category);
+    
     const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          doc.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          doc.type.toLowerCase().includes(searchTerm.toLowerCase());
+                          (doc.author && doc.author.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                          (doc.type && doc.type.toLowerCase().includes(searchTerm.toLowerCase()));
+    
     return matchesCategory && matchesSearch;
   });
 
@@ -88,21 +64,21 @@ export const DocumentList: React.FC<DocumentListProps> = ({ category, searchTerm
                   </div>
                   <div className="flex items-center">
                     <Calendar className="h-3.5 w-3.5 mr-1" />
-                    <span>{doc.lastModified}</span>
+                    <span>{doc.lastModified || doc.updatedAt?.split('T')[0] || 'Unknown date'}</span>
                   </div>
                   <div className="flex items-center">
                     <User className="h-3.5 w-3.5 mr-1" />
-                    <span>{doc.author}</span>
+                    <span>{doc.author || doc.createdBy || 'Unknown author'}</span>
                   </div>
                 </div>
               </div>
             </div>
             <div>
               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                ${doc.status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' : 
-                  doc.status === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' : 
+                ${doc.status?.toLowerCase() === 'published' || doc.status?.toLowerCase() === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' : 
+                  doc.status?.toLowerCase() === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' : 
                   'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}`}>
-                {doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
+                {doc.status ? doc.status.charAt(0).toUpperCase() + doc.status.slice(1).toLowerCase() : 'Unknown'}
               </span>
             </div>
           </div>

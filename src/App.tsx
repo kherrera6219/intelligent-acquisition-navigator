@@ -13,7 +13,7 @@ import { generateCsrfToken } from '@/utils/csrfProtection';
 import { supabase } from '@/integrations/supabase/client';
 import { checkSupabaseConnection } from '@/utils/supabaseHelper';
 import { SkipLinks } from '@/components/ui/universal/SkipLinks';
-import { browserRouter } from './routes';
+import { browserRouter } from './routes/index';
 
 function App() {
   // Initialize security and storage features on app load
