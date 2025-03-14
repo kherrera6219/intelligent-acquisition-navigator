@@ -1,17 +1,17 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col } from '@/components/ui/universal/Grid';
+import { Container } from '@/components/ui/universal/Container';
 import { Github, Twitter, Linkedin } from 'lucide-react';
 
 export const ExternalFooter = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900/95 border-t border-gray-800 mt-auto py-12">
+    <footer className="mt-auto py-12 bg-black/50 backdrop-blur-sm border-t border-gray-800">
       <Container>
-        <Row>
-          <Col lg={4} className="mb-8 lg:mb-0">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
+          <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-6">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-violet-500 bg-clip-text text-transparent">
                 ProcurityIQ
@@ -31,11 +31,11 @@ export const ExternalFooter = () => {
                 <Github className="h-5 w-5" />
               </a>
             </div>
-          </Col>
+          </div>
           
-          <Col lg={8}>
-            <Row>
-              <Col sm={6} md={4}>
+          <div className="lg:col-span-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              <div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Company</h3>
                 <ul className="space-y-3">
                   <li><Link to="/about" className="text-gray-300 hover:text-white transition-colors">About</Link></li>
@@ -43,9 +43,9 @@ export const ExternalFooter = () => {
                   <li><Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</Link></li>
                   <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
                 </ul>
-              </Col>
+              </div>
               
-              <Col sm={6} md={4}>
+              <div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Resources</h3>
                 <ul className="space-y-3">
                   <li><Link to="/help" className="text-gray-300 hover:text-white transition-colors">Help Center</Link></li>
@@ -53,9 +53,9 @@ export const ExternalFooter = () => {
                   <li><Link to="/api-docs" className="text-gray-300 hover:text-white transition-colors">API Documentation</Link></li>
                   <li><Link to="/sitemap" className="text-gray-300 hover:text-white transition-colors">Sitemap</Link></li>
                 </ul>
-              </Col>
+              </div>
               
-              <Col sm={6} md={4}>
+              <div>
                 <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Legal</h3>
                 <ul className="space-y-3">
                   <li><Link to="/privacy" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</Link></li>
@@ -63,10 +63,10 @@ export const ExternalFooter = () => {
                   <li><Link to="/security" className="text-gray-300 hover:text-white transition-colors">Security</Link></li>
                   <li><Link to="/compliance" className="text-gray-300 hover:text-white transition-colors">Compliance</Link></li>
                 </ul>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
