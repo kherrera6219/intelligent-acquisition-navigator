@@ -17,12 +17,14 @@ const FederalAcquisitionPage = () => {
   const [chatMessages, setChatMessages] = useState<FederalChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [networkError, setNetworkError] = useState<Error | null>(null);
   const { toast } = useToast();
   
   const { executeOperation } = useNetworkOperation({
     maxRetries: 2,
     onError: (error) => {
       console.error('Failed to get AI response:', error);
+      setNetworkError(error);
     }
   });
   
@@ -96,6 +98,7 @@ const FederalAcquisitionPage = () => {
     
     setChatMessages(prev => [...prev, userMessage]);
     setIsSending(true);
+    setNetworkError(null);
     
     await executeOperation(async () => {
       try {
@@ -111,6 +114,7 @@ const FederalAcquisitionPage = () => {
         setChatMessages(prev => [...prev, aiMessage]);
       } catch (error) {
         console.error('Error in AI response:', error);
+        setNetworkError(error instanceof Error ? error : new Error('Unknown error'));
         toast({
           title: "Failed to get response",
           description: "There was a problem getting a response from the AI. Please try again.",
@@ -130,8 +134,19 @@ const FederalAcquisitionPage = () => {
     });
   };
 
-  const handleNetworkErrorReset = () => {
-    window.location.reload();
+  const handleNetworkErrorReset = async () => {
+    setNetworkError(null);
+    setIsLoading(true);
+    try {
+      // Attempt to refresh data
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      // This would be a real data fetch in production
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+      setNetworkError(error instanceof Error ? error : new Error('Failed to refresh data'));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleFileUpload = (file: File) => {
@@ -152,12 +167,14 @@ const FederalAcquisitionPage = () => {
           title="Federal Acquisition Management"
           description="Manage and monitor federal acquisition compliance, documentation, and procedures."
           isLoading={isLoading}
-          error={null}
+          error={networkError}
           withCard={false}
           breadcrumbs={[
             { label: 'Dashboard', href: '/dashboard' },
             { label: 'Federal Acquisition', href: '/federal-acquisition' }
           ]}
+          withErrorBoundary={true}
+          onRetry={handleNetworkErrorReset}
         >
           <div className="flex flex-col gap-6">
             <FederalTabNavigation

@@ -3,7 +3,9 @@ import React, { useMemo } from 'react';
 import { Proposal } from '@/types/proposals';
 import { ProposalCard } from '@/components/proposals/ProposalCard';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export interface ProposalListProps {
   proposals: Proposal[];
@@ -13,6 +15,7 @@ export interface ProposalListProps {
   error?: Error | null;
   emptyMessage?: string;
   retryFunction?: () => void;
+  isRetrying?: boolean;
 }
 
 export const ProposalList: React.FC<ProposalListProps> = ({ 
@@ -22,7 +25,8 @@ export const ProposalList: React.FC<ProposalListProps> = ({
   isError = false,
   error = null,
   emptyMessage = "No proposals found.",
-  retryFunction
+  retryFunction,
+  isRetrying = false
 }) => {
   // Memoize the list to prevent unnecessary re-renders
   const memoizedProposals = useMemo(() => {
@@ -51,12 +55,14 @@ export const ProposalList: React.FC<ProposalListProps> = ({
             {error?.message || "We couldn't load the proposals. Please try again later."}
           </p>
           {retryFunction && (
-            <button 
+            <Button 
               onClick={retryFunction}
               className="px-4 py-2 bg-primary/90 hover:bg-primary text-primary-foreground rounded-md transition-colors"
+              disabled={isRetrying}
             >
-              Try Again
-            </button>
+              <RefreshCw className={cn("h-4 w-4 mr-2", isRetrying && "animate-spin")} />
+              {isRetrying ? "Retrying..." : "Try Again"}
+            </Button>
           )}
         </div>
       </div>

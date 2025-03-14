@@ -18,6 +18,7 @@ interface ProtectedPageLayoutProps {
   backLink?: {label: string; href: string};
   withCard?: boolean;
   tags?: Array<{label: string; color: string}>;
+  onRetry?: () => void;
 }
 
 export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
@@ -26,6 +27,9 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   title,
   description,
   withErrorBoundary = true,
+  isLoading = false,
+  error = null,
+  onRetry,
   // We're not using the other props in this component, but they're defined
   // in the interface for type safety with page components
 }) => {
@@ -39,7 +43,12 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   return (
     <AppLayout showSidebar={showSidebar}>
       {withErrorBoundary ? (
-        <NetworkErrorHandler autoRetry={true} alertPosition="top">
+        <NetworkErrorHandler 
+          autoRetry={true} 
+          alertPosition="top"
+          isLoading={isLoading}
+          onRetry={onRetry}
+        >
           <div className="flex items-center justify-between mb-4">
             {title && <h1 className="text-2xl font-bold">{title}</h1>}
             <OfflineStatusIndicator compact />
