@@ -8,7 +8,7 @@ interface ProtectedPageLayoutProps {
   children: React.ReactNode;
   showSidebar?: boolean;
   title?: string;
-  description?: string; // Add description prop
+  description?: string;
   withErrorBoundary?: boolean;
   isLoading?: boolean;
   error?: Error | null;

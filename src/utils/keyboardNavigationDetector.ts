@@ -41,12 +41,10 @@ export function initKeyboardNavigationDetector(): (() => void) | void {
   window.addEventListener('keydown', handleFirstTab);
 
   // Clean up function
-  const cleanup = () => {
+  return () => {
     window.removeEventListener('keydown', handleFirstTab);
     window.removeEventListener('mousedown', handleMouseDown);
   };
-  
-  return cleanup;
 }
 
 // Auto-initialize when imported
