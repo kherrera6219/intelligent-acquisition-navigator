@@ -73,9 +73,9 @@ export const PricingPlanCard: React.FC<PricingPlanProps> = ({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 inline-block ml-1 opacity-70" />
+                        <HelpCircle className="h-4 w-4 inline-block ml-1 opacity-70 cursor-help" />
                       </TooltipTrigger>
-                      <TooltipContent className="bg-gray-700 text-white border-gray-600">
+                      <TooltipContent>
                         <p>{feature.tooltip}</p>
                       </TooltipContent>
                     </Tooltip>
