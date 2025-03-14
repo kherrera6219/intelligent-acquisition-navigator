@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './AppRoutes';
+import { ErrorBoundary } from '@/components/ui/universal/ErrorBoundary';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 /**
@@ -10,9 +10,9 @@ import NotFoundPage from '@/pages/NotFoundPage';
  */
 export const Router: React.FC = () => {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <ErrorBoundary fallback={<div>Something went wrong</div>}>
+      <RouterProvider router={browserRouter} />
+    </ErrorBoundary>
   );
 };
 
@@ -21,7 +21,7 @@ export const Router: React.FC = () => {
  */
 export const browserRouter = createBrowserRouter([
   {
-    path: "/",
+    path: "*",
     element: <AppRoutes />,
     errorElement: <NotFoundPage />
   }

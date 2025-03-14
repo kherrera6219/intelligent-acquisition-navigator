@@ -1,178 +1,134 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
-import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { Wifi, WifiOff } from 'lucide-react';
+import { LoginButton } from '@/components/auth/LoginButton';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { cn } from '@/lib/utils';
+import { MenuIcon, X } from 'lucide-react';
+import { navigationItems } from '@/config/navigationItems';
 
 interface HeaderProps {
-  variant?: string;
-  isScrolled?: boolean;
-  isHomePage?: boolean;
+  variant?: 'default' | 'compact' | 'transparent' | 'glass';
+  className?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
-  variant = 'default',
-  isScrolled = false,
-  isHomePage = false
+  variant = 'default', 
+  className
 }) => {
-  const { isAuthenticated, user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const { isOnline } = useNetworkMonitor();
+  const location = useLocation();
   
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  // Close menu when changing routes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+  
+  // Close menu when pressing Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMenuOpen(false);
+      }
+    };
+    
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, []);
+  
+  // Handle click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (isMenuOpen && !target.closest('nav')) {
+        setIsMenuOpen(false);
+      }
+    };
+    
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, [isMenuOpen]);
+  
+  const headerVariantClasses = {
+    default: 'bg-background shadow-md',
+    compact: 'bg-background/95 backdrop-blur-sm shadow-md',
+    transparent: 'bg-transparent',
+    glass: 'bg-background/30 backdrop-blur-md border-b border-white/10'
   };
-
-  // Apply conditional styling based on variant and scroll state
-  const headerClasses = isScrolled 
-    ? "bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm shadow-md"
-    : isHomePage && variant === 'default'
-    ? "bg-transparent border-b border-gray-800/30"
-    : "bg-gray-900/95 border-b border-gray-800 backdrop-blur-sm";
-
+  
+  const isCurrentPage = (path: string) => location.pathname === path;
+  
   return (
-    <header className={`sticky top-0 z-50 ${headerClasses} transition-all duration-300`}>
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Link to="/" className="text-white font-bold text-xl">
-              ProcurityIQ
+    <header className={cn(
+      'sticky top-0 z-50 w-full transition-all duration-200',
+      headerVariantClasses[variant],
+      className
+    )}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo and brand */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="flex items-center">
+              <img src="/logo.svg" alt="Logo" className="h-8 w-auto" />
+              <span className="ml-3 text-lg font-bold text-foreground">ProcurityIQ</span>
             </Link>
-            
-            {/* Status Indicator */}
-            {!isOnline && (
-              <div className="ml-3 flex items-center gap-1 text-yellow-400 text-xs py-0.5 px-2 rounded-full bg-yellow-500/20 border border-yellow-500/30">
-                <WifiOff className="h-3 w-3" />
-                <span>Offline</span>
-              </div>
-            )}
           </div>
           
-          {/* Desktop Navigation */}
+          {/* Desktop navigation */}
           <nav className="hidden md:flex items-center space-x-4">
-            <Link to="/about" className="text-gray-200 hover:text-white transition-colors">About</Link>
-            <Link to="/contact" className="text-gray-200 hover:text-white transition-colors">Contact</Link>
-            <Link to="/pricing" className="text-gray-200 hover:text-white transition-colors">Pricing</Link>
-            <Link to="/sitemap" className="text-gray-200 hover:text-white transition-colors">Sitemap</Link>
-            <Link to="/knowledge-base" className="text-gray-200 hover:text-white transition-colors">Knowledge Base</Link>
+            <ul className="flex space-x-4">
+              {/* Navigation items */}
+              <li><Link to="/" className={cn("text-sm font-medium hover:text-primary transition-colors", isCurrentPage('/') && "text-primary")}>Home</Link></li>
+              <li><Link to="/features" className={cn("text-sm font-medium hover:text-primary transition-colors", isCurrentPage('/features') && "text-primary")}>Features</Link></li>
+              <li><Link to="/pricing" className={cn("text-sm font-medium hover:text-primary transition-colors", isCurrentPage('/pricing') && "text-primary")}>Pricing</Link></li>
+              <li><Link to="/about" className={cn("text-sm font-medium hover:text-primary transition-colors", isCurrentPage('/about') && "text-primary")}>About</Link></li>
+              <li><Link to="/contact" className={cn("text-sm font-medium hover:text-primary transition-colors", isCurrentPage('/contact') && "text-primary")}>Contact</Link></li>
+            </ul>
             
-            {isAuthenticated ? (
-              <>
-                <Link to="/home" className="text-gray-200 hover:text-white transition-colors">Home</Link>
-                <Link to="/profile" className="text-gray-200 hover:text-white transition-colors">Profile</Link>
-                <Button variant="outline" size="sm" onClick={() => signOut()}>Sign Out</Button>
-              </>
-            ) : (
-              <Button onClick={() => navigate('/auth')} variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700">Sign In</Button>
-            )}
+            {/* Right side actions */}
+            <div className="flex items-center space-x-2 ml-4">
+              <ThemeToggle />
+              <LoginButton variant="default" size="sm" />
+            </div>
           </nav>
           
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button 
-              onClick={toggleMenu}
-              className="text-gray-300 hover:text-white focus:outline-none"
-              aria-label="Toggle menu"
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-foreground"
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+              {isMenuOpen ? <X className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+            </Button>
           </div>
         </div>
-        
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4">
-            <nav className="flex flex-col space-y-2">
-              <Link 
-                to="/about" 
-                className="text-gray-200 hover:text-white transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About
-              </Link>
-              <Link 
-                to="/contact" 
-                className="text-gray-200 hover:text-white transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </Link>
-              <Link 
-                to="/pricing" 
-                className="text-gray-200 hover:text-white transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Pricing
-              </Link>
-              <Link 
-                to="/sitemap" 
-                className="text-gray-200 hover:text-white transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sitemap
-              </Link>
-              <Link 
-                to="/knowledge-base" 
-                className="text-gray-200 hover:text-white transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Knowledge Base
-              </Link>
-              
-              {isAuthenticated ? (
-                <>
-                  <Link 
-                    to="/home" 
-                    className="text-gray-200 hover:text-white transition-colors py-2"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Home
-                  </Link>
-                  <Link 
-                    to="/profile" 
-                    className="text-gray-200 hover:text-white transition-colors py-2"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => {
-                      signOut();
-                      setIsMenuOpen(false);
-                    }}
-                    className="mt-2 border-gray-600 text-white hover:bg-gray-800"
-                  >
-                    Sign Out
-                  </Button>
-                </>
-              ) : (
-                <Button 
-                  onClick={() => {
-                    navigate('/auth');
-                    setIsMenuOpen(false);
-                  }} 
-                  variant="default" 
-                  size="sm"
-                  className="mt-2 bg-blue-600 hover:bg-blue-700"
-                >
-                  Sign In
-                </Button>
-              )}
-            </nav>
-          </div>
-        )}
       </div>
+      
+      {/* Mobile navigation */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-background/95 backdrop-blur-md border-b border-gray-800">
+          <div className="container mx-auto px-4 py-3">
+            <ul className="space-y-2">
+              <li><Link to="/" className={cn("block px-3 py-2 rounded-md hover:bg-muted transition-colors", isCurrentPage('/') && "bg-muted")}>Home</Link></li>
+              <li><Link to="/features" className={cn("block px-3 py-2 rounded-md hover:bg-muted transition-colors", isCurrentPage('/features') && "bg-muted")}>Features</Link></li>
+              <li><Link to="/pricing" className={cn("block px-3 py-2 rounded-md hover:bg-muted transition-colors", isCurrentPage('/pricing') && "bg-muted")}>Pricing</Link></li>
+              <li><Link to="/about" className={cn("block px-3 py-2 rounded-md hover:bg-muted transition-colors", isCurrentPage('/about') && "bg-muted")}>About</Link></li>
+              <li><Link to="/contact" className={cn("block px-3 py-2 rounded-md hover:bg-muted transition-colors", isCurrentPage('/contact') && "bg-muted")}>Contact</Link></li>
+            </ul>
+            
+            <div className="mt-4 pt-4 border-t border-gray-700">
+              <div className="flex justify-between items-center">
+                <ThemeToggle />
+                <LoginButton variant="default" size="sm" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

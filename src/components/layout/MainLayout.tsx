@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { ExternalFooter } from './ExternalFooter';
 import { InternalFooter } from './InternalFooter';
-import { NetworkStatusBanner } from '../ui/universal/NetworkStatusBanner';
+import { NetworkStatusMonitor } from '../ui/universal/NetworkStatusMonitor';
 import { PrivacyBanner } from '../ui/universal/PrivacyBanner';
 import NetworkErrorBoundary from '../ui/universal/NetworkErrorBoundary';
 import CookieConsent from '../CookieConsent';
@@ -15,7 +15,7 @@ import { SkipLinks } from '../ui/universal/SkipLinks';
 import { useNetworkMonitor } from '../ui/universal/NetworkMonitorProvider';
 
 interface MainLayoutProps extends PropsWithChildren {
-  variant?: 'default' | 'fluent' | 'minimal';
+  variant?: 'default' | 'fluent' | 'minimal' | 'modern';
   showFooter?: boolean;
   showHeader?: boolean;
   showNetworkStatus?: boolean;
@@ -50,7 +50,6 @@ const headerRoutes = [
   '/profile',
   '/knowledge-base',
   '/federal-knowledge-base',
-  '/texas-acquisition',
   '/improve',
   '/federal-acquisition',
   '/solicitation-review',
@@ -61,7 +60,8 @@ const headerRoutes = [
   '/small-business',
   '/quality-assurance',
   '/source-selection',
-  '/contract-management'
+  '/contract-management',
+  '/activity'
 ];
 
 const homeRoutes = ['/', '/home'];
@@ -83,7 +83,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const { isOnline, reconnecting, supabaseConnected } = useNetworkMonitor();
+  const { isOnline, isReconnecting, supabaseConnected } = useNetworkMonitor();
   
   useKeyboardShortcuts();
   
@@ -112,12 +112,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     default: 'container mx-auto py-8 px-4 sm:px-6 lg:px-8',
     fluent: 'container mx-auto py-8 px-4 sm:px-6 lg:px-8',
     minimal: 'container mx-auto py-6 px-4 sm:px-6 lg:px-8',
+    modern: 'container mx-auto py-6 px-4 sm:px-6 lg:px-8'
   };
   
   const containerClasses = {
     default: 'min-h-screen flex flex-col bg-background',
     fluent: 'min-h-screen flex flex-col bg-gradient-to-b from-background to-background/90',
     minimal: 'min-h-screen flex flex-col bg-background',
+    modern: 'min-h-screen flex flex-col bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800'
   };
   
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(showPrivacyBanner);
@@ -136,7 +138,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   const isExternalRoute = externalRoutes.includes(location.pathname);
   
   // Network status components
-  const showNetworkBanner = showNetworkStatus && (!isOnline || !supabaseConnected || reconnecting);
+  const showNetworkBanner = showNetworkStatus && (!isOnline || !supabaseConnected || isReconnecting);
   
   return (
     <div className={cn(containerClasses[variant], className)}>
@@ -144,15 +146,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         <SkipLinks />
         
         {shouldShowHeader && (
-          <Header />
+          <Header variant={variant === 'modern' ? 'glass' : headerVariant} />
         )}
         
         {showNetworkBanner && (
-          <NetworkStatusBanner 
-            isOffline={!isOnline}
-            isReconnecting={reconnecting} 
-            variant={!isOnline ? 'destructive' : 'warning'}
-          />
+          <NetworkStatusMonitor />
         )}
         
         {showPrivacyNotice && (

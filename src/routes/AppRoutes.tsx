@@ -1,6 +1,11 @@
+
 import React, { Suspense } from 'react';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { LoadingPage } from "@/components/LoadingPage";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { ExternalPageLayout } from "@/components/layout/ExternalPageLayout";
+import { ProtectedPageLayout } from "@/components/layout/ProtectedPageLayout";
 
 // Import route collections
 import landingRoutes from './landingRoutes';
@@ -10,48 +15,16 @@ import acquisitionRoutes from './acquisitionRoutes';
 import settingsRoutes from './settingsRoutes';
 
 // Import specific pages for route definitions that aren't in collections
-import {
-  ChatPage,
-  ImproveApp,
-  ApiDocsPage,
-  ComponentLibraryPage,
-  KnowledgeBasePage,
-  ValidationPage,
-  NotFoundPage
-} from './lazyComponents';
-import { wrapWithLayout } from './routeTypes';
+import { lazy } from 'react';
 
-// Additional utility routes that don't fit in other route groups
-const utilityRoutes = [
-  {
-    path: "/chat",
-    element: wrapWithLayout(ChatPage)
-  },
-  {
-    path: "/improve",
-    element: wrapWithLayout(ImproveApp, false)
-  },
-  {
-    path: "/api-docs",
-    element: wrapWithLayout(ApiDocsPage, false)
-  },
-  {
-    path: "/component-library",
-    element: wrapWithLayout(ComponentLibraryPage, false)
-  },
-  {
-    path: "/knowledge-base",
-    element: wrapWithLayout(KnowledgeBasePage)
-  },
-  {
-    path: "/validation",
-    element: wrapWithLayout(ValidationPage)
-  },
-  {
-    path: "*",
-    element: wrapWithLayout(NotFoundPage, false)
-  }
-];
+const ChatPage = lazy(() => import('@/pages/ChatPage'));
+const ImproveApp = lazy(() => import('@/pages/ImproveApp'));
+const ApiDocsPage = lazy(() => import('@/pages/ApiDocsPage'));
+const ComponentLibraryPage = lazy(() => import('@/pages/ComponentLibraryPage'));
+const KnowledgeBasePage = lazy(() => import('@/pages/KnowledgeBasePage'));
+const ValidationPage = lazy(() => import('@/pages/ValidationPage'));
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
+const ActivityPage = lazy(() => import('@/pages/ActivityPage'));
 
 export function AppRoutes() {
   return (
@@ -59,33 +32,100 @@ export function AppRoutes() {
       <Routes>
         {/* Landing routes */}
         {landingRoutes.map((route, index) => (
-          <Route key={`landing-${index}`} path={route.path} element={route.element} />
+          <Route 
+            key={`landing-${index}`} 
+            path={route.path} 
+            element={
+              <ExternalPageLayout>
+                {route.element}
+              </ExternalPageLayout>
+            } 
+          />
         ))}
         
         {/* Auth routes */}
         {authRoutes.map((route, index) => (
-          <Route key={`auth-${index}`} path={route.path} element={route.element} />
+          <Route 
+            key={`auth-${index}`} 
+            path={route.path} 
+            element={
+              <ExternalPageLayout showHeader={false} showFooter={false}>
+                {route.element}
+              </ExternalPageLayout>
+            } 
+          />
         ))}
         
-        {/* Dashboard routes */}
-        {dashboardRoutes.map((route, index) => (
-          <Route key={`dashboard-${index}`} path={route.path} element={route.element} />
-        ))}
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute />}>
+          {/* Dashboard routes */}
+          {dashboardRoutes.map((route, index) => (
+            <Route 
+              key={`dashboard-${index}`} 
+              path={route.path} 
+              element={
+                <ProtectedPageLayout>
+                  {route.element}
+                </ProtectedPageLayout>
+              } 
+            />
+          ))}
+          
+          {/* Acquisition routes */}
+          {acquisitionRoutes.map((route, index) => (
+            <Route 
+              key={`acquisition-${index}`} 
+              path={route.path} 
+              element={
+                <ProtectedPageLayout>
+                  {route.element}
+                </ProtectedPageLayout>
+              } 
+            />
+          ))}
+          
+          {/* Settings routes */}
+          {settingsRoutes.map((route, index) => (
+            <Route 
+              key={`settings-${index}`} 
+              path={route.path} 
+              element={
+                <ProtectedPageLayout>
+                  {route.element}
+                </ProtectedPageLayout>
+              } 
+            />
+          ))}
+          
+          {/* Activity page */}
+          <Route 
+            path="/activity" 
+            element={
+              <ProtectedPageLayout>
+                <ActivityPage />
+              </ProtectedPageLayout>
+            } 
+          />
+          
+          {/* Additional utility routes */}
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
+          <Route path="/validation" element={<ValidationPage />} />
+        </Route>
         
-        {/* Acquisition routes */}
-        {acquisitionRoutes.map((route, index) => (
-          <Route key={`acquisition-${index}`} path={route.path} element={route.element} />
-        ))}
+        {/* Public utility routes */}
+        <Route path="/improve" element={<ImproveApp />} />
+        <Route path="/api-docs" element={<ApiDocsPage />} />
+        <Route path="/component-library" element={<ComponentLibraryPage />} />
         
-        {/* Settings routes */}
-        {settingsRoutes.map((route, index) => (
-          <Route key={`settings-${index}`} path={route.path} element={route.element} />
-        ))}
+        {/* Redirect root to dashboard if authenticated, otherwise to landing page */}
+        <Route 
+          path="/" 
+          element={<Navigate to="/dashboard" replace />} 
+        />
         
-        {/* Additional utility routes */}
-        {utilityRoutes.map((route, index) => (
-          <Route key={`utility-${index}`} path={route.path} element={route.element} />
-        ))}
+        {/* Catch all (404) */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );
