@@ -11,6 +11,11 @@ interface ConnectionQuality {
   lastChecked: Date;
 }
 
+interface ConnectionCheckResult {
+  success: boolean;
+  latency: number | null;
+}
+
 interface ConnectionMonitorOptions {
   pingEndpoint?: string;
   pingInterval?: number;
@@ -39,8 +44,8 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
   const { toast } = useToast();
 
   // Function to check connection with server
-  const checkServerConnection = useCallback(async () => {
-    if (!navigator.onLine) return false;
+  const checkServerConnection = useCallback(async (): Promise<ConnectionCheckResult> => {
+    if (!navigator.onLine) return { success: false, latency: null };
     
     setIsReconnecting(true);
     const startTime = performance.now();
@@ -92,12 +97,12 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
 
   const handleOnline = useCallback(async () => {
     // Double check server connection
-    const { success, latency } = await checkServerConnection();
+    const result = await checkServerConnection();
     
-    if (success) {
+    if (result.success) {
       const newState = {
         isOnline: true,
-        latency,
+        latency: result.latency,
         connectionType: connectionQuality.connectionType,
         effectiveConnectionType: connectionQuality.effectiveConnectionType,
         downlink: connectionQuality.downlink,
@@ -110,8 +115,8 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
       if (showToasts) {
         toast({
           title: "Connection Restored",
-          description: latency 
-            ? `Your internet connection has been restored (${Math.round(latency)}ms).` 
+          description: result.latency 
+            ? `Your internet connection has been restored (${Math.round(result.latency)}ms).` 
             : "Your internet connection has been restored.",
           variant: "default"
         });
@@ -151,11 +156,11 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
   // Forcibly refresh connection status
   const refreshConnectionStatus = useCallback(async () => {
     setIsReconnecting(true);
-    const { success, latency } = await checkServerConnection();
+    const result = await checkServerConnection();
     
     const newState = {
-      isOnline: success,
-      latency,
+      isOnline: result.success,
+      latency: result.latency,
       connectionType: connectionQuality.connectionType,
       effectiveConnectionType: connectionQuality.effectiveConnectionType,
       downlink: connectionQuality.downlink,
@@ -170,7 +175,7 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
       onConnectionChange(newState);
     }
     
-    return success;
+    return result.success;
   }, [checkServerConnection, connectionQuality, updateNetworkInfo, onConnectionChange]);
 
   // Setup event listeners for online/offline events
@@ -191,8 +196,8 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
 
     // Initial check with server
     if (navigator.onLine) {
-      checkServerConnection().then(({ success }) => {
-        if (!success && connectionQuality.isOnline) {
+      checkServerConnection().then((result) => {
+        if (!result.success && connectionQuality.isOnline) {
           handleOffline();
         }
       });
@@ -201,29 +206,29 @@ export function useNetworkConnectionMonitor(options: ConnectionMonitorOptions = 
     // Set up periodic check
     const intervalId = setInterval(() => {
       if (navigator.onLine) {
-        checkServerConnection().then(({ success, latency }) => {
+        checkServerConnection().then((result) => {
           const newState = {
-            isOnline: success,
-            latency,
+            isOnline: result.success,
+            latency: result.latency,
             connectionType: connectionQuality.connectionType,
             effectiveConnectionType: connectionQuality.effectiveConnectionType,
             downlink: connectionQuality.downlink,
             lastChecked: new Date()
           };
           
-          if (success !== connectionQuality.isOnline) {
+          if (result.success !== connectionQuality.isOnline) {
             setConnectionQuality(newState);
             
-            if (success) {
+            if (result.success) {
               handleOnline();
             } else {
               handleOffline();
             }
-          } else if (success) {
+          } else if (result.success) {
             // Just update latency if we're still online
             setConnectionQuality(prev => ({
               ...prev,
-              latency,
+              latency: result.latency,
               lastChecked: new Date()
             }));
           }
