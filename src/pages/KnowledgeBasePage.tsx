@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageErrorBoundary } from '@/components/ui/universal/PageErrorBoundary';
 import { Container, Row, Col } from '@/components/ui/universal/Grid';
@@ -82,5 +83,21 @@ const KnowledgeBasePage = () => {
                                   {tag}
                                 </span>
                               ))}
-                            </
+                            </div>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                )}
+              </Col>
+            </Row>
+          </Container>
+        </ProtectedPageLayout>
+      </PageErrorBoundary>
+      <InternalFooter />
+    </>
+  );
+};
 
+export default KnowledgeBasePage;
