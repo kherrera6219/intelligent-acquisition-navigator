@@ -1,3 +1,4 @@
+
 const fs = require('fs');
 const path = require('path');
 
@@ -12,8 +13,8 @@ const filesToRemove = [
   'src/hooks/useNetworkStatus.tsx',
   
   // CSS duplications - clean up redundant imports
-  // We'll keep the modular approach and remove older monolithic ones
-  'src/styles/modules/accessibility/index.css', // redundant imports
+  // We'll regenerate this file with proper imports
+  'src/styles/modules/accessibility/index.css',
   
   // Components to be removed due to duplicated functionality
   'src/components/ui/universal/NetworkErrorHandler.tsx', // useNetworkConnectionMonitor provides better handling
@@ -50,6 +51,8 @@ function updateImportsInFile(filePath, oldImport, newImport) {
       content = content.replace(new RegExp(oldImport, 'g'), newImport);
       fs.writeFileSync(fullPath, content, 'utf8');
       console.log(`✅ Updated imports in: ${filePath}`);
+    } else {
+      console.log(`ℹ️ No updates needed in: ${filePath} (pattern not found)`);
     }
   } catch (error) {
     console.error(`❌ Error updating imports in ${filePath}:`, error.message);
@@ -65,6 +68,11 @@ const importsToUpdate = [
     newImport: "import { NetworkStatusBanner } from './NetworkStatusBanner';"
   },
   // Add other import updates here as needed
+  {
+    file: 'src/components/ui/universal/NetworkMonitorProvider.tsx',
+    oldImport: "<EnhancedNetworkBanner isOffline={!isOnline} isReconnecting={isReconnecting} />",
+    newImport: "<NetworkStatusBanner isOffline={!isOnline} isReconnecting={isReconnecting} />"
+  }
 ];
 
 // Main execution
