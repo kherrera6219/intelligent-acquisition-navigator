@@ -40,13 +40,7 @@ export const getCachedItem = async (key: string): Promise<any> => {
     
     if (!item) return null;
 
-    // Check if the item has expired
-    if (item.expires && item.expires < Date.now()) {
-      await database.delete(CACHE_STORE, key);
-      return null;
-    }
-
-    return item.value;
+    return item;
   } catch (error) {
     console.error('Error getting cached item:', error);
     return null;
@@ -67,6 +61,18 @@ export const setCachedItem = async (key: string, value: any, expiresIn: number =
     });
   } catch (error) {
     console.error('Error setting cached item:', error);
+  }
+};
+
+// Check if data exists
+export const hasCachedItem = async (key: string): Promise<boolean> => {
+  try {
+    const database = await initOfflineDB();
+    const item = await database.get(CACHE_STORE, key);
+    return !!item;
+  } catch (error) {
+    console.error('Error checking if data exists:', error);
+    return false;
   }
 };
 

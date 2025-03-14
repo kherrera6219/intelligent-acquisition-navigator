@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Clock, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface SessionTimeoutTimerProps {
   className?: string;
@@ -66,24 +66,29 @@ export function SessionTimeoutTimer({
 
   return (
     <TooltipProvider>
-      <Tooltip content={tooltipContent}>
-        <button
-          className={cn(
-            "flex items-center gap-1.5 text-sm font-medium transition-colors",
-            "hover:opacity-80 cursor-pointer rounded py-1 px-1.5",
-            getStatusColor(),
-            className
-          )}
-          onClick={handleClick}
-          aria-label="Session time remaining"
-        >
-          {showIcon && (
-            status === 'critical' 
-              ? <Shield className="h-3.5 w-3.5" /> 
-              : <Clock className="h-3.5 w-3.5" />
-          )}
-          <span>{timeDisplay}</span>
-        </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            className={cn(
+              "flex items-center gap-1.5 text-sm font-medium transition-colors",
+              "hover:opacity-80 cursor-pointer rounded py-1 px-1.5",
+              getStatusColor(),
+              className
+            )}
+            onClick={handleClick}
+            aria-label="Session time remaining"
+          >
+            {showIcon && (
+              status === 'critical' 
+                ? <Shield className="h-3.5 w-3.5" /> 
+                : <Clock className="h-3.5 w-3.5" />
+            )}
+            <span>{timeDisplay}</span>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          {tooltipContent}
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

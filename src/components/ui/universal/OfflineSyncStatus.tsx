@@ -16,10 +16,10 @@ export const OfflineSyncStatus: React.FC<OfflineSyncStatusProps> = ({
   compact = false 
 }) => {
   const { isOnline } = useNetworkMonitor();
-  const { pendingRequests, isSyncing, syncPendingRequests, canSync } = useOfflineSync();
+  const { pendingRequestCount, syncing, syncNow } = useOfflineSync();
 
   // Don't show if there are no pending requests
-  if (pendingRequests === 0) return null;
+  if (pendingRequestCount === 0) return null;
 
   return (
     <div className={`${className} ${compact ? 'p-2' : 'p-4'} bg-secondary/50 border border-secondary rounded-md shadow-sm`}>
@@ -35,28 +35,28 @@ export const OfflineSyncStatus: React.FC<OfflineSyncStatusProps> = ({
           </span>
         </div>
         
-        {isOnline && canSync && (
+        {isOnline && (
           <Button
             variant="outline"
             size="sm"
-            onClick={syncPendingRequests}
-            disabled={isSyncing || !isOnline}
+            onClick={syncNow}
+            disabled={syncing || !isOnline}
           >
-            {isSyncing ? 'Syncing...' : 'Sync Now'}
+            {syncing ? 'Syncing...' : 'Sync Now'}
           </Button>
         )}
       </div>
       
       <div className="flex items-center justify-between mb-1">
         <span className="text-xs text-muted-foreground">
-          {pendingRequests} {pendingRequests === 1 ? 'change' : 'changes'} pending
+          {pendingRequestCount} {pendingRequestCount === 1 ? 'change' : 'changes'} pending
         </span>
-        {isSyncing && (
+        {syncing && (
           <span className="text-xs text-muted-foreground">Syncing...</span>
         )}
       </div>
       
-      {isSyncing && (
+      {syncing && (
         <Progress value={33} className="h-1" />
       )}
     </div>

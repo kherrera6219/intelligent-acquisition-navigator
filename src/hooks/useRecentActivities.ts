@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Activity } from '@/types/dashboard';
 import { FileText, Code, MessageSquare, GitPullRequest, Calendar } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 type ActivityCategory = 'document' | 'code' | 'message' | 'pull-request' | 'calendar';
 
@@ -65,7 +66,7 @@ const mockActivities: Activity[] = [
 ];
 
 // Helper function to get icon by activity category
-const getActivityIcon = (category: ActivityCategory) => {
+const getActivityIcon = (category: ActivityCategory): { component: LucideIcon, className: string } => {
   switch (category) {
     case 'document':
       return { component: FileText, className: "text-blue-500" };

@@ -1,5 +1,5 @@
 
-import { storeData, getData, hasData } from './offlineStorage';
+import { initOfflineDB, setCachedItem, getCachedItem } from './offlineStorage';
 
 interface CachedFetchOptions {
   cacheKey: string;
@@ -25,7 +25,7 @@ export const cachedFetch = async <T>(
 
   // If data is provided, store it in cache
   if (data) {
-    await storeData(cacheKey, {
+    await setCachedItem(cacheKey, {
       data,
       timestamp: Date.now()
     });
@@ -38,22 +38,16 @@ export const cachedFetch = async <T>(
   }
 
   // Check if we have cached data
-  const hasCachedData = await hasData(cacheKey);
-  if (!hasCachedData) {
-    return null;
-  }
-
-  // Get cached data
-  const cached = await getData(cacheKey);
+  const cached = await getCachedItem(cacheKey);
   if (!cached) {
     return null;
   }
 
   // Check if cache is still valid
   const now = Date.now();
-  if (cached.timestamp && (now - cached.timestamp > cacheMaxAge)) {
+  if (cached.expires && (now > cached.expires)) {
     return null; // Cache is expired
   }
 
-  return cached.data as T;
+  return cached.value as T;
 };

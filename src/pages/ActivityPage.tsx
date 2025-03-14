@@ -36,7 +36,7 @@ const ActivityPage: React.FC = () => {
       <Card className="p-6 glass-card">
         <h1 className="text-2xl font-bold mb-4">Activity History</h1>
         
-        {error && <ActivityError message={error} />}
+        {error && <ActivityError message={error.message} />}
         
         <ActivityList 
           isLoading={isLoading} 

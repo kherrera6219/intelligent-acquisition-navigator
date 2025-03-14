@@ -59,7 +59,7 @@ export const RecentActivityCard: React.FC = (): JSX.Element => {
         </div>
       }
     >
-      {error && <ActivityError message={error} />}
+      {error && <ActivityError message={error.message} />}
       
       <ActivityList 
         isLoading={isLoading} 
