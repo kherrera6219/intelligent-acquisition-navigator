@@ -12,9 +12,11 @@ import { DashboardMainContent } from '@/components/dashboard/DashboardMainConten
 import { DashboardRecentActivity } from '@/components/dashboard/DashboardRecentActivity';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
 import { StatisticsOverview } from '@/components/dashboard/StatisticsOverview';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [greeting, setGreeting] = useState<string>('');
@@ -46,6 +48,10 @@ export default function DashboardPage() {
   }, []);
 
   const userName = user?.email ? user.email.split('@')[0] : '';
+  
+  const handleNewProject = () => {
+    navigate('/proposals/new');
+  };
 
   return (
     <MsFluentDashboardLayout
@@ -54,6 +60,8 @@ export default function DashboardPage() {
       header={<UniversalInternalHeader />}
       footer={<InternalFooter />}
     >
+      <NetworkStatusBanner />
+      
       <header className="mb-6">
         <h1 className="ms-title-large text-balance">{`${greeting}${userName ? ', ' + userName : ''}!`}</h1>
         <p className="ms-subtitle mt-1">Welcome to your procurement management dashboard</p>
@@ -85,7 +93,7 @@ export default function DashboardPage() {
             </div>
           </div>
               
-          <Button className="bg-primary hover:bg-primary/90 text-white">
+          <Button className="bg-primary hover:bg-primary/90 text-white" onClick={handleNewProject}>
             <PlusCircle className="h-4 w-4 mr-2" />
             New Project
           </Button>

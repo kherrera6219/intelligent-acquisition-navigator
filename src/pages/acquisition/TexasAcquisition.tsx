@@ -10,6 +10,7 @@ import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { BackButton } from "@/components/navigation/BackButton";
 import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
 import { InternalFooter } from "@/components/layout/InternalFooter";
+import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 
 const TexasAcquisition = () => {
   const [input, setInput] = useState("");
@@ -91,6 +92,7 @@ const TexasAcquisition = () => {
   return (
     <>
       <UniversalInternalHeader />
+      <NetworkStatusBanner />
       <ProtectedPageLayout
         title="Texas Acquisition Management"
         description="Manage and monitor Texas state acquisition compliance and procedures."
@@ -98,6 +100,7 @@ const TexasAcquisition = () => {
           { label: 'Dashboard', href: '/dashboard' },
           { label: 'Texas Acquisition', href: '/texas-acquisition' }
         ]}
+        isLoading={isInitializing}
       >
         <TexasChatContainer
           conversationId={conversationId || ""}

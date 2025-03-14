@@ -1,78 +1,60 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { Card } from '@/components/ui/universal/Card';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/ui/universal/Breadcrumbs';
+import { LoadingState } from '@/components/ui/universal/LoadingState';
 import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
-import { OfflineStatusIndicator } from '@/components/ui/universal/OfflineStatusIndicator';
-import { GlobalNetworkErrorBanner } from '@/components/ui/universal/GlobalNetworkErrorBanner';
-import { SkipLinks } from '@/components/ui/universal/SkipLinks';
 
 interface ProtectedPageLayoutProps {
-  children: React.ReactNode;
-  showSidebar?: boolean;
-  title?: string;
+  children: ReactNode;
+  title: string;
   description?: string;
-  withErrorBoundary?: boolean;
   isLoading?: boolean;
   error?: Error | null;
-  breadcrumbs?: Array<{label: string; href: string}>;
-  action?: React.ReactNode;
-  fullWidth?: boolean;
-  backLink?: {label: string; href: string};
-  withCard?: boolean;
-  tags?: Array<{label: string; color: string}>;
-  onRetry?: () => void;
+  action?: ReactNode;
+  breadcrumbs?: BreadcrumbItem[];
 }
 
 export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   children,
-  showSidebar = true,
   title,
   description,
-  withErrorBoundary = true,
   isLoading = false,
   error = null,
-  onRetry,
-  // We're not using the other props in this component, but they're defined
-  // in the interface for type safety with page components
+  action,
+  breadcrumbs
 }) => {
-  React.useEffect(() => {
-    // Update document title if provided
-    if (title) {
-      document.title = `${title} | ProcurityIQ`;
-    }
-  }, [title]);
-
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* Global network error banner that appears at the top of the page */}
-      {error && (
-        <GlobalNetworkErrorBanner 
-          error={error} 
-          onRetry={onRetry}
-          isRetrying={isLoading}
-        />
-      )}
+    <div className="px-6 py-4 max-w-7xl mx-auto">
+      <NetworkStatusBanner />
       
-      <main id="main-content" tabIndex={-1}>
-        {withErrorBoundary ? (
-          <div className="network-error-handler">
-            <div className="flex items-center justify-between mb-4">
-              {title && <h1 className="text-2xl font-bold">{title}</h1>}
-              <OfflineStatusIndicator compact />
-            </div>
-            {description && <p className="text-muted-foreground mb-6">{description}</p>}
-            {children}
+      {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+      
+      <header className="mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-balance">{title}</h1>
+            {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
           </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between mb-4">
-              {title && <h1 className="text-2xl font-bold">{title}</h1>}
-              <OfflineStatusIndicator compact />
+          
+          {action && (
+            <div className="flex-shrink-0">
+              {action}
             </div>
-            {description && <p className="text-muted-foreground mb-6">{description}</p>}
-            {children}
-          </>
-        )}
-      </main>
+          )}
+        </div>
+      </header>
+      
+      {isLoading ? (
+        <LoadingState message="Loading content..." className="min-h-[300px]" />
+      ) : error ? (
+        <Card className="p-6 border-destructive/30 bg-destructive/10">
+          <h2 className="text-lg font-medium mb-2">Error</h2>
+          <p className="text-sm text-muted-foreground">{error.message}</p>
+        </Card>
+      ) : (
+        children
+      )}
     </div>
   );
 };

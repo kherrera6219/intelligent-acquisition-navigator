@@ -5,6 +5,10 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ExternalPageLayout } from "@/components/layout/ExternalPageLayout";
 import { ProtectedPageLayout } from "@/components/layout/ProtectedPageLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
+import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
+import { InternalFooter } from "@/components/layout/InternalFooter";
+import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 
 // Import route collections
 import landingRoutes from './landingRoutes';
@@ -23,6 +27,7 @@ const ValidationPage = lazy(() => import('@/pages/ValidationPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 const ActivityPage = lazy(() => import('@/pages/ActivityPage'));
 const CodeReviewPage = lazy(() => import('@/pages/CodeReviewPage'));
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 
 export function AppRoutes() {
   return (
@@ -59,81 +64,120 @@ export function AppRoutes() {
         
         {/* Protected routes */}
         <Route element={<ProtectedRoute children={null} />}>
-          {/* Dashboard routes */}
+          {/* Dashboard */}
+          <Route path="/dashboard" element={<DashboardPage />} />
+
+          {/* Dashboard routes with internal layout */}
           {dashboardRoutes.map((route, index) => (
             <Route 
               key={`dashboard-${index}`} 
               path={route.path} 
               element={
-                <ProtectedPageLayout>
-                  {route.element}
-                </ProtectedPageLayout>
+                <>
+                  <UniversalInternalHeader />
+                  <NetworkStatusBanner />
+                  <ProtectedPageLayout title={route.title || ""}>
+                    {route.element}
+                  </ProtectedPageLayout>
+                  <InternalFooter />
+                </>
               } 
             />
           ))}
           
-          {/* Acquisition routes */}
+          {/* Acquisition routes with internal layout */}
           {acquisitionRoutes.map((route, index) => (
             <Route 
               key={`acquisition-${index}`} 
               path={route.path} 
               element={
-                <ProtectedPageLayout>
-                  {route.element}
-                </ProtectedPageLayout>
+                <>
+                  <UniversalInternalHeader />
+                  <NetworkStatusBanner />
+                  <ProtectedPageLayout title={route.title || ""}>
+                    {route.element}
+                  </ProtectedPageLayout>
+                  <InternalFooter />
+                </>
               } 
             />
           ))}
           
-          {/* Settings routes */}
+          {/* Settings routes with internal layout */}
           {settingsRoutes.map((route, index) => (
             <Route 
               key={`settings-${index}`} 
               path={route.path} 
               element={
-                <ProtectedPageLayout>
-                  {route.element}
-                </ProtectedPageLayout>
+                <>
+                  <UniversalInternalHeader />
+                  <NetworkStatusBanner />
+                  <ProtectedPageLayout title={route.title || ""}>
+                    {route.element}
+                  </ProtectedPageLayout>
+                  <InternalFooter />
+                </>
               } 
             />
           ))}
           
-          {/* Activity page */}
+          {/* Other protected routes */}
           <Route 
             path="/activity" 
             element={
-              <ProtectedPageLayout>
+              <AppLayout>
                 <ActivityPage />
-              </ProtectedPageLayout>
+              </AppLayout>
             } 
           />
           
-          {/* Code Review page */}
+          <Route 
+            path="/knowledge-base" 
+            element={
+              <AppLayout>
+                <KnowledgeBasePage />
+              </AppLayout>
+            } 
+          />
+          
+          <Route 
+            path="/chat" 
+            element={
+              <AppLayout>
+                <ChatPage />
+              </AppLayout>
+            } 
+          />
+          
+          <Route 
+            path="/improve" 
+            element={
+              <AppLayout>
+                <ImproveApp />
+              </AppLayout>
+            } 
+          />
+          
+          <Route 
+            path="/validation" 
+            element={
+              <AppLayout>
+                <ValidationPage />
+              </AppLayout>
+            } 
+          />
+          
           <Route 
             path="/code-review" 
             element={
-              <ProtectedPageLayout>
+              <AppLayout>
                 <CodeReviewPage />
-              </ProtectedPageLayout>
+              </AppLayout>
             } 
           />
-          
-          {/* Additional utility routes */}
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
-          <Route path="/validation" element={<ValidationPage />} />
         </Route>
         
-        {/* Public utility routes */}
-        <Route path="/improve" element={<ImproveApp />} />
-        
-        {/* Redirect root to dashboard if authenticated, otherwise to landing page */}
-        <Route 
-          path="/" 
-          element={<Navigate to="/dashboard" replace />} 
-        />
-        
-        {/* Catch all (404) */}
+        {/* Not Found */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>

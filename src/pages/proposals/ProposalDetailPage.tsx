@@ -4,6 +4,10 @@ import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '@/components/proposals/ProposalDetails';
 import { Proposal } from '@/types/proposals';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
+import { InternalFooter } from '@/components/layout/InternalFooter';
 
 export default function ProposalDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -29,16 +33,26 @@ export default function ProposalDetailPage() {
   };
   
   return (
-    <ProtectedPageLayout
-      title={`Proposal Details: ${id}`}
-      description="View and manage proposal details"
-      breadcrumbs={[
-        { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Proposals', href: '/proposals' },
-        { label: `Proposal ${id}`, href: `/proposals/${id}` }
-      ]}
-    >
-      <ProposalDetails proposal={mockProposal} handleBack={handleBack} />
-    </ProtectedPageLayout>
+    <>
+      <UniversalInternalHeader />
+      <ProtectedPageLayout
+        title={`Proposal Details: ${id}`}
+        description="View and manage proposal details"
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Proposals', href: '/proposals' },
+          { label: `Proposal ${id}`, href: `/proposals/${id}` }
+        ]}
+        action={
+          <Button variant="outline" onClick={handleBack}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Proposals
+          </Button>
+        }
+      >
+        <ProposalDetails proposal={mockProposal} handleBack={handleBack} />
+      </ProtectedPageLayout>
+      <InternalFooter />
+    </>
   );
 }
