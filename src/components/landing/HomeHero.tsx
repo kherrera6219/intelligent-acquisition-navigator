@@ -8,13 +8,13 @@ import { Flex } from '@/components/ui/universal/Flexbox';
 
 export const HomeHero: React.FC = () => {
   return (
-    <section className="w-full py-16 md:py-24">
+    <section className="w-full py-16 md:py-24 bg-gradient-to-b from-gray-900 to-gray-800">
       <Container>
-        <Row className="items-center">
+        <Row className="items-center justify-center">
           <Col lg={6} className="mb-8 lg:mb-0 text-center lg:text-left">
             <Flex direction="column" className="h-full justify-center">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-                ProcurityIQ Acquisition Platform
+                Intelligent Acquisition Platform
               </h1>
               <p className="text-lg md:text-xl text-gray-300 max-w-xl mt-6 mx-auto lg:mx-0">
                 Streamline procurement processes across federal, state, and local levels with AI-powered insights and compliance automation.
@@ -33,7 +33,7 @@ export const HomeHero: React.FC = () => {
             </Flex>
           </Col>
           <Col lg={6} className="flex justify-center">
-            <div className="metal-card p-6 rounded-xl max-w-md lg:max-w-full">
+            <div className="metal-card p-6 rounded-xl max-w-md lg:max-w-full transform hover:scale-[1.02] transition-all duration-300">
               <img 
                 src="/assets/dashboard-preview.png" 
                 alt="ProcurityIQ Dashboard Preview" 

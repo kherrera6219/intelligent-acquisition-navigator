@@ -50,16 +50,20 @@ export const HomeFeatures: React.FC = () => {
         
         <Row className="justify-center">
           {features.map((feature, index) => (
-            <Col key={index} md={6} lg={4} className="mb-8">
+            <Col key={index} md={6} lg={4} className="mb-8 px-4">
               <div className="glass-card hover:shadow-xl hover:translate-y-[-2px] transition-all duration-300 h-full rounded-xl">
                 <div className="p-6 flex flex-col h-full">
-                  <div className="mb-4 flex justify-center">{feature.icon}</div>
+                  <div className="mb-4 flex justify-center">
+                    <div className="p-3 rounded-full bg-gray-800/50 transform transition-transform duration-300 hover:scale-110">
+                      {feature.icon}
+                    </div>
+                  </div>
                   <h3 className="text-xl font-semibold mb-3 text-center">{feature.title}</h3>
                   <p className="text-gray-300 flex-grow text-center">{feature.description}</p>
                   <div className="mt-4 pt-4 border-t border-gray-700/50 text-center">
-                    <Link to="/features" className="text-primary hover:text-primary/90 flex items-center justify-center text-sm font-medium">
+                    <Link to="/features" className="text-primary hover:text-primary/90 flex items-center justify-center text-sm font-medium group">
                       Learn more
-                      <ChevronRight className="ml-1 h-4 w-4" />
+                      <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </div>
                 </div>
