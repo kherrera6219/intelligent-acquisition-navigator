@@ -3,12 +3,10 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, HelpCircle } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip/Tooltip";
+import { TooltipContent } from "@/components/ui/tooltip/TooltipContent";
+import { TooltipProvider } from "@/components/ui/tooltip/TooltipProvider";
+import { Root, TooltipTrigger } from '@radix-ui/react-tooltip';
 
 export interface PricingFeature {
   text: string;
@@ -79,13 +77,8 @@ export const PricingPlanCard: React.FC<PricingPlanProps> = ({
                 {feature.text}
                 {feature.tooltip && (
                   <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 inline-block ml-1 opacity-70 cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{feature.tooltip}</p>
-                      </TooltipContent>
+                    <Tooltip content={feature.tooltip} side="top" align="center">
+                      <HelpCircle className="h-4 w-4 inline-block ml-1 opacity-70 cursor-help" />
                     </Tooltip>
                   </TooltipProvider>
                 )}
