@@ -1,97 +1,82 @@
 
-import { useState, useEffect } from 'react';
-import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
+import { useState, useEffect, useCallback } from 'react';
 import { ChecklistItem } from '@/types/checklist';
-import { useChecklistData } from '@/hooks/useChecklistData';
 
 export const useOfflineChecklistData = () => {
-  const { isOnline } = useNetworkMonitor();
   const [localItems, setLocalItems] = useState<ChecklistItem[]>([]);
-  const [pendingChanges, setPendingChanges] = useState<any[]>([]);
+  const [pendingUpdates, setPendingUpdates] = useState<Record<number, Partial<ChecklistItem>>>({});
   
-  // Get the actions from useChecklistData
-  const { updateItem } = useChecklistData();
+  const STORAGE_KEY = 'checklist_items';
+  const PENDING_UPDATES_KEY = 'checklist_pending_updates';
 
+  // Load data from local storage on initial mount
   useEffect(() => {
-    // Load locally stored checklist items on mount
-    const loadOfflineData = () => {
+    const storedItems = localStorage.getItem(STORAGE_KEY);
+    if (storedItems) {
       try {
-        const storedItems = localStorage.getItem('checklist_items');
-        const storedChanges = localStorage.getItem('pending_changes');
-        
-        if (storedItems) {
-          setLocalItems(JSON.parse(storedItems));
-        }
-        
-        if (storedChanges) {
-          setPendingChanges(JSON.parse(storedChanges));
-        }
+        setLocalItems(JSON.parse(storedItems));
       } catch (error) {
-        console.error('Error loading offline data:', error);
+        console.error('Failed to parse stored checklist items:', error);
       }
-    };
-    
-    loadOfflineData();
+    }
+
+    const storedUpdates = localStorage.getItem(PENDING_UPDATES_KEY);
+    if (storedUpdates) {
+      try {
+        setPendingUpdates(JSON.parse(storedUpdates));
+      } catch (error) {
+        console.error('Failed to parse stored pending updates:', error);
+      }
+    }
   }, []);
 
-  useEffect(() => {
-    // Sync pending changes when back online
-    const syncPendingChanges = async () => {
-      if (isOnline && pendingChanges.length > 0) {
-        console.log('Syncing pending changes:', pendingChanges.length);
-        
-        for (const change of pendingChanges) {
-          try {
-            await updateItem(change.id, change.data);
-            // Remove this change from pending changes
-            setPendingChanges(prev => prev.filter(c => c.id !== change.id));
-          } catch (error) {
-            console.error('Error syncing change:', error);
-          }
-        }
-        
-        // Update localStorage with remaining changes
-        localStorage.setItem('pending_changes', JSON.stringify(pendingChanges));
-      }
-    };
-    
-    syncPendingChanges();
-  }, [isOnline, pendingChanges, updateItem]);
+  // Update an item offline
+  const updateItemOffline = useCallback((id: number, updates: Partial<ChecklistItem>) => {
+    // Update local copy of items
+    setLocalItems(prevItems => {
+      const updatedItems = prevItems.map(item => 
+        item.id === id ? { ...item, ...updates } : item
+      );
+      
+      // Save to localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedItems));
+      
+      return updatedItems;
+    });
 
-  const saveLocalChange = (id: number, data: any) => {
-    // Add to pending changes
-    const newChange = { id, data, timestamp: Date.now() };
-    setPendingChanges(prev => [...prev.filter(c => c.id !== id), newChange]);
-    
-    // Update localStorage
-    try {
-      localStorage.setItem('pending_changes', JSON.stringify([
-        ...pendingChanges.filter(c => c.id !== id),
-        newChange
-      ]));
-    } catch (error) {
-      console.error('Error saving local change:', error);
-    }
-    
-    // Update local items
-    setLocalItems(prev => prev.map(item => 
-      item.id === id ? { ...item, ...data } : item
-    ));
-    
-    try {
-      localStorage.setItem('checklist_items', JSON.stringify(localItems));
-    } catch (error) {
-      console.error('Error saving local items:', error);
-    }
-  };
+    // Track pending updates to sync when online
+    setPendingUpdates(prev => {
+      const newUpdates = { 
+        ...prev,
+        [id]: { ...prev[id], ...updates }
+      };
+      
+      localStorage.setItem(PENDING_UPDATES_KEY, JSON.stringify(newUpdates));
+      
+      return newUpdates;
+    });
+  }, []);
+
+  // Clear pending updates (after successful sync)
+  const clearPendingUpdates = useCallback(() => {
+    setPendingUpdates({});
+    localStorage.removeItem(PENDING_UPDATES_KEY);
+  }, []);
+
+  // Get pending updates in a format ready for syncing
+  const getPendingUpdatesForSync = useCallback(() => {
+    return Object.entries(pendingUpdates).map(([idStr, updates]) => ({
+      id: parseInt(idStr, 10),
+      updates
+    }));
+  }, [pendingUpdates]);
 
   return {
     localItems,
-    pendingChanges,
-    saveLocalChange,
-    hasPendingChanges: pendingChanges.length > 0,
-    pendingUpdatesCount: pendingChanges.length,
-    updateItemOffline: saveLocalChange,
-    data: localItems
+    updateItemOffline,
+    clearPendingUpdates,
+    getPendingUpdatesForSync,
+    hasPendingChanges: Object.keys(pendingUpdates).length > 0,
+    pendingUpdatesCount: Object.keys(pendingUpdates).length
   };
 };

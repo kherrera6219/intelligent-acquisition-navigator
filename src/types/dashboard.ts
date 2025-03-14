@@ -1,4 +1,3 @@
-
 import { LucideIcon } from 'lucide-react';
 
 export interface RecentActivity {
@@ -46,4 +45,14 @@ export interface UserProfile {
   projects: number;
   loginTime: string;
   isPremium: boolean;
+}
+
+export interface Activity {
+  id: string;
+  title: string;
+  description: string;
+  timestamp: string;
+  category: string;
+  status: 'pending' | 'in-progress' | 'completed';
+  user: string;
 }

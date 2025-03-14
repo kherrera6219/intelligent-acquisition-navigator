@@ -1,6 +1,6 @@
 
-export { Tooltip } from './Tooltip';
-export { TooltipProvider } from './TooltipProvider';
+export { default as Tooltip } from './Tooltip';
 export { TooltipContent } from './TooltipContent';
-export type { TooltipProps } from './types';
-export { Root, Trigger as TooltipTrigger, Portal } from '@radix-ui/react-tooltip';
+export { TooltipProvider } from './TooltipProvider';
+export { TooltipTrigger } from './Tooltip';
+export * from './types';

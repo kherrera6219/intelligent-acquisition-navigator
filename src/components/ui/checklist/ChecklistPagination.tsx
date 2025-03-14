@@ -14,38 +14,48 @@ export const ChecklistPagination: React.FC<ChecklistPaginationProps> = ({
   totalItems,
   itemsPerPage,
   currentPage,
-  onPageChange,
+  onPageChange
 }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      onPageChange(currentPage - 1);
+    }
+  };
+  
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      onPageChange(currentPage + 1);
+    }
+  };
 
   if (totalPages <= 1) {
     return null;
   }
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-6">
+    <div className="flex items-center justify-between mt-6">
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={handlePrevPage}
         disabled={currentPage === 1}
-        aria-label="Previous page"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-4 w-4 mr-2" />
+        Previous
       </Button>
-
-      <div className="text-sm text-gray-400">
+      <div className="text-sm text-muted-foreground">
         Page {currentPage} of {totalPages}
       </div>
-
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={handleNextPage}
         disabled={currentPage === totalPages}
-        aria-label="Next page"
       >
-        <ChevronRight className="h-4 w-4" />
+        Next
+        <ChevronRight className="h-4 w-4 ml-2" />
       </Button>
     </div>
   );

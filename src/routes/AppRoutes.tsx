@@ -19,8 +19,6 @@ import { lazy } from 'react';
 
 const ChatPage = lazy(() => import('@/pages/ChatPage'));
 const ImproveApp = lazy(() => import('@/pages/ImproveApp'));
-const ApiDocsPage = lazy(() => import('@/pages/ApiDocsPage'));
-const ComponentLibraryPage = lazy(() => import('@/pages/ComponentLibraryPage'));
 const KnowledgeBasePage = lazy(() => import('@/pages/KnowledgeBasePage'));
 const ValidationPage = lazy(() => import('@/pages/ValidationPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
@@ -58,7 +56,7 @@ export function AppRoutes() {
         ))}
         
         {/* Protected routes */}
-        <Route element={<ProtectedRoute />}>
+        <Route element={<ProtectedRoute children={null} />}>
           {/* Dashboard routes */}
           {dashboardRoutes.map((route, index) => (
             <Route 
@@ -126,8 +124,6 @@ export function AppRoutes() {
         
         {/* Public utility routes */}
         <Route path="/improve" element={<ImproveApp />} />
-        <Route path="/api-docs" element={<ApiDocsPage />} />
-        <Route path="/component-library" element={<ComponentLibraryPage />} />
         
         {/* Redirect root to dashboard if authenticated, otherwise to landing page */}
         <Route 

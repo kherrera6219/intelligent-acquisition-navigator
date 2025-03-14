@@ -1,17 +1,28 @@
 
 import React from 'react';
+import { Card } from '@/components/ui/card';
+import { Sparkles } from 'lucide-react';
 
 interface ChecklistCompletedProps {
   show: boolean;
 }
 
-export const ChecklistCompleted: React.FC<ChecklistCompletedProps> = ({ show }) => {
-  if (!show) return null;
+export const ChecklistCompleted: React.FC<ChecklistCompletedProps> = ({
+  show
+}) => {
+  if (!show) {
+    return null;
+  }
 
   return (
-    <div className="mt-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-center">
-      <h3 className="text-green-400 font-medium mb-2">All items completed! 🎉</h3>
-      <p className="text-sm text-gray-400">Great job! You've completed all improvement tasks.</p>
-    </div>
+    <Card className="mt-8 p-6 bg-gradient-to-r from-green-500/20 to-blue-500/20 border-green-200 dark:border-green-900">
+      <div className="flex items-center justify-center">
+        <Sparkles className="h-6 w-6 text-green-500 mr-2" />
+        <h3 className="text-xl font-semibold text-green-600 dark:text-green-400">All tasks completed!</h3>
+      </div>
+      <p className="text-center mt-2 text-green-700 dark:text-green-300">
+        Great job! You've completed all the tasks in the checklist.
+      </p>
+    </Card>
   );
 };

@@ -1,31 +1,49 @@
 
 import React from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface ChecklistErrorProps {
-  error: Error;
+  error: Error | string;
   hasOfflineData: boolean;
   offlineItemsCount: number;
 }
 
-export const ChecklistError: React.FC<ChecklistErrorProps> = ({ 
-  error, 
+export const ChecklistError: React.FC<ChecklistErrorProps> = ({
+  error,
   hasOfflineData,
-  offlineItemsCount 
+  offlineItemsCount
 }) => {
   return (
-    <div className="w-full p-6 text-center">
-      <div className="flex flex-col items-center justify-center gap-3 py-10">
-        <AlertTriangle className="h-12 w-12 text-amber-500" />
-        <p className="text-red-500 font-medium text-lg">Error loading checklist</p>
-        <p className="text-sm text-gray-400 max-w-md mx-auto">{error.message}</p>
-      </div>
-      {hasOfflineData && offlineItemsCount > 0 && (
-        <div className="mt-4 p-4 bg-amber-950/20 border border-amber-500/20 rounded-lg">
-          <p className="text-sm text-amber-400 font-medium mb-2">Using cached checklist data</p>
-          <p className="text-xs text-gray-400">Changes will sync when connection is restored</p>
+    <Card className="p-6 border-red-200 dark:border-red-900">
+      <div className="flex items-start">
+        <AlertTriangle className="h-6 w-6 text-red-500 mt-1 mr-3 flex-shrink-0" />
+        <div>
+          <h3 className="text-lg font-semibold text-red-600 dark:text-red-400">
+            Failed to load checklist
+          </h3>
+          <p className="text-red-700 dark:text-red-300 mt-2">
+            {typeof error === 'string' ? error : error.message}
+          </p>
+          
+          {hasOfflineData && (
+            <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-md">
+              <p className="text-amber-800 dark:text-amber-300 text-sm">
+                You're viewing {offlineItemsCount} items from your last session. 
+                Some data might be out of date.
+              </p>
+            </div>
+          )}
+          
+          <div className="mt-4">
+            <Button className="space-x-2">
+              <RefreshCw className="h-4 w-4" />
+              <span>Retry</span>
+            </Button>
+          </div>
         </div>
-      )}
-    </div>
+      </div>
+    </Card>
   );
 };

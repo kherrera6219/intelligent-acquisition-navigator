@@ -1,92 +1,52 @@
 
 import React from 'react';
-import { WifiOff, Wifi, RefreshCw } from 'lucide-react';
-import { useNetworkMonitor } from './NetworkMonitorProvider';
-import { Tooltip } from '@/components/ui/tooltip';
-import { format } from 'date-fns';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { NetworkStatusIcon } from './NetworkStatusIcon';
 
-interface OfflineStatusIndicatorProps {
-  className?: string;
-  showLabel?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+export interface OfflineStatusIndicatorProps {
+  compact?: boolean;
 }
 
-export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({
-  className = '',
-  showLabel = false,
-  size = 'md'
+export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({ 
+  compact = false 
 }) => {
-  const { isOnline, isReconnecting, supabaseConnected, lastSyncTime } = useNetworkMonitor();
-
-  const getIconSize = () => {
-    switch (size) {
-      case 'sm': return 'h-3 w-3';
-      case 'lg': return 'h-5 w-5';
-      case 'md':
-      default: return 'h-4 w-4';
-    }
-  };
-
-  const getFontSize = () => {
-    switch (size) {
-      case 'sm': return 'text-xs';
-      case 'lg': return 'text-base';
-      case 'md':
-      default: return 'text-sm';
-    }
-  };
-
-  const getLabelText = () => {
-    if (!isOnline) return 'Offline';
-    if (isReconnecting) return 'Reconnecting...';
-    if (!supabaseConnected) return 'Limited Connectivity';
-    return 'Online';
-  };
-
-  const getTooltipText = () => {
-    if (!isOnline) {
-      return 'You are currently offline. Some features may be unavailable.';
-    }
-    
-    if (isReconnecting) {
-      return 'Reconnecting to the server...';
-    }
-    
-    if (!supabaseConnected) {
-      return 'Connected to the internet, but unable to reach the server.';
-    }
-    
-    return lastSyncTime 
-      ? `Online. Last synchronized: ${format(lastSyncTime, 'MMM d, yyyy h:mm:ss a')}`
-      : 'Online. All systems operational.';
-  };
+  const { online, lastOnlineAt, lastSyncTime } = useNetworkStatus();
+  
+  if (online) {
+    return null;
+  }
+  
+  if (compact) {
+    return (
+      <div className="inline-flex items-center rounded-full bg-yellow-500/10 px-2 py-1 text-xs font-medium text-yellow-500 ring-1 ring-inset ring-yellow-500/20">
+        <NetworkStatusIcon status="offline" className="mr-1 h-3 w-3" />
+        Offline
+      </div>
+    );
+  }
 
   return (
-    <div className={`flex items-center gap-1 ${className}`}>
-      <Tooltip content={getTooltipText()}>
-        <div className="flex items-center">
-          {!isOnline ? (
-            <WifiOff className={`${getIconSize()} text-destructive`} />
-          ) : isReconnecting ? (
-            <RefreshCw className={`${getIconSize()} text-warning animate-spin`} />
-          ) : !supabaseConnected ? (
-            <Wifi className={`${getIconSize()} text-warning`} />
-          ) : (
-            <Wifi className={`${getIconSize()} text-success`} />
-          )}
-          
-          {showLabel && (
-            <span className={`ml-1 ${getFontSize()} ${
-              !isOnline ? 'text-destructive' : 
-              isReconnecting ? 'text-warning' : 
-              !supabaseConnected ? 'text-warning' : 
-              'text-success'
-            }`}>
-              {getLabelText()}
-            </span>
-          )}
+    <div className="rounded-md bg-yellow-50 p-4 dark:bg-yellow-900/20">
+      <div className="flex">
+        <div className="flex-shrink-0">
+          <NetworkStatusIcon status="offline" className="h-5 w-5 text-yellow-400" />
         </div>
-      </Tooltip>
+        <div className="ml-3">
+          <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Offline Mode</h3>
+          <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-200">
+            <p>
+              You are currently working offline. Changes will be synced when you reconnect.
+              {lastSyncTime && (
+                <span className="block mt-1 text-xs">
+                  Last synced: {new Date(lastSyncTime).toLocaleString()}
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
+export default OfflineStatusIndicator;
