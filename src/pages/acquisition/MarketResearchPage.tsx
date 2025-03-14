@@ -194,7 +194,7 @@ const MarketResearchPage = () => {
                             <TableHead>Location</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead className="text-right">Value</TableHead>
-                            <TableHead className="w-[80px]"></TableHead>
+                            <TableHead className="w-[80px]">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -228,7 +228,7 @@ const MarketResearchPage = () => {
                         <TableFooter>
                           <TableRow>
                             <TableCell colSpan={5}>Total Research Value</TableCell>
-                            <TableCell className="text-right font-bold">$9.85M</TableCell>
+                            <TableCell className="text-right font-bold">{`$9.85M`}</TableCell>
                             <TableCell></TableCell>
                           </TableRow>
                         </TableFooter>
