@@ -11,6 +11,7 @@ import CookieConsent from '../CookieConsent';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
+import { SkipLinks } from '../ui/universal/SkipLinks';
 
 interface MainLayoutProps extends PropsWithChildren {
   variant?: 'default' | 'fluent' | 'minimal';
@@ -64,7 +65,7 @@ const headerRoutes = [
 
 const homeRoutes = ['/', '/home'];
 
-const externalRoutes = ['/', '/about', '/features', '/pricing', '/contact', '/help', '/privacy', '/terms'];
+const externalRoutes = ['/', '/about', '/features', '/pricing', '/contact', '/help', '/privacy', '/terms', '/sitemap'];
 
 export const MainLayout: React.FC<MainLayoutProps> = ({
   children,
@@ -149,6 +150,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <div className={cn(containerClasses[variant], className)}>
       <NetworkErrorBoundary>
+        <SkipLinks />
+        
         {shouldShowHeader && (
           <Header />
         )}
@@ -164,7 +167,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           />
         )}
         
-        <main className={cn("flex-grow", contentClassNames[variant])}>
+        <main id="main-content" className={cn("flex-grow", contentClassNames[variant])} tabIndex={-1}>
           {children}
         </main>
         

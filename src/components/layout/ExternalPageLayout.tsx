@@ -1,34 +1,48 @@
 
 import React from 'react';
-import { ExternalFooter } from './ExternalFooter';
-import { Header } from './Header';
 import { Helmet } from 'react-helmet';
+import { Header } from './Header';
+import { ExternalFooter } from './ExternalFooter';
+import { SkipLinks } from '../ui/universal/SkipLinks';
 
-type ExternalPageLayoutProps = {
+interface ExternalPageLayoutProps {
   children: React.ReactNode;
-  title: string;
+  title?: string;
   description?: string;
-};
+  showHeader?: boolean;
+  showFooter?: boolean;
+  noIndex?: boolean;
+}
 
 export const ExternalPageLayout: React.FC<ExternalPageLayoutProps> = ({
   children,
   title,
-  description = 'Acquisition Knowledge Framework helps improve federal acquisition workflows.',
+  description,
+  showHeader = true,
+  showFooter = true,
+  noIndex = false
 }) => {
+  const pageTitle = title ? `${title} | ProcurityIQ` : 'ProcurityIQ';
+  
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <>
       <Helmet>
-        <title>{title} | AKF</title>
-        <meta name="description" content={description} />
+        <title>{pageTitle}</title>
+        {description && <meta name="description" content={description} />}
+        {noIndex && <meta name="robots" content="noindex, nofollow" />}
       </Helmet>
       
-      <Header />
-      
-      <main className="flex-grow">
-        {children}
-      </main>
-      
-      <ExternalFooter />
-    </div>
+      <div className="min-h-screen flex flex-col bg-gray-900">
+        <SkipLinks />
+        
+        {showHeader && <Header />}
+        
+        <main id="main-content" className="flex-grow" tabIndex={-1}>
+          {children}
+        </main>
+        
+        {showFooter && <ExternalFooter />}
+      </div>
+    </>
   );
 };

@@ -4,6 +4,7 @@ import { AppLayout } from './AppLayout';
 import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 import { OfflineStatusIndicator } from '@/components/ui/universal/OfflineStatusIndicator';
 import { GlobalNetworkErrorBanner } from '@/components/ui/universal/GlobalNetworkErrorBanner';
+import { SkipLinks } from '@/components/ui/universal/SkipLinks';
 
 interface ProtectedPageLayoutProps {
   children: React.ReactNode;

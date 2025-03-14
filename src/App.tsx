@@ -13,6 +13,7 @@ import { initOfflineDB, clearExpiredCache } from '@/utils/offlineStorage';
 import { generateCsrfToken } from '@/utils/csrfProtection';
 import { supabase } from '@/integrations/supabase/client';
 import { checkSupabaseConnection } from '@/utils/supabaseHelper';
+import { SkipLinks } from '@/components/ui/universal/SkipLinks';
 
 function App() {
   // Initialize security and storage features on app load
@@ -57,6 +58,7 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <NetworkMonitorProvider>
+            <SkipLinks />
             <NetworkStatusMonitor />
             <RouterProvider router={browserRouter} />
             <CookieConsent />

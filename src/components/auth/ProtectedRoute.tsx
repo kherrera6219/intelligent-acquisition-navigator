@@ -6,6 +6,7 @@ import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBann
 import { VerificationBanner } from "@/components/auth/VerificationBanner";
 import { SessionTimeoutWarning } from "@/components/auth/SessionTimeoutWarning";
 import { PageLoader } from "@/components/ui/universal/PageLoader";
+import { SkipLinks } from "@/components/ui/universal/SkipLinks";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -51,6 +52,7 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
   return (
     <>
+      <SkipLinks />
       <NetworkStatusBanner />
       <VerificationBanner />
       <SessionTimeoutWarning />
