@@ -19,7 +19,7 @@ export default function ProposalDetailPage() {
     id: id || '0',
     title: `Proposal ${id}`,
     description: 'Detailed proposal description would go here.',
-    status: 'PENDING',
+    status: 'PENDING' as 'PENDING' | 'APPROVED' | 'REJECTED' | 'DRAFT',
     submittedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     submissionDate: new Date().toISOString(), 

@@ -11,11 +11,11 @@ const ProposalDetailPage = lazy(() => import("@/pages/proposals/ProposalDetailPa
 
 const routes: RouteObject[] = [
   {
-    path: "/dashboard",
+    path: "/",
     element: wrapWithLayout(DashboardHomePage)
   },
   {
-    path: "/home",
+    path: "/dashboard",
     element: wrapWithLayout(DashboardHomePage)
   },
   {
