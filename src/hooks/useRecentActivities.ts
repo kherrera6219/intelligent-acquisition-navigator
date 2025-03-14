@@ -86,6 +86,36 @@ export const useRecentActivities = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [filter, setFilter] = useState<string | null>(null);
+
+  // Get all unique categories for filtering
+  const categories = Array.from(new Set(mockActivities.map(activity => activity.category)));
+
+  // Apply filter to activities
+  const filteredActivities = activities.filter(activity => 
+    filter ? activity.category === filter : true
+  ).map(activity => ({
+    ...activity,
+    icon: getActivityIcon(activity.category as ActivityCategory),
+    status: Math.random() > 0.7 ? 'warning' : Math.random() > 0.4 ? 'success' : 'info',
+    timestamp: new Date(activity.timestamp) // Convert ISO string to Date object
+  }));
+
+  // Function to refresh activities
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Simulate API refresh
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setActivities(mockActivities);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to refresh activities'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -105,8 +135,13 @@ export const useRecentActivities = () => {
 
   return {
     activities,
+    filteredActivities,
     isLoading,
     error,
+    filter,
+    setFilter,
+    categories,
+    handleRefresh,
     getActivityIcon
   };
 };
