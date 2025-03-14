@@ -1,94 +1,100 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface NetworkStatus {
   isOnline: boolean;
   isReconnecting: boolean;
   supabaseConnected: boolean;
-  lastOnlineAt: Date | null;
-  lastSyncTime: Date | null;
+  lastChecked: Date | null;
 }
 
-export const useNetworkStatus = (): NetworkStatus => {
-  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [isReconnecting, setIsReconnecting] = useState<boolean>(false);
-  const [supabaseConnected, setSupabaseConnected] = useState<boolean>(true);
-  const [lastOnlineAt, setLastOnlineAt] = useState<Date | null>(isOnline ? new Date() : null);
-  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+export function useNetworkStatus() {
+  const [status, setStatus] = useState<NetworkStatus>({
+    isOnline: navigator.onLine,
+    isReconnecting: false,
+    supabaseConnected: false,
+    lastChecked: null
+  });
 
   // Check Supabase connection
-  const checkSupabaseConnection = async () => {
+  const checkSupabaseConnection = useCallback(async () => {
     try {
+      // Using a lightweight health check table to verify database connection
       const { data, error } = await supabase
         .from('health_check')
         .select('id')
         .limit(1)
-        .timeout(5000);
-        
-      const isConnected = !error;
-      setSupabaseConnected(isConnected);
+        .maybeSingle();
       
-      if (isConnected) {
-        setLastSyncTime(new Date());
-      }
+      // If we get here, even with no data, the connection is working
+      setStatus(prev => ({ 
+        ...prev, 
+        supabaseConnected: !error,
+        lastChecked: new Date()
+      }));
       
-      return isConnected;
-    } catch (error) {
-      console.error('Error checking Supabase connection:', error);
-      setSupabaseConnected(false);
+      return !error;
+    } catch (err) {
+      setStatus(prev => ({ 
+        ...prev, 
+        supabaseConnected: false,
+        lastChecked: new Date()
+      }));
       return false;
     }
-  };
+  }, []);
 
+  // Handle online/offline events
+  const handleOnline = useCallback(() => {
+    setStatus(prev => ({ 
+      ...prev, 
+      isOnline: true,
+      isReconnecting: true 
+    }));
+    
+    // When we come back online, check Supabase connection
+    checkSupabaseConnection().then(() => {
+      setStatus(prev => ({ ...prev, isReconnecting: false }));
+    });
+  }, [checkSupabaseConnection]);
+
+  const handleOffline = useCallback(() => {
+    setStatus(prev => ({ 
+      ...prev, 
+      isOnline: false,
+      supabaseConnected: false
+    }));
+  }, []);
+
+  // Setup event listeners
   useEffect(() => {
-    // Set up event listeners for online/offline status
-    const handleOnline = () => {
-      setIsOnline(true);
-      setLastOnlineAt(new Date());
-      setIsReconnecting(true);
-      
-      // Check Supabase connection after coming back online
-      checkSupabaseConnection().finally(() => {
-        setIsReconnecting(false);
-      });
-    };
-
-    const handleOffline = () => {
-      setIsOnline(false);
-      setSupabaseConnected(false);
-    };
-
-    // Set up event listeners
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-
-    // Initial connection check
+    
+    // Initial check
     checkSupabaseConnection();
-
-    // Set up periodic connection check when online
-    let intervalId: number | undefined;
-    if (isOnline) {
-      intervalId = window.setInterval(() => {
-        checkSupabaseConnection();
-      }, 60000); // Check every minute
-    }
-
-    // Cleanup
+    
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
     };
-  }, [isOnline]);
+  }, [handleOnline, handleOffline, checkSupabaseConnection]);
 
-  return {
-    isOnline,
-    isReconnecting,
-    supabaseConnected,
-    lastOnlineAt,
-    lastSyncTime
-  };
-};
+  // Periodic check when online
+  useEffect(() => {
+    let intervalId: number;
+    
+    if (status.isOnline) {
+      intervalId = window.setInterval(() => {
+        checkSupabaseConnection();
+      }, 30000); // Check every 30 seconds
+    }
+    
+    return () => {
+      if (intervalId) window.clearInterval(intervalId);
+    };
+  }, [status.isOnline, checkSupabaseConnection]);
+
+  return status;
+}

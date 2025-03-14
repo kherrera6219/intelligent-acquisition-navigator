@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 interface NetworkStatusTooltipProps {
@@ -34,17 +34,10 @@ export const NetworkStatusTooltip: React.FC<NetworkStatusTooltipProps> = ({
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className={cn("flex items-center", className)}>
-            <span className={cn("h-3 w-3 rounded-full", statusColor)} />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          {statusText}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip content={statusText}>
+      <div className={cn("flex items-center", className)}>
+        <span className={cn("h-3 w-3 rounded-full", statusColor)} />
+      </div>
+    </Tooltip>
   );
 };

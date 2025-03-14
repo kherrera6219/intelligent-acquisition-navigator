@@ -1,86 +1,50 @@
 
 import React from 'react';
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { useNavigate } from 'react-router-dom';
-import type { DashboardCardProps } from '@/types/dashboard';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { DashboardCardProps } from '@/types/dashboard';
 
 export const MsDashboardCard: React.FC<DashboardCardProps> = ({
   title,
   subtitle,
-  icon,
-  href,
-  children,
   className,
-  onClick,
-  badge,
-  footer
-}): JSX.Element => {
-  const navigate = useNavigate();
-
-  const handleClick = (): void => {
-    if (onClick) {
-      onClick();
-    } else if (href) {
-      navigate(href);
-    }
-  };
-
-  const isClickable = !!onClick || !!href;
-
+  children,
+  footer,
+  badge
+}) => {
   return (
-    <Card 
-      className={cn(
-        "p-4 transition-all border border-border/40 bg-card/50 backdrop-blur-sm",
-        isClickable && "hover:bg-card/80 hover:shadow-lg cursor-pointer",
-        className
-      )}
-      onClick={isClickable ? handleClick : undefined}
-      role={isClickable ? "button" : undefined}
-      tabIndex={isClickable ? 0 : undefined}
-      aria-label={isClickable ? `Open ${title}` : undefined}
-      onKeyDown={isClickable ? (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleClick();
-        }
-      } : undefined}
-    >
-      <div className="flex items-start gap-4">
-        {icon && (
-          <div className="flex-shrink-0 p-2 bg-primary/10 rounded-md text-primary" aria-hidden="true">
-            {icon}
-          </div>
-        )}
-        <div className="flex-grow">
-          <div className="flex items-center justify-between">
+    <Card className={cn("overflow-hidden", className)}>
+      <div className="p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
             <h3 className="text-lg font-semibold">{title}</h3>
-            {badge && (
-              <span className={cn(
-                "px-2 py-0.5 text-xs rounded-full",
-                badge.variant === "success" ? "bg-green-500/20 text-green-500" : 
-                badge.variant === "warning" ? "bg-amber-500/20 text-amber-500" :
-                badge.variant === "error" ? "bg-red-500/20 text-red-500" :
-                badge.variant === "primary" ? "bg-primary/20 text-primary" :
-                "bg-blue-500/20 text-blue-500"
-              )}>
-                {badge.text}
-              </span>
-            )}
+            {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
           </div>
-          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+          
+          {badge && (
+            <div className={cn(
+              "px-2 py-1 text-xs rounded-full",
+              badge.variant === 'success' && "bg-green-500/10 text-green-500 border border-green-500/20",
+              badge.variant === 'warning' && "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20",
+              badge.variant === 'error' && "bg-red-500/10 text-red-500 border border-red-500/20",
+              badge.variant === 'info' && "bg-blue-500/10 text-blue-500 border border-blue-500/20",
+              badge.variant === 'default' && "bg-gray-500/10 text-gray-500 border border-gray-500/20"
+            )}>
+              {badge.text}
+            </div>
+          )}
         </div>
-      </div>
-      {children && (
-        <div className="mt-4">
+        
+        <div className="space-y-4">
           {children}
         </div>
-      )}
-      {footer && (
-        <div className="mt-4 pt-4 border-t border-border/20">
-          {footer}
-        </div>
-      )}
+        
+        {footer && (
+          <div className="mt-6 pt-4 border-t border-white/10">
+            {footer}
+          </div>
+        )}
+      </div>
     </Card>
   );
 };
