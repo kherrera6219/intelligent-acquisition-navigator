@@ -29,3 +29,5 @@ export const Tooltip = ({
     </TooltipPrimitive.Provider>
   );
 };
+
+export default Tooltip;

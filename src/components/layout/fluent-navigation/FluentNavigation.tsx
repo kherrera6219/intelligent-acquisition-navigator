@@ -37,7 +37,7 @@ export const FluentNavigation: React.FC<FluentNavigationProps> = ({
       )}
       aria-label="Main Navigation"
     >
-      {items.map((item, index) => {
+      {items.map((item) => {
         const isActive = location.pathname === item.href;
         
         return (
