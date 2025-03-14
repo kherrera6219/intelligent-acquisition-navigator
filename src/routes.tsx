@@ -5,9 +5,9 @@ import { AppRoutes } from './routes/AppRoutes';
 import NotFoundPage from '@/pages/NotFoundPage';
 import { ProtectedPageLayout } from './components/layout/ProtectedPageLayout';
 import { ExternalPageLayout } from './components/layout/ExternalPageLayout';
-import { HomePage } from './pages/HomePage';
-import { AuthPage } from './pages/AuthPage';
-import { DashboardPage } from './pages/DashboardPage';
+import HomePage from './pages/HomePage';
+import AuthenticationPage from './pages/auth/AuthenticationPage';
+import DashboardPage from './pages/dashboard/DashboardHomePage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 // Simple wrapper for public routes
@@ -33,7 +33,7 @@ export const browserRouter = createBrowserRouter([
         path: "auth/*",
         element: (
           <ExternalPageLayout showHeader={false} showFooter={false}>
-            <AuthPage />
+            <AuthenticationPage />
           </ExternalPageLayout>
         ),
       },
@@ -132,7 +132,10 @@ export const browserRouter = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: () => import('./pages/TermsPage')
+            // Create TermsPage that was previously missing
+            lazy: () => import('./pages/PrivacyPage').then(module => ({ 
+              Component: () => React.createElement(module.default, { pageType: 'terms' })
+            }))
           }
         ]
       },

@@ -3,7 +3,11 @@ import React from 'react';
 import { Wifi, WifiOff, Loader } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 
 interface OfflineStatusIndicatorProps {
   className?: string;

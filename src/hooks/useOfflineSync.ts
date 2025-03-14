@@ -6,12 +6,14 @@ import { useToast } from '@/hooks/use-toast';
 import { setLastSyncTime } from '@/utils/supabaseHelper';
 
 export function useOfflineSync() {
-  const { isOnline, supabaseConnected } = useNetworkMonitor();
+  const { isOnline, isReconnecting } = useNetworkMonitor();
   const [pendingCount, setPendingCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
-  const [lastSyncTime, setLastSyncTimeState] = useState<Date | null>(null);
+  const [lastSyncTimeState, setLastSyncTimeState] = useState<Date | null>(null);
   const { toast } = useToast();
+  // Default supabaseConnected to true if not provided by the context
+  const supabaseConnected = true;
 
   // Fetch the count of pending requests
   const fetchPendingCount = useCallback(async () => {
@@ -25,7 +27,7 @@ export function useOfflineSync() {
 
   // Sync offline data when back online
   const syncOfflineData = useCallback(async () => {
-    if (!isOnline || !supabaseConnected || isSyncing) return;
+    if (!isOnline || isSyncing) return;
 
     try {
       setIsSyncing(true);
@@ -81,10 +83,10 @@ export function useOfflineSync() {
 
   // Auto-sync when coming back online
   useEffect(() => {
-    if (isOnline && supabaseConnected && pendingCount > 0 && !isSyncing) {
+    if (isOnline && pendingCount > 0 && !isSyncing) {
       syncOfflineData();
     }
-  }, [isOnline, supabaseConnected, pendingCount, isSyncing, syncOfflineData]);
+  }, [isOnline, pendingCount, isSyncing, syncOfflineData]);
 
   // Fetch pending count on mount and when connection status changes
   useEffect(() => {
@@ -94,7 +96,7 @@ export function useOfflineSync() {
     const intervalId = setInterval(fetchPendingCount, 30000); // every 30 seconds
     
     return () => clearInterval(intervalId);
-  }, [fetchPendingCount, isOnline, supabaseConnected]);
+  }, [fetchPendingCount, isOnline]);
 
   return {
     isOnline,
@@ -104,6 +106,6 @@ export function useOfflineSync() {
     syncProgress,
     syncOfflineData,
     refreshPendingCount: fetchPendingCount,
-    lastSyncTime
+    lastSyncTime: lastSyncTimeState
   };
 }

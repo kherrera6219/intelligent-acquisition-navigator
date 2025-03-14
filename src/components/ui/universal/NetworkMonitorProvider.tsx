@@ -5,14 +5,18 @@ import { NetworkStatusBanner } from './NetworkStatusBanner';
 interface NetworkMonitorContextType {
   isOnline: boolean;
   isReconnecting: boolean;
+  supabaseConnected?: boolean; // Added this field
   lastOnlineTime: Date | null;
+  lastSyncTime?: Date | null; // Added this field
   checkConnection: () => Promise<boolean>;
 }
 
 const NetworkMonitorContext = createContext<NetworkMonitorContextType>({
   isOnline: true,
   isReconnecting: false,
+  supabaseConnected: true, // Default value
   lastOnlineTime: null,
+  lastSyncTime: null, // Default value
   checkConnection: async () => true,
 });
 
@@ -35,6 +39,8 @@ export const NetworkMonitorProvider: React.FC<NetworkMonitorProviderProps> = ({
   const [isReconnecting, setIsReconnecting] = useState<boolean>(false);
   const [lastOnlineTime, setLastOnlineTime] = useState<Date | null>(initialOnlineState ? new Date() : null);
   const [reconnectTimer, setReconnectTimer] = useState<number | null>(null);
+  const [supabaseConnected, setSupabaseConnected] = useState<boolean>(true);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
 
   const checkConnection = useCallback(async (): Promise<boolean> => {
     try {
@@ -115,7 +121,9 @@ export const NetworkMonitorProvider: React.FC<NetworkMonitorProviderProps> = ({
       value={{
         isOnline,
         isReconnecting,
+        supabaseConnected,
         lastOnlineTime,
+        lastSyncTime,
         checkConnection,
       }}
     >
