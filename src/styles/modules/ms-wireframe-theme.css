@@ -1,0 +1,90 @@
+
+/* ProcurityIQ Wireframe Theme
+   Based on Microsoft Fluent UI Design System */
+
+:root {
+  /* Core Brand Colors */
+  --procurity-primary: #0078D4;
+  --procurity-primary-dark: #106EBE;
+  --procurity-primary-light: #2B88D8;
+  --procurity-secondary: #2B579A;
+  
+  /* Neutral Colors */
+  --procurity-black: #1A1A1A;
+  --procurity-dark: #212121;
+  --procurity-dark-alt: #2D2D2D;
+  --procurity-gray-darkest: #323130;
+  --procurity-gray-darker: #3B3A39;
+  --procurity-gray-dark: #484644;
+  --procurity-gray: #605E5C;
+  --procurity-gray-light: #A19F9D;
+  --procurity-gray-lighter: #D2D0CE;
+  --procurity-gray-lightest: #EDEBE9;
+  --procurity-white: #FFFFFF;
+  
+  /* Accent Colors */
+  --procurity-success: #107C10;
+  --procurity-warning: #FFB900;
+  --procurity-error: #D83B01;
+  --procurity-info: #0078D4;
+  
+  /* UI Element Colors */
+  --procurity-sidebar-bg: var(--procurity-black);
+  --procurity-content-bg: var(--procurity-white);
+  --procurity-card-bg: var(--procurity-white);
+  --procurity-header-bg: var(--procurity-white);
+  --procurity-modal-bg: var(--procurity-white);
+  --procurity-button-primary-bg: var(--procurity-primary);
+  --procurity-button-secondary-bg: var(--procurity-white);
+  
+  /* Text Colors */
+  --procurity-text-primary: var(--procurity-gray-darkest);
+  --procurity-text-secondary: var(--procurity-gray);
+  --procurity-text-disabled: var(--procurity-gray-light);
+  --procurity-text-on-primary: var(--procurity-white);
+  --procurity-text-on-dark: var(--procurity-white);
+  
+  /* Border Colors */
+  --procurity-border-light: var(--procurity-gray-lighter);
+  --procurity-border-medium: var(--procurity-gray-light);
+  
+  /* Shadow Variables */
+  --procurity-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --procurity-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --procurity-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  
+  /* Spacing Scale */
+  --procurity-space-xxs: 0.125rem; /* 2px */
+  --procurity-space-xs: 0.25rem;   /* 4px */
+  --procurity-space-sm: 0.5rem;    /* 8px */
+  --procurity-space-md: 1rem;      /* 16px */
+  --procurity-space-lg: 1.5rem;    /* 24px */
+  --procurity-space-xl: 2rem;      /* 32px */
+  --procurity-space-xxl: 3rem;     /* 48px */
+  
+  /* Border Radius */
+  --procurity-radius-sm: 2px;
+  --procurity-radius-md: 4px;
+  --procurity-radius-lg: 8px;
+  
+  /* Transition Duration */
+  --procurity-transition-fast: 100ms;
+  --procurity-transition-normal: 200ms;
+  --procurity-transition-slow: 300ms;
+  
+  /* Layout Constants */
+  --procurity-sidebar-width: 240px;
+  --procurity-header-height: 48px;
+  --procurity-container-width: 1440px;
+}
+
+/* Dark Theme Override */
+.dark-theme {
+  --procurity-content-bg: var(--procurity-gray-darkest);
+  --procurity-card-bg: var(--procurity-dark-alt);
+  --procurity-header-bg: var(--procurity-dark);
+  --procurity-text-primary: var(--procurity-white);
+  --procurity-text-secondary: var(--procurity-gray-lightest);
+  --procurity-border-light: var(--procurity-gray-dark);
+  --procurity-border-medium: var(--procurity-gray);
+}
