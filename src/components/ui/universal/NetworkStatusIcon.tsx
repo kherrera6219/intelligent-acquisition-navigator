@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Wifi, WifiOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface NetworkStatusIconProps {
-  isOnline: boolean;
+export interface NetworkStatusIconProps {
+  isOnline?: boolean;
+  status?: 'online' | 'offline' | 'reconnecting';
   className?: string;
   showLabel?: boolean;
   iconSize?: number;
@@ -12,18 +13,22 @@ interface NetworkStatusIconProps {
 
 export const NetworkStatusIcon: React.FC<NetworkStatusIconProps> = ({
   isOnline,
+  status,
   className,
   showLabel = false,
   iconSize = 16
 }) => {
   const [animateIcon, setAnimateIcon] = useState(false);
   
+  // Determine online status from either prop
+  const online = isOnline !== undefined ? isOnline : status === 'online';
+  
   // Animation effect when status changes
   useEffect(() => {
     setAnimateIcon(true);
     const timeout = setTimeout(() => setAnimateIcon(false), 1000);
     return () => clearTimeout(timeout);
-  }, [isOnline]);
+  }, [online, status]);
 
   return (
     <div className={cn(
@@ -31,7 +36,7 @@ export const NetworkStatusIcon: React.FC<NetworkStatusIconProps> = ({
       animateIcon ? "animate-pulse" : "",
       className
     )}>
-      {isOnline ? (
+      {online ? (
         <Wifi 
           className="text-green-500" 
           size={iconSize} 
@@ -46,9 +51,9 @@ export const NetworkStatusIcon: React.FC<NetworkStatusIconProps> = ({
       {showLabel && (
         <span className={cn(
           "text-xs font-medium",
-          isOnline ? "text-green-500" : "text-red-500"
+          online ? "text-green-500" : "text-red-500"
         )}>
-          {isOnline ? "Online" : "Offline"}
+          {online ? "Online" : "Offline"}
         </span>
       )}
     </div>

@@ -9,7 +9,7 @@ interface ApplicationStatusProviderProps {
 
 export const ApplicationStatusProvider: React.FC<ApplicationStatusProviderProps> = ({ children }) => {
   const [showReconnectedToast, setShowReconnectedToast] = useState(false);
-  const { isOnline, reconnecting, supabaseConnected, lastSyncTime } = useNetworkMonitor();
+  const { isOnline, isReconnecting, supabaseConnected } = useNetworkMonitor();
   const { toast } = useToast();
 
   // Show toast notification when coming back online after being offline

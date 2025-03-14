@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Activity } from '@/types/dashboard';
+import { AlertCircle, FileText, Users, Clock, CheckCircle2 } from 'lucide-react';
 
 type ActivityFilter = string | null;
 
@@ -29,7 +30,8 @@ export const useRecentActivities = () => {
               timestamp: new Date().toISOString(),
               category: 'Contract',
               status: 'completed',
-              user: 'John Doe'
+              user: 'John Doe',
+              icon: <CheckCircle2 className="h-5 w-5 text-green-500" />
             },
             {
               id: '2',
@@ -37,8 +39,9 @@ export const useRecentActivities = () => {
               description: 'Solicitation #67890 created by Jane Smith',
               timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
               category: 'Solicitation',
-              status: 'active',
-              user: 'Jane Smith'
+              status: 'pending',
+              user: 'Jane Smith',
+              icon: <FileText className="h-5 w-5 text-blue-500" />
             },
             {
               id: '3',
@@ -47,7 +50,8 @@ export const useRecentActivities = () => {
               timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
               category: 'Proposal',
               status: 'in-progress',
-              user: 'Team A'
+              user: 'Team A',
+              icon: <AlertCircle className="h-5 w-5 text-amber-500" />
             },
             {
               id: '4',
@@ -56,7 +60,8 @@ export const useRecentActivities = () => {
               timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
               category: 'Budget',
               status: 'completed',
-              user: 'Finance Department'
+              user: 'Finance Department',
+              icon: <CheckCircle2 className="h-5 w-5 text-green-500" />
             },
             {
               id: '5',
@@ -65,7 +70,8 @@ export const useRecentActivities = () => {
               timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
               category: 'Team',
               status: 'completed',
-              user: 'HR Department'
+              user: 'HR Department',
+              icon: <Users className="h-5 w-5 text-indigo-500" />
             }
           ]);
         }, 800);

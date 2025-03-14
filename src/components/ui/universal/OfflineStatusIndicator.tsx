@@ -10,9 +10,9 @@ export interface OfflineStatusIndicatorProps {
 export const OfflineStatusIndicator: React.FC<OfflineStatusIndicatorProps> = ({ 
   compact = false 
 }) => {
-  const { online, lastOnlineAt, lastSyncTime } = useNetworkStatus();
+  const { isOnline, lastOnlineAt, lastSyncTime } = useNetworkStatus();
   
-  if (online) {
+  if (isOnline) {
     return null;
   }
   

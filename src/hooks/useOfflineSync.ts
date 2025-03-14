@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from './use-toast';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { getPendingRequests, processPendingRequests, clearExpiredCache } from '@/utils/offlineStorage';
+import { getPendingRequests, getPendingRequestCount, deletePendingRequest, processPendingRequests, clearExpiredCache } from '@/utils/offlineStorage';
 
 export function useOfflineSync() {
   const [pendingRequests, setPendingRequests] = useState<number>(0);
@@ -14,9 +14,9 @@ export function useOfflineSync() {
   // Check for pending requests
   const checkPendingRequests = useCallback(async () => {
     try {
-      const requests = await getPendingRequests();
-      setPendingRequests(requests.length);
-      setCanSync(requests.length > 0 && isOnline && supabaseConnected);
+      const count = await getPendingRequestCount();
+      setPendingRequests(count);
+      setCanSync(count > 0 && isOnline && supabaseConnected);
     } catch (error) {
       console.error('Error checking pending requests:', error);
     }

@@ -12,7 +12,12 @@ export const offlineFetch = async (
   } catch (error) {
     // If fetch failed and we're offline, store the request for later
     if (!navigator.onLine) {
-      const url = typeof input === 'string' ? input : input.url;
+      // Handle different types of input to get the URL string
+      const url = typeof input === 'string' 
+        ? input 
+        : input instanceof Request 
+          ? input.url 
+          : input.toString();
       
       await addPendingRequest({
         url,

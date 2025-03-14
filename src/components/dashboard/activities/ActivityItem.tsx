@@ -9,7 +9,7 @@ import {
   AlertCircle,
   FileText 
 } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 
 export interface ActivityItemProps {
   icon?: React.ReactNode;
@@ -50,25 +50,17 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
       <div className="flex flex-col items-end gap-1 flex-shrink-0">
-        <TooltipProvider>
-          <Tooltip content={`Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`}>
-            <TooltipTrigger asChild>
-              <div className="flex items-center">
-                {getStatusIcon()}
-              </div>
-            </TooltipTrigger>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip content={format(timestamp, 'MMM d, yyyy h:mm:ss a')}>
-            <TooltipTrigger asChild>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
-                <span>{format(timestamp, 'h:mm a')}</span>
-              </div>
-            </TooltipTrigger>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip content={`Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`}>
+          <div className="flex items-center">
+            {getStatusIcon()}
+          </div>
+        </Tooltip>
+        <Tooltip content={format(timestamp, 'MMM d, yyyy h:mm:ss a')}>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Clock className="h-3 w-3" />
+            <span>{format(timestamp, 'h:mm a')}</span>
+          </div>
+        </Tooltip>
       </div>
     </div>
   );

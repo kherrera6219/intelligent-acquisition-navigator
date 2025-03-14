@@ -1,3 +1,4 @@
+
 import { LucideIcon } from 'lucide-react';
 
 export interface RecentActivity {
@@ -55,4 +56,5 @@ export interface Activity {
   category: string;
   status: 'pending' | 'in-progress' | 'completed';
   user: string;
+  icon?: React.ReactNode; // Added to match ActivityList requirement
 }

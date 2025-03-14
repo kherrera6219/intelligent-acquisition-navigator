@@ -1,13 +1,12 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Card } from "@/components/ui/universal/Card";
+import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Lock, RefreshCw, Save } from 'lucide-react';
+import { Shield, Lock, RefreshCw } from 'lucide-react';
 import { generateCsrfToken } from '@/utils/csrfProtection';
 import { rateLimitManager } from '@/utils/rateLimitManager';
 import { clearExpiredCache } from '@/utils/offlineStorage';
