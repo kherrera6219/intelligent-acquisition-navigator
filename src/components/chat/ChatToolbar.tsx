@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Paintbrush, Code, Play } from "lucide-react";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip/Tooltip";
 
 interface ChatToolbarProps {
   onDocumentCreation: () => void;

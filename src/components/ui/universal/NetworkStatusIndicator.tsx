@@ -2,7 +2,7 @@
 import React from 'react';
 import { NetworkStatus } from '@/types/dashboard';
 import { Wifi, WifiOff, RefreshCw } from 'lucide-react';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip/Tooltip';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 

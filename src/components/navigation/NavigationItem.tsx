@@ -1,7 +1,7 @@
 
 import { LucideIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip/Tooltip";
 
 interface NavigationItemProps {
   icon: LucideIcon;
