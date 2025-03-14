@@ -7,9 +7,34 @@ import { FederalTabContent } from '@/components/federal/FederalTabContent';
 import { FederalReportCardGrid } from '@/components/federal/FederalReportCardGrid';
 import { useNetworkOperation } from '@/hooks/useNetworkOperation';
 import { useToast } from '@/hooks/use-toast';
+import { ReportCardProps } from '@/components/federal/FederalReportCard';
+
+const mockReports: ReportCardProps[] = [
+  {
+    title: "Federal Acquisition Regulation Analysis",
+    description: "Analysis of recent FAR updates and their impact on procurement processes",
+    date: "2023-05-15",
+    status: "complete",
+    confidenceScore: 95
+  },
+  {
+    title: "DFARS Compliance Review",
+    description: "Evaluation of defense procurement compliance with current DFARS requirements",
+    date: "2023-04-22",
+    status: "in-progress",
+    confidenceScore: 87
+  },
+  {
+    title: "Small Business Set-Aside Analysis",
+    description: "Review of small business set-aside opportunities under federal regulations",
+    date: "2023-03-10",
+    status: "draft",
+    confidenceScore: 74
+  }
+];
 
 const FederalAcquisitionPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('chat');
+  const [activeTab, setActiveTab] = useState<'chat' | 'reports'>('chat');
   const { toast } = useToast();
   
   const { executeOperation, isLoading, error } = useNetworkOperation({
@@ -20,11 +45,19 @@ const FederalAcquisitionPage: React.FC = () => {
     successMessage: 'Federal acquisition data loaded successfully.'
   });
 
-  const handleTabChange = (tabId: string) => {
+  const handleTabChange = (tabId: 'chat' | 'reports') => {
     setActiveTab(tabId);
   };
 
-  const loadTabData = async (tabId: string) => {
+  const handleNewReport = () => {
+    toast({
+      title: "Create Report",
+      description: "Creating a new report...",
+      variant: "default"
+    });
+  };
+
+  const loadTabData = async (tabId: 'chat' | 'reports') => {
     try {
       await executeOperation(async () => {
         // Simulate loading data for the tab
@@ -50,7 +83,11 @@ const FederalAcquisitionPage: React.FC = () => {
         { label: 'Federal Acquisition', href: '/federal-acquisition' }
       ]}
     >
-      <FederalTabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      <FederalTabNavigation 
+        activeTab={activeTab} 
+        onTabChange={handleTabChange} 
+        onNewReport={handleNewReport} 
+      />
       
       <div className="mt-6">
         {activeTab === 'chat' && (
@@ -58,11 +95,16 @@ const FederalAcquisitionPage: React.FC = () => {
         )}
         
         {activeTab === 'reports' && (
-          <FederalReportCardGrid />
+          <FederalReportCardGrid reports={mockReports} />
         )}
         
         {activeTab !== 'chat' && activeTab !== 'reports' && (
-          <FederalTabContent tabId={activeTab} isLoading={isLoading} error={error?.message} />
+          <FederalTabContent 
+            activeTab="reports"
+            reports={mockReports}
+            isLoading={isLoading}
+            error={error?.message}
+          />
         )}
       </div>
     </ProtectedPageLayout>

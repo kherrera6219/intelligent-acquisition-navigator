@@ -2,14 +2,14 @@
 import React from 'react';
 import { FederalReportCard, ReportCardProps } from './FederalReportCard';
 
-interface FederalReportCardGridProps {
+export interface FederalReportCardGridProps {
   reports: ReportCardProps[];
   onCardClick?: (id: number) => void;
   className?: string;
 }
 
 export const FederalReportCardGrid: React.FC<FederalReportCardGridProps> = ({
-  reports,
+  reports = [], // Provide default empty array
   onCardClick,
   className
 }) => {

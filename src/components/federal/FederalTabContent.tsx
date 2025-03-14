@@ -6,32 +6,36 @@ import { FederalChatContainer } from './FederalChatContainer';
 import { ReportCardProps } from './FederalReportCard';
 import { FederalChatMessage } from './FederalChatContainer';
 
-interface FederalTabContentProps {
+export interface FederalTabContentProps {
   activeTab: 'reports' | 'chat';
-  reports: ReportCardProps[];
-  chatMessages: FederalChatMessage[];
-  isSending: boolean;
-  messageInput: string;
-  onInputChange: (value: string) => void;
-  onSendMessage: (message: string) => void;
-  onClearChat: () => void;
-  onCardClick: (index: number) => void;
-  onNetworkErrorReset: () => void;
-  onFileUpload: (file: File) => void;
+  reports?: ReportCardProps[];
+  chatMessages?: FederalChatMessage[];
+  isSending?: boolean;
+  messageInput?: string;
+  onInputChange?: (value: string) => void;
+  onSendMessage?: (message: string) => void;
+  onClearChat?: () => void;
+  onCardClick?: (index: number) => void;
+  onNetworkErrorReset?: () => void;
+  onFileUpload?: (file: File) => void;
+  isLoading?: boolean;
+  error?: string;
 }
 
 export const FederalTabContent: React.FC<FederalTabContentProps> = ({
   activeTab,
-  reports,
-  chatMessages,
-  isSending,
-  messageInput,
-  onInputChange,
-  onSendMessage,
-  onClearChat,
-  onCardClick,
-  onNetworkErrorReset,
-  onFileUpload,
+  reports = [],
+  chatMessages = [],
+  isSending = false,
+  messageInput = '',
+  onInputChange = () => {},
+  onSendMessage = () => {},
+  onClearChat = () => {},
+  onCardClick = () => {},
+  onNetworkErrorReset = () => {},
+  onFileUpload = () => {},
+  isLoading,
+  error,
 }) => {
   return (
     <>

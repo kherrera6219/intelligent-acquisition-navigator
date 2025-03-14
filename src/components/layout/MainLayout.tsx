@@ -153,7 +153,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         )}
         
         {showNetworkStatus && (
-          <NetworkStatusBanner isOnline={isOnline} />
+          <NetworkStatusBanner isOffline={!isOnline} />
         )}
         
         {showPrivacyNotice && (

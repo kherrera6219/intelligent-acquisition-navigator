@@ -13,7 +13,7 @@ export function useQueryWithCache<TData, TError = unknown>(
     queryKey,
     queryFn,
     staleTime: isOnline ? 1000 * 60 * 5 : Infinity, // 5 minutes when online, never stale when offline
-    cacheTime: Infinity, // Keep cache forever to support offline mode
+    gcTime: Infinity, // Keep cache forever to support offline mode (formerly cacheTime)
     refetchOnWindowFocus: isOnline ? (options?.refetchOnWindowFocus ?? false) : false,
     refetchOnMount: isOnline ? (options?.refetchOnMount ?? true) : false,
     refetchOnReconnect: isOnline,

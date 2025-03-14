@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { useImprovementActions } from './useImprovementActions';
 import { ChecklistItem } from '@/types/checklist';
+import { useImprovementActions } from './useImprovementActions';
 
 export const useOfflineChecklistData = () => {
   const { isOnline } = useNetworkMonitor();
@@ -56,7 +56,7 @@ export const useOfflineChecklistData = () => {
     syncPendingChanges();
   }, [isOnline, pendingChanges, updateItem]);
 
-  const saveLocalChange = (id: string, data: any) => {
+  const saveLocalChange = (id: number, data: any) => {
     // Add to pending changes
     const newChange = { id, data, timestamp: Date.now() };
     setPendingChanges(prev => [...prev.filter(c => c.id !== id), newChange]);
@@ -87,6 +87,9 @@ export const useOfflineChecklistData = () => {
     localItems,
     pendingChanges,
     saveLocalChange,
-    hasPendingChanges: pendingChanges.length > 0
+    hasPendingChanges: pendingChanges.length > 0,
+    pendingUpdatesCount: pendingChanges.length,
+    updateItemOffline: saveLocalChange,
+    data: localItems
   };
 };

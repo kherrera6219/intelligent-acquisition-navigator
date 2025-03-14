@@ -1,91 +1,62 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { appRoutes } from '@/routes/AppRoutes';
-import { PageHeader } from '@/components/layout/PageHeader';
+import { AppRoutes } from '@/routes/AppRoutes';
 
 const SitemapPage: React.FC = () => {
-  // Organize routes by category
-  const categories = {
-    main: ['/', '/about', '/features', '/pricing', '/contact', '/help', '/privacy'],
-    dashboard: ['/dashboard', '/analytics', '/improve', '/profile', '/settings'],
-    acquisition: [
-      '/market-research',
-      '/document-control',
-      '/solicitation-review',
-      '/federal-acquisition',
-      '/texas-acquisition',
-      '/compliance',
-      '/source-selection',
-      '/contract-management',
-      '/legal-review',
-      '/small-business',
-      '/quality-assurance'
-    ],
-    knowledge: ['/knowledge-base', '/chat'],
-    developer: ['/api-docs', '/component-library', '/validation'],
-  };
-
-  const formatPathName = (path: string) => {
-    if (path === '/') return 'Home';
-    return path
-      .replace(/-/g, ' ')
-      .replace(/\//g, '')
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-
+  // Note: We need the actual routes imported from AppRoutes
+  
   return (
-    <div className="container mx-auto px-4 py-8">
-      <PageHeader
-        title="Sitemap"
-        description="Complete list of all pages on our site"
-      />
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-        {Object.entries(categories).map(([category, paths]) => (
-          <div key={category} className="rounded-lg border border-gray-300 dark:border-gray-700 p-4">
-            <h2 className="text-xl font-semibold mb-4 capitalize">{category} Pages</h2>
-            <ul className="space-y-2">
-              {paths.map((path) => (
-                <li key={path} className="transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
-                  <Link
-                    to={path}
-                    className="block px-3 py-2 text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    {formatPathName(path)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-12 border-t border-gray-300 dark:border-gray-700 pt-6">
-        <h2 className="text-xl font-semibold mb-4">Additional Resources</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Link
-            to="/sitemap"
-            className="block p-4 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            HTML Sitemap
-          </Link>
-          <a
-            href="/sitemap.xml"
-            className="block p-4 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            XML Sitemap
-          </a>
-          <Link
-            to="/help"
-            className="block p-4 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            Help Center
-          </Link>
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-6">Sitemap</h1>
+      
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Main Pages</h2>
+          <ul className="space-y-2">
+            <li><Link to="/" className="text-blue-500 hover:underline">Home</Link></li>
+            <li><Link to="/about" className="text-blue-500 hover:underline">About</Link></li>
+            <li><Link to="/features" className="text-blue-500 hover:underline">Features</Link></li>
+            <li><Link to="/contact" className="text-blue-500 hover:underline">Contact</Link></li>
+            <li><Link to="/pricing" className="text-blue-500 hover:underline">Pricing</Link></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h2 className="text-xl font-semibold mb-4">User Account</h2>
+          <ul className="space-y-2">
+            <li><Link to="/dashboard" className="text-blue-500 hover:underline">Dashboard</Link></li>
+            <li><Link to="/profile" className="text-blue-500 hover:underline">Profile</Link></li>
+            <li><Link to="/settings" className="text-blue-500 hover:underline">Settings</Link></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Acquisition</h2>
+          <ul className="space-y-2">
+            <li><Link to="/federal-acquisition" className="text-blue-500 hover:underline">Federal Acquisition</Link></li>
+            <li><Link to="/market-research" className="text-blue-500 hover:underline">Market Research</Link></li>
+            <li><Link to="/solicitation-review" className="text-blue-500 hover:underline">Solicitation Review</Link></li>
+            <li><Link to="/document-control" className="text-blue-500 hover:underline">Document Control</Link></li>
+            <li><Link to="/compliance" className="text-blue-500 hover:underline">Compliance</Link></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Help & Resources</h2>
+          <ul className="space-y-2">
+            <li><Link to="/help" className="text-blue-500 hover:underline">Help Center</Link></li>
+            <li><Link to="/knowledge-base" className="text-blue-500 hover:underline">Knowledge Base</Link></li>
+            <li><Link to="/api-docs" className="text-blue-500 hover:underline">API Documentation</Link></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Legal</h2>
+          <ul className="space-y-2">
+            <li><Link to="/privacy" className="text-blue-500 hover:underline">Privacy Policy</Link></li>
+            <li><Link to="/terms" className="text-blue-500 hover:underline">Terms of Service</Link></li>
+          </ul>
         </div>
       </div>
     </div>

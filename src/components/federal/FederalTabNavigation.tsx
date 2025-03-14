@@ -6,7 +6,7 @@ import { Filter, Plus } from 'lucide-react';
 interface FederalTabNavigationProps {
   activeTab: 'reports' | 'chat';
   onTabChange: (tab: 'reports' | 'chat') => void;
-  onNewReport: () => void;
+  onNewReport?: () => void;
 }
 
 export const FederalTabNavigation: React.FC<FederalTabNavigationProps> = ({
@@ -36,10 +36,12 @@ export const FederalTabNavigation: React.FC<FederalTabNavigationProps> = ({
           <Filter className="h-4 w-4 mr-2" />
           Filter
         </Button>
-        <Button size="sm" onClick={onNewReport}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Report
-        </Button>
+        {onNewReport && (
+          <Button size="sm" onClick={onNewReport}>
+            <Plus className="h-4 w-4 mr-2" />
+            New Report
+          </Button>
+        )}
       </div>
     </div>
   );

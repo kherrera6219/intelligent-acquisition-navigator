@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useImprovement } from "@/contexts/ImprovementContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -29,11 +30,13 @@ export const ImprovementChecklist: React.FC = () => {
   const itemsPerPage = 5;
 
   const { 
-    data: offlineChecklist, 
+    localItems, 
     updateItemOffline,
-    hasPendingUpdates,
+    hasPendingChanges,
     pendingUpdatesCount 
-  } = useOfflineChecklistData(checklist, isLoading, error);
+  } = useOfflineChecklistData();
+
+  const offlineChecklist = localItems.length > 0 ? localItems : checklist;
 
   const filteredChecklist = offlineChecklist.filter(item => {
     const searchRegex = new RegExp(searchQuery, 'i');
@@ -89,7 +92,7 @@ export const ImprovementChecklist: React.FC = () => {
       <ChecklistHeader 
         totalItems={offlineChecklist.length}
         completedCount={completedCount}
-        hasPendingUpdates={hasPendingUpdates}
+        hasPendingUpdates={hasPendingChanges}
         pendingUpdatesCount={pendingUpdatesCount}
       />
 

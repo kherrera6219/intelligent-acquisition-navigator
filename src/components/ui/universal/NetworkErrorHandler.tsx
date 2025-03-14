@@ -30,3 +30,5 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
     </div>
   );
 };
+
+export default NetworkErrorHandler;
