@@ -7,18 +7,18 @@ import { knowledgeFeatures, complianceFeatures, analyticsFeatures } from './feat
 
 export const FeatureTabs: React.FC = () => {
   return (
-    <Tabs defaultValue="knowledge" className="mb-20">
-      <TabsList className="grid w-full grid-cols-3 mb-8">
-        <TabsTrigger value="knowledge" className="data-[state=active]:bg-blue-900/20 text-base">
-          <BookOpen className="h-4 w-4 mr-2" />
+    <Tabs defaultValue="knowledge" className="mb-24">
+      <TabsList className="grid w-full grid-cols-3 mb-10">
+        <TabsTrigger value="knowledge" className="data-[state=active]:bg-blue-900/20 text-base py-3">
+          <BookOpen className="h-5 w-5 mr-2" />
           Knowledge Base
         </TabsTrigger>
-        <TabsTrigger value="compliance" className="data-[state=active]:bg-blue-900/20 text-base">
-          <Shield className="h-4 w-4 mr-2" />
+        <TabsTrigger value="compliance" className="data-[state=active]:bg-blue-900/20 text-base py-3">
+          <Shield className="h-5 w-5 mr-2" />
           Compliance
         </TabsTrigger>
-        <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-900/20 text-base">
-          <BarChart3 className="h-4 w-4 mr-2" />
+        <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-900/20 text-base py-3">
+          <BarChart3 className="h-5 w-5 mr-2" />
           Analytics
         </TabsTrigger>
       </TabsList>
