@@ -1,39 +1,11 @@
 
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Import all module styles */
-@import './modules/animations.css';
-@import './modules/layout.css';
-@import './modules/navigation.css';
-@import './modules/buttons.css';
-@import './modules/cards.css';
-@import './modules/forms.css';
-@import './modules/sidebar-navigation.css';
-@import './modules/ms-dashboard-layout.css';
-@import './modules/ms-fluent/core.css';
-@import './modules/ms-fluent/layout.css';
+/* Import modular theme components */
+@import './theme/index.css';
+
+/* Import other modules */
 @import './modules/accessibility/index.css';
-
-/* Base styles */
-:root {
-  --header-height: 4rem;
-  --sidebar-width: 16rem;
-  --footer-height: 3rem;
-}
-
-body {
-  @apply bg-background text-foreground;
-  font-feature-settings: "rlig" 1, "calt" 1;
-}
-
-/* Prevent scrollbar from shifting content */
-html {
-  scrollbar-gutter: stable;
-}
-
-/* Focus ring style */
-.ring-focus {
-  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
-}
+@import './global.css';
