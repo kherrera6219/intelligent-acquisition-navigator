@@ -1,261 +1,197 @@
 
-/**
- * Utility for managing offline storage and synchronization
- */
+import { openDB, IDBPDatabase } from 'idb';
 
-// Database name and version
-const DB_NAME = 'offlineDb';
+// Constants
+const DB_NAME = 'offlineStorage';
 const DB_VERSION = 1;
-
-// Store names
 const CACHE_STORE = 'cache';
-const PENDING_REQUESTS_STORE = 'pendingRequests';
+const PENDING_STORE = 'pendingRequests';
 
-// Open the database
-const openDB = (): Promise<IDBDatabase> => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-    request.onerror = (event) => {
-      console.error('Error opening IndexedDB:', event);
-      reject(new Error('Could not open IndexedDB'));
-    };
-
-    request.onsuccess = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      resolve(db);
-    };
-
-    request.onupgradeneeded = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      
-      // Create cache store with timestamp index for expiration
-      if (!db.objectStoreNames.contains(CACHE_STORE)) {
-        const cacheStore = db.createObjectStore(CACHE_STORE, { keyPath: 'key' });
-        cacheStore.createIndex('expirationTime', 'expirationTime', { unique: false });
-      }
-      
-      // Create pending requests store
-      if (!db.objectStoreNames.contains(PENDING_REQUESTS_STORE)) {
-        const pendingStore = db.createObjectStore(PENDING_REQUESTS_STORE, { 
-          keyPath: 'id', 
-          autoIncrement: true 
-        });
-        pendingStore.createIndex('priority', 'priority', { unique: false });
-        pendingStore.createIndex('timestamp', 'timestamp', { unique: false });
-      }
-    };
-  });
-};
+// Database setup
+let dbPromise: Promise<IDBPDatabase>;
 
 // Initialize the database
-export const initOfflineDB = async (): Promise<void> => {
+export const initOfflineDB = async () => {
   try {
-    await openDB();
-    console.log('IndexedDB initialized successfully');
+    dbPromise = openDB(DB_NAME, DB_VERSION, {
+      upgrade(db) {
+        // Create cache store if it doesn't exist
+        if (!db.objectStoreNames.contains(CACHE_STORE)) {
+          const cacheStore = db.createObjectStore(CACHE_STORE, { keyPath: 'key' });
+          cacheStore.createIndex('expiresAt', 'expiresAt');
+        }
+        
+        // Create pending requests store if it doesn't exist
+        if (!db.objectStoreNames.contains(PENDING_STORE)) {
+          const pendingStore = db.createObjectStore(PENDING_STORE, { 
+            keyPath: 'id', 
+            autoIncrement: true 
+          });
+          pendingStore.createIndex('timestamp', 'timestamp');
+        }
+      }
+    });
+    return true;
   } catch (error) {
-    console.error('Failed to initialize IndexedDB:', error);
+    console.error('Failed to initialize offline database:', error);
+    return false;
   }
 };
 
 // Cache a response
-export const cacheResponse = async (
-  key: string, 
-  data: any, 
-  expiration: number = 3600000 // Default: 1 hour
-): Promise<void> => {
+export const cacheResponse = async (key: string, data: any, maxAge: number = 3600000) => {
   try {
-    const db = await openDB();
-    const transaction = db.transaction(CACHE_STORE, 'readwrite');
-    const store = transaction.objectStore(CACHE_STORE);
+    const db = await dbPromise;
+    const expiresAt = Date.now() + maxAge;
     
-    const expirationTime = Date.now() + expiration;
-    
-    await store.put({
+    await db.put(CACHE_STORE, {
       key,
       data,
-      expirationTime,
-      cachedAt: Date.now()
+      expiresAt
     });
     
-    db.close();
+    return true;
   } catch (error) {
-    console.error('Error caching response:', error);
-    throw error;
+    console.error('Failed to cache response:', error);
+    return false;
   }
 };
 
 // Get a cached response
-export const getCachedResponse = async (key: string): Promise<any | null> => {
+export const getCachedResponse = async (key: string) => {
   try {
-    const db = await openDB();
-    const transaction = db.transaction(CACHE_STORE, 'readonly');
-    const store = transaction.objectStore(CACHE_STORE);
+    const db = await dbPromise;
+    const item = await db.get(CACHE_STORE, key);
     
-    const request = store.get(key);
+    if (!item) return null;
     
-    return new Promise((resolve, reject) => {
-      request.onsuccess = () => {
-        const cachedItem = request.result;
-        
-        if (!cachedItem) {
-          resolve(null);
-          return;
-        }
-        
-        // Check if the cached item has expired
-        if (cachedItem.expirationTime < Date.now()) {
-          // Remove expired item asynchronously
-          const cleanupTx = db.transaction(CACHE_STORE, 'readwrite');
-          cleanupTx.objectStore(CACHE_STORE).delete(key);
-          resolve(null);
-        } else {
-          resolve(cachedItem.data);
-        }
-        
-        db.close();
-      };
-      
-      request.onerror = (event) => {
-        console.error('Error retrieving cached response:', event);
-        reject(new Error('Failed to retrieve cached response'));
-      };
-    });
+    // Check if the cached item has expired
+    if (item.expiresAt < Date.now()) {
+      await db.delete(CACHE_STORE, key);
+      return null;
+    }
+    
+    return item.data;
   } catch (error) {
-    console.error('Error getting cached response:', error);
+    console.error('Failed to get cached response:', error);
     return null;
   }
 };
 
-// Add a request to be processed when back online
-export const addPendingRequest = async (
-  request: RequestInfo, 
-  options?: RequestInit,
-  priority: number = 0
-): Promise<number> => {
+// Queue a request for offline processing
+export const queueRequest = async (
+  url: string, 
+  method: string, 
+  body?: any, 
+  headers?: HeadersInit
+) => {
   try {
-    const db = await openDB();
-    const transaction = db.transaction(PENDING_REQUESTS_STORE, 'readwrite');
-    const store = transaction.objectStore(PENDING_REQUESTS_STORE);
+    const db = await dbPromise;
     
-    const pendingRequest = {
-      url: typeof request === 'string' ? request : request.url,
-      options,
-      priority,
-      timestamp: Date.now(),
-      retryCount: 0
+    const request = {
+      url,
+      method,
+      body,
+      headers,
+      timestamp: Date.now()
     };
     
-    const id = await store.add(pendingRequest);
-    db.close();
-    return id as number;
+    await db.add(PENDING_STORE, request);
+    return true;
   } catch (error) {
-    console.error('Error adding pending request:', error);
-    throw error;
+    console.error('Failed to queue request:', error);
+    return false;
   }
 };
 
 // Get all pending requests
-export const getPendingRequests = async (): Promise<any[]> => {
+export const getPendingRequests = async () => {
   try {
-    const db = await openDB();
-    const transaction = db.transaction(PENDING_REQUESTS_STORE, 'readonly');
-    const store = transaction.objectStore(PENDING_REQUESTS_STORE);
-    
-    return new Promise((resolve, reject) => {
-      const request = store.getAll();
-      
-      request.onsuccess = () => {
-        resolve(request.result);
-        db.close();
-      };
-      
-      request.onerror = (event) => {
-        console.error('Error retrieving pending requests:', event);
-        reject(new Error('Failed to retrieve pending requests'));
-      };
-    });
+    const db = await dbPromise;
+    return await db.getAll(PENDING_STORE);
   } catch (error) {
-    console.error('Error getting pending requests:', error);
+    console.error('Failed to get pending requests:', error);
     return [];
   }
 };
 
-// Remove a pending request
-export const removePendingRequest = async (id: number): Promise<void> => {
-  try {
-    const db = await openDB();
-    const transaction = db.transaction(PENDING_REQUESTS_STORE, 'readwrite');
-    const store = transaction.objectStore(PENDING_REQUESTS_STORE);
-    
-    await store.delete(id);
-    db.close();
-  } catch (error) {
-    console.error('Error removing pending request:', error);
-    throw error;
-  }
-};
-
-// Clean up expired cache items
-export const clearExpiredCache = async (): Promise<void> => {
-  try {
-    const db = await openDB();
-    const transaction = db.transaction(CACHE_STORE, 'readwrite');
-    const store = transaction.objectStore(CACHE_STORE);
-    const index = store.index('expirationTime');
-    
-    const currentTime = Date.now();
-    const range = IDBKeyRange.upperBound(currentTime);
-    
-    const request = index.openCursor(range);
-    
-    request.onsuccess = (event) => {
-      const cursor = (event.target as IDBRequest).result;
-      
-      if (cursor) {
-        store.delete(cursor.primaryKey);
-        cursor.continue();
-      }
-    };
-    
-    transaction.oncomplete = () => {
-      db.close();
-    };
-  } catch (error) {
-    console.error('Error clearing expired cache:', error);
-  }
-};
-
 // Process all pending requests
-export const processPendingRequests = async (): Promise<{ success: number, failed: number }> => {
-  let successCount = 0;
-  let failedCount = 0;
+export const processPendingRequests = async () => {
+  const results = { successful: 0, failed: 0 };
   
   try {
-    const pendingRequests = await getPendingRequests();
+    const db = await dbPromise;
+    const pendingRequests = await db.getAll(PENDING_STORE);
     
-    // Sort by priority (higher first) and then by timestamp (older first)
-    pendingRequests.sort((a, b) => {
-      if (a.priority !== b.priority) {
-        return b.priority - a.priority;
-      }
-      return a.timestamp - b.timestamp;
-    });
-    
+    // Process each request
     for (const request of pendingRequests) {
       try {
-        await fetch(request.url, request.options);
-        await removePendingRequest(request.id);
-        successCount++;
+        const response = await fetch(request.url, {
+          method: request.method,
+          headers: request.headers,
+          body: request.body ? JSON.stringify(request.body) : undefined
+        });
+        
+        if (response.ok) {
+          // Request successful, remove from queue
+          await db.delete(PENDING_STORE, request.id);
+          results.successful++;
+        } else {
+          // Request failed
+          results.failed++;
+          console.error('Failed to process pending request:', response.statusText);
+        }
       } catch (error) {
-        console.error(`Failed to process pending request ${request.id}:`, error);
-        failedCount++;
+        results.failed++;
+        console.error('Error processing pending request:', error);
       }
     }
     
-    return { success: successCount, failed: failedCount };
+    return results;
   } catch (error) {
-    console.error('Error processing pending requests:', error);
-    return { success: successCount, failed: failedCount };
+    console.error('Failed to process pending requests:', error);
+    return results;
+  }
+};
+
+// Clear all expired cache items
+export const clearExpiredCache = async () => {
+  try {
+    const db = await dbPromise;
+    const now = Date.now();
+    
+    // Use a cursor to efficiently delete expired items
+    const tx = db.transaction(CACHE_STORE, 'readwrite');
+    const store = tx.objectStore(CACHE_STORE);
+    const expiryIndex = store.index('expiresAt');
+    
+    let cursor = await expiryIndex.openCursor(IDBKeyRange.upperBound(now));
+    let deletedCount = 0;
+    
+    // Delete all expired items
+    while (cursor) {
+      await cursor.delete();
+      deletedCount++;
+      cursor = await cursor.continue();
+    }
+    
+    await tx.done;
+    return deletedCount;
+  } catch (error) {
+    console.error('Failed to clear expired cache:', error);
+    return 0;
+  }
+};
+
+// Clear all data (for testing/debugging)
+export const clearAllData = async () => {
+  try {
+    const db = await dbPromise;
+    await db.clear(CACHE_STORE);
+    await db.clear(PENDING_STORE);
+    return true;
+  } catch (error) {
+    console.error('Failed to clear all data:', error);
+    return false;
   }
 };

@@ -12,6 +12,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
 import { SkipLinks } from '../ui/universal/SkipLinks';
+import { useNetworkMonitor } from '../ui/universal/NetworkMonitorProvider';
 
 interface MainLayoutProps extends PropsWithChildren {
   variant?: 'default' | 'fluent' | 'minimal';
@@ -82,7 +83,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const isExternalRoute = externalRoutes.includes(location.pathname);
+  const { isOnline, reconnecting, supabaseConnected } = useNetworkMonitor();
   
   useKeyboardShortcuts();
   
@@ -119,21 +120,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     minimal: 'min-h-screen flex flex-col bg-background',
   };
   
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-  
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(showPrivacyBanner);
   
   const handleLearnMore = () => {
@@ -147,6 +133,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   // Only show cookie consent on the homepage (/)
   const shouldShowCookieConsent = showCookieConsent && isHomePage;
   
+  const isExternalRoute = externalRoutes.includes(location.pathname);
+  
+  // Network status components
+  const showNetworkBanner = showNetworkStatus && (!isOnline || !supabaseConnected || reconnecting);
+  
   return (
     <div className={cn(containerClasses[variant], className)}>
       <NetworkErrorBoundary>
@@ -156,8 +147,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           <Header />
         )}
         
-        {showNetworkStatus && (
-          <NetworkStatusBanner isOffline={!isOnline} />
+        {showNetworkBanner && (
+          <NetworkStatusBanner 
+            isOffline={!isOnline}
+            isReconnecting={reconnecting} 
+            variant={!isOnline ? 'destructive' : 'warning'}
+          />
         )}
         
         {showPrivacyNotice && (

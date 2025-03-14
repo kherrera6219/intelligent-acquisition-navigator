@@ -1,73 +1,94 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { offlineFetch } from './offlineStorage';
+import { cachedFetch } from './cachedFetch';
 
-/**
- * Utility to check if Supabase is reachable
- * @returns Promise resolving to boolean indicating if Supabase is reachable
- */
-export async function checkSupabaseConnection(): Promise<boolean> {
+// Check if Supabase is connected
+export const checkSupabaseConnection = async (): Promise<boolean> => {
   try {
-    // Try to select from health_check table
+    // Make a simple query to check connection
     const { data, error } = await supabase
       .from('health_check')
-      .select('id')
+      .select('status')
       .limit(1);
-    
-    // If there's no error or we get a specific "table does not exist" error
-    // (which means the server is reachable but the table might not exist),
-    // consider it connected
-    return !error || (error.code === 'PGRST116');
+
+    if (error) {
+      console.error('Supabase connection error:', error);
+      return false;
+    }
+
+    return !!data;
   } catch (error) {
-    console.warn('Supabase connection check failed:', error);
+    console.error('Failed to check Supabase connection:', error);
     return false;
   }
-}
+};
 
-/**
- * Enhanced Supabase query function with offline support
- * Uses the offlineFetch utility to handle offline scenarios
- * 
- * @param apiCall Function that returns a Supabase query object
- * @param options Offline options including cache settings
- * @returns Promise with the query result
- */
-export async function offlineSupabaseQuery<T>(
-  apiCall: () => Promise<{ data: T | null; error: any }>,
-  options = {
-    cacheMaxAge: 3600000, // 1 hour default
-    offlinePriority: 0,
-    bypassCache: false
-  }
-): Promise<{ data: T | null; error: any }> {
+// Get user session
+export const getSupabaseUser = async () => {
   try {
-    // Try normal Supabase query first
-    return await apiCall();
-  } catch (error) {
-    // If it's a network error, try to use cached data or queue for later
-    if (error instanceof TypeError && error.message.includes('network')) {
-      // Return empty result with error
-      return { data: null, error };
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error) {
+      console.error('Error getting user session:', error);
+      return null;
     }
     
-    // For other errors, just propagate them
+    return session?.user || null;
+  } catch (error) {
+    console.error('Failed to get Supabase user:', error);
+    return null;
+  }
+};
+
+// Generic function to fetch data from Supabase with offline support
+export const fetchFromSupabaseWithOfflineSupport = async <T>(
+  tableName: string,
+  query: any,
+  options: {
+    cacheKey?: string;
+    cacheMaxAge?: number;
+    bypassCache?: boolean;
+  } = {}
+): Promise<T[]> => {
+  const {
+    cacheKey = `supabase-${tableName}-${JSON.stringify(query)}`,
+    cacheMaxAge = 3600000, // 1 hour default
+    bypassCache = false,
+  } = options;
+
+  try {
+    // Try to use cached data first if not bypassing cache
+    if (!bypassCache) {
+      const cachedData = await cachedFetch<T[]>(cacheKey, {
+        cacheKey,
+        cacheMaxAge,
+        bypassCache
+      });
+      
+      if (cachedData) {
+        return cachedData;
+      }
+    }
+
+    // If no cached data or bypassing cache, fetch from Supabase
+    const { data, error } = await query;
+
+    if (error) {
+      console.error(`Error fetching from ${tableName}:`, error);
+      throw error;
+    }
+
+    // Cache the results
+    await cachedFetch<T[]>(cacheKey, {
+      cacheKey,
+      cacheMaxAge,
+      bypassCache: true, // We're saving to cache, not reading from it
+      data: data
+    });
+
+    return data;
+  } catch (error) {
+    console.error(`Failed to fetch from ${tableName}:`, error);
     throw error;
   }
-}
-
-/**
- * Gets the timestamp of the last successful sync with Supabase
- * @returns Timestamp of the last sync or null if never synced
- */
-export function getLastSyncTime(): Date | null {
-  const lastSyncTimeString = localStorage.getItem('supabase_last_sync_time');
-  return lastSyncTimeString ? new Date(lastSyncTimeString) : null;
-}
-
-/**
- * Sets the timestamp of the last successful sync with Supabase
- * @param time Timestamp to set (defaults to current time)
- */
-export function setLastSyncTime(time: Date = new Date()): void {
-  localStorage.setItem('supabase_last_sync_time', time.toISOString());
-}
+};

@@ -1,80 +1,110 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { AzureKeyCredential, OpenAIClient } from 'npm:@azure/openai';
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Create a Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') as string;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') as string;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Get the API key from environment
+    const apiKey = Deno.env.get('OPENAI_API_KEY');
+    const endpoint = Deno.env.get('AZURE_OPENAI_ENDPOINT');
 
-    // Get API key from environment
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
-    if (!OPENAI_API_KEY) {
-      throw new Error('Missing OpenAI API key')
+    if (!apiKey || !endpoint) {
+      throw new Error('Missing API key or endpoint configuration');
     }
 
-    // Get the request body
-    const { messages } = await req.json()
+    // Parse the request body
+    const requestData = await req.json();
+    const { messages, options = {} } = requestData;
 
-    console.log('Processing request with messages:', JSON.stringify(messages));
-
-    // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4-turbo',
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 800
-      })
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-      console.error('OpenAI API error:', error)
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`)
+    if (!messages || !Array.isArray(messages)) {
+      throw new Error('Invalid request format: messages array is required');
     }
 
-    const data = await response.json()
-    console.log('Received OpenAI response:', JSON.stringify(data));
+    // Setup Azure OpenAI client
+    const client = new OpenAIClient(
+      endpoint,
+      new AzureKeyCredential(apiKey)
+    );
 
-    // Log the interaction
-    try {
-      await supabase.from('audit_logs').insert({
-        action: 'OPENAI_REQUEST',
-        resource_type: 'ai_chat',
-        details: { messageCount: messages.length, tokens: data.usage }
-      });
-    } catch (logError) {
-      // Non-fatal error, just log it
-      console.error('Error logging to audit_logs:', logError);
-    }
+    // Get the deployment name from environment or use default
+    const deploymentName = Deno.env.get('AZURE_OPENAI_DEPLOYMENT_NAME') || 'gpt-4-turbo';
 
-    return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200
-    })
+    console.log(`Using deployment: ${deploymentName}`);
+    console.log(`Messages count: ${messages.length}`);
+
+    // Call Azure OpenAI API
+    const result = await client.getChatCompletions(
+      deploymentName,
+      messages,
+      {
+        temperature: options.temperature || 0.7,
+        maxTokens: options.maxTokens || 1000,
+        topP: options.topP || 0.95,
+        presencePenalty: options.presencePenalty || 0,
+        frequencyPenalty: options.frequencyPenalty || 0,
+        stopSequences: options.stopSequences || [],
+      }
+    );
+
+    console.log(`Response received with ${result.choices.length} choices`);
+
+    // Return the response
+    return new Response(
+      JSON.stringify({
+        id: result.id,
+        object: 'chat.completion',
+        created: Date.now(),
+        model: deploymentName,
+        choices: result.choices.map(choice => ({
+          message: {
+            role: choice.message.role,
+            content: choice.message.content,
+          },
+          index: choice.index,
+          finish_reason: choice.finishReason,
+        })),
+        usage: {
+          prompt_tokens: result.usage?.promptTokens || 0,
+          completion_tokens: result.usage?.completionTokens || 0,
+          total_tokens: result.usage?.totalTokens || 0,
+        },
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
+      }
+    );
   } catch (error) {
-    console.error('Error in edge function:', error.message)
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500
-    })
+    console.error('Error:', error);
+    
+    return new Response(
+      JSON.stringify({
+        error: {
+          message: error.message || 'An unexpected error occurred',
+          type: error.name || 'UnknownError',
+          param: null,
+          code: error.status || 500,
+        },
+      }),
+      {
+        status: error.status || 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
+      }
+    );
   }
 })

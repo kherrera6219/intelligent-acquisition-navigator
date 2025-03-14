@@ -1,70 +1,48 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { checkSupabaseConnection } from '@/utils/supabaseHelper';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 
-export interface NetworkMonitorContextType {
+interface NetworkMonitorContextType {
   isOnline: boolean;
-  isReconnecting: boolean;
-  lastSyncTime: Date | null;
-  checkConnection: () => Promise<void>;
+  reconnecting: boolean;
   supabaseConnected: boolean;
+  lastSyncTime: Date | null;
+  lastOnlineTime: Date | null;
 }
 
-const NetworkMonitorContext = createContext<NetworkMonitorContextType>({
-  isOnline: true,
-  isReconnecting: false,
+const defaultContext: NetworkMonitorContextType = {
+  isOnline: navigator.onLine,
+  reconnecting: false,
+  supabaseConnected: false,
   lastSyncTime: null,
-  checkConnection: async () => {},
-  supabaseConnected: true
-});
+  lastOnlineTime: null
+};
+
+export const NetworkMonitorContext = createContext<NetworkMonitorContextType>(defaultContext);
 
 export const useNetworkMonitor = () => useContext(NetworkMonitorContext);
 
 interface NetworkMonitorProviderProps {
   children: React.ReactNode;
-  checkInterval?: number;
 }
 
-export const NetworkMonitorProvider: React.FC<NetworkMonitorProviderProps> = ({ 
-  children,
-  checkInterval = 30000 // Check every 30 seconds by default
-}) => {
+export const NetworkMonitorProvider: React.FC<NetworkMonitorProviderProps> = ({ children }) => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [isReconnecting, setIsReconnecting] = useState<boolean>(false);
+  const [reconnecting, setReconnecting] = useState<boolean>(false);
+  const [supabaseConnected, setSupabaseConnected] = useState<boolean>(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
-  const [supabaseConnected, setSupabaseConnected] = useState<boolean>(true);
+  const [lastOnlineTime, setLastOnlineTime] = useState<Date | null>(isOnline ? new Date() : null);
 
-  const checkConnection = async () => {
-    // Only attempt to check connection if browser reports online
-    if (navigator.onLine) {
-      setIsReconnecting(true);
-      
-      try {
-        // Check if we can reach Supabase
-        const isConnected = await checkSupabaseConnection();
-        setSupabaseConnected(isConnected);
-        
-        if (isConnected) {
-          setIsOnline(true);
-          setLastSyncTime(new Date());
-        }
-      } catch (error) {
-        console.error('Error checking connection:', error);
-        setSupabaseConnected(false);
-      } finally {
-        setIsReconnecting(false);
-      }
-    } else {
-      setIsOnline(false);
-      setSupabaseConnected(false);
-    }
-  };
-
-  // Set up event listeners for online/offline status
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      checkConnection();
+      setLastOnlineTime(new Date());
+      
+      // When we come back online, set reconnecting to true
+      // until we confirm Supabase connection
+      setReconnecting(true);
+      
+      // Try to reconnect to Supabase
+      checkSupabaseConnection();
     };
 
     const handleOffline = () => {
@@ -72,30 +50,63 @@ export const NetworkMonitorProvider: React.FC<NetworkMonitorProviderProps> = ({
       setSupabaseConnected(false);
     };
 
+    const checkSupabaseConnection = async () => {
+      try {
+        // Simple check using the health_check endpoint
+        const response = await fetch('https://bosxxgbinzcjgwjaotyb.supabase.co/rest/v1/health_check?select=status', {
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvc3h4Z2Jpbnpjamd3amFvdHliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk0NjQ4NTUsImV4cCI6MjA1NTA0MDg1NX0.PPQPO_Q140Ec0qm1-Z5jDggAQULyz29r4jm76nk97aA'
+          }
+        });
+        
+        setSupabaseConnected(response.ok);
+        
+        if (response.ok) {
+          setReconnecting(false);
+          setLastSyncTime(new Date());
+        }
+      } catch (error) {
+        console.error('Failed to check Supabase connection:', error);
+        setSupabaseConnected(false);
+      }
+    };
+
+    // Initial connection check
+    if (isOnline) {
+      checkSupabaseConnection();
+    }
+
+    // Set up event listeners
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Initial connection check
-    checkConnection();
-
-    // Set up interval for periodic connection checks
-    const intervalId = setInterval(checkConnection, checkInterval);
+    // Set up periodic connection check when online
+    let connectionCheckInterval: number | null = null;
+    if (isOnline) {
+      connectionCheckInterval = window.setInterval(() => {
+        checkSupabaseConnection();
+      }, 30000); // Check every 30 seconds
+    }
 
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      clearInterval(intervalId);
+      if (connectionCheckInterval) {
+        clearInterval(connectionCheckInterval);
+      }
     };
-  }, [checkInterval]);
+  }, [isOnline]);
 
   return (
-    <NetworkMonitorContext.Provider value={{ 
-      isOnline, 
-      isReconnecting, 
-      lastSyncTime,
-      checkConnection,
-      supabaseConnected
-    }}>
+    <NetworkMonitorContext.Provider
+      value={{
+        isOnline,
+        reconnecting,
+        supabaseConnected,
+        lastSyncTime,
+        lastOnlineTime
+      }}
+    >
       {children}
     </NetworkMonitorContext.Provider>
   );

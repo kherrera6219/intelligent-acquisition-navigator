@@ -1,21 +1,22 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
+  AlertTriangle, 
+  CheckCircle2, 
+  Info, 
+  Clock, 
+  AlertCircle,
+  FileText 
+} from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface ActivityItemProps {
-  icon: React.ReactNode;
+export interface ActivityItemProps {
+  icon?: React.ReactNode;
   title: string;
   description: string;
   timestamp: Date;
-  status?: 'success' | 'warning' | 'error' | 'info';
-  className?: string;
+  status: 'success' | 'warning' | 'error' | 'info';
 }
 
 export const ActivityItem: React.FC<ActivityItemProps> = ({
@@ -23,36 +24,58 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
   title,
   description,
   timestamp,
-  status = 'info',
-  className
+  status
 }) => {
+  const getStatusIcon = () => {
+    switch (status) {
+      case 'success':
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case 'warning':
+        return <AlertTriangle className="h-4 w-4 text-amber-500" />;
+      case 'error':
+        return <AlertCircle className="h-4 w-4 text-red-500" />;
+      case 'info':
+      default:
+        return <Info className="h-4 w-4 text-blue-500" />;
+    }
+  };
+
   return (
-    <div className={cn("flex items-start gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors", className)}>
-      <div className={cn(
-        "flex-shrink-0 p-2 rounded-full",
-        status === 'success' && "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
-        status === 'warning' && "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
-        status === 'error' && "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
-        status === 'info' && "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-      )}>
-        {icon}
+    <div className="flex items-start gap-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
+      <div className="flex-shrink-0 mt-0.5">
+        {icon || <FileText className="h-5 w-5 text-muted-foreground" />}
       </div>
       <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">{title}</h4>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{description}</p>
+        <p className="text-sm font-medium leading-none mb-1">{title}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <time className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
-              {formatDistanceToNow(timestamp, { addSuffix: true })}
-            </time>
-          </TooltipTrigger>
-          <TooltipContent>
-            {timestamp.toLocaleString()}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <div className="flex flex-col items-end gap-1 flex-shrink-0">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center">
+                {getStatusIcon()}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Status: {status.charAt(0).toUpperCase() + status.slice(1)}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                <span>{format(timestamp, 'h:mm a')}</span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{format(timestamp, 'MMM d, yyyy h:mm:ss a')}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
   );
 };

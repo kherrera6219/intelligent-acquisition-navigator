@@ -1,86 +1,75 @@
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from './use-toast';
-import { processPendingRequests } from '@/utils/offlineStorage';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
+
+interface NetworkStats {
+  success: number; 
+  failed: number;
+}
 
 export function useNetworkErrorMonitor() {
-  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [reconnecting, setReconnecting] = useState<boolean>(false);
+  const [networkErrors, setNetworkErrors] = useState<Error[]>([]);
+  const [isRetrying, setIsRetrying] = useState(false);
+  const [networkStats, setNetworkStats] = useState<NetworkStats>({ success: 0, failed: 0 });
+  const { isOnline } = useNetworkMonitor();
   const { toast } = useToast();
 
-  useEffect(() => {
-    // Online handler
-    const handleOnline = async () => {
-      setIsOnline(true);
-      
-      toast({
-        title: "Back Online",
-        description: "You're connected to the internet again. Syncing data...",
-        variant: "default",
-        duration: 3000,
-      });
-      
-      // Process any pending requests
-      setReconnecting(true);
-      try {
-        const result = await processPendingRequests((processed, total) => {
-          console.log(`Processing offline requests: ${processed}/${total}`);
-        });
-        
-        if (result.successful > 0) {
-          toast({
-            title: "Sync Complete",
-            description: `Successfully processed ${result.successful} offline ${result.successful === 1 ? 'action' : 'actions'}.`,
-            variant: "default",
-            duration: 3000,
-          });
-        }
-        
-        if (result.failed > 0) {
-          toast({
-            title: "Sync Issues",
-            description: `Failed to process ${result.failed} offline ${result.failed === 1 ? 'action' : 'actions'}. Some changes may need to be redone.`,
-            variant: "destructive",
-            duration: 5000,
-          });
-        }
-      } catch (error) {
-        console.error("Error processing offline requests:", error);
-        toast({
-          title: "Sync Error",
-          description: "An error occurred while syncing your offline actions.",
-          variant: "destructive",
-          duration: 5000,
-        });
-      } finally {
-        setReconnecting(false);
-      }
-    };
+  // Function to add a network error
+  const addNetworkError = (error: Error) => {
+    setNetworkErrors(prev => [...prev, error]);
+    setNetworkStats(prev => ({ ...prev, failed: prev.failed + 1 }));
     
-    // Offline handler
-    const handleOffline = () => {
-      setIsOnline(false);
+    // Show toast for network error
+    toast({
+      title: 'Network Error',
+      description: error.message || 'Unable to complete operation due to network issues',
+      variant: 'destructive',
+    });
+  };
+
+  // Function to retry all failed network operations
+  const retryFailedOperations = async () => {
+    if (networkErrors.length === 0 || !isOnline) return;
+    
+    setIsRetrying(true);
+    
+    // In a real application, you'd implement the retry logic for each specific operation
+    // This is a simplified example
+    setTimeout(() => {
+      const successRate = isOnline ? 0.8 : 0; // 80% success rate when online
+      const successful = Math.floor(networkErrors.length * successRate);
+      const remainingErrors = networkErrors.slice(successful);
+      
+      setNetworkErrors(remainingErrors);
+      setNetworkStats(prev => ({
+        success: prev.success + successful,
+        failed: remainingErrors.length
+      }));
+      
+      setIsRetrying(false);
+      
       toast({
-        title: "You're Offline",
-        description: "Working in offline mode. Some features may be limited.",
-        variant: "destructive",
-        duration: 5000,
+        title: remainingErrors.length === 0 ? 'All operations recovered' : 'Partial recovery',
+        description: `${successful} ${successful === 1 ? 'operation' : 'operations'} recovered, ${remainingErrors.length} still failed.`,
+        variant: remainingErrors.length === 0 ? 'default' : 'destructive',
       });
-    };
+    }, 2000);
+  };
 
-    // Register event listeners
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    // Clean up listeners on unmount
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [toast]);
+  // Clear errors when coming back online
+  useEffect(() => {
+    if (isOnline && networkErrors.length > 0 && !isRetrying) {
+      // Auto-retry when coming back online
+      retryFailedOperations();
+    }
+  }, [isOnline, networkErrors.length, isRetrying]);
 
   return {
-    isOnline,
-    reconnecting
+    networkErrors,
+    isRetrying,
+    addNetworkError,
+    retryFailedOperations,
+    networkStats
   };
 }

@@ -1,71 +1,55 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { NetworkStatusBanner } from './NetworkStatusBanner';
+import { useState, useEffect } from 'react';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
-import { SkipLinks } from './SkipLinks';
-import { initKeyboardNavigationDetector } from '@/utils/keyboardNavigationDetector';
+import { useToast } from '@/hooks/use-toast';
 
-interface ApplicationStatusContextType {
-  isOnline: boolean;
-  reconnecting: boolean;
-  lastSyncTime: Date | null;
-  pendingActions: number;
+interface ApplicationStatusProviderProps {
+  children: React.ReactNode;
 }
 
-const ApplicationStatusContext = createContext<ApplicationStatusContextType>({
-  isOnline: true,
-  reconnecting: false,
-  lastSyncTime: null,
-  pendingActions: 0
-});
+export const ApplicationStatusProvider: React.FC<ApplicationStatusProviderProps> = ({ children }) => {
+  const [showReconnectedToast, setShowReconnectedToast] = useState(false);
+  const { isOnline, reconnecting, supabaseConnected, lastSyncTime } = useNetworkMonitor();
+  const { toast } = useToast();
 
-export const useApplicationStatus = () => useContext(ApplicationStatusContext);
-
-export const ApplicationStatusProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isOnline, isReconnecting, lastSyncTime } = useNetworkMonitor();
-  const [pendingActions, setPendingActions] = useState<number>(0);
-  
-  // Get pending actions count on mount
+  // Show toast notification when coming back online after being offline
   useEffect(() => {
-    const getPendingActionsCount = async () => {
-      try {
-        // This would be integrated with your actual offline storage system
-        const offlineStorage = localStorage.getItem('pendingActions');
-        if (offlineStorage) {
-          const actions = JSON.parse(offlineStorage);
-          setPendingActions(Array.isArray(actions) ? actions.length : 0);
+    if (isOnline && supabaseConnected && showReconnectedToast) {
+      toast({
+        title: 'Back online',
+        description: 'You are now connected to the internet.',
+        variant: 'default',
+      });
+      setShowReconnectedToast(false);
+    } else if (!isOnline) {
+      setShowReconnectedToast(true);
+    }
+  }, [isOnline, supabaseConnected, showReconnectedToast, toast]);
+
+  // Periodically check application status
+  useEffect(() => {
+    const checkAppStatus = async () => {
+      if (isOnline) {
+        // Check that we can connect to the API
+        try {
+          // You could add additional health checks here if needed
+          if (!supabaseConnected) {
+            console.warn('Supabase connection appears to be down');
+          }
+        } catch (error) {
+          console.error('Error checking application status:', error);
         }
-      } catch (error) {
-        console.error('Error getting pending actions count:', error);
       }
     };
+
+    // Check status every 2 minutes
+    const intervalId = setInterval(checkAppStatus, 2 * 60 * 1000);
     
-    getPendingActionsCount();
-    
-    // Set up keyboard navigation detection
-    const cleanup = initKeyboardNavigationDetector();
-    
-    return () => {
-      if (typeof cleanup === 'function') {
-        cleanup();
-      }
-    };
-  }, []);
-  
-  const contextValue = {
-    isOnline,
-    reconnecting: isReconnecting,
-    lastSyncTime,
-    pendingActions
-  };
-  
-  return (
-    <ApplicationStatusContext.Provider value={contextValue}>
-      <SkipLinks />
-      <NetworkStatusBanner />
-      <main id="main-content" tabIndex={-1}>
-        {children}
-      </main>
-    </ApplicationStatusContext.Provider>
-  );
+    // Initial check
+    checkAppStatus();
+
+    return () => clearInterval(intervalId);
+  }, [isOnline, supabaseConnected]);
+
+  return <>{children}</>;
 };
