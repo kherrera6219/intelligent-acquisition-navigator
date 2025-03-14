@@ -6,7 +6,7 @@ interface CardProps {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
-  variant?: 'default' | 'glass' | 'outline' | 'elevated' | 'subtle';
+  variant?: 'default' | 'glass' | 'outline' | 'elevated' | 'subtle' | 'ms-fluent' | 'metal';
   hoverable?: boolean;
   noShadow?: boolean;
 }
@@ -24,14 +24,16 @@ export const Card: React.FC<CardProps> = ({
     glass: "bg-background/20 backdrop-blur-md border border-border/30",
     outline: "bg-transparent border border-border/70",
     elevated: "bg-card shadow-md border border-border/30",
-    subtle: "bg-card/20 border border-border/20"
+    subtle: "bg-card/20 border border-border/20",
+    "ms-fluent": "bg-card/80 backdrop-blur-sm border border-border/30 shadow-sm",
+    metal: "bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700"
   };
 
   return (
     <div 
       className={cn(
         "rounded-lg transition-all duration-200",
-        variantClasses[variant],
+        variant in variantClasses ? variantClasses[variant as keyof typeof variantClasses] : variantClasses.default,
         !noShadow && "shadow-sm",
         (onClick || hoverable) && "cursor-pointer hover:border-border/60 hover:shadow-md hover:bg-card/60",
         className

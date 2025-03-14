@@ -10,6 +10,7 @@ export interface ProtectedPageLayoutProps {
   title: string;
   description?: string;
   isLoading?: boolean;
+  error?: Error | null;
   action?: ReactNode;
   fullWidth?: boolean;
   breadcrumbs?: BreadcrumbItem[];
@@ -24,6 +25,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   title,
   description,
   isLoading = false,
+  error,
   action,
   fullWidth = false,
   breadcrumbs,
@@ -51,9 +53,17 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
           )}
         </div>
         
+        {/* Error display */}
+        {error && (
+          <div className="p-4 mb-6 border border-red-500/30 bg-red-500/10 rounded-md text-red-500">
+            <h3 className="font-semibold mb-1">Error</h3>
+            <p>{error.message}</p>
+          </div>
+        )}
+        
         {/* Page Content */}
         {isLoading ? (
-          <LoadingState className="my-12" />
+          <LoadingState className="my-12" variant="skeleton" />
         ) : (
           children
         )}

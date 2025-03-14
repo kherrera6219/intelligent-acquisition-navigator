@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { browserRouter } from './routes';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/providers/AuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
@@ -14,6 +13,7 @@ import { generateCsrfToken } from '@/utils/csrfProtection';
 import { supabase } from '@/integrations/supabase/client';
 import { checkSupabaseConnection } from '@/utils/supabaseHelper';
 import { SkipLinks } from '@/components/ui/universal/SkipLinks';
+import { browserRouter } from './routes';
 
 function App() {
   // Initialize security and storage features on app load
