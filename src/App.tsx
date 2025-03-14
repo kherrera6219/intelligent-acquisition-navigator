@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { Router } from './routes';
+import { browserRouter } from './routes';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/providers/AuthProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
@@ -58,7 +58,7 @@ function App() {
         <AuthProvider>
           <NetworkMonitorProvider>
             <NetworkStatusMonitor />
-            <RouterProvider router={Router} />
+            <RouterProvider router={browserRouter} />
             <CookieConsent />
             <Toaster />
           </NetworkMonitorProvider>

@@ -1,120 +1,119 @@
 
 import { useState, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { createRetryFunction } from '@/utils/retryMechanism';
+import { useToast } from './use-toast';
 
 interface NetworkOperationOptions {
   maxRetries?: number;
   initialDelay?: number;
-  onSuccess?: (data: any) => void;
-  onError?: (error: Error) => void;
+  backoffFactor?: number;
   showToasts?: boolean;
+  offlineMessage?: string;
+  errorMessage?: string;
+  successMessage?: string;
 }
 
-/**
- * Hook for handling network operations with retry mechanism
- */
-export function useNetworkOperation<T>(options: NetworkOperationOptions = {}) {
-  const {
-    maxRetries = 3,
-    initialDelay = 1000,
-    onSuccess,
-    onError,
-    showToasts = true
-  } = options;
-  
+export function useNetworkOperation({
+  maxRetries = 3,
+  initialDelay = 1000,
+  backoffFactor = 2,
+  showToasts = false,
+  offlineMessage = 'You are currently offline. This operation will be queued until you reconnect.',
+  errorMessage = 'Operation failed. Please try again.',
+  successMessage = 'Operation completed successfully.',
+}: NetworkOperationOptions = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const { toast } = useToast();
   const { isOnline } = useNetworkMonitor();
-  
-  const executeOperation = useCallback(async (
-    operation: () => Promise<T>,
-  ): Promise<T | null> => {
-    // Reset states
-    setIsLoading(true);
+  const { toast } = useToast();
+
+  const reset = useCallback(() => {
     setError(null);
-    setRetryCount(0);
-    
-    // Check if online before attempting operation
-    if (!isOnline) {
-      const offlineError = new Error('You are currently offline. Please check your connection and try again.');
-      setError(offlineError);
-      setIsLoading(false);
-      
-      if (showToasts) {
-        toast({
-          title: 'Offline',
-          description: 'You are currently offline. Please check your connection and try again.',
-          variant: 'destructive',
-        });
+  }, []);
+
+  const executeOperation = useCallback(
+    async <T,>(operation: () => Promise<T>): Promise<T | undefined> => {
+      if (!isOnline) {
+        const offlineError = new Error(offlineMessage);
+        setError(offlineError);
+        if (showToasts) {
+          toast({
+            title: 'Offline',
+            description: offlineMessage,
+            variant: 'destructive',
+          });
+        }
+        return undefined;
       }
-      
-      if (onError) {
-        onError(offlineError);
-      }
-      
-      return null;
-    }
-    
-    try {
-      // Create a retry function
-      const retryableOperation = createRetryFunction(operation, {
-        maxRetries,
-        initialDelay,
-        onRetry: (currentRetryCount, retryError) => {
-          setRetryCount(currentRetryCount);
-          
+
+      setIsLoading(true);
+      setError(null);
+      let retries = 0;
+      let delay = initialDelay;
+
+      const executeWithRetry = async (): Promise<T> => {
+        try {
+          const result = await operation();
+          setIsLoading(false);
           if (showToasts) {
             toast({
-              title: `Retrying (${currentRetryCount}/${maxRetries})`,
-              description: `Connection issue: ${retryError.message}. Attempting to reconnect...`,
+              title: 'Success',
+              description: successMessage,
             });
           }
+          return result;
+        } catch (err) {
+          console.error('Operation failed:', err);
+          
+          // Check if we should retry
+          if (retries < maxRetries) {
+            retries++;
+            
+            // Implement exponential backoff
+            await new Promise(resolve => setTimeout(resolve, delay));
+            delay = delay * backoffFactor;
+            
+            // Retry the operation
+            return executeWithRetry();
+          } else {
+            // We've exhausted retries, set error state
+            const thrownError = err instanceof Error ? err : new Error(String(err));
+            setError(thrownError);
+            setIsLoading(false);
+            
+            if (showToasts) {
+              toast({
+                title: 'Error',
+                description: thrownError.message || errorMessage,
+                variant: 'destructive',
+              });
+            }
+            
+            throw thrownError;
+          }
         }
-      });
-      
-      // Execute the operation with retry
-      const result = await retryableOperation();
-      
-      if (onSuccess) {
-        onSuccess(result);
+      };
+
+      try {
+        return await executeWithRetry();
+      } catch (finalError) {
+        // This catch is for handling the error at the call site
+        // We've already set the error state and shown toast in the executeWithRetry function
+        return undefined;
       }
-      
-      return result;
-    } catch (err: any) {
-      const errorInstance = err instanceof Error ? err : new Error(err?.message || 'An unknown error occurred');
-      setError(errorInstance);
-      
-      if (showToasts) {
-        toast({
-          title: 'Operation Failed',
-          description: `${errorInstance.message}`,
-          variant: 'destructive',
-        });
-      }
-      
-      if (onError) {
-        onError(errorInstance);
-      }
-      
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isOnline, maxRetries, initialDelay, onError, onSuccess, showToasts, toast]);
-  
-  return {
-    executeOperation,
-    isLoading,
-    error,
-    retryCount,
-    isOnline,
-    reset: () => {
-      setError(null);
-      setRetryCount(0);
-    }
-  };
+    },
+    [
+      isOnline, 
+      initialDelay, 
+      maxRetries, 
+      backoffFactor, 
+      showToasts, 
+      offlineMessage, 
+      errorMessage, 
+      successMessage, 
+      toast
+    ]
+  );
+
+  return { executeOperation, isLoading, error, reset };
 }

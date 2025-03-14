@@ -14,7 +14,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { UniversalInternalHeader } from '@/components/layout/UniversalInternalHeader';
+import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
 import { InternalFooter } from '@/components/layout/InternalFooter';
 
 const TexasAcquisitionPage: React.FC = () => {

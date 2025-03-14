@@ -50,7 +50,7 @@ const FederalKnowledgeBasePage: React.FC = () => {
     <main className="flex-grow">
       <Container>
         {!isOnline && (
-          <Alert variant="warning" className="mb-4">
+          <Alert variant="destructive" className="mb-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               You are currently offline. Some content may be limited.
