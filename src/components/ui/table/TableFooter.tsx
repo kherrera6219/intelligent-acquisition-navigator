@@ -1,16 +1,18 @@
 
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 
-interface TableFooterProps {
-  children: ReactNode;
-  className?: string;
-}
+interface TableFooterProps extends React.HTMLAttributes<HTMLTableSectionElement> {}
 
-export const TableFooter: React.FC<TableFooterProps> = ({ children, className }) => {
-  return (
-    <tfoot className={cn("bg-muted/50 border-t font-medium", className)}>
-      {children}
-    </tfoot>
-  );
-};
+export const TableFooter = React.forwardRef<
+  HTMLTableSectionElement,
+  TableFooterProps
+>(({ className, ...props }, ref) => (
+  <tfoot
+    ref={ref}
+    className={cn("bg-primary-100/10 border-t", className)}
+    {...props}
+  />
+));
+
+TableFooter.displayName = "TableFooter";

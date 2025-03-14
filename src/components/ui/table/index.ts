@@ -1,8 +1,8 @@
 
-export * from './Table';
-export * from './TableBody';
-export * from './TableCell';
-export * from './TableFooter';
-export * from './TableHead';
-export * from './TableHeader';
-export * from './TableRow';
+export { Table } from './Table';
+export { TableHeader } from './TableHeader';
+export { TableBody } from './TableBody';
+export { TableFooter } from './TableFooter';
+export { TableHead } from './TableHead';
+export { TableRow } from './TableRow';
+export { TableCell } from './TableCell';

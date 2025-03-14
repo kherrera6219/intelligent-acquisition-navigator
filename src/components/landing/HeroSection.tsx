@@ -22,7 +22,7 @@ export const HeroSection = () => {
       className="relative w-full min-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden" 
       aria-labelledby="hero-title"
     >
-      <div className="absolute inset-0 bg-[#221F26] z-0">
+      <div className="absolute inset-0 bg-[#1A1F2C] z-0">
         <KnowledgeGraphAnimation />
       </div>
       
@@ -33,7 +33,7 @@ export const HeroSection = () => {
             className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight"
           >
             <GradientText 
-              className="animate-in fade-in slide-in-from-bottom-2"
+              className="animate-in fade-in slide-in-from-bottom-2 bg-gradient-to-r from-[#9b87f5] via-[#D946EF] to-[#F97316]"
             >
               Next-Generation
             </GradientText>
@@ -52,7 +52,7 @@ export const HeroSection = () => {
               onClick={() => navigate("/signup")}
               size="lg"
               gradientVariant="primary"
-              className="w-full sm:w-auto px-8 py-4 text-lg"
+              className="w-full sm:w-auto px-8 py-4 text-lg bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:from-[#8B5CF6] hover:to-[#6E59A5]"
               aria-label="Get started with ProcurityIQ"
             >
               Get Started
@@ -61,7 +61,7 @@ export const HeroSection = () => {
               onClick={handleDemoRequest}
               gradientVariant="secondary"
               size="lg"
-              className="w-full sm:w-auto px-8 py-4 text-lg"
+              className="w-full sm:w-auto px-8 py-4 text-lg border border-[#9b87f5]/20"
               aria-label="Request a demo of ProcurityIQ"
             >
               Request Demo
@@ -71,8 +71,8 @@ export const HeroSection = () => {
       </div>
       
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center items-start p-1">
-          <div className="w-1 h-2 bg-white/50 rounded-full animate-pulse"></div>
+        <div className="w-6 h-10 border-2 border-[#9b87f5]/20 rounded-full flex justify-center items-start p-1">
+          <div className="w-1 h-2 bg-[#9b87f5]/50 rounded-full animate-pulse"></div>
         </div>
       </div>
     </section>
