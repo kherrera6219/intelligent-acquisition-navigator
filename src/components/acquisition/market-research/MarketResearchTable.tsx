@@ -2,17 +2,16 @@
 import React from 'react';
 import { 
   Table, 
-  TableBody, 
-  TableCaption, 
-  TableCell, 
-  TableHead, 
   TableHeader, 
-  TableRow 
+  TableRow, 
+  TableHead, 
+  TableBody, 
+  TableCell 
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface MarketResearchItem {
+export interface MarketResearchItem {
   id: string;
   vendor: string;
   category: string;
@@ -29,101 +28,100 @@ interface MarketResearchTableProps {
   onPageChange: (page: number) => void;
 }
 
-export const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
+const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
   data,
   currentPage,
   itemsPerPage,
   totalItems,
   onPageChange
 }) => {
-  // Status badge color mapping
-  const getStatusColor = (status: string) => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const displayData = data.slice(startIndex, endIndex);
+  
+  const getStatusClass = (status: 'active' | 'pending' | 'archived') => {
     switch (status) {
       case 'active':
-        return 'bg-green-500 hover:bg-green-600';
+        return 'bg-green-100 text-green-800';
       case 'pending':
-        return 'bg-yellow-500 hover:bg-yellow-600';
+        return 'bg-yellow-100 text-yellow-800';
       case 'archived':
-        return 'bg-gray-500 hover:bg-gray-600';
+        return 'bg-gray-100 text-gray-800';
       default:
-        return 'bg-blue-500 hover:bg-blue-600';
+        return '';
     }
   };
-
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
+  
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-      <Table>
-        <TableCaption>List of market research data</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Vendor</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Last Updated</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.length > 0 ? (
-            data.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.vendor}</TableCell>
-                <TableCell>{item.category}</TableCell>
-                <TableCell>${item.price.toLocaleString()}</TableCell>
-                <TableCell>
-                  <Badge className={getStatusColor(item.status)}>
-                    {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                  </Badge>
-                </TableCell>
-                <TableCell>{item.lastUpdated}</TableCell>
-                <TableCell>
-                  <Button variant="outline" size="sm">View</Button>
+    <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Vendor</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Last Updated</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {displayData.length > 0 ? (
+              displayData.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.vendor}</TableCell>
+                  <TableCell>{item.category}</TableCell>
+                  <TableCell>${item.price.toLocaleString()}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(item.status)}`}>
+                      {item.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>{item.lastUpdated}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell className="text-center py-4" colSpan={5}>
+                  No research data found matching your criteria.
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={6} className="text-center py-8">
-                <div className="flex flex-col items-center justify-center text-gray-500">
-                  <p>No market research data found</p>
-                  <p className="text-sm mt-1">Try adjusting your filters</p>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <nav className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-gray-500">
-              Showing page {currentPage} of {totalPages}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              Previous
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </nav>
+            )}
+          </TableBody>
+        </Table>
       </div>
+      
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border-t border-gray-200">
+          <div className="text-sm text-gray-700">
+            Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
+            <span className="font-medium">{endIndex}</span> of{' '}
+            <span className="font-medium">{totalItems}</span> results
+          </div>
+          <div className="flex space-x-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+export default MarketResearchTable;

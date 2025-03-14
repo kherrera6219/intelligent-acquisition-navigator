@@ -29,12 +29,13 @@ const Navigation = () => {
   };
 
   const navLinks = [
-    { path: "/", label: "Landing", description: "Welcome page" },
+    { path: "/", label: "Home", description: "Welcome page" },
     { path: "/dashboard", label: "Dashboard", description: "Main dashboard" },
     { path: "/federal-acquisition", label: "Federal Acquisition", description: "Federal acquisition information" },
     { path: "/texas-acquisition", label: "Texas Acquisition", description: "Texas acquisition information" },
     { path: "/market-research", label: "Market Research", description: "Research market information" },
     { path: "/knowledge-base", label: "Knowledge Base", description: "Browse knowledge resources" },
+    { path: "/analytics", label: "Analytics", description: "View analytics data" },
     { path: "/sitemap", label: "Sitemap", description: "View all pages" }
   ];
 

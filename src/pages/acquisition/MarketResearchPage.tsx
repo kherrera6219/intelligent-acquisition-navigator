@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
-import { MarketResearchDashboard } from '@/components/acquisition/market-research/MarketResearchDashboard';
-import { MarketResearchFilter } from '@/components/acquisition/market-research/MarketResearchFilter';
-import { MarketResearchTable } from '@/components/acquisition/market-research/MarketResearchTable';
+import MarketResearchDashboard from '@/components/acquisition/market-research/MarketResearchDashboard';
+import MarketResearchFilter from '@/components/acquisition/market-research/MarketResearchFilter';
+import MarketResearchTable, { MarketResearchItem } from '@/components/acquisition/market-research/MarketResearchTable';
 
 // Mock data
-const mockData = [
+const mockData: MarketResearchItem[] = [
   { id: '1', vendor: 'Tech Solutions Inc.', category: 'Software', price: 12500, status: 'active', lastUpdated: '2023-09-15' },
   { id: '2', vendor: 'Hardware Experts', category: 'Hardware', price: 8750, status: 'pending', lastUpdated: '2023-09-10' },
   { id: '3', vendor: 'Cloud Services Co.', category: 'Cloud', price: 15000, status: 'active', lastUpdated: '2023-09-05' },

@@ -1,7 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, BarChart2, FileText, Map, HelpCircle, Book, Building, Shield, Settings } from 'lucide-react';
