@@ -14,7 +14,6 @@ import {
   Database, 
   Users, 
   FileText, 
-  LucideIcon,
   PenTool,
   GanttChart,
   Bot,
