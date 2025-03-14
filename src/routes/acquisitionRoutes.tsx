@@ -19,7 +19,7 @@ const TexasAcquisitionPage = lazy(() => import("@/pages/acquisition/TexasAcquisi
 const routes: RouteObject[] = [
   {
     path: "/market-research",
-    element: <MarketResearchPage />
+    element: wrapWithLayout(MarketResearchPage)
   },
   {
     path: "/document-control",

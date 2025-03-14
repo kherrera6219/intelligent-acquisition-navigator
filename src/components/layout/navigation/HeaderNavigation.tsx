@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { navItems } from "./navItems";
@@ -11,7 +10,7 @@ export const HeaderNavigation: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
-  // Main menu items for our dropdown - consolidated list
+  // Main menu items for our dropdown - only keeping valid pages
   const mainMenuItems = [
     { label: 'Home', href: '/', icon: Home, description: "Public landing page" },
     { label: 'Dashboard', href: '/dashboard', icon: Home, description: "Main dashboard" },
@@ -19,7 +18,6 @@ export const HeaderNavigation: React.FC = () => {
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Building, description: "Texas acquisition information" },
     { label: 'Market Research', href: '/market-research', icon: FileText, description: "Research market information" },
     { label: 'Knowledge Base', href: '/knowledge-base', icon: Book, description: "Browse knowledge resources" },
-    { label: 'Compliance', href: '/compliance', icon: Shield, description: "View compliance information" },
     { label: 'Analytics', href: '/analytics', icon: BarChart2, description: "View analytics data" },
     { label: 'Sitemap', href: '/sitemap', icon: Map, description: "View all pages" },
     { label: 'Help', href: '/help', icon: HelpCircle, description: "Get help" }

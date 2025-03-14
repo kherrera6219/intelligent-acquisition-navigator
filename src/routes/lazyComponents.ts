@@ -1,4 +1,3 @@
-
 import { lazy } from 'react';
 
 // Landing and public pages
@@ -12,18 +11,20 @@ export const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 export const SitemapPage = lazy(() => import('@/pages/SitemapPage'));
 export const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'));
 
-// Utility and special pages
+// Dashboard and feature pages
+export const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardHomePage'));
+export const ProposalDetailPage = lazy(() => import('@/pages/proposals/ProposalDetailPage'));
+export const ProposalsPage = lazy(() => import('@/pages/proposals/ProposalsPage'));
+
+// Acquisition pages
+export const FederalAcquisitionPage = lazy(() => import('@/pages/acquisition/FederalAcquisitionPage'));
+export const TexasAcquisitionPage = lazy(() => import('@/pages/acquisition/TexasAcquisition'));
+export const MarketResearchPage = lazy(() => import('@/pages/acquisition/MarketResearchPage'));
+
+// Other utility pages
 export const ChatPage = lazy(() => import('@/pages/ChatPage'));
 export const ImproveApp = lazy(() => import('@/pages/ImproveApp'));
 export const ApiDocsPage = lazy(() => import('@/pages/developer/ApiDocsPage'));
 export const ComponentLibraryPage = lazy(() => import('@/pages/developer/ComponentLibraryPage'));
 export const KnowledgeBasePage = lazy(() => import('@/pages/KnowledgeBasePage'));
 export const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
-
-// Dashboard and feature pages
-export const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardHomePage'));
-export const ProposalDetailPage = lazy(() => import('@/pages/proposals/ProposalDetailPage'));
-export const ProposalsPage = lazy(() => import('@/pages/proposals/ProposalsPage'));
-export const FederalAcquisitionPage = lazy(() => import('@/pages/acquisition/FederalAcquisitionPage'));
-export const TexasAcquisitionPage = lazy(() => import('@/pages/acquisition/TexasAcquisition'));
-export const MarketResearchPage = lazy(() => import('@/pages/acquisition/MarketResearchPage'));

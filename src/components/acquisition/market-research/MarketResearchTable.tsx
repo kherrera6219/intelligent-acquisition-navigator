@@ -1,22 +1,13 @@
 
 import React from 'react';
-import { 
-  Table, 
-  TableHeader, 
-  TableRow, 
-  TableHead, 
-  TableBody, 
-  TableCell 
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 
 export interface MarketResearchItem {
   id: string;
   vendor: string;
   category: string;
   price: number;
-  status: 'active' | 'pending' | 'archived';
+  status: string;
   lastUpdated: string;
 }
 
@@ -35,91 +26,91 @@ const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
   totalItems,
   onPageChange
 }) => {
+  // Calculate pagination
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-  const displayData = data.slice(startIndex, endIndex);
+  const currentData = data.slice(startIndex, endIndex);
   
-  const getStatusClass = (status: 'active' | 'pending' | 'archived') => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'archived':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return '';
-    }
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0
+    }).format(amount);
+  };
+  
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+    
+    return (
+      <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        
+        <button
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+    );
   };
   
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Vendor</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Last Updated</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {displayData.length > 0 ? (
-              displayData.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.vendor}</TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>${item.price.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(item.status)}`}>
-                      {item.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>{item.lastUpdated}</TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell className="text-center py-4" colSpan={5}>
-                  No research data found matching your criteria.
+    <div className="bg-white rounded-md shadow overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Vendor</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Price</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Last Updated</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {currentData.length > 0 ? (
+            currentData.map(item => (
+              <TableRow key={item.id}>
+                <TableCell>{item.vendor}</TableCell>
+                <TableCell>{item.category}</TableCell>
+                <TableCell>{formatCurrency(item.price)}</TableCell>
+                <TableCell>
+                  <span className={`inline-block px-2 py-1 rounded text-xs font-medium
+                    ${item.status === 'active' ? 'bg-green-100 text-green-800' : 
+                      item.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                      'bg-gray-100 text-gray-800'}`}
+                  >
+                    {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                  </span>
                 </TableCell>
+                <TableCell>{item.lastUpdated}</TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell className="text-center py-4" colSpan={5}>
+                No market research data found
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
       
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border-t border-gray-200">
-          <div className="text-sm text-gray-700">
-            Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
-            <span className="font-medium">{endIndex}</span> of{' '}
-            <span className="font-medium">{totalItems}</span> results
-          </div>
-          <div className="flex space-x-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
+      {renderPagination()}
     </div>
   );
 };

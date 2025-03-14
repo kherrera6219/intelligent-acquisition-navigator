@@ -18,14 +18,13 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   const { userRole } = useAuth();
   const [isMainDropdownOpen, setIsMainDropdownOpen] = useState(false);
   
-  // Consolidated menu items
+  // Consolidated menu items - only including pages that actually exist
   const mainMenuItems = [
     { label: 'Dashboard', href: '/dashboard', icon: BarChart2 },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: Building },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Building },
     { label: 'Market Research', href: '/market-research', icon: FileText },
     { label: 'Knowledge Base', href: '/knowledge-base', icon: Book },
-    { label: 'Compliance', href: '/compliance', icon: Shield },
     { label: 'Analytics', href: '/analytics', icon: BarChart2 },
     { label: 'Features', href: '/features', icon: FileText },
     { label: 'About', href: '/about', icon: Book },
@@ -52,7 +51,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             <div>
               <button
                 onClick={() => setIsMainDropdownOpen(!isMainDropdownOpen)}
-                className={`w-full text-left flex items-center justify-between px-3 py-2 rounded-md text-base font-medium ${
+                className={`w-full text-left flex items-between justify-between px-3 py-2 rounded-md text-base font-medium ${
                   isMainDropdownOpen ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                 }`}
                 aria-expanded={isMainDropdownOpen}
