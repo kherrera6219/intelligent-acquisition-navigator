@@ -4,6 +4,7 @@ import { useNetworkErrorMonitor } from '@/hooks/useNetworkErrorMonitor';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { checkSupabaseConnection, getLastSyncTime, setLastSyncTime } from '@/utils/supabaseHelper';
+import { NetworkStatusBanner } from './NetworkStatusBanner';
 
 // Create context
 interface NetworkContextType {
@@ -89,6 +90,7 @@ export const NetworkMonitorProvider: React.FC<{ children: React.ReactNode }> = (
   
   return (
     <NetworkContext.Provider value={contextValue}>
+      {!networkState.isOnline && <NetworkStatusBanner isOnline={networkState.isOnline} />}
       {children}
     </NetworkContext.Provider>
   );
