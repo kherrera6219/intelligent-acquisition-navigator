@@ -14,6 +14,8 @@ interface NetworkErrorHandlerProps {
   retryInterval?: number;
   alertPosition?: 'top' | 'inline';
   className?: string;
+  onRetry?: () => void;
+  isLoading?: boolean;
 }
 
 export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
@@ -23,6 +25,8 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
   retryInterval = 10000, // 10 seconds
   alertPosition = 'inline',
   className,
+  onRetry,
+  isLoading = false,
 }) => {
   const { isOnline } = useNetworkMonitor();
   const [isRetrying, setIsRetrying] = useState(false);
@@ -60,7 +64,11 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
         }, 1000);
       } else {
         // Attempt to reload/retry
-        window.location.reload();
+        if (onRetry) {
+          onRetry();
+        } else {
+          window.location.reload();
+        }
         setIsRetrying(false);
         setRetryCount(prev => prev + 1);
       }
@@ -69,7 +77,7 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
     return () => {
       if (timerId) clearTimeout(timerId);
     };
-  }, [autoRetry, isOnline, showError, isRetrying, retryTimeLeft]);
+  }, [autoRetry, isOnline, showError, isRetrying, retryTimeLeft, onRetry]);
 
   // Function to start retry countdown
   const handleRetry = () => {
@@ -81,7 +89,11 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
 
   // Function to immediately retry
   const handleImmediateRetry = () => {
-    window.location.reload();
+    if (onRetry) {
+      onRetry();
+    } else {
+      window.location.reload();
+    }
   };
 
   if (!showError) {
@@ -102,11 +114,12 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
                 variant="outline" 
                 onClick={handleImmediateRetry}
                 className="text-xs"
+                disabled={isLoading}
               >
-                <RefreshCw className="h-3 w-3 mr-1" />
-                Retry Now
+                <RefreshCw className={cn("h-3 w-3 mr-1", isLoading && "animate-spin")} />
+                {isLoading ? "Retrying..." : "Retry Now"}
               </Button>
-              {autoRetry && !isRetrying && (
+              {autoRetry && !isRetrying && !isLoading && (
                 <Button 
                   size="sm" 
                   variant="outline"
@@ -150,12 +163,13 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
           <Button 
             variant="default" 
             onClick={handleImmediateRetry}
+            disabled={isLoading}
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Retry Now
+            <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
+            {isLoading ? "Retrying..." : "Retry Now"}
           </Button>
           
-          {autoRetry && !isRetrying && (
+          {autoRetry && !isRetrying && !isLoading && (
             <Button 
               variant="outline"
               onClick={handleRetry}
