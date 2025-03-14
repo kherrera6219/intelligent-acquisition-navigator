@@ -42,7 +42,7 @@ export const HeroSection = () => {
               Acquisition Management
             </span>
             <br />
-            <span className="text-[#9b87f5] text-2xl md:text-3xl lg:text-4xl animate-in fade-in-50 slide-in-from-bottom-4 delay-200">
+            <span className="text-[#9b87f5] animate-in fade-in-50 slide-in-from-bottom-4 delay-200">
               ProcurityIQ
             </span>
           </h1>
