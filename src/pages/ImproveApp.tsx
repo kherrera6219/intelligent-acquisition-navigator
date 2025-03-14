@@ -72,7 +72,7 @@ const ImproveApp: React.FC = () => {
             {!isOnline && (
               <Alert variant="destructive" className="bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 mb-4 rounded" role="alert">
                 <AlertTriangle className="h-4 w-4" />
-                <p className="font-bold">You are currently offline</p>
+                <AlertDescription className="font-bold">You are currently offline</AlertDescription>
                 <p>Some features may be limited. Changes will sync when you're back online.</p>
               </Alert>
             )}

@@ -1,94 +1,23 @@
 
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, QueryKey, UseQueryOptions } from '@tanstack/react-query';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { useState, useEffect } from 'react';
 
-export interface QueryCacheOptions {
-  cacheTime?: number;
-  staleTime?: number;
-  retryCount?: number;
-  refetchOnWindowFocus?: boolean;
-  offlineOnly?: boolean;
-}
-
-export function useQueryWithCache<TData = unknown>(
-  queryKey: string[],
+export function useQueryWithCache<TData, TError = unknown>(
+  queryKey: QueryKey,
   queryFn: () => Promise<TData>,
-  {
-    cacheTime,
-    staleTime,
-    retryCount = 3,
-    refetchOnWindowFocus = true,
-    offlineOnly = false,
-  }: QueryCacheOptions = {}
+  options?: Omit<UseQueryOptions<TData, TError, TData>, 'queryKey' | 'queryFn'>
 ) {
   const { isOnline } = useNetworkMonitor();
-  const [cachedData, setCachedData] = useState<TData | null>(null);
-  const [isFetchingFromCache, setIsFetchingFromCache] = useState(false);
 
-  // Load cache on mount or when offline
-  useEffect(() => {
-    const loadCache = async () => {
-      if (!isOnline || offlineOnly) {
-        setIsFetchingFromCache(true);
-        try {
-          const cacheKey = `query-cache:${queryKey.join(':')}`;
-          const item = localStorage.getItem(cacheKey);
-          if (item) {
-            const { data, timestamp } = JSON.parse(item);
-            if (Date.now() - timestamp < (cacheTime || 1000 * 60 * 60 * 24)) {
-              setCachedData(data);
-            }
-          }
-        } catch (error) {
-          console.error('Error loading from cache:', error);
-        } finally {
-          setIsFetchingFromCache(false);
-        }
-      }
-    };
-
-    loadCache();
-  }, [isOnline, queryKey, cacheTime, offlineOnly]);
-
-  // Update cache when data is received online
-  const updateCache = (data: TData) => {
-    try {
-      const cacheKey = `query-cache:${queryKey.join(':')}`;
-      localStorage.setItem(
-        cacheKey,
-        JSON.stringify({
-          data,
-          timestamp: Date.now(),
-        })
-      );
-    } catch (error) {
-      console.error('Error saving to cache:', error);
-    }
-  };
-
-  const result = useQuery({
+  return useQuery({
     queryKey,
     queryFn,
-    staleTime,
-    gcTime: cacheTime,
-    retry: retryCount,
-    refetchOnWindowFocus,
-    enabled: isOnline && !offlineOnly,
+    staleTime: isOnline ? 1000 * 60 * 5 : Infinity, // 5 minutes when online, never stale when offline
+    cacheTime: Infinity, // Keep cache forever to support offline mode
+    refetchOnWindowFocus: isOnline ? (options?.refetchOnWindowFocus ?? false) : false,
+    refetchOnMount: isOnline ? (options?.refetchOnMount ?? true) : false,
+    refetchOnReconnect: isOnline,
+    retry: isOnline ? (options?.retry ?? 3) : false,
+    ...options
   });
-
-  // Save data to cache when it's received
-  useEffect(() => {
-    if (result.data && isOnline) {
-      updateCache(result.data);
-    }
-  }, [result.data, isOnline]);
-
-  return {
-    ...result,
-    data: result.data || cachedData,
-    isLoading: result.isLoading || isFetchingFromCache,
-    isFetching: result.isFetching || isFetchingFromCache,
-    isOffline: !isOnline,
-  };
 }

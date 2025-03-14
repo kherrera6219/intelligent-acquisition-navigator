@@ -1,201 +1,135 @@
-import React from 'react';
-import { Container } from '@/components/ui/universal/Container';
-import { PageHeader } from '@/components/layout/PageHeader';
-import { GradientText } from '@/components/ui/universal/GradientText';
-import { Card } from '@/components/ui/universal/Card';
-import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
-import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
+
+import React, { useState, useEffect } from 'react';
+import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Code } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
+import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 const ApiDocsPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('overview');
   const { isOnline } = useNetworkMonitor();
 
   return (
-    <main className="flex-grow">
-      <Container>
-        {!isOnline && (
-          <NetworkStatusBanner 
-            message="You are currently offline. API documentation may be limited."
-          />
-        )}
-        <div className="space-y-8 py-6 bg-noise"
-          style={{
-            backgroundImage: `
-              linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.15) 100%),
-              radial-gradient(at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 75%)
-            `,
-            backgroundAttachment: 'fixed',
-            backgroundColor: 'var(--background)'
-          }}
-        >
-          <PageHeader
-            title={<GradientText>API Documentation</GradientText>}
-            description="Resources for developers integrating with our platform"
-          />
-          
-          <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="mb-6">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="authentication">Authentication</TabsTrigger>
-              <TabsTrigger value="endpoints">Endpoints</TabsTrigger>
-              <TabsTrigger value="examples">Examples</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview">
-              <Card variant="metal" className="p-6">
-                <h2 className="text-xl font-semibold mb-4">API Overview</h2>
-                <p className="text-gray-400 mb-4">
-                  Our RESTful API allows you to programmatically access and manage acquisition data.
-                  All API requests use JSON for request and response bodies and require authentication.
+    <ProtectedPageLayout
+      title="API Documentation"
+      description="Learn how to integrate with our API services"
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Developer', href: '/api-docs' },
+        { label: 'API Documentation', href: '/api-docs' }
+      ]}
+    >
+      {!isOnline && (
+        <NetworkStatusBanner 
+          isOffline={true} 
+          message="You are currently offline. Some API features may not be available."
+          variant="destructive"
+        />
+      )}
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="w-full max-w-md mx-auto">
+          <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
+          <TabsTrigger value="endpoints" className="flex-1">Endpoints</TabsTrigger>
+          <TabsTrigger value="authentication" className="flex-1">Authentication</TabsTrigger>
+          <TabsTrigger value="examples" className="flex-1">Examples</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>API Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Welcome to our comprehensive API documentation. Our RESTful API allows you to programmatically access and interact with the data and services provided by our platform.
+              </p>
+              <div className="mt-4">
+                <h3 className="text-lg font-medium">Base URL</h3>
+                <code className="bg-gray-800/30 p-2 rounded-md block mt-2">
+                  https://api.procurity.ai/v1
+                </code>
+              </div>
+              <div className="mt-4">
+                <h3 className="text-lg font-medium">Response Format</h3>
+                <p className="text-muted-foreground mt-2">
+                  All responses are returned in JSON format with standard HTTP status codes.
                 </p>
-                <p className="text-gray-400 mb-4">
-                  Base URL: <code className="bg-gray-800 px-2 py-1 rounded">https://api.procurity.ai/v1</code>
-                </p>
-                <h3 className="text-lg font-medium mb-2 mt-6">Getting Started</h3>
-                <ol className="list-decimal list-inside space-y-2 text-gray-400">
-                  <li>Register for an API key in your account settings</li>
-                  <li>Review the authentication requirements</li>
-                  <li>Explore available endpoints</li>
-                  <li>Test with our interactive examples</li>
-                </ol>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="authentication">
-              <Card variant="metal" className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Authentication</h2>
-                <p className="text-gray-400 mb-4">
-                  All API requests require authentication using Bearer tokens.
-                </p>
-                <div className="bg-gray-800 p-4 rounded-md mb-6">
-                  <pre>
-                    <code>
-                      {`// Example request with authentication
-fetch('https://api.procurity.ai/v1/proposals', {
-  method: 'GET',
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="endpoints" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>API Endpoints</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <h3 className="text-lg font-medium">Available Endpoints</h3>
+              <div className="mt-4 space-y-4">
+                <div className="border border-gray-200 dark:border-gray-800 rounded-md p-4">
+                  <h4 className="font-medium">GET /documents</h4>
+                  <p className="text-muted-foreground mt-1">Retrieves a list of available documents</p>
+                </div>
+                <div className="border border-gray-200 dark:border-gray-800 rounded-md p-4">
+                  <h4 className="font-medium">GET /documents/:id</h4>
+                  <p className="text-muted-foreground mt-1">Retrieves a specific document by ID</p>
+                </div>
+                <div className="border border-gray-200 dark:border-gray-800 rounded-md p-4">
+                  <h4 className="font-medium">POST /documents</h4>
+                  <p className="text-muted-foreground mt-1">Creates a new document</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="authentication" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Authentication</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Our API uses JWT (JSON Web Tokens) for authentication. You'll need to include the token in the Authorization header of your requests.
+              </p>
+              <div className="mt-4">
+                <h3 className="text-lg font-medium">Request Header</h3>
+                <code className="bg-gray-800/30 p-2 rounded-md block mt-2">
+                  Authorization: Bearer {'{your-jwt-token}'}
+                </code>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="examples" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Code Examples</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <h3 className="text-lg font-medium">JavaScript Example</h3>
+              <pre className="bg-gray-800/30 p-3 rounded-md mt-2 overflow-auto">
+                <code>
+{`fetch('https://api.procurity.ai/v1/documents', {
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_API_KEY'
+    'Authorization': 'Bearer your-jwt-token',
+    'Content-Type': 'application/json'
   }
-})`}
-                    </code>
-                  </pre>
-                </div>
-                <h3 className="text-lg font-medium mb-2">Token Management</h3>
-                <ul className="list-disc list-inside space-y-2 text-gray-400">
-                  <li>Tokens expire after 24 hours</li>
-                  <li>Refresh tokens using the <code>/auth/refresh</code> endpoint</li>
-                  <li>Revoke tokens using the <code>/auth/revoke</code> endpoint</li>
-                </ul>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="endpoints">
-              <Card variant="metal" className="p-6">
-                <h2 className="text-xl font-semibold mb-4">API Endpoints</h2>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Authentication</h3>
-                    <ul className="list-disc list-inside space-y-2 text-gray-400">
-                      <li><code>/auth/login</code> - Obtain authentication tokens</li>
-                      <li><code>/auth/refresh</code> - Refresh an expired token</li>
-                      <li><code>/auth/logout</code> - Invalidate current token</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Proposals</h3>
-                    <ul className="list-disc list-inside space-y-2 text-gray-400">
-                      <li><code>/proposals</code> - List all proposals</li>
-                      <li><code>/proposals/{'{id}'}</code> - Get proposal details</li>
-                      <li><code>/proposals/{'{id}'}/evaluations</code> - Get proposal evaluations</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Documents</h3>
-                    <ul className="list-disc list-inside space-y-2 text-gray-400">
-                      <li><code>/documents</code> - List all documents</li>
-                      <li><code>/documents/{'{id}'}</code> - Get document details</li>
-                      <li><code>/documents/upload</code> - Upload a new document</li>
-                    </ul>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="examples">
-              <Card variant="metal" className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Example Code</h2>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">JavaScript/TypeScript</h3>
-                    <div className="bg-gray-800 p-4 rounded-md">
-                      <pre>
-                        <code>
-                          {`// Initialize client
-const api = new ProcurityClient({ 
-  apiKey: 'YOUR_API_KEY' 
-});
-
-// Get all proposals
-api.proposals.list()
-  .then(proposals => {
-    console.log(proposals);
-  })
-  .catch(error => {
-    console.error(error);
-  });
-
-// Get proposal details
-api.proposals.get('proposal-id-123')
-  .then(proposal => {
-    console.log(proposal);
-  });`}
-                        </code>
-                      </pre>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Python</h3>
-                    <div className="bg-gray-800 p-4 rounded-md">
-                      <pre>
-                        <code>
-                          {`# Initialize client
-from procurity import ProcurityClient
-
-client = ProcurityClient(api_key='YOUR_API_KEY')
-
-# Get all proposals
-proposals = client.proposals.list()
-print(proposals)
-
-# Get proposal details
-proposal = client.proposals.get('proposal-id-123')
-print(proposal)`}
-                        </code>
-                      </pre>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-8">
-                  <Link to="/sitemap">
-                    <button className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded">
-                      <Code className="mr-2 h-4 w-4" />
-                      View All Documentation
-                    </button>
-                  </Link>
-                </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </Container>
-    </main>
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));`}
+                </code>
+              </pre>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </ProtectedPageLayout>
   );
 };
 

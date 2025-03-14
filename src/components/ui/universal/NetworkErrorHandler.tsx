@@ -23,6 +23,7 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
           actionLabel={retryAction ? "Retry" : undefined}
           onAction={retryAction}
           isLoading={isRetrying}
+          variant="destructive"
         />
       )}
       {children}

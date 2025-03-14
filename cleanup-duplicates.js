@@ -5,19 +5,20 @@ const path = require('path');
 // Files to be removed due to duplication
 const filesToRemove = [
   // Network related components with overlapping functionality
-  // Keep NetworkStatusBanner as it's more comprehensive
   'src/components/ui/universal/EnhancedNetworkBanner.tsx',
   
   // Network related hooks
-  // We've already refactored useNetworkConnectionMonitor.ts and will keep it
   'src/hooks/useNetworkStatus.tsx',
   
   // CSS duplications - clean up redundant imports
-  // We'll regenerate this file with proper imports
   'src/styles/modules/accessibility/index.css',
   
-  // Components to be removed due to duplicated functionality
-  'src/components/ui/universal/NetworkErrorHandler.tsx', // useNetworkConnectionMonitor provides better handling
+  // Duplicate routing components
+  'src/routes/index.js',
+  
+  // Additional duplicated files that have been refactored
+  'src/hooks/useNetworkStatus.ts',
+  'src/components/ui/universal/NetworkErrorHandler.duplicate.tsx'
 ];
 
 // Function to remove a file if it exists
@@ -67,12 +68,28 @@ const importsToUpdate = [
     oldImport: "import { EnhancedNetworkBanner } from './EnhancedNetworkBanner';",
     newImport: "import { NetworkStatusBanner } from './NetworkStatusBanner';"
   },
-  // Add other import updates here as needed
   {
     file: 'src/components/ui/universal/NetworkMonitorProvider.tsx',
     oldImport: "<EnhancedNetworkBanner isOffline={!isOnline} isReconnecting={isReconnecting} />",
     newImport: "<NetworkStatusBanner isOffline={!isOnline} isReconnecting={isReconnecting} />"
-  }
+  },
+  // Update imports after removing useNetworkStatus
+  {
+    file: 'src/hooks/useNetworkOperation.ts',
+    oldImport: "import { useNetworkStatus } from '@/hooks/useNetworkStatus';",
+    newImport: "import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';"
+  },
+  {
+    file: 'src/hooks/useQueryWithCache.ts',
+    oldImport: "import { useNetworkStatus } from './useNetworkStatus';",
+    newImport: "import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';"
+  },
+  {
+    file: 'src/hooks/useOfflineChecklistData.ts',
+    oldImport: "import { useNetworkStatus } from '@/hooks/useNetworkStatus';",
+    newImport: "import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';"
+  },
+  // Add more import updates as needed
 ];
 
 // Main execution

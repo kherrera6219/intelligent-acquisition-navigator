@@ -1,128 +1,94 @@
 
 import React from 'react';
-import { Container } from '@/components/ui/universal/Container';
-import { PageHeader } from '@/components/layout/PageHeader';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { AppRoutes } from '@/routes/AppRoutes';
-import { RouteObject } from 'react-router-dom';
-import { Compass, ExternalLink } from 'lucide-react';
+import { appRoutes } from '@/routes/AppRoutes';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 const SitemapPage: React.FC = () => {
-  // Create dummy routes for the sitemap based on AppRoutes
-  const routeObjects: RouteObject[] = [
-    { path: "/" },
-    { path: "/about" },
-    { path: "/features" },
-    { path: "/contact" },
-    { path: "/pricing" },
-    { path: "/help" },
-    { path: "/privacy" },
-    { path: "/chat" },
-    { path: "/improve" },
-    { path: "/sitemap" },
-    { path: "/api-docs" },
-    { path: "/component-library" },
-    { path: "/dashboard" },
-    { path: "/analytics" },
-    { path: "/market-research" },
-    { path: "/document-control" },
-    { path: "/solicitation-review" },
-    { path: "/federal-acquisition" },
-    { path: "/texas-acquisition" },
-    { path: "/compliance" },
-    { path: "/source-selection" },
-    { path: "/contract-management" },
-    { path: "/legal-review" },
-    { path: "/small-business" },
-    { path: "/quality-assurance" },
-    { path: "/knowledge-base" },
-    { path: "/profile" },
-    { path: "/validation" },
-    { path: "*" }
-  ];
-  
-  // Group routes by section
-  const routesByType = routeObjects.reduce((acc: Record<string, string[]>, route: RouteObject) => {
-    const path = route.path || "";
-    
-    if (path === '*') return acc; // Skip 404 route
-    
-    let type = 'Other';
-    
-    if (path.startsWith('/dashboard') || path.startsWith('/analytics') || path === '/ms-fluent-dashboard') {
-      type = 'Dashboard';
-    } else if (path.startsWith('/auth') || path === '/profile') {
-      type = 'Authentication';
-    } else if (path.startsWith('/market-research') || path.startsWith('/document-control') || 
-               path.startsWith('/solicitation') || path.startsWith('/compliance') ||
-               path.startsWith('/federal-acquisition') || path.startsWith('/texas-acquisition') ||
-               path.startsWith('/source-selection') || path.startsWith('/contract-management') || 
-               path.startsWith('/legal-review') || path.startsWith('/small-business') ||
-               path.startsWith('/quality-assurance')) {
-      type = 'Acquisition';
-    } else if (path.startsWith('/settings') || path.startsWith('/knowledge-base') || 
-               path.startsWith('/federal-knowledge-base')) {
-      type = 'Settings & Knowledge Base';
-    } else if (path === '/' || path.startsWith('/about') || path.startsWith('/features') || 
-               path.startsWith('/pricing') || path.startsWith('/contact') || 
-               path.startsWith('/help') || path.startsWith('/privacy') || 
-               path.startsWith('/chat') || path.startsWith('/improve') ||
-               path.startsWith('/sitemap')) {
-      type = 'Main';
-    } else if (path.startsWith('/api-docs') || path.startsWith('/component-library')) {
-      type = 'Developer';
-    }
-    
-    acc[type] = [...(acc[type] || []), path];
-    return acc;
-  }, {});
+  // Organize routes by category
+  const categories = {
+    main: ['/', '/about', '/features', '/pricing', '/contact', '/help', '/privacy'],
+    dashboard: ['/dashboard', '/analytics', '/improve', '/profile', '/settings'],
+    acquisition: [
+      '/market-research',
+      '/document-control',
+      '/solicitation-review',
+      '/federal-acquisition',
+      '/texas-acquisition',
+      '/compliance',
+      '/source-selection',
+      '/contract-management',
+      '/legal-review',
+      '/small-business',
+      '/quality-assurance'
+    ],
+    knowledge: ['/knowledge-base', '/chat'],
+    developer: ['/api-docs', '/component-library', '/validation'],
+  };
 
-  // Sort the keys to ensure consistent display order
-  const orderedTypes = ['Main', 'Dashboard', 'Acquisition', 'Authentication', 'Settings & Knowledge Base', 'Developer', 'Other'];
+  const formatPathName = (path: string) => {
+    if (path === '/') return 'Home';
+    return path
+      .replace(/-/g, ' ')
+      .replace(/\//g, '')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
 
   return (
-    <Container className="py-8">
+    <div className="container mx-auto px-4 py-8">
       <PageHeader
         title="Sitemap"
-        description="Navigation map of all pages in the application"
+        description="Complete list of all pages on our site"
       />
 
-      <div className="space-y-8 mt-8">
-        {orderedTypes.map(type => {
-          if (!routesByType[type] || routesByType[type].length === 0) return null;
-          
-          return (
-            <div key={type} className="loading-fade-in">
-              <div className="flex items-center mb-4">
-                <Compass className="h-5 w-5 mr-2 text-blue-500" />
-                <h2 className="text-xl font-semibold">{type}</h2>
-              </div>
-              <Card className="p-4 ms-fluent-panel">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {routesByType[type].sort().map(path => (
-                    <Button
-                      key={path}
-                      variant="outline"
-                      className="justify-start ms-nav-item group h-auto py-3"
-                      asChild
-                    >
-                      <Link to={path} className="flex justify-between items-center w-full">
-                        <span>
-                          {path === '/' ? 'Home' : path.replace(/^\/([\w-]+).*$/, '$1').replace(/-/g, ' ')}
-                        </span>
-                        <ExternalLink className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity ml-2" />
-                      </Link>
-                    </Button>
-                  ))}
-                </div>
-              </Card>
-            </div>
-          );
-        })}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+        {Object.entries(categories).map(([category, paths]) => (
+          <div key={category} className="rounded-lg border border-gray-300 dark:border-gray-700 p-4">
+            <h2 className="text-xl font-semibold mb-4 capitalize">{category} Pages</h2>
+            <ul className="space-y-2">
+              {paths.map((path) => (
+                <li key={path} className="transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
+                  <Link
+                    to={path}
+                    className="block px-3 py-2 text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    {formatPathName(path)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
-    </Container>
+
+      <div className="mt-12 border-t border-gray-300 dark:border-gray-700 pt-6">
+        <h2 className="text-xl font-semibold mb-4">Additional Resources</h2>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Link
+            to="/sitemap"
+            className="block p-4 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            HTML Sitemap
+          </Link>
+          <a
+            href="/sitemap.xml"
+            className="block p-4 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            XML Sitemap
+          </a>
+          <Link
+            to="/help"
+            className="block p-4 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Help Center
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 };
 

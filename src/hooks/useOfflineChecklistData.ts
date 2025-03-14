@@ -1,81 +1,92 @@
 
 import { useState, useEffect } from 'react';
-import { ChecklistItem } from '@/contexts/ImprovementContext';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
+import { useImprovementActions } from './useImprovementActions';
+import { ChecklistItem } from '@/types/checklist';
 
-export const useOfflineChecklistData = (
-  onlineData: ChecklistItem[],
-  isLoading: boolean,
-  error: Error | null
-) => {
-  const [offlineData, setOfflineData] = useState<ChecklistItem[]>([]);
-  const [pendingUpdates, setPendingUpdates] = useState<{
-    id: number;
-    updates: Partial<ChecklistItem>;
-  }[]>([]);
+export const useOfflineChecklistData = () => {
   const { isOnline } = useNetworkMonitor();
+  const [localItems, setLocalItems] = useState<ChecklistItem[]>([]);
+  const [pendingChanges, setPendingChanges] = useState<any[]>([]);
+  const { updateItem } = useImprovementActions();
 
-  // Load cached data from localStorage when offline
   useEffect(() => {
-    if (!isOnline && !isLoading) {
-      const cachedData = localStorage.getItem('checklist_items');
-      if (cachedData) {
-        try {
-          setOfflineData(JSON.parse(cachedData));
-        } catch (e) {
-          console.error('Error parsing cached checklist data:', e);
+    // Load locally stored checklist items on mount
+    const loadOfflineData = () => {
+      try {
+        const storedItems = localStorage.getItem('checklist_items');
+        const storedChanges = localStorage.getItem('pending_changes');
+        
+        if (storedItems) {
+          setLocalItems(JSON.parse(storedItems));
         }
-      }
-    }
-  }, [isOnline, isLoading]);
-
-  // Cache data to localStorage when online
-  useEffect(() => {
-    if (isOnline && onlineData.length > 0 && !isLoading && !error) {
-      localStorage.setItem('checklist_items', JSON.stringify(onlineData));
-      setOfflineData(onlineData);
-    }
-  }, [isOnline, onlineData, isLoading, error]);
-
-  // Sync pending updates when online
-  useEffect(() => {
-    const syncPendingUpdates = async () => {
-      if (isOnline && pendingUpdates.length > 0) {
-        console.log('Syncing pending updates:', pendingUpdates);
-        // This would be where we'd send the updates to the server
-        // For now, we'll just clear the pending updates
-        setPendingUpdates([]);
+        
+        if (storedChanges) {
+          setPendingChanges(JSON.parse(storedChanges));
+        }
+      } catch (error) {
+        console.error('Error loading offline data:', error);
       }
     };
+    
+    loadOfflineData();
+  }, []);
 
-    syncPendingUpdates();
-  }, [isOnline, pendingUpdates]);
+  useEffect(() => {
+    // Sync pending changes when back online
+    const syncPendingChanges = async () => {
+      if (isOnline && pendingChanges.length > 0) {
+        console.log('Syncing pending changes:', pendingChanges.length);
+        
+        for (const change of pendingChanges) {
+          try {
+            await updateItem(change.id, change.data);
+            // Remove this change from pending changes
+            setPendingChanges(prev => prev.filter(c => c.id !== change.id));
+          } catch (error) {
+            console.error('Error syncing change:', error);
+          }
+        }
+        
+        // Update localStorage with remaining changes
+        localStorage.setItem('pending_changes', JSON.stringify(pendingChanges));
+      }
+    };
+    
+    syncPendingChanges();
+  }, [isOnline, pendingChanges, updateItem]);
 
-  const updateItemOffline = (id: number, updates: Partial<ChecklistItem>) => {
-    // Update in local state
-    setOfflineData((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
-    );
-
-    // Cache to localStorage
-    const updatedData = offlineData.map((item) =>
-      item.id === id ? { ...item, ...updates } : item
-    );
-    localStorage.setItem('checklist_items', JSON.stringify(updatedData));
-
-    // Add to pending updates if offline
-    if (!isOnline) {
-      setPendingUpdates((prev) => [...prev, { id, updates }]);
+  const saveLocalChange = (id: string, data: any) => {
+    // Add to pending changes
+    const newChange = { id, data, timestamp: Date.now() };
+    setPendingChanges(prev => [...prev.filter(c => c.id !== id), newChange]);
+    
+    // Update localStorage
+    try {
+      localStorage.setItem('pending_changes', JSON.stringify([
+        ...pendingChanges.filter(c => c.id !== id),
+        newChange
+      ]));
+    } catch (error) {
+      console.error('Error saving local change:', error);
+    }
+    
+    // Update local items
+    setLocalItems(prev => prev.map(item => 
+      item.id === id ? { ...item, ...data } : item
+    ));
+    
+    try {
+      localStorage.setItem('checklist_items', JSON.stringify(localItems));
+    } catch (error) {
+      console.error('Error saving local items:', error);
     }
   };
 
-  // Return the data that should be used (online or offline)
-  const effectiveData = isOnline ? onlineData : offlineData;
-
   return {
-    data: effectiveData.length > 0 ? effectiveData : onlineData,
-    updateItemOffline,
-    hasPendingUpdates: pendingUpdates.length > 0,
-    pendingUpdatesCount: pendingUpdates.length,
+    localItems,
+    pendingChanges,
+    saveLocalChange,
+    hasPendingChanges: pendingChanges.length > 0
   };
 };
