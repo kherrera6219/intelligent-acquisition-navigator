@@ -21,6 +21,7 @@ import {
   Lock,
   ArrowRight
 } from 'lucide-react';
+import { Container } from '@/components/ui/universal/Container';
 
 interface FeatureCardProps {
   title: string;
@@ -193,7 +194,7 @@ export default function FeaturesPage() {
 
   return (
     <ExternalPageLayout title="Features" description="Explore the comprehensive features of our acquisition knowledge platform.">
-      <div className="container mx-auto px-4 py-16">
+      <Container className="py-16">
         {/* Hero Section */}
         <div className="text-center mb-16">
           <Badge variant="outline" className="mb-4 px-3 py-1 text-blue-400 border-blue-400">Platform Capabilities</Badge>
@@ -341,7 +342,7 @@ export default function FeaturesPage() {
             </div>
           </Card>
         </div>
-      </div>
+      </Container>
     </ExternalPageLayout>
   );
 }
