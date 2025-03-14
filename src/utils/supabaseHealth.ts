@@ -91,13 +91,13 @@ export const logHealthCheck = async (status: HealthStatus): Promise<void> => {
   try {
     const { error } = await supabase
       .from('health_check')
-      .insert({
-        status: status.overall,
+      .update({
         api_status: status.api,
         db_status: status.database,
         auth_status: status.auth,
-        details: status.details
-      });
+        details: status.details || {}
+      })
+      .eq('id', 1);
       
     if (error) {
       console.error('Error logging health check:', error);

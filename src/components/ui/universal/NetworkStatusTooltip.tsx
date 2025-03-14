@@ -28,7 +28,7 @@ export const NetworkStatusTooltip: React.FC<NetworkStatusTooltipProps> = ({
     if (!isOnline || !supabaseConnected) {
       return <WifiOff className="h-5 w-5 text-destructive" />;
     }
-    return <Wifi className="h-5 w-5 text-success" />;
+    return <Wifi className="h-5 w-5 text-green-500" />;
   };
 
   const getStatusMessage = () => {
@@ -55,7 +55,7 @@ export const NetworkStatusTooltip: React.FC<NetworkStatusTooltipProps> = ({
         <TooltipContent side="left" align="center">
           <p>{getStatusMessage()}</p>
           {(isOnline && supabaseConnected) && (
-            <p className="text-xs text-success mt-1">All systems operational</p>
+            <p className="text-xs text-green-500 mt-1">All systems operational</p>
           )}
         </TooltipContent>
       </Tooltip>

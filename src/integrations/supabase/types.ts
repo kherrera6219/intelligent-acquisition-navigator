@@ -451,16 +451,28 @@ export type Database = {
       }
       health_check: {
         Row: {
+          api_status: string | null
+          auth_status: string | null
+          db_status: string | null
+          details: Json | null
           id: number
           status: string
           timestamp: string
         }
         Insert: {
+          api_status?: string | null
+          auth_status?: string | null
+          db_status?: string | null
+          details?: Json | null
           id?: number
           status?: string
           timestamp?: string
         }
         Update: {
+          api_status?: string | null
+          auth_status?: string | null
+          db_status?: string | null
+          details?: Json | null
           id?: number
           status?: string
           timestamp?: string

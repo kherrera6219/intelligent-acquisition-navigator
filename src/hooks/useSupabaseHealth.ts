@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { checkSupabaseHealth, HealthStatus } from '@/utils/supabaseHealth';
+import { checkSupabaseHealth, logHealthCheck, HealthStatus } from '@/utils/supabaseHealth';
 import { useNetworkMonitor } from '@/components/ui/universal/NetworkMonitorProvider';
 
 export function useSupabaseHealth(checkIntervalMs = 60000) {
@@ -15,6 +15,9 @@ export function useSupabaseHealth(checkIntervalMs = 60000) {
       setIsChecking(true);
       const status = await checkSupabaseHealth();
       setHealth(status);
+      
+      // Log health check results to Supabase
+      await logHealthCheck(status);
     } catch (error) {
       console.error('Error in health check:', error);
     } finally {

@@ -21,8 +21,8 @@ export const SupabaseStatus: React.FC = () => {
     
     switch (health.overall) {
       case 'error': return "destructive";
-      case 'warning': return "warning";
-      case 'ok': return "success";
+      case 'warning': return "secondary"; // Changed from "warning" to "secondary" to match available variants
+      case 'ok': return "outline"; // Changed from "success" to "outline" 
       default: return "outline";
     }
   };
@@ -33,8 +33,8 @@ export const SupabaseStatus: React.FC = () => {
     
     switch (health.overall) {
       case 'error': return <AlertCircle className="h-3 w-3 text-destructive" />;
-      case 'warning': return <AlertCircle className="h-3 w-3 text-warning" />;
-      case 'ok': return <CheckCircle className="h-3 w-3 text-success" />;
+      case 'warning': return <AlertCircle className="h-3 w-3 text-amber-500" />; // Using amber color for warning
+      case 'ok': return <CheckCircle className="h-3 w-3 text-green-500" />; // Using green color for success
       default: return <HelpCircle className="h-3 w-3 text-muted-foreground" />;
     }
   };
@@ -71,8 +71,8 @@ export const SupabaseStatus: React.FC = () => {
                 <div className="grid grid-cols-2 gap-1 text-xs">
                   <span>API:</span>
                   <span className={`
-                    ${health.api === 'ok' ? 'text-success' : ''}
-                    ${health.api === 'warning' ? 'text-warning' : ''}
+                    ${health.api === 'ok' ? 'text-green-500' : ''}
+                    ${health.api === 'warning' ? 'text-amber-500' : ''}
                     ${health.api === 'error' ? 'text-destructive' : ''}
                   `}>
                     {health.api.toUpperCase()}
@@ -80,8 +80,8 @@ export const SupabaseStatus: React.FC = () => {
                   
                   <span>Database:</span>
                   <span className={`
-                    ${health.database === 'ok' ? 'text-success' : ''}
-                    ${health.database === 'warning' ? 'text-warning' : ''}
+                    ${health.database === 'ok' ? 'text-green-500' : ''}
+                    ${health.database === 'warning' ? 'text-amber-500' : ''}
                     ${health.database === 'error' ? 'text-destructive' : ''}
                   `}>
                     {health.database.toUpperCase()}
@@ -89,8 +89,8 @@ export const SupabaseStatus: React.FC = () => {
                   
                   <span>Auth:</span>
                   <span className={`
-                    ${health.auth === 'ok' ? 'text-success' : ''}
-                    ${health.auth === 'warning' ? 'text-warning' : ''}
+                    ${health.auth === 'ok' ? 'text-green-500' : ''}
+                    ${health.auth === 'warning' ? 'text-amber-500' : ''}
                     ${health.auth === 'error' ? 'text-destructive' : ''}
                   `}>
                     {health.auth.toUpperCase()}
