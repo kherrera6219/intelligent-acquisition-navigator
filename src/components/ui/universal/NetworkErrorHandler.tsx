@@ -13,6 +13,8 @@ interface NetworkErrorHandlerProps {
   isLoading?: boolean;
   autoRetry?: boolean;
   retryInterval?: number; // in milliseconds
+  className?: string;
+  alertPosition?: 'top' | 'inline';
 }
 
 export function NetworkErrorHandler({
@@ -22,6 +24,8 @@ export function NetworkErrorHandler({
   isLoading = false,
   autoRetry = false,
   retryInterval = 10000, // 10 seconds default
+  className = '',
+  alertPosition = 'inline',
 }: NetworkErrorHandlerProps) {
   const isOnline = useNetworkStatus();
   const [isRetrying, setIsRetrying] = useState(false);
@@ -103,31 +107,48 @@ export function NetworkErrorHandler({
     return secondsLeft > 0 ? `in ${secondsLeft}s` : 'now';
   };
   
+  // Position classes for alert
+  const positionClasses = alertPosition === 'top' 
+    ? 'sticky top-0 z-50 mb-4' 
+    : 'mb-6';
+  
   if (!isOnline) {
     return (
-      <Card className="p-4 border border-yellow-500/20 bg-yellow-500/5 mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-3">
-            <WifiOff className="h-5 w-5 text-yellow-500" />
-            <div>
-              <h3 className="font-medium text-white">You're offline</h3>
-              <p className="text-sm text-gray-400">
-                Please check your internet connection to continue.
-              </p>
+      <>
+        <Card className={`p-4 border border-yellow-500/20 bg-yellow-500/5 ${positionClasses} ${className}`} role="alert" aria-live="assertive">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <WifiOff className="h-5 w-5 text-yellow-500" aria-hidden="true" />
+              <div>
+                <h3 className="font-medium text-white">You're offline</h3>
+                <p className="text-sm text-gray-400">
+                  Please check your internet connection to continue.
+                </p>
+              </div>
             </div>
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
+              size="sm"
+              className="bg-yellow-500/20 hover:bg-yellow-500/30 border-yellow-500/30 text-yellow-100"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" aria-hidden="true" />
+              <span>Try Again</span>
+            </Button>
           </div>
-        </div>
-      </Card>
+        </Card>
+        {children}
+      </>
     );
   }
   
   if (errorMessage) {
     return (
       <>
-        <Card className="p-4 border border-red-500/20 bg-red-500/5 mb-6">
+        <Card className={`p-4 border border-red-500/20 bg-red-500/5 ${positionClasses} ${className}`} role="alert" aria-live="assertive">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="h-5 w-5 text-red-500" />
+              <AlertTriangle className="h-5 w-5 text-red-500" aria-hidden="true" />
               <div>
                 <h3 className="font-medium text-white">Network Error</h3>
                 <p className="text-sm text-gray-400">
@@ -145,8 +166,9 @@ export function NetworkErrorHandler({
                 className="flex items-center gap-2"
                 size="sm"
                 disabled={isRetrying || isLoading}
+                aria-label="Retry connection"
               >
-                <RefreshCw className={`h-4 w-4 ${isRetrying ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 ${isRetrying ? 'animate-spin' : ''}`} aria-hidden="true" />
                 <span>Retry Now</span>
               </Button>
             )}

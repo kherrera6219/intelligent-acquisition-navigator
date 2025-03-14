@@ -1,47 +1,45 @@
 
 /**
- * Utility to detect and manage keyboard navigation for improved accessibility
- * This helps differentiate between mouse users and keyboard users
- * to show appropriate focus indicators only when needed
+ * Utility to detect keyboard navigation and add a class to the body
+ * This helps style focus states differently for keyboard vs. mouse users
  */
 
-export const initKeyboardNavigationDetector = (): void => {
-  // Don't initialize more than once
-  if (window.keyboardNavigationDetectorInitialized) return;
-  
-  // Function to add keyboard user class
-  const handleKeyDown = (e: KeyboardEvent): void => {
+export function initKeyboardNavigationDetector(): void {
+  // Only run in the browser
+  if (typeof document === 'undefined') return;
+
+  // Function to handle keyboard detection
+  const handleFirstTab = (e: KeyboardEvent) => {
     if (e.key === 'Tab') {
       document.body.classList.add('keyboard-user');
+      
+      // Remove the event listener after detecting keyboard use
+      window.removeEventListener('keydown', handleFirstTab);
+      
+      // Add event listener for mouse use
+      window.addEventListener('mousedown', handleMouseDown);
     }
   };
-  
-  // Function to remove keyboard user class on mouse interaction
-  const handleMouseDown = (): void => {
+
+  // Function to handle mouse use
+  const handleMouseDown = () => {
     document.body.classList.remove('keyboard-user');
+    
+    // Re-add keyboard detection when mouse is used
+    window.addEventListener('keydown', handleFirstTab);
   };
-  
-  // Add event listeners
-  document.addEventListener('keydown', handleKeyDown);
-  document.addEventListener('mousedown', handleMouseDown);
-  
-  // Mark as initialized
-  window.keyboardNavigationDetectorInitialized = true;
-  
-  // Set initial state - assume not keyboard user until Tab is pressed
-  document.body.classList.remove('keyboard-user');
-};
 
-// Helper to check if a user is currently navigating via keyboard
-export const isKeyboardUser = (): boolean => {
-  return document.body.classList.contains('keyboard-user');
-};
+  // Initialize the event listener
+  window.addEventListener('keydown', handleFirstTab);
 
-// Types for TypeScript
-declare global {
-  interface Window {
-    keyboardNavigationDetectorInitialized?: boolean;
-  }
+  // Clean up function if needed
+  return () => {
+    window.removeEventListener('keydown', handleFirstTab);
+    window.removeEventListener('mousedown', handleMouseDown);
+  };
 }
 
-export default initKeyboardNavigationDetector;
+// Auto-initialize when imported
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', initKeyboardNavigationDetector);
+}

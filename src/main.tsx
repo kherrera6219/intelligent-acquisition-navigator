@@ -1,21 +1,44 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
-
-// CSS imports in correct order
-import './styles/theme/index.css';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
+import { Toaster } from './components/ui/toaster';
+import { ThemeProvider } from './providers/ThemeProvider';
+import { NetworkMonitorProvider } from './components/ui/universal/NetworkMonitorProvider'; 
+import { ApplicationStatusProvider } from './components/ui/universal/ApplicationStatusProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './styles/global.css';
-import './styles/application.css';
-import './index.css';
 
-import { registerServiceWorker } from './serviceWorkerRegistration';
+// Create React Query client with offline support
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error: any) => {
+        // Don't retry on network errors (will be handled by our offline system)
+        if (error?.message?.includes('network') || error?.message?.includes('fetch')) {
+          return false;
+        }
+        // Otherwise retry 3 times
+        return failureCount < 3;
+      },
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <NetworkMonitorProvider>
+          <ApplicationStatusProvider>
+            <RouterProvider router={router} />
+            <Toaster />
+          </ApplicationStatusProvider>
+        </NetworkMonitorProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
+  </React.StrictMode>
 );
-
-// Register service worker for PWA support
-registerServiceWorker();
