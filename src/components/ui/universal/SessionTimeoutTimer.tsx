@@ -1,22 +1,23 @@
 
 import React from 'react';
-import { useSessionManagement } from '@/hooks/useSessionManagement';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
 interface SessionTimeoutTimerProps {
   className?: string;
+  sessionTimeLeft?: number;
+  sessionDuration?: number;
+  isSessionExpiringSoon?: boolean;
 }
 
-export const SessionTimeoutTimer: React.FC<SessionTimeoutTimerProps> = ({ className }) => {
-  // Since useSessionManagement hook might be missing needed properties,
-  // we'll create a simple implementation here
-  const sessionTimeLeft = 100; // Example percentage
-  const isSessionExpiringSoon = false;
-  const sessionDuration = 3600; // Example in seconds
-  
+export const SessionTimeoutTimer: React.FC<SessionTimeoutTimerProps> = ({ 
+  className,
+  sessionTimeLeft = 100,
+  sessionDuration = 3600,
+  isSessionExpiringSoon = false
+}) => {
   // Compute the percentage of time remaining
-  const percentRemaining = (sessionTimeLeft / sessionDuration) * 100;
+  const percentRemaining = Math.max(0, Math.min(100, (sessionTimeLeft / sessionDuration) * 100));
   
   // Get the appropriate color based on time remaining
   const getProgressColor = () => {
@@ -26,12 +27,17 @@ export const SessionTimeoutTimer: React.FC<SessionTimeoutTimerProps> = ({ classN
   };
   
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full", className)} role="progressbar" aria-valuenow={percentRemaining}>
       <Progress 
         value={percentRemaining} 
         className={cn("h-1", getProgressColor())}
         aria-label="Session timeout progress"
       />
+      {isSessionExpiringSoon && (
+        <div className="mt-1 text-xs text-red-500" aria-live="polite">
+          Your session is about to expire
+        </div>
+      )}
     </div>
   );
 };

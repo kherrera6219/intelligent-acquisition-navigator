@@ -1,70 +1,96 @@
 
-import { supabase } from '@/integrations/supabase/client';
-import type { Activity } from '@/types/dashboard';
-import { recentActivities } from '@/data/dashboardMockData';
+import { Activity } from '@/types/dashboard';
 
 /**
- * Fetch recent activities from the API
+ * Mock data for recent activities
+ * In a real application, this would come from an API call
  */
-export const fetchRecentActivities = async (): Promise<Activity[]> => {
-  try {
-    // In a real implementation, this would fetch from Supabase or other data source
-    // const { data, error } = await supabase
-    //   .from('activities')
-    //   .select('*')
-    //   .order('timestamp', { ascending: false })
-    //   .limit(20);
-    
-    // if (error) {
-    //   throw new Error(`Failed to fetch activities: ${error.message}`);
-    // }
-    
-    // return data as Activity[];
-    
-    // For demo purposes, we'll return mock data with a slight delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return recentActivities;
-  } catch (error) {
-    console.error('Error fetching activities:', error);
-    throw error;
+const mockActivities: Omit<Activity, 'icon' | 'status'>[] = [
+  {
+    id: '1',
+    title: 'Document Updated',
+    description: 'Financial report Q1 2025 updated',
+    timestamp: new Date().toISOString(),
+    category: 'document',
+    user: {
+      name: 'Alex Johnson',
+      avatar: '/avatars/alex.jpg'
+    }
+  },
+  {
+    id: '2',
+    title: 'New Message',
+    description: 'You received a message from Sarah Smith',
+    timestamp: new Date(Date.now() - 3600000).toISOString(),
+    category: 'message',
+    user: {
+      name: 'Sarah Smith',
+      avatar: '/avatars/sarah.jpg'
+    }
+  },
+  {
+    id: '3',
+    title: 'New Document Created',
+    description: 'Project proposal added to the library',
+    timestamp: new Date(Date.now() - 7200000).toISOString(),
+    category: 'creation',
+    user: {
+      name: 'Michael Chen',
+      avatar: '/avatars/michael.jpg'
+    }
+  },
+  {
+    id: '4',
+    title: 'Approval Needed',
+    description: 'Budget request waiting for approval',
+    timestamp: new Date(Date.now() - 10800000).toISOString(),
+    category: 'approval',
+    user: {
+      name: 'Jessica Williams',
+      avatar: '/avatars/jessica.jpg'
+    }
+  },
+  {
+    id: '5',
+    title: 'System Warning',
+    description: 'Storage capacity reaching limit',
+    timestamp: new Date(Date.now() - 14400000).toISOString(),
+    category: 'warning',
+    user: {
+      name: 'System',
+      avatar: '/avatars/system.jpg'
+    }
   }
+];
+
+/**
+ * Fetch recent activities
+ * @param limit Number of activities to return
+ * @returns Promise with activities
+ */
+export const fetchRecentActivities = async (limit: number = 5): Promise<Omit<Activity, 'icon' | 'status'>[]> => {
+  // Simulate API call delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  // Return the requested number of activities
+  return mockActivities.slice(0, limit);
 };
 
 /**
- * Get all unique activity categories
+ * Format timestamp to a human-readable format
+ * @param timestamp ISO string timestamp
+ * @returns Formatted time string
  */
-export const getActivityCategories = async (): Promise<string[]> => {
-  try {
-    // In a real implementation, this would fetch from Supabase or other data source
-    // const { data, error } = await supabase
-    //   .from('activities')
-    //   .select('category')
-    //   .order('category');
-    
-    // if (error) {
-    //   throw new Error(`Failed to fetch activity categories: ${error.message}`);
-    // }
-    
-    // Extract unique categories
-    // const categories = [...new Set(data.map(item => item.category))];
-    // return categories;
-    
-    // For demo purposes, extract from mock data
-    const categories = [...new Set(recentActivities.map(activity => activity.category))];
-    return categories;
-  } catch (error) {
-    console.error('Error fetching activity categories:', error);
-    throw error;
+export const formatActivityTime = (timestamp: string): string => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+  
+  if (diffInHours < 1) {
+    return 'Just now';
+  } else if (diffInHours < 24) {
+    return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+  } else {
+    return date.toLocaleDateString();
   }
-};
-
-/**
- * Filter activities by category
- */
-export const filterActivitiesByCategory = (
-  activities: Activity[], 
-  category: string | null
-): Activity[] => {
-  if (!category) return activities;
-  return activities.filter(activity => activity.category === category);
 };

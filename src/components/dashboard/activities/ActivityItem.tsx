@@ -1,66 +1,72 @@
 
 import React from 'react';
-import { format } from 'date-fns';
-import { 
-  AlertTriangle, 
-  CheckCircle2, 
-  Info, 
-  Clock, 
-  AlertCircle,
-  FileText 
-} from 'lucide-react';
-import { Tooltip } from '@/components/ui/tooltip';
+import { formatActivityTime } from '@/services/activityService';
+import { LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export interface ActivityItemProps {
-  icon?: React.ReactNode;
+interface ActivityItemProps {
+  icon?: React.ReactNode | LucideIcon;
   title: string;
   description: string;
-  timestamp: Date;
-  status: 'success' | 'warning' | 'error' | 'info';
+  timestamp: Date | string;
+  status?: 'info' | 'warning' | 'success' | 'error';
+  className?: string;
 }
 
 export const ActivityItem: React.FC<ActivityItemProps> = ({
-  icon,
+  icon: IconComponent,
   title,
   description,
   timestamp,
-  status
+  status = 'info',
+  className
 }) => {
-  const getStatusIcon = () => {
+  // Convert timestamp to string if it's a Date object
+  const timestampString = typeof timestamp === 'string' 
+    ? timestamp 
+    : timestamp.toISOString();
+  
+  // Format the timestamp
+  const formattedTime = formatActivityTime(timestampString);
+  
+  // Map status to color class
+  const getStatusColorClass = () => {
     switch (status) {
-      case 'success':
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-amber-500" />;
-      case 'error':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
+      case 'warning': return 'text-yellow-500 bg-yellow-500/10';
+      case 'success': return 'text-green-500 bg-green-500/10';
+      case 'error': return 'text-red-500 bg-red-500/10';
       case 'info':
-      default:
-        return <Info className="h-4 w-4 text-blue-500" />;
+      default: return 'text-blue-500 bg-blue-500/10';
     }
   };
 
+  // Render the component
   return (
-    <div className="flex items-start gap-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
-      <div className="flex-shrink-0 mt-0.5">
-        {icon || <FileText className="h-5 w-5 text-muted-foreground" />}
-      </div>
+    <div 
+      className={cn(
+        "flex items-start gap-3 p-3 rounded-lg border border-border/50 bg-card/50",
+        className
+      )}
+      role="listitem"
+    >
+      {IconComponent && typeof IconComponent === 'function' ? (
+        <div className={cn("p-2 rounded-full", getStatusColorClass())}>
+          {React.createElement(IconComponent as LucideIcon, { 
+            className: "h-5 w-5"
+          })}
+        </div>
+      ) : IconComponent ? (
+        <div className={cn("p-2 rounded-full", getStatusColorClass())}>
+          {IconComponent}
+        </div>
+      ) : null}
+      
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium leading-none mb-1">{title}</p>
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </div>
-      <div className="flex flex-col items-end gap-1 flex-shrink-0">
-        <Tooltip content={`Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`}>
-          <div className="flex items-center">
-            {getStatusIcon()}
-          </div>
-        </Tooltip>
-        <Tooltip content={format(timestamp, 'MMM d, yyyy h:mm:ss a')}>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" />
-            <span>{format(timestamp, 'h:mm a')}</span>
-          </div>
-        </Tooltip>
+        <h4 className="text-sm font-medium truncate">{title}</h4>
+        <p className="text-xs text-muted-foreground mt-1">{description}</p>
+        <div className="flex items-center mt-2">
+          <span className="text-xs text-muted-foreground">{formattedTime}</span>
+        </div>
       </div>
     </div>
   );

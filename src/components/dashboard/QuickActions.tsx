@@ -2,9 +2,8 @@
 import React from 'react';
 import { MsDashboardSection } from '@/components/layout/MsDashboardSection';
 import { MsDashboardGrid } from '@/components/layout/MsDashboardGrid';
-import { MsDashboardCard } from '@/components/layout/MsDashboardCard';
 import { Link } from 'react-router-dom';
-import { FileText, PieChart, Users, HelpCircle } from 'lucide-react';
+import { FileText, PieChart, Users, HelpCircle, LucideIcon } from 'lucide-react';
 
 interface ActionCardProps {
   href: string;

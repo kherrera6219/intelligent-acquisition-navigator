@@ -50,7 +50,15 @@ export interface DashboardCardProps {
     text: string;
     variant: 'default' | 'success' | 'warning' | 'error' | 'info';
   };
-  // Add missing properties that are used in QuickActions.tsx
+  // Properties used in QuickActions.tsx
   href?: string;
   icon?: ReactNode;
+}
+
+// Add a network status interface for the OfflineStatusIndicator
+export interface NetworkStatus {
+  isOnline: boolean;
+  isReconnecting: boolean;
+  lastOnlineAt?: Date;
+  lastSyncTime?: Date;
 }

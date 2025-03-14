@@ -1,151 +1,91 @@
-import { useState, useEffect, useCallback } from 'react';
+
+import { useQuery } from '@tanstack/react-query';
+import { Activity } from '@/types/dashboard';
+import { fetchRecentActivities } from '@/services/activityService';
 import { 
   FileText, 
-  Users, 
-  Settings, 
-  AlertCircle, 
-  Bell, 
-  LucideIcon, 
-  Info, 
-  CheckCircle2, 
-  AlertTriangle 
+  MessageSquare, 
+  FilePlus, 
+  FileEdit,
+  UserPlus, 
+  Check, 
+  AlertTriangle,
+  Clock, 
+  LucideIcon 
 } from 'lucide-react';
-import { fetchRecentActivities, getActivityCategories, filterActivitiesByCategory } from '@/services/activityService';
-import { Activity } from '@/types/dashboard';
-import { useToast } from '@/hooks/use-toast';
 
-interface ActivityIcon {
-  component: LucideIcon;
-  className: string;
-}
-
-export const useRecentActivities = () => {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [filter, setFilter] = useState<string | null>(null);
-  const [categories, setCategories] = useState<string[]>([]);
-  const { toast } = useToast();
-  
-  const getActivityIcon = (activity: Activity): ActivityIcon => {
-    if (activity.icon) {
-      return {
-        component: activity.icon,
-        className: 'text-primary'
-      };
-    }
-
-    switch (activity.category) {
-      case 'Document':
-        return {
-          component: FileText,
-          className: 'text-blue-500'
-        };
-      case 'Meeting':
-        return {
-          component: Users,
-          className: 'text-green-500'
-        };
-      case 'System':
-        return {
-          component: Settings,
-          className: 'text-purple-500'
-        };
-      case 'Alert':
-        return {
-          component: AlertCircle,
-          className: 'text-red-500'
-        };
-      case 'Notification':
-        return {
-          component: Bell,
-          className: 'text-amber-500'
-        };
-      default:
-        return {
-          component: Info,
-          className: 'text-gray-500'
-        };
-    }
-  };
-
-  const getStatusIcon = (status?: 'info' | 'warning' | 'success' | 'error'): LucideIcon => {
-    switch (status) {
-      case 'success':
-        return CheckCircle2;
-      case 'warning':
-        return AlertTriangle;
-      case 'error':
-        return AlertCircle;
-      case 'info':
-      default:
-        return Info;
-    }
-  };
-
-  const transformActivitiesForUI = (apiActivities: Activity[]) => {
-    return apiActivities.map(activity => {
-      const { component: IconComponent, className } = getActivityIcon(activity);
-      const StatusIcon = activity.status ? getStatusIcon(activity.status) : null;
-      
-      return {
-        ...activity,
-        timestamp: new Date(activity.timestamp),
-        icon: <IconComponent className={`h-5 w-5 ${className}`} />,
-        status: activity.status || 'info',
-        statusIcon: StatusIcon ? <StatusIcon className="h-4 w-4" /> : null
-      };
-    });
-  };
-
-  const fetchActivities = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const data = await fetchRecentActivities();
-      const transformedData = transformActivitiesForUI(data);
-      setActivities(transformedData);
-      
-      const categoryData = await getActivityCategories();
-      setCategories(categoryData);
-    } catch (err) {
-      console.error('Error fetching recent activities:', err);
-      setError(err instanceof Error ? err : new Error('Failed to fetch activities'));
-      toast({
-        title: 'Error',
-        description: 'Failed to load recent activities',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [toast]);
-
-  useEffect(() => {
-    fetchActivities();
-  }, [fetchActivities]);
-
-  const filteredActivities = filter 
-    ? filterActivitiesByCategory(activities, filter)
-    : activities;
-
-  const handleRefresh = () => {
-    fetchActivities();
-    toast({
-      title: 'Refreshed',
-      description: 'Activity data has been refreshed',
-    });
-  };
-
-  return {
-    activities,
-    filteredActivities,
+/**
+ * Custom hook to fetch and manage recent activities
+ */
+export const useRecentActivities = (limit: number = 5) => {
+  const { 
+    data: activities,
     isLoading,
     error,
-    filter,
-    setFilter,
-    categories,
-    handleRefresh
+    refetch
+  } = useQuery({
+    queryKey: ['recentActivities', limit],
+    queryFn: () => fetchRecentActivities(limit),
+  });
+
+  /**
+   * Get appropriate icon component based on activity category
+   */
+  const getActivityIcon = (category: string): LucideIcon => {
+    switch (category.toLowerCase()) {
+      case 'document':
+        return FileText;
+      case 'message':
+        return MessageSquare;
+      case 'creation':
+        return FilePlus;
+      case 'edit':
+        return FileEdit;
+      case 'user':
+        return UserPlus;
+      case 'approval':
+        return Check;
+      case 'warning':
+        return AlertTriangle;
+      default:
+        return Clock;
+    }
+  };
+
+  /**
+   * Get status based on activity category
+   */
+  const getActivityStatus = (category: string): 'info' | 'warning' | 'success' | 'error' => {
+    switch (category.toLowerCase()) {
+      case 'warning':
+        return 'warning';
+      case 'error':
+        return 'error';
+      case 'approval':
+        return 'success';
+      default:
+        return 'info';
+    }
+  };
+
+  /**
+   * Format activities with appropriate icons and status
+   */
+  const formattedActivities: Activity[] = activities?.map(activity => {
+    const icon = getActivityIcon(activity.category);
+    const status = getActivityStatus(activity.category);
+    
+    return {
+      ...activity,
+      icon,
+      status
+    };
+  }) || [];
+
+  return {
+    activities: formattedActivities,
+    isLoading,
+    error,
+    refetch
   };
 };
