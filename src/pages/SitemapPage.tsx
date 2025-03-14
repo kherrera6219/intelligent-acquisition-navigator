@@ -32,7 +32,6 @@ const SitemapPage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">Acquisition</h2>
           <ul className="space-y-2">
             <li><Link to="/federal-acquisition" className="text-blue-500 hover:underline">Federal Acquisition</Link></li>
-            <li><Link to="/texas-acquisition" className="text-blue-500 hover:underline">Texas Acquisition</Link></li>
             <li><Link to="/market-research" className="text-blue-500 hover:underline">Market Research</Link></li>
             <li><Link to="/solicitation-review" className="text-blue-500 hover:underline">Solicitation Review</Link></li>
             <li><Link to="/document-control" className="text-blue-500 hover:underline">Document Control</Link></li>
@@ -42,6 +41,14 @@ const SitemapPage: React.FC = () => {
             <li><Link to="/legal-review" className="text-blue-500 hover:underline">Legal Review</Link></li>
             <li><Link to="/small-business" className="text-blue-500 hover:underline">Small Business</Link></li>
             <li><Link to="/quality-assurance" className="text-blue-500 hover:underline">Quality Assurance</Link></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Analytics & Reporting</h2>
+          <ul className="space-y-2">
+            <li><Link to="/analytics" className="text-blue-500 hover:underline">Analytics Dashboard</Link></li>
+            <li><Link to="/proposals" className="text-blue-500 hover:underline">Proposals</Link></li>
           </ul>
         </div>
         

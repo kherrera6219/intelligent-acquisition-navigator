@@ -33,11 +33,14 @@ const Navigation = () => {
       <Link to="/federal-acquisition" onClick={() => handleNavClick('Federal Acquisition')} className="text-white hover:text-blue-300">
         Federal Acquisition
       </Link>
-      <Link to="/texas-acquisition" onClick={() => handleNavClick('Texas Acquisition')} className="text-white hover:text-blue-300">
-        Texas Acquisition
+      <Link to="/market-research" onClick={() => handleNavClick('Market Research')} className="text-white hover:text-blue-300">
+        Market Research
       </Link>
       <Link to="/settings" onClick={() => handleNavClick('Settings')} className="text-white hover:text-blue-300">
         Settings
+      </Link>
+      <Link to="/sitemap" onClick={() => handleNavClick('Sitemap')} className="text-white hover:text-blue-300">
+        Sitemap
       </Link>
     </nav>
   );

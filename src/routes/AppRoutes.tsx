@@ -33,12 +33,13 @@ const ContractManagementPage = lazy(() => import("@/pages/acquisition/ContractMa
 const LegalReviewPage = lazy(() => import("@/pages/acquisition/LegalReviewPage"));
 const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPage"));
 const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
-const TexasAcquisitionPage = lazy(() => import("@/pages/acquisition/TexasAcquisition"));
 
 // Other specific pages
 const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const ValidationPage = lazy(() => import("@/pages/ValidationPage"));
+const ProposalsPage = lazy(() => import("@/pages/ProposalsPage"));
+const ProposalDetailPage = lazy(() => import("@/pages/ProposalDetailPage"));
 
 const appRoutes: RouteObject[] = [
   {
@@ -114,10 +115,6 @@ const appRoutes: RouteObject[] = [
     element: wrapWithLayout(FederalAcquisitionPage)
   },
   {
-    path: "/texas-acquisition",
-    element: wrapWithLayout(TexasAcquisitionPage)
-  },
-  {
     path: "/compliance",
     element: wrapWithLayout(CompliancePage)
   },
@@ -152,6 +149,14 @@ const appRoutes: RouteObject[] = [
   {
     path: "/validation",
     element: wrapWithLayout(ValidationPage)
+  },
+  {
+    path: "/proposals",
+    element: wrapWithLayout(ProposalsPage)
+  },
+  {
+    path: "/proposals/:id",
+    element: wrapWithLayout(ProposalDetailPage)
   },
   {
     path: "*",
