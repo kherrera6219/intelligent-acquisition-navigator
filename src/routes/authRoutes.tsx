@@ -1,30 +1,29 @@
 
 import { RouteObject } from "react-router-dom";
-import { wrapWithLayout } from "./routeTypes";
 import { lazy } from "react";
 
 // Lazy-load auth components
-const AuthPage = lazy(() => import("@/pages/auth/AuthenticationPage"));
-const PasswordResetRequestPage = lazy(() => import("@/pages/auth/PasswordResetRequestPage"));
-const PasswordResetPage = lazy(() => import("@/pages/auth/PasswordResetPage"));
-const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
+const LoginPage = lazy(() => import("@/pages/auth/LoginPage"));
+const RegisterPage = lazy(() => import("@/pages/auth/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("@/pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("@/pages/auth/ResetPasswordPage"));
 
 const routes: RouteObject[] = [
   {
-    path: "/auth",
-    element: wrapWithLayout(AuthPage, false)
+    path: "/login",
+    element: <LoginPage />
   },
   {
-    path: "/auth/forgot-password",
-    element: wrapWithLayout(PasswordResetRequestPage, false)
+    path: "/register",
+    element: <RegisterPage />
   },
   {
-    path: "/auth/reset-password",
-    element: wrapWithLayout(PasswordResetPage, false)
+    path: "/forgot-password",
+    element: <ForgotPasswordPage />
   },
   {
-    path: "/profile",
-    element: wrapWithLayout(ProfilePage)
+    path: "/reset-password",
+    element: <ResetPasswordPage />
   }
 ];
 

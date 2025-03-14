@@ -1,24 +1,30 @@
 
-import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
+import { lazy } from "react";
 
-const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
-const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
-const FederalKnowledgeBasePage = lazy(() => import("@/pages/FederalKnowledgeBasePage"));
+// Lazy-load settings components
+const SettingsPage = lazy(() => import("@/pages/settings/SettingsPage"));
+const ProfilePage = lazy(() => import("@/pages/settings/ProfilePage"));
+const SecurityPage = lazy(() => import("@/pages/settings/SecurityPage"));
+const NotificationsPage = lazy(() => import("@/pages/settings/NotificationsPage"));
 
 const routes: RouteObject[] = [
   {
     path: "/settings",
-    element: wrapWithLayout(SettingsPage)
+    element: wrapWithLayout(SettingsPage, true)
   },
   {
-    path: "/knowledge-base",
-    element: wrapWithLayout(KnowledgeBasePage)
+    path: "/settings/profile",
+    element: wrapWithLayout(ProfilePage, true)
   },
   {
-    path: "/federal-knowledge-base",
-    element: wrapWithLayout(FederalKnowledgeBasePage)
+    path: "/settings/security",
+    element: wrapWithLayout(SecurityPage, true)
+  },
+  {
+    path: "/settings/notifications",
+    element: wrapWithLayout(NotificationsPage, true)
   }
 ];
 

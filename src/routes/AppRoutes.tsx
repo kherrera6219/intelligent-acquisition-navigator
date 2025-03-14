@@ -3,7 +3,22 @@ import React, { Suspense } from 'react';
 import { useRoutes, Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { LoadingState } from '@/components/ui/universal/LoadingState';
-import routes from '@/routes';
+
+// Import route collections
+import landingRoutes from './landingRoutes';
+import authRoutes from './authRoutes';
+import dashboardRoutes from './dashboardRoutes';
+import acquisitionRoutes from './acquisitionRoutes';
+import settingsRoutes from './settingsRoutes';
+
+// Combine all route collections
+const allRoutes = [
+  ...landingRoutes,
+  ...authRoutes,
+  ...dashboardRoutes,
+  ...acquisitionRoutes,
+  ...settingsRoutes
+];
 
 export const AppRoutes: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -11,13 +26,13 @@ export const AppRoutes: React.FC = () => {
   // Process routes to handle protection based on auth state
   const processedRoutes = React.useMemo(() => {
     if (isLoading) {
-      return routes.map(route => ({
+      return allRoutes.map(route => ({
         ...route,
         element: <LoadingState message="Loading authentication..." />
       }));
     }
 
-    return routes.map(route => {
+    return allRoutes.map(route => {
       // Skip if the route has already been processed or doesn't contain "protect" metadata
       const routePath = route.path;
       

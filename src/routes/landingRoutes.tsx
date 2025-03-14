@@ -1,84 +1,65 @@
 
-import React from 'react';
-import { LazyComponent } from './routeTypes';
-import { PageLayout } from '@/components/layout/PageLayout';
+import { RouteObject } from "react-router-dom";
+import { lazy } from "react";
 
-// Import pages with lazy loading
-const HomePage = React.lazy(() => import('@/pages/HomePage'));
-const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
-const FeaturesPage = React.lazy(() => import('@/pages/FeaturesPage'));
-const PricingPage = React.lazy(() => import('@/pages/PricingPage'));
-const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
-const HelpPage = React.lazy(() => import('@/pages/HelpPage'));
-const PrivacyPage = React.lazy(() => import('@/pages/PrivacyPage'));
-const SitemapPage = React.lazy(() => import('@/pages/SitemapPage'));
+// Lazy-load landing page components
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
+const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const HelpPage = lazy(() => import("@/pages/HelpPage"));
+const PrivacyPage = lazy(() => import("@/pages/PrivacyPage"));
+const TermsPage = lazy(() => import("@/pages/TermsPage"));
+const SitemapPage = lazy(() => import("@/pages/SitemapPage"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const KnowledgeBasePage = lazy(() => import("@/pages/KnowledgeBasePage"));
 
-// Landing routes
-const landingRoutes = [
+const routes: RouteObject[] = [
   {
     path: "/",
-    element: (
-      <PageLayout>
-        <LazyComponent Component={HomePage} />
-      </PageLayout>
-    )
+    element: <HomePage />
   },
   {
     path: "/about",
-    element: (
-      <PageLayout>
-        <LazyComponent Component={AboutPage} />
-      </PageLayout>
-    )
+    element: <AboutPage />
   },
   {
     path: "/features",
-    element: (
-      <PageLayout>
-        <LazyComponent Component={FeaturesPage} />
-      </PageLayout>
-    )
+    element: <FeaturesPage />
   },
   {
     path: "/pricing",
-    element: (
-      <PageLayout>
-        <LazyComponent Component={PricingPage} />
-      </PageLayout>
-    )
+    element: <PricingPage />
   },
   {
     path: "/contact",
-    element: (
-      <PageLayout>
-        <LazyComponent Component={ContactPage} />
-      </PageLayout>
-    )
+    element: <ContactPage />
   },
   {
     path: "/help",
-    element: (
-      <PageLayout>
-        <LazyComponent Component={HelpPage} />
-      </PageLayout>
-    )
+    element: <HelpPage />
   },
   {
     path: "/privacy",
-    element: (
-      <PageLayout>
-        <LazyComponent Component={PrivacyPage} />
-      </PageLayout>
-    )
+    element: <PrivacyPage />
+  },
+  {
+    path: "/terms",
+    element: <TermsPage />
   },
   {
     path: "/sitemap",
-    element: (
-      <PageLayout>
-        <LazyComponent Component={SitemapPage} />
-      </PageLayout>
-    )
+    element: <SitemapPage />
+  },
+  {
+    path: "/knowledge-base",
+    element: <KnowledgeBasePage />
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />
   }
 ];
 
-export default landingRoutes;
+export default routes;

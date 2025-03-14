@@ -3,6 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { auditLogger } from '@/lib/audit';
+import { useTheme } from '@/providers/ThemeProvider';
 
 /**
  * Secondary navigation component for pages without the main header.
@@ -12,6 +13,7 @@ import { auditLogger } from '@/lib/audit';
 const Navigation = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const handleNavClick = (destination: string) => {
     // Log navigation event
@@ -39,14 +41,18 @@ const Navigation = () => {
     { path: "/sitemap", label: "Sitemap", description: "View all pages" }
   ];
 
+  // Use theme-aware styling
+  const navClass = `flex gap-4 p-4 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`;
+  const linkClass = `${theme === 'dark' ? 'text-white hover:text-blue-300' : 'text-slate-800 hover:text-blue-600'}`;
+
   return (
-    <nav className="flex gap-4 p-4 bg-slate-800">
+    <nav className={navClass}>
       {navLinks.map((link) => (
         <Link 
           key={link.path}
           to={link.path} 
           onClick={() => handleNavClick(link.label)} 
-          className="text-white hover:text-blue-300"
+          className={linkClass}
           title={link.description}
         >
           {link.label}

@@ -1,6 +1,7 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { ThemeContext, Theme } from "@/contexts/ThemeContext";
+import { useThemeTransition } from "@/hooks/use-theme-transition";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -13,6 +14,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       : "light";
     return systemTheme;
   });
+
+  // Use theme transition hook to handle smooth transitions
+  useThemeTransition();
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -45,8 +49,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Hook to use theme context throughout the app
 export const useTheme = () => {
-  const context = React.useContext(ThemeContext);
+  const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error("useTheme must be used within a ThemeProvider");
   }

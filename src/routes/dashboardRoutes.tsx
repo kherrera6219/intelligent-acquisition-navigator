@@ -1,31 +1,25 @@
 
-import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
+import { lazy } from "react";
 
-// Lazily load dashboard components
-const DashboardHomePage = lazy(() => import("@/pages/dashboard/DashboardHomePage"));
+// Lazy-load dashboard components
+const DashboardPage = lazy(() => import("@/pages/dashboard/DashboardPage"));
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
-const ProposalsPage = lazy(() => import("@/pages/proposals/ProposalsPage"));
-const ProposalDetailPage = lazy(() => import("@/pages/proposals/ProposalDetailPage"));
+const ActivityPage = lazy(() => import("@/pages/dashboard/ActivityPage"));
 
 const routes: RouteObject[] = [
-  // Removed the duplicate "/" route to avoid conflict with landingRoutes
   {
     path: "/dashboard",
-    element: wrapWithLayout(DashboardHomePage)
+    element: wrapWithLayout(DashboardPage, true)
   },
   {
     path: "/analytics",
-    element: wrapWithLayout(AnalyticsPage)
+    element: wrapWithLayout(AnalyticsPage, true, "manager")
   },
   {
-    path: "/proposals",
-    element: wrapWithLayout(ProposalsPage)
-  },
-  {
-    path: "/proposals/:id",
-    element: wrapWithLayout(ProposalDetailPage)
+    path: "/activity",
+    element: wrapWithLayout(ActivityPage, true)
   }
 ];
 
