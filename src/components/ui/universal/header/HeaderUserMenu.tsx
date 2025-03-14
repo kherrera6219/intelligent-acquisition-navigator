@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Settings, User } from 'lucide-react';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip/Tooltip';
 import { cn } from '@/lib/utils';
 
 export interface HeaderUserMenuProps {

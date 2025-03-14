@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip/Tooltip';
 import { cn } from '@/lib/utils';
 
 interface NetworkStatusTooltipProps {

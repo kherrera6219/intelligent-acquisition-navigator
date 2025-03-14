@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Wifi, WifiOff } from 'lucide-react';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip/Tooltip';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
 import { cn } from '@/lib/utils';
 

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip/Tooltip';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
 
 export const SupabaseStatus: React.FC = () => {
