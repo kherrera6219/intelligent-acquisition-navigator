@@ -1,91 +1,44 @@
 
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { fetchActivities } from '@/services/activityService';
 import { Activity } from '@/types/dashboard';
-import { fetchRecentActivities } from '@/services/activityService';
-import { 
-  FileText, 
-  MessageSquare, 
-  FilePlus, 
-  FileEdit,
-  UserPlus, 
-  Check, 
-  AlertTriangle,
-  Clock, 
-  LucideIcon 
-} from 'lucide-react';
 
-/**
- * Custom hook to fetch and manage recent activities
- */
-export const useRecentActivities = (limit: number = 5) => {
+export const useRecentActivities = () => {
+  const [filter, setFilter] = useState<string | null>(null);
+  
   const { 
-    data: activities,
-    isLoading,
+    data: activities = [], 
+    isLoading, 
     error,
     refetch
   } = useQuery({
-    queryKey: ['recentActivities', limit],
-    queryFn: () => fetchRecentActivities(limit),
+    queryKey: ['activities'],
+    queryFn: fetchActivities
   });
 
-  /**
-   * Get appropriate icon component based on activity category
-   */
-  const getActivityIcon = (category: string): LucideIcon => {
-    switch (category.toLowerCase()) {
-      case 'document':
-        return FileText;
-      case 'message':
-        return MessageSquare;
-      case 'creation':
-        return FilePlus;
-      case 'edit':
-        return FileEdit;
-      case 'user':
-        return UserPlus;
-      case 'approval':
-        return Check;
-      case 'warning':
-        return AlertTriangle;
-      default:
-        return Clock;
-    }
-  };
-
-  /**
-   * Get status based on activity category
-   */
-  const getActivityStatus = (category: string): 'info' | 'warning' | 'success' | 'error' => {
-    switch (category.toLowerCase()) {
-      case 'warning':
-        return 'warning';
-      case 'error':
-        return 'error';
-      case 'approval':
-        return 'success';
-      default:
-        return 'info';
-    }
-  };
-
-  /**
-   * Format activities with appropriate icons and status
-   */
-  const formattedActivities: Activity[] = activities?.map(activity => {
-    const icon = getActivityIcon(activity.category);
-    const status = getActivityStatus(activity.category);
+  // Extract unique categories from activities
+  const categories = Array.from(new Set(activities.map(activity => activity.category)));
+  
+  // Filter activities based on selected category
+  const filteredActivities = filter 
+    ? activities.filter(activity => activity.category === filter)
+    : activities;
     
-    return {
-      ...activity,
-      icon,
-      status
-    };
-  }) || [];
+  // Handler for refreshing activities data
+  const handleRefresh = () => {
+    refetch();
+  };
 
   return {
-    activities: formattedActivities,
+    activities,
+    filteredActivities,
     isLoading,
     error,
+    filter,
+    setFilter,
+    categories,
+    handleRefresh,
     refetch
   };
 };
