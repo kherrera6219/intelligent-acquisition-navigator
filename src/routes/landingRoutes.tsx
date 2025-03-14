@@ -10,7 +10,7 @@ const PricingPage = lazy(() => import("../pages/PricingPage"));
 const ContactPage = lazy(() => import("../pages/ContactPage"));
 const HelpPage = lazy(() => import("../pages/HelpPage"));
 const PrivacyPage = lazy(() => import("../pages/PrivacyPage"));
-const TermsPage = lazy(() => import("../pages/TermsPage"));
+const TermsPage = lazy(() => import("../pages/TermsOfServicePage"));
 const SitemapPage = lazy(() => import("../pages/SitemapPage"));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 const KnowledgeBasePage = lazy(() => import("../pages/KnowledgeBasePage"));

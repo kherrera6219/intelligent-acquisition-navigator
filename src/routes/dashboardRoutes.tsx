@@ -4,7 +4,7 @@ import { wrapWithLayout } from "./routeTypes";
 import { lazy } from "react";
 
 // Lazy-load dashboard components
-const DashboardPage = lazy(() => import("../pages/DashboardPage"));
+const DashboardPage = lazy(() => import("../pages/dashboard/DashboardHomePage"));
 const AnalyticsPage = lazy(() => import("../pages/AnalyticsPage"));
 const ActivityPage = lazy(() => import("../pages/ActivityPage"));
 
