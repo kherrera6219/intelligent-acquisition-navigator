@@ -21,7 +21,7 @@ body.keyboard-navigation-active :focus {
 
 /* Enhance focus styles for Microsoft Fluent UI compliance */
 .ms-focus-outline {
-  @apply focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
 }
 
 /* Keyboard accessible helper class */
