@@ -8,18 +8,18 @@ import { Flex } from '@/components/ui/universal/Flexbox';
 
 export const HomeHero: React.FC = () => {
   return (
-    <section className="w-full py-10 md:py-16">
+    <section className="w-full py-16 md:py-24">
       <Container>
-        <Row>
-          <Col lg={6} className="mb-8 lg:mb-0">
+        <Row className="items-center">
+          <Col lg={6} className="mb-8 lg:mb-0 text-center lg:text-left">
             <Flex direction="column" className="h-full justify-center">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Intelligent Acquisition Navigator
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                ProcurityIQ Acquisition Platform
               </h1>
-              <p className="text-lg md:text-xl text-gray-300 max-w-xl mt-4">
+              <p className="text-lg md:text-xl text-gray-300 max-w-xl mt-6 mx-auto lg:mx-0">
                 Streamline procurement processes across federal, state, and local levels with AI-powered insights and compliance automation.
               </p>
-              <div className="flex flex-wrap gap-4 pt-6">
+              <div className="flex flex-wrap gap-4 pt-8 justify-center lg:justify-start">
                 <Button className="bg-primary hover:bg-primary/90 text-white px-6 py-6 h-12 rounded-md text-base font-medium shadow-lg hover:shadow-xl transition-all">
                   Get Started
                   <ChevronRight className="ml-2 h-5 w-5" />
@@ -32,8 +32,8 @@ export const HomeHero: React.FC = () => {
               </div>
             </Flex>
           </Col>
-          <Col lg={6}>
-            <div className="metallic-card p-6 rounded-xl">
+          <Col lg={6} className="flex justify-center">
+            <div className="metal-card p-6 rounded-xl max-w-md lg:max-w-full">
               <img 
                 src="/assets/dashboard-preview.png" 
                 alt="ProcurityIQ Dashboard Preview" 
@@ -41,7 +41,7 @@ export const HomeHero: React.FC = () => {
                 onError={(e) => {
                   // Fallback for missing image
                   const target = e.target as HTMLImageElement;
-                  target.src = 'https://via.placeholder.com/800x500?text=Intelligent+Acquisition+Navigator';
+                  target.src = 'https://via.placeholder.com/800x500?text=ProcurityIQ+Acquisition+Platform';
                 }}
               />
             </div>

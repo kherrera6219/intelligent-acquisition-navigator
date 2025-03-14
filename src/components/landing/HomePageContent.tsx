@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { PrivacyNotice } from './PrivacyNotice';
 import { BackToTopButton } from '@/components/ui/navigation/BackToTopButton';
 import { HelpButton } from '@/components/ui/navigation/HelpButton';
@@ -23,29 +24,36 @@ export const HomePageContent: React.FC<HomePageContentProps> = ({
   scrollToTop,
 }) => {
   return (
-    <div className="flex flex-col w-full">
-      {/* Hero Section */}
-      <HomeHero />
+    <>
+      <Helmet>
+        <title>ProcurityIQ | Intelligent Acquisition Platform</title>
+        <meta name="description" content="Streamline procurement processes across federal, state, and local levels with AI-powered insights and compliance automation." />
+      </Helmet>
+      
+      <div className="flex flex-col w-full">
+        {/* Hero Section */}
+        <HomeHero />
 
-      {/* Features Section */}
-      <HomeFeatures />
+        {/* Features Section */}
+        <HomeFeatures />
 
-      {/* CTA Section */}
-      <HomeCta />
+        {/* CTA Section */}
+        <HomeCta />
 
-      {/* Privacy Notice */}
-      {showPrivacyNotice && (
-        <PrivacyNotice
-          onLearnMore={() => console.log('Learn more clicked')}
-          onClose={() => setShowPrivacyNotice(false)}
-        />
-      )}
+        {/* Privacy Notice */}
+        {showPrivacyNotice && (
+          <PrivacyNotice
+            onLearnMore={() => console.log('Learn more clicked')}
+            onClose={() => setShowPrivacyNotice(false)}
+          />
+        )}
 
-      {/* Navigation Controls */}
-      <div className="fixed bottom-6 right-6 flex flex-col gap-3">
-        {showBackToTop && <BackToTopButton onClick={scrollToTop} visible={showBackToTop} />}
-        <HelpButton />
+        {/* Navigation Controls */}
+        <div className="fixed bottom-6 right-6 flex flex-col gap-3">
+          {showBackToTop && <BackToTopButton onClick={scrollToTop} visible={showBackToTop} />}
+          <HelpButton />
+        </div>
       </div>
-    </div>
+    </>
   );
 };

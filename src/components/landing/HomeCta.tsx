@@ -7,11 +7,11 @@ import { FlexBetween } from '@/components/ui/universal/Flexbox';
 
 export const HomeCta: React.FC = () => {
   return (
-    <section className="w-full py-12 md:py-20">
+    <section className="w-full py-16 md:py-24">
       <Container>
-        <div className="ms-fluent-panel max-w-4xl mx-auto">
+        <div className="glass-card max-w-4xl mx-auto rounded-xl">
           <div className="p-8 md:p-10 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to transform your procurement process?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to transform your procurement process?</h2>
             <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
               Join organizations across the country that are already saving time and reducing compliance risks with our intelligent acquisition platform.
             </p>
