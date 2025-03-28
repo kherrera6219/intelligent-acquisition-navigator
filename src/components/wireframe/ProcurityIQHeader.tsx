@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Bell, Search, HelpCircle, Settings, User } from 'lucide-react';
+import { MsGradientText } from '@/components/ui/universal/MsGradientText';
 
 interface ProcurityIQHeaderProps {
   pageTitle: string;
@@ -8,43 +9,48 @@ interface ProcurityIQHeaderProps {
 
 export const ProcurityIQHeader: React.FC<ProcurityIQHeaderProps> = ({ pageTitle }) => {
   return (
-    <header className="procurity-header">
-      <div className="procurity-header-container">
-        <div className="procurity-header-left">
-          <div className="procurity-logo">
-            <span className="procurity-logo-text">ProcurityIQ</span>
+    <header className="ms-fluent-header sticky top-0 z-40 w-full bg-background/60 backdrop-blur-lg border-b border-border/40">
+      <div className="ms-container ms-flex justify-between h-16">
+        <div className="ms-flex gap-4">
+          <div className="ms-logo flex items-center">
+            <MsGradientText className="text-lg font-semibold" gradient="primary">
+              ProcurityIQ
+            </MsGradientText>
           </div>
-          <h2 className="procurity-header-title">{pageTitle}</h2>
+          <div className="ms-v-divider hidden md:block" />
+          <h2 className="ms-heading-5 hidden md:flex items-center">{pageTitle}</h2>
         </div>
         
-        <div className="procurity-header-search">
-          <div className="procurity-search-container">
-            <Search className="procurity-search-icon" size={16} />
-            <input 
-              type="text" 
-              className="procurity-search-input" 
-              placeholder="Search..." 
-              aria-label="Search"
-            />
-          </div>
-        </div>
-        
-        <div className="procurity-header-actions">
-          <button className="procurity-icon-button" aria-label="Notifications">
-            <Bell size={18} />
-          </button>
-          <button className="procurity-icon-button" aria-label="Help">
-            <HelpCircle size={18} />
-          </button>
-          <button className="procurity-icon-button" aria-label="Settings">
-            <Settings size={18} />
-          </button>
-          <button className="procurity-user-button" aria-label="User profile">
-            <div className="procurity-user-avatar">
-              <User size={18} />
+        <div className="ms-flex-responsive">
+          <div className="ms-search-container relative max-w-md w-full">
+            <div className="ms-input-with-icon ms-flex w-full max-w-sm items-center">
+              <Search className="ms-input-icon" size={18} />
+              <input 
+                type="text" 
+                className="ms-input" 
+                placeholder="Search..." 
+                aria-label="Search"
+              />
             </div>
-            <span className="procurity-user-name">Olivia</span>
-          </button>
+          </div>
+          
+          <div className="ms-h-stack">
+            <button className="ms-icon-button" aria-label="Notifications">
+              <Bell size={20} />
+            </button>
+            <button className="ms-icon-button" aria-label="Help">
+              <HelpCircle size={20} />
+            </button>
+            <button className="ms-icon-button" aria-label="Settings">
+              <Settings size={20} />
+            </button>
+            <button className="ms-user-profile ms-flex gap-2 items-center ms-text-sm px-2 py-1 rounded-full hover:bg-accent/10">
+              <div className="ms-avatar ms-avatar-sm">
+                <User size={18} />
+              </div>
+              <span className="ms-user-name">Olivia</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>

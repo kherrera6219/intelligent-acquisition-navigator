@@ -10,6 +10,7 @@ import {
   Settings,
   Plus
 } from 'lucide-react';
+import { MsGradientButton } from '@/components/ui/universal/MsGradientButton';
 
 interface ProcurityIQSidebarProps {
   currentSection?: string;
@@ -28,32 +29,36 @@ export const ProcurityIQSidebar: React.FC<ProcurityIQSidebarProps> = ({
   ];
 
   return (
-    <aside className="procurity-sidebar">
-      <div className="procurity-sidebar-header">
-        <button className="procurity-create-button">
-          <Plus size={16} />
-          <span>Create Proposal</span>
-        </button>
+    <aside className="ms-sidebar h-[calc(100vh-4rem)] border-r border-border/30 w-64">
+      <div className="ms-sidebar-header p-4 border-b border-border/30">
+        <MsGradientButton 
+          variant="primary" 
+          size="md"
+          className="w-full"
+          icon={<Plus size={16} />}
+        >
+          Create Proposal
+        </MsGradientButton>
       </div>
       
-      <nav className="procurity-sidebar-nav">
-        <ul className="procurity-nav-list">
+      <nav className="ms-sidebar-content p-2">
+        <ul className="ms-nav-list space-y-1">
           {navItems.map((item) => (
-            <li key={item.id} className="procurity-nav-item">
+            <li key={item.id} className="ms-nav-item">
               <Link 
                 to={item.path}
-                className={`procurity-nav-link ${currentSection === item.id ? 'active' : ''}`}
+                className={`ms-nav-link ms-nav-item ${currentSection === item.id ? 'ms-nav-item-active' : 'ms-nav-item-inactive'}`}
               >
-                <item.icon size={20} className="procurity-nav-icon" />
-                <span className="procurity-nav-label">{item.label}</span>
+                <item.icon size={20} className="ms-nav-icon" />
+                <span className="ms-nav-label">{item.label}</span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
       
-      <div className="procurity-sidebar-footer">
-        <Link to="/logout" className="procurity-logout-link">
+      <div className="ms-sidebar-footer p-4 border-t border-border/30 mt-auto">
+        <Link to="/logout" className="ms-link-subtle block text-center">
           Log Out
         </Link>
       </div>

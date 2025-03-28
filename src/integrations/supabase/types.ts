@@ -9,6 +9,71 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      access_requests: {
+        Row: {
+          access_level: string
+          created_at: string
+          id: string
+          request_status: string
+          system_application: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_level: string
+          created_at?: string
+          id?: string
+          request_status?: string
+          system_application: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_level?: string
+          created_at?: string
+          id?: string
+          request_status?: string
+          system_application?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "government_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      acquisition_procedures: {
+        Row: {
+          description: string | null
+          id: string
+          last_updated: string | null
+          steps: Json | null
+          title: string
+          type: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          steps?: Json | null
+          title: string
+          type: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          steps?: Json | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       activities: {
         Row: {
           category: string | null
@@ -36,6 +101,126 @@ export type Database = {
           timestamp?: string
           title?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      agencies: {
+        Row: {
+          address: string | null
+          agent_code: string | null
+          contact_number: string | null
+          created_at: string
+          dodaac_number: string | null
+          duns_number: string | null
+          government_level: string
+          id: string
+          name: string
+          sector: string
+          unique_id_code: string
+        }
+        Insert: {
+          address?: string | null
+          agent_code?: string | null
+          contact_number?: string | null
+          created_at?: string
+          dodaac_number?: string | null
+          duns_number?: string | null
+          government_level: string
+          id?: string
+          name: string
+          sector: string
+          unique_id_code: string
+        }
+        Update: {
+          address?: string | null
+          agent_code?: string | null
+          contact_number?: string | null
+          created_at?: string
+          dodaac_number?: string | null
+          duns_number?: string | null
+          government_level?: string
+          id?: string
+          name?: string
+          sector?: string
+          unique_id_code?: string
+        }
+        Relationships: []
+      }
+      agent_data_cards: {
+        Row: {
+          agent_details: Json
+          analysis_parameters: Json | null
+          compliance_checks: Json
+          decision_parameters: Json | null
+          feedback_details: Json | null
+          human_intervention: Json
+          input_data: Json | null
+          metadata: Json | null
+          processing_details: Json | null
+          step_id: string
+          step_type: string
+          timestamp: string
+        }
+        Insert: {
+          agent_details: Json
+          analysis_parameters?: Json | null
+          compliance_checks: Json
+          decision_parameters?: Json | null
+          feedback_details?: Json | null
+          human_intervention: Json
+          input_data?: Json | null
+          metadata?: Json | null
+          processing_details?: Json | null
+          step_id: string
+          step_type: string
+          timestamp: string
+        }
+        Update: {
+          agent_details?: Json
+          analysis_parameters?: Json | null
+          compliance_checks?: Json
+          decision_parameters?: Json | null
+          feedback_details?: Json | null
+          human_intervention?: Json
+          input_data?: Json | null
+          metadata?: Json | null
+          processing_details?: Json | null
+          step_id?: string
+          step_type?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
+      agent_interactions: {
+        Row: {
+          agent_type: string
+          id: string
+          is_user: boolean | null
+          metadata: Json | null
+          query: string
+          response: string
+          session_id: string
+          timestamp: string
+        }
+        Insert: {
+          agent_type: string
+          id?: string
+          is_user?: boolean | null
+          metadata?: Json | null
+          query: string
+          response: string
+          session_id: string
+          timestamp?: string
+        }
+        Update: {
+          agent_type?: string
+          id?: string
+          is_user?: boolean | null
+          metadata?: Json | null
+          query?: string
+          response?: string
+          session_id?: string
+          timestamp?: string
         }
         Relationships: []
       }
@@ -82,6 +267,99 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      app_phases: {
+        Row: {
+          created_at: string
+          description: string
+          end_date: string | null
+          id: string
+          start_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          end_date?: string | null
+          id: string
+          start_date?: string | null
+          status: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          id?: string
+          start_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      atlas_chat_messages: {
+        Row: {
+          content: string
+          conversation_id: string | null
+          created_at: string | null
+          id: string
+          role: string
+          sources: Json | null
+          suggested_actions: Json | null
+          timestamp: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          role: string
+          sources?: Json | null
+          suggested_actions?: Json | null
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          role?: string
+          sources?: Json | null
+          suggested_actions?: Json | null
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      atlas_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       audit_logs: {
         Row: {
@@ -143,6 +421,160 @@ export type Database = {
           type?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      build_phases: {
+        Row: {
+          build_plan_id: string
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          order_index: number
+          start_date: string | null
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          build_plan_id: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          order_index: number
+          start_date?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          build_plan_id?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          order_index?: number
+          start_date?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_phases_build_plan_id_fkey"
+            columns: ["build_plan_id"]
+            isOneToOne: false
+            referencedRelation: "build_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      build_plans: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      build_tasks: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          order_index: number
+          phase_id: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          order_index: number
+          phase_id: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          order_index?: number
+          phase_id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_tasks_phase_id_fkey"
+            columns: ["phase_id"]
+            isOneToOne: false
+            referencedRelation: "build_phases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      buy_american: {
+        Row: {
+          compliance_status: boolean | null
+          created_at: string | null
+          id: string
+          last_updated: string | null
+          material_origin: string | null
+          user_id: string | null
+          vendor_id: string
+        }
+        Insert: {
+          compliance_status?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_updated?: string | null
+          material_origin?: string | null
+          user_id?: string | null
+          vendor_id: string
+        }
+        Update: {
+          compliance_status?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_updated?: string | null
+          material_origin?: string | null
+          user_id?: string | null
+          vendor_id?: string
         }
         Relationships: []
       }
@@ -289,11 +721,42 @@ export type Database = {
         }
         Relationships: []
       }
+      dfars_clauses: {
+        Row: {
+          applicability: string[] | null
+          clause_number: string
+          description: string | null
+          id: string
+          last_updated: string | null
+          requirements: string | null
+          title: string
+        }
+        Insert: {
+          applicability?: string[] | null
+          clause_number: string
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          requirements?: string | null
+          title: string
+        }
+        Update: {
+          applicability?: string[] | null
+          clause_number?: string
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          requirements?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       document_attachments: {
         Row: {
           content_type: string
           file_path: string
           id: string
+          metadata: Json
           name: string
           size: number
           solicitation_id: string
@@ -305,6 +768,7 @@ export type Database = {
           content_type: string
           file_path: string
           id?: string
+          metadata?: Json
           name: string
           size: number
           solicitation_id: string
@@ -316,6 +780,7 @@ export type Database = {
           content_type?: string
           file_path?: string
           id?: string
+          metadata?: Json
           name?: string
           size?: number
           solicitation_id?: string
@@ -332,6 +797,150 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      document_classifications: {
+        Row: {
+          classification: string
+          confidence_score: number
+          created_at: string
+          document_id: string
+          id: string
+          metadata: Json
+          sections: Json
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          classification: string
+          confidence_score?: number
+          created_at?: string
+          document_id: string
+          id?: string
+          metadata?: Json
+          sections?: Json
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          classification?: string
+          confidence_score?: number
+          created_at?: string
+          document_id?: string
+          id?: string
+          metadata?: Json
+          sections?: Json
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      document_content: {
+        Row: {
+          content: string
+          created_at: string
+          document_id: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          document_id: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      document_extractions: {
+        Row: {
+          created_at: string
+          document_id: string
+          entities: Json
+          id: string
+          key_pairs: Json
+          sections: Json
+          tables: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          entities?: Json
+          id?: string
+          key_pairs?: Json
+          sections?: Json
+          tables?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          entities?: Json
+          id?: string
+          key_pairs?: Json
+          sections?: Json
+          tables?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      document_regulatory_references: {
+        Row: {
+          created_at: string
+          document_id: string
+          id: string
+          reference_data: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          document_id: string
+          id?: string
+          reference_data?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          document_id?: string
+          id?: string
+          reference_data?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      exclusion_list: {
+        Row: {
+          created_at: string | null
+          exclusion_date: string | null
+          id: string
+          reason: string | null
+          user_id: string | null
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          exclusion_date?: string | null
+          id?: string
+          reason?: string | null
+          user_id?: string | null
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          exclusion_date?: string | null
+          id?: string
+          reason?: string | null
+          user_id?: string | null
+          vendor_id?: string
+        }
+        Relationships: []
       }
       far_citations: {
         Row: {
@@ -365,6 +974,36 @@ export type Database = {
           source_document?: string | null
           subpart?: string
           text?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      far_clauses: {
+        Row: {
+          applicability: string[] | null
+          clause_number: string
+          description: string | null
+          id: string
+          last_updated: string | null
+          requirements: string | null
+          title: string
+        }
+        Insert: {
+          applicability?: string[] | null
+          clause_number: string
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          requirements?: string | null
+          title: string
+        }
+        Update: {
+          applicability?: string[] | null
+          clause_number?: string
+          description?: string | null
+          id?: string
+          last_updated?: string | null
+          requirements?: string | null
           title?: string
         }
         Relationships: []
@@ -445,6 +1084,68 @@ export type Database = {
             columns: ["target_component_id"]
             isOneToOne: false
             referencedRelation: "mathematical_framework_components"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      government_users: {
+        Row: {
+          agency_id: string
+          created_at: string
+          department_division: string | null
+          dob: string | null
+          email: string
+          employee_id: string | null
+          full_name: string
+          id: string
+          phone_number: string | null
+          security_clearance_level: string | null
+          supervisor_contact_number: string | null
+          supervisor_email: string | null
+          supervisor_name: string | null
+          title_position: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          department_division?: string | null
+          dob?: string | null
+          email: string
+          employee_id?: string | null
+          full_name: string
+          id?: string
+          phone_number?: string | null
+          security_clearance_level?: string | null
+          supervisor_contact_number?: string | null
+          supervisor_email?: string | null
+          supervisor_name?: string | null
+          title_position?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          department_division?: string | null
+          dob?: string | null
+          email?: string
+          employee_id?: string | null
+          full_name?: string
+          id?: string
+          phone_number?: string | null
+          security_clearance_level?: string | null
+          supervisor_contact_number?: string | null
+          supervisor_email?: string | null
+          supervisor_name?: string | null
+          title_position?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "government_users_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
             referencedColumns: ["id"]
           },
         ]
@@ -684,6 +1385,134 @@ export type Database = {
         }
         Relationships: []
       }
+      nist_controls: {
+        Row: {
+          control_id: string
+          description: string | null
+          family: string | null
+          id: string
+          last_updated: string | null
+          requirements: string | null
+          title: string
+        }
+        Insert: {
+          control_id: string
+          description?: string | null
+          family?: string | null
+          id?: string
+          last_updated?: string | null
+          requirements?: string | null
+          title: string
+        }
+        Update: {
+          control_id?: string
+          description?: string | null
+          family?: string | null
+          id?: string
+          last_updated?: string | null
+          requirements?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      phase_items: {
+        Row: {
+          completed: boolean
+          created_at: string
+          description: string
+          id: string
+          phase_id: string
+          priority: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          description: string
+          id: string
+          phase_id: string
+          priority: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          description?: string
+          id?: string
+          phase_id?: string
+          priority?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phase_items_phase_id_fkey"
+            columns: ["phase_id"]
+            isOneToOne: false
+            referencedRelation: "app_phases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pricing_data: {
+        Row: {
+          category: string | null
+          id: string
+          last_updated: string | null
+          price_history: Json | null
+          product_code: string
+          product_name: string
+        }
+        Insert: {
+          category?: string | null
+          id?: string
+          last_updated?: string | null
+          price_history?: Json | null
+          product_code: string
+          product_name: string
+        }
+        Update: {
+          category?: string | null
+          id?: string
+          last_updated?: string | null
+          price_history?: Json | null
+          product_code?: string
+          product_name?: string
+        }
+        Relationships: []
+      }
+      procurement_metrics: {
+        Row: {
+          category: string
+          id: number
+          metadata: Json | null
+          metric_name: string
+          metric_unit: string
+          metric_value: number
+          timestamp: string
+        }
+        Insert: {
+          category: string
+          id?: number
+          metadata?: Json | null
+          metric_name: string
+          metric_unit?: string
+          metric_value: number
+          timestamp?: string
+        }
+        Update: {
+          category?: string
+          id?: number
+          metadata?: Json | null
+          metric_name?: string
+          metric_unit?: string
+          metric_value?: number
+          timestamp?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -867,6 +1696,119 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      sam_certifications: {
+        Row: {
+          certification_date: string
+          certification_type: string
+          created_at: string | null
+          entity_id: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          naics_code: string | null
+          psc_code: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          certification_date: string
+          certification_type: string
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          naics_code?: string | null
+          psc_code?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          certification_date?: string
+          certification_type?: string
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          naics_code?: string | null
+          psc_code?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sam_certifications_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "sam_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sam_entities: {
+        Row: {
+          address: Json | null
+          business_start_date: string | null
+          cage_code: string | null
+          created_at: string | null
+          dba_name: string | null
+          debt_subject_to_offset: boolean | null
+          exclusion_status: boolean | null
+          id: string
+          last_updated: string | null
+          legal_name: string
+          uei: string
+          user_id: string | null
+        }
+        Insert: {
+          address?: Json | null
+          business_start_date?: string | null
+          cage_code?: string | null
+          created_at?: string | null
+          dba_name?: string | null
+          debt_subject_to_offset?: boolean | null
+          exclusion_status?: boolean | null
+          id?: string
+          last_updated?: string | null
+          legal_name: string
+          uei: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: Json | null
+          business_start_date?: string | null
+          cage_code?: string | null
+          created_at?: string | null
+          dba_name?: string | null
+          debt_subject_to_offset?: boolean | null
+          exclusion_status?: boolean | null
+          id?: string
+          last_updated?: string | null
+          legal_name?: string
+          uei?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      sam_gov_cache: {
+        Row: {
+          cache_key: string
+          created_at: string | null
+          data: Json
+          id: number
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string | null
+          data: Json
+          id?: number
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string | null
+          data?: Json
+          id?: number
         }
         Relationships: []
       }
@@ -1272,6 +2214,36 @@ export type Database = {
         }
         Relationships: []
       }
+      vendors: {
+        Row: {
+          address: string | null
+          cage_code: string
+          certifications: string[] | null
+          id: string
+          last_updated: string | null
+          name: string
+          past_performance: Json | null
+        }
+        Insert: {
+          address?: string | null
+          cage_code: string
+          certifications?: string[] | null
+          id?: string
+          last_updated?: string | null
+          name: string
+          past_performance?: Json | null
+        }
+        Update: {
+          address?: string | null
+          cage_code?: string
+          certifications?: string[] | null
+          id?: string
+          last_updated?: string | null
+          name?: string
+          past_performance?: Json | null
+        }
+        Relationships: []
+      }
       version_history: {
         Row: {
           changed_at: string
@@ -1327,6 +2299,18 @@ export type Database = {
           user_email: string
         }
         Returns: string
+      }
+      get_compliance_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          category: string
+          id: number
+          metadata: Json | null
+          metric_name: string
+          metric_unit: string
+          metric_value: number
+          timestamp: string
+        }[]
       }
       policy_exists: {
         Args: {

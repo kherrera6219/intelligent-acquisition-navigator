@@ -23,61 +23,63 @@ export const VendorTable: React.FC<VendorTableProps> = ({
   onViewDetails
 }) => {
   return (
-    <div className="procurity-table-container">
-      <table className="procurity-table">
-        <thead>
+    <div className="ms-table-container w-full overflow-auto">
+      <table className="ms-table w-full">
+        <thead className="ms-table-header">
           <tr>
-            <th>Vendor Name</th>
-            <th>Description</th>
-            <th>Contract #</th>
-            <th>Expiration Date</th>
-            <th>Federal</th>
-            <th>State</th>
-            <th>Approved</th>
-            <th>Actions</th>
+            <th className="ms-table-head">Vendor Name</th>
+            <th className="ms-table-head">Description</th>
+            <th className="ms-table-head">Contract #</th>
+            <th className="ms-table-head">Expiration Date</th>
+            <th className="ms-table-head">Federal</th>
+            <th className="ms-table-head">State</th>
+            <th className="ms-table-head">Approved</th>
+            <th className="ms-table-head">Actions</th>
           </tr>
         </thead>
         <tbody>
           {vendors.map((vendor) => (
-            <tr key={vendor.id}>
-              <td>
-                <div className="procurity-flex procurity-items-center procurity-gap-sm">
-                  <div className="procurity-vendor-icon">{vendor.name.charAt(0)}</div>
-                  <span>{vendor.name}</span>
+            <tr key={vendor.id} className="ms-table-row">
+              <td className="ms-table-cell">
+                <div className="ms-flex items-center gap-3">
+                  <div className="ms-avatar ms-avatar-sm bg-primary/10 text-primary">
+                    {vendor.name.charAt(0)}
+                  </div>
+                  <span className="ms-text-base">{vendor.name}</span>
                 </div>
               </td>
-              <td>{vendor.description}</td>
-              <td>{vendor.contractNumber}</td>
-              <td>{vendor.expiration}</td>
-              <td>
+              <td className="ms-table-cell">{vendor.description}</td>
+              <td className="ms-table-cell">{vendor.contractNumber}</td>
+              <td className="ms-table-cell">{vendor.expiration}</td>
+              <td className="ms-table-cell">
                 {vendor.federal ? 
-                  <Check className="procurity-icon-success" size={16} /> : 
-                  <X className="procurity-icon-error" size={16} />
+                  <span className="ms-status ms-status-success"><span className="ms-status-dot"></span>Yes</span> : 
+                  <span className="ms-status ms-status-error"><span className="ms-status-dot"></span>No</span>
                 }
               </td>
-              <td>
+              <td className="ms-table-cell">
                 {vendor.state ? 
-                  <Check className="procurity-icon-success" size={16} /> : 
-                  <X className="procurity-icon-error" size={16} />
+                  <span className="ms-status ms-status-success"><span className="ms-status-dot"></span>Yes</span> : 
+                  <span className="ms-status ms-status-error"><span className="ms-status-dot"></span>No</span>
                 }
               </td>
-              <td>
+              <td className="ms-table-cell">
                 {vendor.approved ? 
-                  <Check className="procurity-icon-success" size={16} /> : 
-                  <X className="procurity-icon-error" size={16} />
+                  <span className="ms-status ms-status-success"><span className="ms-status-dot"></span>Yes</span> : 
+                  <span className="ms-status ms-status-error"><span className="ms-status-dot"></span>No</span>
                 }
               </td>
-              <td>
-                <div className="procurity-flex procurity-items-center procurity-gap-sm">
+              <td className="ms-table-cell">
+                <div className="ms-h-stack-sm">
                   <button 
-                    className="procurity-icon-button" 
+                    className="ms-icon-button" 
                     onClick={() => onViewDetails(vendor.id)}
                     aria-label="View details"
                   >
                     <ExternalLink size={16} />
                   </button>
                   <button 
-                    className="procurity-icon-button" 
+                    className="ms-icon-button" 
                     aria-label="More options"
                   >
                     <MoreHorizontal size={16} />

@@ -18,21 +18,21 @@ export const ProcurityIQLayout: React.FC<ProcurityIQLayoutProps> = ({
   currentSection
 }) => {
   return (
-    <div className="procurity-app-layout">
+    <div className="ms-layout-container">
       <ProcurityIQHeader pageTitle={pageTitle} />
       
-      <div className="procurity-main-container">
+      <div className="ms-grid-sidebar">
         <ProcurityIQSidebar currentSection={currentSection} />
         
-        <main className="procurity-main-content">
-          <div className="procurity-page-header">
-            <h1 className="procurity-page-title">{pageTitle}</h1>
+        <main className="ms-container ms-section">
+          <div className="ms-page-header">
+            <h1 className="ms-heading-2">{pageTitle}</h1>
             {pageDescription && (
-              <p className="procurity-page-description">{pageDescription}</p>
+              <p className="ms-text-muted ms-text-lg">{pageDescription}</p>
             )}
           </div>
           
-          <div className="procurity-page-content">
+          <div className="ms-card ms-card-padding mt-6">
             {children}
           </div>
         </main>
