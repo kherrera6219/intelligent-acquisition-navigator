@@ -1,4 +1,3 @@
-
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useCallback } from 'react';
@@ -43,7 +42,7 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
     retryDelay = 1000
   } = options;
 
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -65,24 +64,15 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-      // Prepare headers with authentication if needed
       let requestHeaders = { ...defaultHeaders, ...headers };
-      if (!skipAuth && user) {
+      if (!skipAuth && isAuthenticated && user) {
         try {
-          // Instead of getAccessToken, we'll use the user session directly
-          // This assumes the token is available in the user object or we're using
-          // another authentication mechanism that doesn't require explicit token retrieval
-          if (user.session) {
-            requestHeaders['Authorization'] = `Bearer ${user.session.access_token}`;
-          } else {
-            console.warn('User is authenticated but no session token is available');
-          }
+          requestHeaders['Authorization'] = `Bearer ${user.id}`;
         } catch (err) {
           console.error('Failed to get auth token:', err);
         }
       }
 
-      // Get content type if not provided
       if (!requestHeaders['Content-Type'] && method !== 'GET' && data) {
         requestHeaders['Content-Type'] = 'application/json';
       }
@@ -93,12 +83,10 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
         signal: controller.signal
       };
 
-      // Add body for non-GET requests
       if (method !== 'GET' && data) {
         requestOptions.body = JSON.stringify(data);
       }
 
-      // Implement retry logic
       let attempts = 0;
       let lastError: any = null;
 
@@ -115,7 +103,6 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
 
           setIsLoading(false);
           
-          // Handle no content responses
           if (response.status === 204) {
             return {} as T;
           }
@@ -125,26 +112,21 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
           lastError = err;
           attempts++;
 
-          // Don't retry if it's an abort error or a 4xx error
           if (err.name === 'AbortError' || (err.status && err.status >= 400 && err.status < 500)) {
             break;
           }
 
-          // If we've reached max retries, break the loop
           if (attempts > retryCount) {
             break;
           }
 
-          // Wait before retrying
           await new Promise(resolve => setTimeout(resolve, retryDelay * attempts));
         }
       }
 
-      // Handle final error state
       setIsLoading(false);
       setError(lastError);
 
-      // Show error toast if enabled
       if (showToast) {
         toast({
           title: "An error occurred",
@@ -155,7 +137,7 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
 
       throw lastError;
     },
-    [baseUrl, defaultHeaders, retryCount, retryDelay, showToasts, timeout, user]
+    [baseUrl, defaultHeaders, retryCount, retryDelay, showToasts, timeout, user, isAuthenticated]
   );
 
   return { request, isLoading, error, clearError };
