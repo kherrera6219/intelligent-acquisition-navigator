@@ -3,63 +3,63 @@ import { RouteObject } from "react-router-dom";
 import { wrapWithLayout } from "./routeTypes";
 import { lazy } from "react";
 
-// Lazy-load acquisition components for better performance
-const MarketResearchPage = lazy(() => import("@/pages/acquisition/MarketResearchPage"));
-const DocumentControlPage = lazy(() => import("@/pages/acquisition/DocumentControlPage"));
-const SolicitationReviewPage = lazy(() => import("@/pages/acquisition/SolicitationReviewPage"));
-const FederalAcquisitionPage = lazy(() => import("@/pages/acquisition/FederalAcquisitionPage"));
-const CompliancePage = lazy(() => import("@/pages/acquisition/CompliancePage"));
-const SourceSelectionPage = lazy(() => import("@/pages/acquisition/SourceSelectionPage"));
-const ContractManagementPage = lazy(() => import("@/pages/acquisition/ContractManagementPage"));
-const LegalReviewPage = lazy(() => import("@/pages/acquisition/LegalReviewPage"));
-const SmallBusinessPage = lazy(() => import("@/pages/acquisition/SmallBusinessPage"));
-const QualityAssurancePage = lazy(() => import("@/pages/acquisition/QualityAssurancePage"));
-const TexasAcquisitionPage = lazy(() => import("@/pages/acquisition/TexasAcquisition"));
+// Lazy-load acquisition components
+const FederalAcquisitionPage = lazy(() => import("../pages/acquisition/FederalAcquisitionPage"));
+const TexasAcquisitionPage = lazy(() => import("../pages/acquisition/TexasAcquisitionPage"));
+const MarketResearchPage = lazy(() => import("../pages/acquisition/MarketResearchPage"));
+const SolicitationReviewPage = lazy(() => import("../pages/acquisition/SolicitationReviewPage"));
+const DocumentControlPage = lazy(() => import("../pages/acquisition/DocumentControlPage"));
+const CompliancePage = lazy(() => import("../pages/acquisition/CompliancePage"));
+const LegalReviewPage = lazy(() => import("../pages/acquisition/LegalReviewPage"));
+const SmallBusinessPage = lazy(() => import("../pages/acquisition/SmallBusinessPage"));
+const QualityAssurancePage = lazy(() => import("../pages/acquisition/QualityAssurancePage"));
+const SourceSelectionPage = lazy(() => import("../pages/acquisition/SourceSelectionPage"));
+const ContractManagementPage = lazy(() => import("../pages/acquisition/ContractManagementPage"));
 
 const routes: RouteObject[] = [
   {
-    path: "/market-research",
-    element: wrapWithLayout(MarketResearchPage)
-  },
-  {
-    path: "/document-control",
-    element: wrapWithLayout(DocumentControlPage)
-  },
-  {
-    path: "/solicitation-review",
-    element: wrapWithLayout(SolicitationReviewPage)
-  },
-  {
     path: "/federal-acquisition",
-    element: wrapWithLayout(FederalAcquisitionPage)
+    element: wrapWithLayout(FederalAcquisitionPage, true)
   },
   {
     path: "/texas-acquisition",
-    element: wrapWithLayout(TexasAcquisitionPage)
+    element: wrapWithLayout(TexasAcquisitionPage, true)
+  },
+  {
+    path: "/market-research",
+    element: wrapWithLayout(MarketResearchPage, true)
+  },
+  {
+    path: "/solicitation-review",
+    element: wrapWithLayout(SolicitationReviewPage, true)
+  },
+  {
+    path: "/document-control",
+    element: wrapWithLayout(DocumentControlPage, true)
   },
   {
     path: "/compliance",
-    element: wrapWithLayout(CompliancePage)
-  },
-  {
-    path: "/source-selection",
-    element: wrapWithLayout(SourceSelectionPage)
-  },
-  {
-    path: "/contract-management",
-    element: wrapWithLayout(ContractManagementPage)
+    element: wrapWithLayout(CompliancePage, true)
   },
   {
     path: "/legal-review",
-    element: wrapWithLayout(LegalReviewPage)
+    element: wrapWithLayout(LegalReviewPage, true, "manager")
   },
   {
     path: "/small-business",
-    element: wrapWithLayout(SmallBusinessPage)
+    element: wrapWithLayout(SmallBusinessPage, true)
   },
   {
     path: "/quality-assurance",
-    element: wrapWithLayout(QualityAssurancePage)
+    element: wrapWithLayout(QualityAssurancePage, true)
+  },
+  {
+    path: "/source-selection",
+    element: wrapWithLayout(SourceSelectionPage, true, "manager")
+  },
+  {
+    path: "/contract-management",
+    element: wrapWithLayout(ContractManagementPage, true)
   }
 ];
 

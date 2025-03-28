@@ -6,7 +6,6 @@ import {
   Settings, 
   FileCheck,
   Users,
-  Book,
   Building2,
   Scale,
   ClipboardCheck,
@@ -14,21 +13,29 @@ import {
   FileSearch,
   Building,
   GlobeLock,
-  List
+  List,
+  LayoutDashboard
 } from 'lucide-react';
 import { NavItem } from './types';
 
 export const navItems: NavItem[] = [
   { 
+    icon: LayoutDashboard,
+    label: 'Dashboard',
+    href: '/dashboard',
+    minRole: 'authenticated',
+    items: undefined
+  },
+  { 
     icon: BookOpen,
     label: 'Knowledge Base',
     href: '/knowledge-base',
-    minRole: null,
+    minRole: 'authenticated',
     items: undefined
   },
   { 
     icon: List,
-    label: 'Application',
+    label: 'Acquisition',
     href: '#',
     minRole: 'authenticated',
     items: [

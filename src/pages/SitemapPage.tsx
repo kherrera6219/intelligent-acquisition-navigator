@@ -7,11 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Home,
-  Info,
   Layout,
-  Mail,
-  CreditCard,
-  HelpCircle,
   Shield,
   FileText,
   Settings,
@@ -19,7 +15,6 @@ import {
   BarChart2,
   FileCheck,
   BookOpen,
-  Code,
   Building2
 } from 'lucide-react';
 
@@ -57,26 +52,11 @@ const SitemapSection: React.FC<SitemapSectionProps> = ({ title, icon, links }) =
 export default function SitemapPage() {
   const siteMapSections = [
     {
-      title: "Main Pages",
+      title: "Main Navigation",
       icon: <Home className="h-5 w-5 text-blue-500" />,
       links: [
-        { path: "/", label: "Home" },
-        { path: "/about", label: "About Us" },
-        { path: "/features", label: "Features" },
-        { path: "/pricing", label: "Pricing" },
-        { path: "/contact", label: "Contact" },
-        { path: "/help", label: "Help Center" },
-      ]
-    },
-    {
-      title: "User Account",
-      icon: <User className="h-5 w-5 text-blue-500" />,
-      links: [
-        { path: "/auth", label: "Login / Register" },
-        { path: "/auth/forgot-password", label: "Reset Password" },
-        { path: "/profile", label: "User Profile" },
         { path: "/dashboard", label: "Dashboard" },
-        { path: "/settings", label: "Account Settings" },
+        { path: "/knowledge-base", label: "Knowledge Base" },
       ]
     },
     {
@@ -89,6 +69,11 @@ export default function SitemapPage() {
         { path: "/solicitation-review", label: "Solicitation Review" },
         { path: "/document-control", label: "Document Control" },
         { path: "/compliance", label: "Compliance" },
+        { path: "/legal-review", label: "Legal Review" },
+        { path: "/small-business", label: "Small Business" },
+        { path: "/quality-assurance", label: "Quality Assurance" },
+        { path: "/source-selection", label: "Source Selection" },
+        { path: "/contract-management", label: "Contract Management" },
       ]
     },
     {
@@ -96,10 +81,6 @@ export default function SitemapPage() {
       icon: <BarChart2 className="h-5 w-5 text-blue-500" />,
       links: [
         { path: "/analytics", label: "Analytics Dashboard" },
-        { path: "/proposals", label: "Proposals" },
-        { path: "/validation", label: "Validation" },
-        { path: "/reports", label: "Reports" },
-        { path: "/insights", label: "Insights" },
       ]
     },
     {
@@ -108,44 +89,18 @@ export default function SitemapPage() {
       links: [
         { path: "/knowledge-base", label: "Knowledge Base" },
         { path: "/federal-knowledge-base", label: "Federal Knowledge Base" },
-        { path: "/training", label: "Training Resources" },
-        { path: "/guides", label: "User Guides" },
-        { path: "/faq", label: "FAQs" },
       ]
     },
     {
-      title: "Developer Resources",
-      icon: <Code className="h-5 w-5 text-blue-500" />,
+      title: "Account & Settings",
+      icon: <User className="h-5 w-5 text-blue-500" />,
       links: [
-        { path: "/api-docs", label: "API Documentation" },
-        { path: "/component-library", label: "Component Library" },
-        { path: "/webhooks", label: "Webhooks" },
-        { path: "/integrations", label: "Integrations" },
-        { path: "/changelog", label: "Changelog" },
+        { path: "/settings", label: "Settings" },
+        { path: "/settings/profile", label: "Profile" },
+        { path: "/settings/security", label: "Security" },
+        { path: "/settings/preferences", label: "Preferences" },
       ]
-    },
-    {
-      title: "Legal & Compliance",
-      icon: <Shield className="h-5 w-5 text-blue-500" />,
-      links: [
-        { path: "/privacy", label: "Privacy Policy" },
-        { path: "/terms", label: "Terms of Service" },
-        { path: "/security", label: "Security" },
-        { path: "/compliance-docs", label: "Compliance Documents" },
-        { path: "/cookies", label: "Cookie Policy" },
-      ]
-    },
-    {
-      title: "Company",
-      icon: <Building2 className="h-5 w-5 text-blue-500" />,
-      links: [
-        { path: "/careers", label: "Careers" },
-        { path: "/partners", label: "Partners" },
-        { path: "/press", label: "Press" },
-        { path: "/blog", label: "Blog" },
-        { path: "/events", label: "Events" },
-      ]
-    },
+    }
   ];
 
   return (
@@ -162,7 +117,7 @@ export default function SitemapPage() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {siteMapSections.map((section, index) => (
             <SitemapSection 
               key={index}
@@ -175,13 +130,13 @@ export default function SitemapPage() {
         
         <div className="mt-16 text-center">
           <Card className="p-8 bg-gradient-to-br from-blue-900/30 to-gray-800 border-gray-700 max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 text-white">Can't find what you're looking for?</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">Need help navigating?</h2>
             <p className="text-gray-300 mb-4">
-              Our support team is always available to help you navigate the platform.
+              Contact the support team if you need assistance.
             </p>
-            <Link to="/contact">
+            <Link to="/settings">
               <Badge className="hover:bg-blue-700 px-4 py-2 bg-blue-600 text-white">
-                Contact Support
+                Go to Settings
               </Badge>
             </Link>
           </Card>

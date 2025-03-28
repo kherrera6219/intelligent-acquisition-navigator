@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { navItems } from "./navItems";
 import { useAuth } from "@/hooks/useAuth";
-import { ChevronDown, Home, FileText, Map, HelpCircle, Book, Shield, BarChart2, Building } from 'lucide-react';
+import { ChevronDown, Home, FileText, Shield, BarChart2, BookOpen, Building, Settings } from 'lucide-react';
 
 export const HeaderNavigation: React.FC = () => {
   const { pathname } = useLocation();
@@ -10,23 +9,17 @@ export const HeaderNavigation: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
-  // Main menu items for our dropdown - only keeping valid pages
+  // Main menu items for our dropdown - only keeping valid application pages
   const mainMenuItems = [
-    { label: 'Home', href: '/', icon: Home, description: "Public landing page" },
     { label: 'Dashboard', href: '/dashboard', icon: Home, description: "Main dashboard" },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: Building, description: "Federal acquisition information" },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Building, description: "Texas acquisition information" },
     { label: 'Market Research', href: '/market-research', icon: FileText, description: "Research market information" },
-    { label: 'Knowledge Base', href: '/knowledge-base', icon: Book, description: "Browse knowledge resources" },
+    { label: 'Knowledge Base', href: '/knowledge-base', icon: BookOpen, description: "Browse knowledge resources" },
     { label: 'Analytics', href: '/analytics', icon: BarChart2, description: "View analytics data" },
-    { label: 'Sitemap', href: '/sitemap', icon: Map, description: "View all pages" },
-    { label: 'Help', href: '/help', icon: HelpCircle, description: "Get help" }
+    { label: 'Compliance', href: '/compliance', icon: Shield, description: "View compliance data" },
+    { label: 'Settings', href: '/settings', icon: Settings, description: "User settings" }
   ];
-  
-  // Filter navItems to exclude items that are now in the dropdown
-  const filteredNavItems = navItems.filter(item => 
-    !mainMenuItems.some(menuItem => menuItem.href === item.href)
-  );
   
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -82,23 +75,42 @@ export const HeaderNavigation: React.FC = () => {
         )}
       </div>
       
-      {/* Rest of the navigation items */}
-      {filteredNavItems.map((item) => (
-        item.minRole === null || (userRole && item.minRole === 'authenticated') ? (
-          <Link 
-            key={item.label}
-            to={item.href}
-            className={`px-2 sm:px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-800 transition-colors 
-              ${pathname === item.href ? 'text-white bg-gray-800' : 'text-gray-300'}`}
-            title={item.label}
-          >
-            <div className="flex items-center">
-              <item.icon className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">{item.label}</span>
-            </div>
-          </Link>
-        ) : null
-      ))}
+      {/* Quick access navigation items */}
+      <Link 
+        to="/dashboard"
+        className={`px-2 sm:px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-800 transition-colors 
+          ${pathname === '/dashboard' ? 'text-white bg-gray-800' : 'text-gray-300'}`}
+        title="Dashboard"
+      >
+        <div className="flex items-center">
+          <Home className="h-4 w-4 mr-2" />
+          <span className="hidden sm:inline">Dashboard</span>
+        </div>
+      </Link>
+      
+      <Link 
+        to="/knowledge-base"
+        className={`px-2 sm:px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-800 transition-colors 
+          ${pathname === '/knowledge-base' ? 'text-white bg-gray-800' : 'text-gray-300'}`}
+        title="Knowledge Base"
+      >
+        <div className="flex items-center">
+          <BookOpen className="h-4 w-4 mr-2" />
+          <span className="hidden sm:inline">Knowledge Base</span>
+        </div>
+      </Link>
+      
+      <Link 
+        to="/settings"
+        className={`px-2 sm:px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-800 transition-colors 
+          ${pathname === '/settings' ? 'text-white bg-gray-800' : 'text-gray-300'}`}
+        title="Settings"
+      >
+        <div className="flex items-center">
+          <Settings className="h-4 w-4 mr-2" />
+          <span className="hidden sm:inline">Settings</span>
+        </div>
+      </Link>
     </nav>
   );
 };

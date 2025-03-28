@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, BarChart2, FileText, Map, HelpCircle, Book, Building, Shield, Settings } from 'lucide-react';
+import { ChevronDown, BarChart2, FileText, HelpCircle, Book, Building, Shield, Settings, Home } from 'lucide-react';
 
 interface MobileMenuProps {
   isMobileMenuOpen: boolean;
@@ -20,18 +20,14 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   
   // Consolidated menu items - only including pages that actually exist
   const mainMenuItems = [
-    { label: 'Dashboard', href: '/dashboard', icon: BarChart2 },
+    { label: 'Dashboard', href: '/dashboard', icon: Home },
     { label: 'Federal Acquisition', href: '/federal-acquisition', icon: Building },
     { label: 'Texas Acquisition', href: '/texas-acquisition', icon: Building },
     { label: 'Market Research', href: '/market-research', icon: FileText },
     { label: 'Knowledge Base', href: '/knowledge-base', icon: Book },
     { label: 'Analytics', href: '/analytics', icon: BarChart2 },
-    { label: 'Features', href: '/features', icon: FileText },
-    { label: 'About', href: '/about', icon: Book },
-    { label: 'Contact', href: '/contact', icon: FileText },
-    { label: 'Settings', href: '/settings', icon: Settings },
-    { label: 'Sitemap', href: '/sitemap', icon: Map },
-    { label: 'Help', href: '/help', icon: HelpCircle }
+    { label: 'Compliance', href: '/compliance', icon: Shield },
+    { label: 'Settings', href: '/settings', icon: Settings }
   ];
   
   if (!isMobileMenuOpen) return null;

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
-import { GradientText } from '@/components/ui/universal/GradientText';
 import { MsGradientText } from '@/components/ui/universal/MsGradientText';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';

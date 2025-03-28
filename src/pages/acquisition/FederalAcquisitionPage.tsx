@@ -11,42 +11,12 @@ import {
 } from 'lucide-react';
 import { FederalChatContainer } from '@/components/federal/FederalChatContainer';
 import { FederalReportCardGrid } from '@/components/federal/FederalReportCardGrid';
-import { ReportCardProps } from '@/components/federal/FederalReportCard';
 import { useMsFluentApi } from '@/lib/msFluentApi';
 import { useToast } from '@/hooks/use-toast';
 
-const mockReports: ReportCardProps[] = [
-  {
-    title: "Federal Acquisition Regulation Analysis",
-    description: "Analysis of recent FAR updates and their impact on procurement processes",
-    date: "2023-05-15",
-    status: "completed",
-    confidenceScore: 95,
-    score: 95,
-    lastUpdated: "2023-05-15"
-  },
-  {
-    title: "DFARS Compliance Review",
-    description: "Evaluation of defense procurement compliance with current DFARS requirements",
-    date: "2023-04-22",
-    status: "review",
-    confidenceScore: 87,
-    score: 87,
-    lastUpdated: "2023-04-22"
-  },
-  {
-    title: "Small Business Set-Aside Analysis",
-    description: "Review of small business set-aside opportunities under federal regulations",
-    date: "2023-03-10",
-    status: "pending",
-    confidenceScore: 74,
-    score: 74,
-    lastUpdated: "2023-03-10"
-  }
-];
-
 const FederalAcquisitionPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [reports, setReports] = useState([]);
   const { toast } = useToast();
   const { request } = useMsFluentApi();
 
@@ -58,8 +28,9 @@ const FederalAcquisitionPage: React.FC = () => {
   const loadInitialData = async () => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Actual API call would go here
+      // const { data } = await request('/api/federal-reports');
+      // setReports(data);
       setIsLoading(false);
     } catch (error) {
       console.error('Failed to load data:', error);
@@ -76,14 +47,6 @@ const FederalAcquisitionPage: React.FC = () => {
     toast({
       title: "Create Report",
       description: "Creating a new report...",
-      variant: "default"
-    });
-  };
-
-  const handleReportClick = (index: number) => {
-    toast({
-      title: "Report Selected",
-      description: `Viewing details for "${mockReports[index].title}"`,
       variant: "default"
     });
   };
@@ -105,8 +68,8 @@ const FederalAcquisitionPage: React.FC = () => {
       content: (
         <Card className="p-6">
           <FederalReportCardGrid 
-            reports={mockReports} 
-            onCardClick={handleReportClick}
+            reports={reports} 
+            onCardClick={() => {}}
           />
         </Card>
       )
@@ -129,19 +92,19 @@ const FederalAcquisitionPage: React.FC = () => {
   const metrics = [
     {
       title: 'FAR Reports',
-      value: mockReports.length,
+      value: reports.length,
       icon: <FileText className="h-8 w-8 text-blue-500" />,
       className: 'bg-blue-950/30 border-blue-800/50'
     },
     {
       title: 'Avg. Confidence',
-      value: `${Math.round(mockReports.reduce((acc, r) => acc + r.confidenceScore, 0) / mockReports.length)}%`,
+      value: '0%',
       icon: <MessageSquare className="h-8 w-8 text-green-500" />,
       className: 'bg-green-950/30 border-green-800/50'
     },
     {
       title: 'Pending Analysis',
-      value: mockReports.filter(r => r.status === 'pending').length,
+      value: 0,
       icon: <FileText className="h-8 w-8 text-amber-500" />,
       className: 'bg-amber-950/30 border-amber-800/50'
     }

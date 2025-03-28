@@ -11,6 +11,7 @@ import authRoutes from './authRoutes';
 import dashboardRoutes from './dashboardRoutes';
 import acquisitionRoutes from './acquisitionRoutes';
 import settingsRoutes from './settingsRoutes';
+import knowledgeBaseRoutes from './knowledgeBaseRoutes';
 
 // Combine all route collections
 const allRoutes = [
@@ -18,7 +19,8 @@ const allRoutes = [
   ...authRoutes,
   ...dashboardRoutes,
   ...acquisitionRoutes,
-  ...settingsRoutes
+  ...settingsRoutes,
+  ...knowledgeBaseRoutes
 ];
 
 export const AppRoutes: React.FC = () => {
@@ -54,11 +56,14 @@ export const AppRoutes: React.FC = () => {
         }
       }
       
-      // Protect dashboard and app routes
+      // Protect application routes
       if (routePath?.startsWith('/dashboard') || 
           routePath?.startsWith('/acquisition') || 
           routePath?.startsWith('/settings') ||
-          routePath?.startsWith('/documents')) {
+          routePath?.startsWith('/documents') ||
+          routePath?.startsWith('/knowledge-base') ||
+          routePath?.startsWith('/compliance') ||
+          routePath?.startsWith('/analytics')) {
         if (!user) {
           // Save the attempted URL for redirect after login
           const returnUrl = encodeURIComponent(location.pathname + location.search);
