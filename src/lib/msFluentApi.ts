@@ -43,7 +43,7 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
     retryDelay = 1000
   } = options;
 
-  const { user, getAccessToken } = useAuth();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -69,9 +69,13 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
       let requestHeaders = { ...defaultHeaders, ...headers };
       if (!skipAuth && user) {
         try {
-          const token = await getAccessToken();
-          if (token) {
-            requestHeaders['Authorization'] = `Bearer ${token}`;
+          // Instead of getAccessToken, we'll use the user session directly
+          // This assumes the token is available in the user object or we're using
+          // another authentication mechanism that doesn't require explicit token retrieval
+          if (user.session) {
+            requestHeaders['Authorization'] = `Bearer ${user.session.access_token}`;
+          } else {
+            console.warn('User is authenticated but no session token is available');
           }
         } catch (err) {
           console.error('Failed to get auth token:', err);
@@ -151,7 +155,7 @@ export function useMsFluentApi(options: MsFluentApiOptions = {}): UseMsFluentApi
 
       throw lastError;
     },
-    [baseUrl, defaultHeaders, retryCount, retryDelay, showToasts, timeout, user, getAccessToken]
+    [baseUrl, defaultHeaders, retryCount, retryDelay, showToasts, timeout, user]
   );
 
   return { request, isLoading, error, clearError };
