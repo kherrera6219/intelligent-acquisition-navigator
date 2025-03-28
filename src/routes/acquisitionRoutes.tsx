@@ -5,7 +5,7 @@ import { lazy } from "react";
 
 // Lazy-load acquisition components
 const FederalAcquisitionPage = lazy(() => import("../pages/acquisition/FederalAcquisitionPage"));
-const TexasAcquisitionPage = lazy(() => import("../pages/acquisition/TexasAcquisition"));
+const TexasAcquisitionPage = lazy(() => import("../pages/acquisition/TexasAcquisitionPage"));
 const MarketResearchPage = lazy(() => import("../pages/acquisition/MarketResearchPage"));
 const SolicitationReviewPage = lazy(() => import("../pages/acquisition/SolicitationReviewPage"));
 const DocumentControlPage = lazy(() => import("../pages/acquisition/DocumentControlPage"));

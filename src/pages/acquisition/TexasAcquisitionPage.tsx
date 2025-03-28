@@ -12,7 +12,7 @@ import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader
 import { InternalFooter } from "@/components/layout/InternalFooter";
 import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 
-const TexasAcquisition = () => {
+const TexasAcquisitionPage = () => {
   const [input, setInput] = useState("");
   const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
   const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACTING_OFFICER");
@@ -122,4 +122,4 @@ const TexasAcquisition = () => {
   );
 };
 
-export default TexasAcquisition;
+export default TexasAcquisitionPage;

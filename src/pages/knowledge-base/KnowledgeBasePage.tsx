@@ -5,11 +5,13 @@ import { MsGradientText } from '@/components/ui/universal/MsGradientText';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MsFluentCard } from '@/components/ui/universal/MsFluentCard';
 import { Link } from 'react-router-dom';
-import { BookOpen, FileText, Database, Building, Cloud } from 'lucide-react';
+import { BookOpen, FileText, Database, Building, Cloud, Search, Filter, Tag, Plus } from 'lucide-react';
 import { useKnowledgeBase } from '@/hooks/useKnowledgeBase';
-
-// Import the necessary components with proper props
+import { KnowledgeBaseHeader } from '@/components/knowledge-base/KnowledgeBaseHeader';
 import { KnowledgeSearch } from '@/components/knowledge-base/KnowledgeSearch';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const KnowledgeBasePage: React.FC = () => {
   const { entries, isLoading } = useKnowledgeBase();
@@ -18,13 +20,16 @@ const KnowledgeBasePage: React.FC = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
   // Filter function for knowledge base items
-  const handleFilterChange = (filters: { types: any[], tags: string[] }) => {
+  const handleFilterChange = (filters: { types: string[], tags: string[] }) => {
     setSelectedTypes(filters.types);
     setSelectedTags(filters.tags);
   };
   
   // Available tags for filtering
-  const availableTags = ['federal', 'compliance', 'procurement', 'contracts', 'legal'];
+  const availableTags = ['federal', 'compliance', 'procurement', 'contracts', 'legal', 'texas'];
+  
+  // Document types
+  const documentTypes = ['document', 'regulation', 'template', 'software', 'process', 'research'];
   
   const tabs = [
     { id: 'documents', label: 'Documents', icon: <FileText className="h-4 w-4 mr-2" /> },
@@ -38,18 +43,34 @@ const KnowledgeBasePage: React.FC = () => {
       title="Knowledge Base"
       description="Access and manage enterprise acquisition resources"
       fullWidth
+      action={
+        <Button className="ms-button-primary flex items-center gap-2">
+          <Plus size={16} />
+          <span>Add Resource</span>
+        </Button>
+      }
     >
       <div className="ms-container">
+        <KnowledgeBaseHeader 
+          title="Enterprise Knowledge Base" 
+          description="Centralized repository for all acquisition and compliance resources"
+        />
+        
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-          <h1 className="text-2xl font-bold">Enterprise Knowledge Base</h1>
-          <div className="flex gap-2 w-full sm:w-auto">
-            <div className="relative flex-1 sm:flex-initial sm:w-64">
+          <div className="flex gap-2 w-full">
+            <div className="relative flex-1 sm:max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
               <input
                 placeholder="Search knowledge base..."
-                className="w-full px-4 py-2 pl-8 border rounded"
+                className="w-full px-4 py-2 pl-10 border rounded-md bg-background"
                 onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery}
               />
             </div>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Filter size={16} />
+              <span className="hidden sm:inline">Filters</span>
+            </Button>
           </div>
         </div>
         
@@ -58,14 +79,16 @@ const KnowledgeBasePage: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+          {/* Sidebar filters */}
           <div className="space-y-6">
-            <div className="mb-6 space-y-4">
-              <h3 className="text-sm font-medium mb-2">Filter by Type</h3>
-              <div className="flex flex-wrap gap-2">
-                {['document', 'regulation', 'template', 'software', 'process', 'research'].map(type => (
-                  <button
+            <Card className="p-4">
+              <h3 className="text-sm font-medium mb-3">Filter by Type</h3>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {documentTypes.map(type => (
+                  <Badge
                     key={type}
-                    className={`px-3 py-1 text-sm rounded ${selectedTypes.includes(type) ? 'bg-primary text-white' : 'bg-secondary/10'}`}
+                    variant={selectedTypes.includes(type) ? "default" : "outline"}
+                    className="cursor-pointer"
                     onClick={() => {
                       const newTypes = selectedTypes.includes(type)
                         ? selectedTypes.filter(t => t !== type)
@@ -74,16 +97,17 @@ const KnowledgeBasePage: React.FC = () => {
                     }}
                   >
                     {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </button>
+                  </Badge>
                 ))}
               </div>
               
-              <h3 className="text-sm font-medium mb-2 mt-4">Filter by Tags</h3>
+              <h3 className="text-sm font-medium mb-3">Filter by Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {availableTags.map(tag => (
-                  <span
+                  <Badge
                     key={tag}
-                    className={`px-2 py-1 text-xs rounded cursor-pointer ${selectedTags.includes(tag) ? 'bg-primary/80 text-white' : 'bg-secondary/20'}`}
+                    variant={selectedTags.includes(tag) ? "secondary" : "outline"}
+                    className="cursor-pointer text-xs"
                     onClick={() => {
                       const newTags = selectedTags.includes(tag)
                         ? selectedTags.filter(t => t !== tag)
@@ -91,11 +115,12 @@ const KnowledgeBasePage: React.FC = () => {
                       handleFilterChange({ types: selectedTypes, tags: newTags });
                     }}
                   >
+                    <Tag className="h-3 w-3 mr-1" />
                     {tag}
-                  </span>
+                  </Badge>
                 ))}
               </div>
-            </div>
+            </Card>
             
             <MsFluentCard className="p-4">
               <h3 className="text-lg font-medium mb-3">Related Resources</h3>
@@ -112,10 +137,15 @@ const KnowledgeBasePage: React.FC = () => {
                   <FileText className="h-4 w-4 mr-2" />
                   <span>Document Control</span>
                 </Link>
+                <Link to="/texas-acquisition" className="flex items-center p-2 hover:bg-secondary/10 rounded-md text-foreground/80 hover:text-foreground">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  <span>Texas Regulations</span>
+                </Link>
               </div>
             </MsFluentCard>
           </div>
           
+          {/* Main content */}
           <div>
             <Tabs defaultValue="documents" className="w-full">
               <TabsList className="mb-6">
@@ -139,8 +169,13 @@ const KnowledgeBasePage: React.FC = () => {
                     ))
                   ) : (
                     <div className="col-span-full">
-                      <MsFluentCard className="p-6 text-center">
-                        <p className="text-muted-foreground">No documents available.</p>
+                      <MsFluentCard className="p-6 text-center border border-border/30 bg-card/30 backdrop-blur-sm">
+                        <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                        <p className="text-muted-foreground mb-4">No documents available yet.</p>
+                        <Button>
+                          <Plus size={16} className="mr-2" />
+                          Upload Document
+                        </Button>
                       </MsFluentCard>
                     </div>
                   )}
@@ -157,8 +192,13 @@ const KnowledgeBasePage: React.FC = () => {
                     ))
                   ) : (
                     <div className="col-span-full">
-                      <MsFluentCard className="p-6 text-center">
-                        <p className="text-muted-foreground">No software builds available.</p>
+                      <MsFluentCard className="p-6 text-center border border-border/30 bg-card/30 backdrop-blur-sm">
+                        <Cloud className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                        <p className="text-muted-foreground mb-4">No software builds available yet.</p>
+                        <Button>
+                          <Plus size={16} className="mr-2" />
+                          Add Software Build
+                        </Button>
                       </MsFluentCard>
                     </div>
                   )}
@@ -175,8 +215,13 @@ const KnowledgeBasePage: React.FC = () => {
                     ))
                   ) : (
                     <div className="col-span-full">
-                      <MsFluentCard className="p-6 text-center">
-                        <p className="text-muted-foreground">No regulations available.</p>
+                      <MsFluentCard className="p-6 text-center border border-border/30 bg-card/30 backdrop-blur-sm">
+                        <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                        <p className="text-muted-foreground mb-4">No regulations available yet.</p>
+                        <Button>
+                          <Plus size={16} className="mr-2" />
+                          Add Regulation
+                        </Button>
                       </MsFluentCard>
                     </div>
                   )}
@@ -187,7 +232,7 @@ const KnowledgeBasePage: React.FC = () => {
                 <MsGradientText className="text-xl font-semibold mb-4">Federal Resources</MsGradientText>
                 
                 <Link to="/federal-knowledge-base">
-                  <MsFluentCard className="p-6 text-center hover:bg-primary/5 transition-colors cursor-pointer">
+                  <MsFluentCard className="p-6 text-center hover:bg-primary/5 transition-colors cursor-pointer border border-border/30 bg-card/30 backdrop-blur-sm">
                     <Building className="h-12 w-12 mx-auto mb-4 text-primary/70" />
                     <h3 className="text-lg font-medium mb-2">Federal Knowledge Base</h3>
                     <p className="text-muted-foreground">
