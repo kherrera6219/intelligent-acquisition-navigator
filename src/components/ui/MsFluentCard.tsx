@@ -2,24 +2,27 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface MsFluentCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'interactive' | 'flat' | 'elevated';
-  noShadow?: boolean;
+interface MsFluentCardProps {
+  children: React.ReactNode;
+  className?: string;
+  variant?: 'default' | 'bordered' | 'elevated' | 'interactive';
+  onClick?: () => void;
 }
 
 export const MsFluentCard = React.forwardRef<HTMLDivElement, MsFluentCardProps>(
-  ({ className, variant = 'default', noShadow, children, ...props }, ref) => {
+  ({ children, className, variant = 'default', onClick, ...props }, ref) => {
+    const variantClasses = {
+      default: 'bg-card border border-border/40 shadow-sm',
+      bordered: 'bg-card border-2 border-border/60 shadow-sm',
+      elevated: 'bg-card border border-border/30 shadow-md',
+      interactive: 'bg-card border border-border/40 shadow-sm transition-all duration-200 hover:shadow-md hover:border-border/60 cursor-pointer'
+    };
+
     return (
       <div
         ref={ref}
-        className={cn(
-          "ms-fluent-card",
-          variant === 'interactive' && "hover:border-border/80 transition-colors cursor-pointer",
-          variant === 'flat' && "shadow-none",
-          variant === 'elevated' && "shadow-lg",
-          noShadow && "shadow-none",
-          className
-        )}
+        className={cn('rounded-lg p-5', variantClasses[variant], className)}
+        onClick={onClick}
         {...props}
       >
         {children}
@@ -27,75 +30,67 @@ export const MsFluentCard = React.forwardRef<HTMLDivElement, MsFluentCardProps>(
     );
   }
 );
+MsFluentCard.displayName = 'MsFluentCard';
 
-MsFluentCard.displayName = "MsFluentCard";
+interface MsFluentCardHeaderProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-export interface MsFluentCardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export const MsFluentCardHeader = React.forwardRef<HTMLDivElement, MsFluentCardHeaderProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("ms-fluent-card-header", className)}
-      {...props}
-    />
-  )
+export const MsFluentCardHeader = ({ children, className }: MsFluentCardHeaderProps) => (
+  <div className={cn('flex justify-between items-center mb-4', className)}>
+    {children}
+  </div>
 );
+MsFluentCardHeader.displayName = 'MsFluentCardHeader';
 
-MsFluentCardHeader.displayName = "MsFluentCardHeader";
+interface MsFluentCardTitleProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-export interface MsFluentCardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
-
-export const MsFluentCardTitle = React.forwardRef<HTMLHeadingElement, MsFluentCardTitleProps>(
-  ({ className, ...props }, ref) => (
-    <h3
-      ref={ref}
-      className={cn("ms-fluent-card-title", className)}
-      {...props}
-    />
-  )
+export const MsFluentCardTitle = ({ children, className }: MsFluentCardTitleProps) => (
+  <h3 className={cn('text-lg font-semibold', className)}>{children}</h3>
 );
+MsFluentCardTitle.displayName = 'MsFluentCardTitle';
 
-MsFluentCardTitle.displayName = "MsFluentCardTitle";
+interface MsFluentCardDescriptionProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-export interface MsFluentCardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
-
-export const MsFluentCardDescription = React.forwardRef<HTMLParagraphElement, MsFluentCardDescriptionProps>(
-  ({ className, ...props }, ref) => (
-    <p
-      ref={ref}
-      className={cn("ms-fluent-card-description", className)}
-      {...props}
-    />
-  )
+export const MsFluentCardDescription = ({ children, className }: MsFluentCardDescriptionProps) => (
+  <p className={cn('text-sm text-muted-foreground', className)}>{children}</p>
 );
+MsFluentCardDescription.displayName = 'MsFluentCardDescription';
 
-MsFluentCardDescription.displayName = "MsFluentCardDescription";
+interface MsFluentCardContentProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-export interface MsFluentCardContentProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export const MsFluentCardContent = React.forwardRef<HTMLDivElement, MsFluentCardContentProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("ms-fluent-card-content", className)}
-      {...props}
-    />
-  )
+export const MsFluentCardContent = ({ children, className }: MsFluentCardContentProps) => (
+  <div className={cn('space-y-4', className)}>{children}</div>
 );
+MsFluentCardContent.displayName = 'MsFluentCardContent';
 
-MsFluentCardContent.displayName = "MsFluentCardContent";
+interface MsFluentCardFooterProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-export interface MsFluentCardFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export const MsFluentCardFooter = React.forwardRef<HTMLDivElement, MsFluentCardFooterProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("ms-fluent-card-footer", className)}
-      {...props}
-    />
-  )
+export const MsFluentCardFooter = ({ children, className }: MsFluentCardFooterProps) => (
+  <div className={cn('flex justify-end items-center mt-4 pt-4 border-t border-border/30', className)}>
+    {children}
+  </div>
 );
+MsFluentCardFooter.displayName = 'MsFluentCardFooter';
 
-MsFluentCardFooter.displayName = "MsFluentCardFooter";
+export {
+  MsFluentCard,
+  MsFluentCardHeader,
+  MsFluentCardTitle,
+  MsFluentCardDescription,
+  MsFluentCardContent,
+  MsFluentCardFooter
+};

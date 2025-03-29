@@ -7,16 +7,24 @@ import {
   MsFluentCardTitle,
   MsFluentCardDescription,
   MsFluentCardContent
-} from '@/components/ui/ms-fluent/MsFluentCard';
-import { MsFluentButton } from '@/components/ui/ms-fluent/MsFluentButton';
-import { MsFluentAlert } from '@/components/ui/ms-fluent/MsFluentAlert';
+} from '@/components/ui/MsFluentCard';
+import { MsFluentButton } from '@/components/ui/MsFluentButton';
+import { MsFluentAlert } from '@/components/ui/MsFluentAlert';
 import {
   MsNavigation,
   MsNavigationItem,
   MsNavigationGroup,
   MsNavigationSeparator
 } from '@/components/ui/ms-fluent/MsNavigation';
-import { MsFluentTable, MsFluentTableHeader, MsFluentTableRow, MsFluentTableHead, MsFluentTableBody, MsFluentTableCell } from '@/components/ui/ms-fluent/MsFluentTable';
+import { 
+  MsFluentTable, 
+  MsFluentTableHeader, 
+  MsFluentTableRow, 
+  MsFluentTableHead, 
+  MsFluentTableBody, 
+  MsFluentTableCell,
+  MsStatusCell
+} from '@/components/ui/MsFluentTable';
 import { 
   MsFileInput, 
   MsFileInputUploader, 

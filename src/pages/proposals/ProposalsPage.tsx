@@ -97,16 +97,16 @@ export default function ProposalsPage() {
         </div>
 
         <div className="ms-h-stack flex gap-2 w-full sm:w-auto">
-          <MsFluentButton variant="outline" size="sm" icon={<Filter className="h-4 w-4" />}>
+          <MsFluentButton variant="outline" size="sm" leadingIcon={<Filter className="h-4 w-4" />}>
             Filter
           </MsFluentButton>
-          <MsFluentButton variant="outline" size="sm" icon={<ArrowUpDown className="h-4 w-4" />}>
+          <MsFluentButton variant="outline" size="sm" leadingIcon={<ArrowUpDown className="h-4 w-4" />}>
             Sort
           </MsFluentButton>
           <MsFluentButton 
             variant="primary" 
             size="sm" 
-            icon={<PlusCircle className="h-4 w-4" />}
+            leadingIcon={<PlusCircle className="h-4 w-4" />}
             onClick={handleNewProposal}
           >
             New Proposal

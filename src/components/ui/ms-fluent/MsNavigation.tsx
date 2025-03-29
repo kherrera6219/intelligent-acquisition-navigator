@@ -34,7 +34,7 @@ interface MsNavigationItemProps {
   active?: boolean;
   disabled?: boolean;
   destructive?: boolean;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void;
   className?: string;
 }
 
@@ -48,7 +48,7 @@ export const MsNavigationItem: React.FC<MsNavigationItemProps> = ({
   onClick,
   className,
 }) => {
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     if (disabled) {
       e.preventDefault();
       return;
@@ -59,26 +59,33 @@ export const MsNavigationItem: React.FC<MsNavigationItemProps> = ({
     }
   };
   
-  const Comp = href ? 'a' : 'button';
-  const props = href ? { href } : { type: 'button' };
+  const commonProps = {
+    className: cn(
+      'ms-navigation-item flex items-center px-3 py-2 text-sm rounded-md transition-colors',
+      'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
+      active ? 'bg-primary/10 text-primary font-medium' : 'text-foreground hover:bg-accent',
+      disabled && 'opacity-50 pointer-events-none',
+      destructive && 'text-destructive hover:bg-destructive/10',
+      className
+    ),
+    onClick: handleClick,
+    "aria-disabled": disabled
+  };
+
+  if (href) {
+    return (
+      <a href={href} {...commonProps}>
+        {icon && <span className="mr-2 h-4 w-4">{icon}</span>}
+        {children}
+      </a>
+    );
+  }
 
   return (
-    <Comp
-      {...props}
-      onClick={handleClick}
-      className={cn(
-        'ms-navigation-item flex items-center px-3 py-2 text-sm rounded-md transition-colors',
-        'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
-        active ? 'bg-primary/10 text-primary font-medium' : 'text-foreground hover:bg-accent',
-        disabled && 'opacity-50 pointer-events-none',
-        destructive && 'text-destructive hover:bg-destructive/10',
-        className
-      )}
-      aria-disabled={disabled}
-    >
+    <button type="button" {...commonProps}>
       {icon && <span className="mr-2 h-4 w-4">{icon}</span>}
       {children}
-    </Comp>
+    </button>
   );
 };
 
@@ -136,3 +143,7 @@ export const MsNavigationSeparator: React.FC<{ className?: string }> = ({
 }) => (
   <div className={cn('ms-navigation-separator h-px bg-border my-2', className)} />
 );
+
+// Add menu components for backward compatibility with older code
+export const MsNavigationMenu = MsNavigation;
+export const MsNavigationMenuItem = MsNavigationItem;

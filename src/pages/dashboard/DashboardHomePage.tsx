@@ -60,7 +60,7 @@ export default function DashboardHomePage() {
           <MsFluentButton 
             variant="primary" 
             size="md"
-            icon={<PlusCircle className="h-4 w-4" />}
+            leadingIcon={<PlusCircle className="h-4 w-4" />}
             onClick={handleNewProject}
           >
             New Project

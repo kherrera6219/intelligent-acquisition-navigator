@@ -36,8 +36,8 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   backLink,
   fullWidth = false,
 }) => {
-  const getContainerSize = (): ContainerSize | undefined => {
-    if (containerWidth === 'default') return undefined;
+  const getContainerSize = (): ContainerSize => {
+    if (containerWidth === 'default') return 'narrow';
     if (containerWidth === 'full' || fullWidth) return 'full';
     return containerWidth as ContainerSize;
   };
@@ -98,4 +98,5 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   );
 };
 
-export type { ProtectedPageLayoutProps, BreadcrumbItem };
+// Export BreadcrumbItem type without duplicating the ProtectedPageLayoutProps export
+export type { BreadcrumbItem };

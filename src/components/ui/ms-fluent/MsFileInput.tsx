@@ -1,74 +1,64 @@
 
 import React, { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Upload, File, X, Check } from 'lucide-react';
-import { MsFluentButton } from '../MsFluentButton';
+import { Upload, FileIcon, X, CheckCircle2, AlertCircle } from 'lucide-react';
 
-export interface MsFileInputProps {
+interface MsFileInputProps {
+  children: React.ReactNode;
+  className?: string;
   value: File[];
   onChange: (files: File[]) => void;
   maxFiles?: number;
   maxSize?: number; // in bytes
   acceptedTypes?: string[];
-  children: React.ReactNode;
-  className?: string;
+  disabled?: boolean;
 }
 
 export const MsFileInput: React.FC<MsFileInputProps> = ({
-  value,
-  onChange,
-  maxFiles = 1,
-  maxSize = 5000000, // 5MB
-  acceptedTypes,
   children,
   className,
+  value,
+  onChange,
+  maxFiles = 5,
+  maxSize = 5 * 1024 * 1024, // 5MB default
+  acceptedTypes = ['*/*'],
+  disabled = false,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-    
-    processFiles(Array.from(files));
-    // Reset the input value so the same file can be selected again
-    if (inputRef.current) inputRef.current.value = '';
-  };
-
-  const processFiles = (files: File[]) => {
+  
+  const handleFiles = (files: FileList | File[]) => {
     setError(null);
+    const fileArray = Array.from(files);
     
-    // Check if adding these files would exceed the maximum
-    if (value.length + files.length > maxFiles) {
-      setError(`Maximum ${maxFiles} file${maxFiles === 1 ? '' : 's'} allowed`);
+    // Validate file count
+    if (value.length + fileArray.length > maxFiles) {
+      setError(`You can only upload a maximum of ${maxFiles} files.`);
       return;
     }
     
-    // Validate size and file type
-    const validFiles = files.filter(file => {
-      // Validate file size
-      if (file.size > maxSize) {
-        setError(`File "${file.name}" exceeds maximum size of ${formatFileSize(maxSize)}`);
-        return false;
-      }
-      
-      // Validate file type if specified
-      if (acceptedTypes && acceptedTypes.length > 0) {
+    // Validate file types and sizes
+    const validFiles = fileArray.filter(file => {
+      // Check file type
+      if (acceptedTypes[0] !== '*/*') {
         const fileType = file.type;
-        const validType = acceptedTypes.some(type => {
-          // Handle wildcard types like "image/*"
+        const isValidType = acceptedTypes.some(type => {
           if (type.endsWith('/*')) {
-            const category = type.split('/')[0];
-            return fileType.startsWith(`${category}/`);
+            return fileType.startsWith(type.replace('/*', '/'));
           }
           return type === fileType;
         });
         
-        if (!validType) {
-          setError(`File "${file.name}" has an unsupported file type`);
+        if (!isValidType) {
+          setError(`File type not accepted: ${file.name}`);
           return false;
         }
+      }
+      
+      // Check file size
+      if (file.size > maxSize) {
+        setError(`File too large: ${file.name}`);
+        return false;
       }
       
       return true;
@@ -78,44 +68,39 @@ export const MsFileInput: React.FC<MsFileInputProps> = ({
       onChange([...value, ...validFiles]);
     }
   };
-
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(true);
+  
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(true);
   };
-
+  
   const handleDragLeave = () => {
-    setIsDragging(false);
+    setDragActive(false);
   };
-
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(false);
+  
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
     
-    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-      processFiles(Array.from(event.dataTransfer.files));
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
     }
   };
-
-  const formatFileSize = (sizeInBytes: number): string => {
-    if (sizeInBytes < 1024) return `${sizeInBytes} B`;
-    if (sizeInBytes < 1024 * 1024) return `${(sizeInBytes / 1024).toFixed(1)} KB`;
-    return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
+  
   return (
-    <div className={cn('ms-file-input', className)}>
-      <input
-        ref={inputRef}
-        type="file"
-        className="sr-only"
-        multiple={maxFiles > 1}
-        accept={acceptedTypes?.join(',')}
-        onChange={handleFileChange}
-      />
-      
+    <div 
+      className={cn(
+        'ms-file-input',
+        disabled && 'opacity-50 pointer-events-none',
+        className
+      )}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       {error && (
-        <div className="text-destructive text-sm mb-2 bg-destructive/10 p-2 rounded-md">
+        <div className="mb-3 text-sm text-destructive flex items-center">
+          <AlertCircle className="h-4 w-4 mr-1" />
           {error}
         </div>
       )}
@@ -125,145 +110,124 @@ export const MsFileInput: React.FC<MsFileInputProps> = ({
   );
 };
 
-interface MsFileInputUploaderProps {
+export const MsFileInputUploader: React.FC<{
   className?: string;
-  dragActiveClassName?: string;
-  label?: string;
-  description?: string;
+  prompt?: string;
   icon?: React.ReactNode;
-}
-
-export const MsFileInputUploader: React.FC<MsFileInputUploaderProps> = ({
-  className,
-  dragActiveClassName,
-  label = "Upload files",
-  description = "Drag and drop files here or click to browse",
-  icon = <Upload className="h-6 w-6" />,
-}) => {
-  const { isDragging, inputRef, handleDragOver, handleDragLeave, handleDrop } = 
-    React.useContext(MsFileInputContext as React.Context<any>);
-    
+}> = ({ className, prompt = "Drag files here or click to browse", icon }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  
   return (
-    <div
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+    <div 
       className={cn(
-        'ms-file-input-uploader border-2 border-dashed rounded-lg p-6 text-center cursor-pointer',
-        isDragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50',
-        isDragging && dragActiveClassName,
+        'ms-file-input-uploader flex flex-col items-center justify-center p-6 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-secondary/5 transition-colors',
         className
       )}
       onClick={() => inputRef.current?.click()}
     >
-      <div className="mx-auto flex flex-col items-center justify-center gap-2">
-        <div className="rounded-full bg-muted p-3">
-          {icon}
-        </div>
-        <h3 className="font-medium mt-2">{label}</h3>
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </div>
+      {icon || <Upload className="h-10 w-10 text-primary/60 mb-2" />}
+      <p className="text-sm text-muted-foreground">{prompt}</p>
+      <input 
+        ref={inputRef} 
+        type="file" 
+        className="hidden" 
+        multiple 
+        onChange={(e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            // Find the parent MsFileInput component
+            let parent = e.currentTarget.parentElement;
+            while (parent && !parent.classList.contains('ms-file-input')) {
+              parent = parent.parentElement;
+            }
+            
+            if (parent && parent.dispatchEvent) {
+              // Dispatch a custom event that the MsFileInput component can listen for
+              const event = new CustomEvent('msFileSelected', {
+                detail: { files: e.target.files }
+              });
+              parent.dispatchEvent(event);
+            }
+          }
+        }}
+      />
     </div>
   );
 };
 
-interface MsFileInputPreviewProps {
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+export const MsFileInputPreview: React.FC<{
   file: File;
-  onRemove: () => void;
+  onRemove?: () => void;
   progress?: number;
   className?: string;
-}
-
-export const MsFileInputPreview: React.FC<MsFileInputPreviewProps> = ({
-  file,
-  onRemove,
-  progress,
-  className,
-}) => {
+}> = ({ file, onRemove, progress, className }) => {
   const isImage = file.type.startsWith('image/');
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (isImage) {
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
-      reader.readAsDataURL(file);
-    }
-    
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [file, isImage]);
-
+  const isPdf = file.type === 'application/pdf';
+  
+  const getIconForFileType = () => {
+    if (isPdf) return <FileIcon className="h-5 w-5 text-red-500" />;
+    return <FileIcon className="h-5 w-5 text-primary" />;
+  };
+  
   return (
-    <div className={cn(
-      'ms-file-input-preview flex items-center p-2 bg-muted/50 rounded-md',
-      className
-    )}>
-      <div className="flex-shrink-0 mr-2">
-        {isImage && previewUrl ? (
-          <div className="h-10 w-10 rounded overflow-hidden">
-            <img 
-              src={previewUrl} 
-              alt={file.name} 
+    <div 
+      className={cn(
+        'ms-file-input-preview flex items-center p-2 border rounded-md bg-card/50',
+        className
+      )}
+    >
+      <div className="flex-shrink-0 h-8 w-8 mr-3 flex items-center justify-center">
+        {isImage ? (
+          <div className="h-8 w-8 rounded bg-muted/30 overflow-hidden flex items-center justify-center">
+            <img
+              src={URL.createObjectURL(file)}
+              alt={file.name}
               className="h-full w-full object-cover"
+              onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
             />
           </div>
         ) : (
-          <div className="h-10 w-10 flex items-center justify-center bg-muted rounded">
-            <File className="h-5 w-5" />
-          </div>
+          getIconForFileType()
         )}
       </div>
       
-      <div className="flex-grow min-w-0">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium truncate">{file.name}</p>
-          <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
-            {formatFileSize(file.size)}
-          </span>
-        </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium truncate">{file.name}</p>
+        <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
         
         {typeof progress === 'number' && (
-          <div className="w-full bg-muted h-1.5 rounded-full mt-1 overflow-hidden">
+          <div className="mt-1 h-1 w-full bg-muted rounded-full overflow-hidden">
             <div 
-              className={cn(
-                "h-full rounded-full transition-all",
-                progress === 100 ? "bg-success" : "bg-primary"
-              )}
+              className="h-full bg-primary"
               style={{ width: `${progress}%` }}
             />
           </div>
         )}
       </div>
       
-      <div className="flex items-center ml-4">
+      <div className="flex-shrink-0 ml-3 flex items-center">
         {progress === 100 ? (
-          <Check className="h-4 w-4 text-success mr-2" />
-        ) : null}
-        <MsFluentButton
-          variant="ghost"
-          size="xs"
-          iconOnly={<X className="h-4 w-4" />}
-          onClick={onRemove}
-          aria-label="Remove file"
-        />
+          <CheckCircle2 className="h-5 w-5 text-success" />
+        ) : (
+          onRemove && (
+            <button 
+              type="button" 
+              onClick={onRemove}
+              className="text-muted-foreground hover:text-destructive transition-colors"
+            >
+              <X className="h-5 w-5" />
+              <span className="sr-only">Remove</span>
+            </button>
+          )
+        )}
       </div>
     </div>
   );
 };
-
-// Create a context to share state between the parent and child components
-const MsFileInputContext = React.createContext<{
-  isDragging: boolean;
-  inputRef: React.RefObject<HTMLInputElement>;
-  handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
-  handleDragLeave: () => void;
-  handleDrop: (event: React.DragEvent<HTMLDivElement>) => void;
-} | null>(null);
-
-function formatFileSize(sizeInBytes: number): string {
-  if (sizeInBytes < 1024) return `${sizeInBytes} B`;
-  if (sizeInBytes < 1024 * 1024) return `${(sizeInBytes / 1024).toFixed(1)} KB`;
-  return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
-}

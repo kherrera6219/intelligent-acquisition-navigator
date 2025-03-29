@@ -127,7 +127,7 @@ export const BuildDetailModal: React.FC<BuildDetailModalProps> = ({ build, isOpe
           </MsFluentButton>
           <MsFluentButton 
             className="w-full sm:w-auto"
-            icon={<ExternalLink className="h-4 w-4" />}
+            leadingIcon={<ExternalLink className="h-4 w-4" />}
           >
             View Documentation
           </MsFluentButton>

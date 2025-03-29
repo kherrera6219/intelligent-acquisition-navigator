@@ -43,7 +43,7 @@ export interface MsFluentButtonProps
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
   iconOnly?: React.ReactNode;
-  icon?: React.ReactNode; // Add support for the icon prop for backward compatibility
+  icon?: React.ReactNode; // Added for backward compatibility
 }
 
 const MsFluentButton = React.forwardRef<HTMLButtonElement, MsFluentButtonProps>(
@@ -56,7 +56,7 @@ const MsFluentButton = React.forwardRef<HTMLButtonElement, MsFluentButtonProps>(
     leadingIcon, 
     trailingIcon, 
     iconOnly,
-    icon, // Add support for the icon prop
+    icon, // Added for backward compatibility
     children, 
     disabled,
     ...props 
