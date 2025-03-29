@@ -3,7 +3,7 @@ import React from 'react';
 import { cn } from "@/lib/utils";
 
 export interface MsLoadingSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'card' | 'text' | 'avatar' | 'button' | 'list';
+  variant?: 'card' | 'text' | 'avatar' | 'button' | 'list' | 'table' | 'grid';
   count?: number;
   width?: string | number;
   height?: string | number;
@@ -27,6 +27,8 @@ export const MsLoadingSkeleton: React.FC<MsLoadingSkeletonProps> = ({
       variant === 'avatar' && "w-10 h-10 rounded-full",
       variant === 'button' && "w-24 h-9 rounded-md",
       variant === 'list' && "w-full h-12 rounded-md",
+      variant === 'table' && "w-full h-8 rounded-sm",
+      variant === 'grid' && "aspect-square w-full rounded-lg",
       className
     );
     
@@ -56,6 +58,7 @@ export const MsLoadingSkeleton: React.FC<MsLoadingSkeletonProps> = ({
   );
 };
 
+// Specialized skeleton components for common use cases
 export const MsLoadingSkeletonText: React.FC<Omit<MsLoadingSkeletonProps, 'variant'>> = (props) => {
   return (
     <div className="space-y-2">
@@ -85,6 +88,41 @@ export const MsLoadingSkeletonCard: React.FC<Omit<MsLoadingSkeletonProps, 'varia
       <div className="flex justify-end mt-4">
         <MsLoadingSkeleton variant="button" {...props} />
       </div>
+    </div>
+  );
+};
+
+export const MsLoadingSkeletonTable: React.FC<Omit<MsLoadingSkeletonProps, 'variant'> & { rows?: number, columns?: number }> = ({ 
+  rows = 5, 
+  columns = 4,
+  ...props 
+}) => {
+  return (
+    <div className="w-full space-y-3">
+      <div className="flex gap-2 mb-2">
+        {Array.from({ length: columns }, (_, i) => (
+          <MsLoadingSkeleton 
+            key={`header-${i}`} 
+            variant="text" 
+            className="h-8 font-semibold"
+            width={`${100/columns}%`}
+            {...props} 
+          />
+        ))}
+      </div>
+      
+      {Array.from({ length: rows }, (_, i) => (
+        <div key={`row-${i}`} className="flex gap-2">
+          {Array.from({ length: columns }, (_, j) => (
+            <MsLoadingSkeleton 
+              key={`cell-${i}-${j}`} 
+              variant="text"
+              width={`${100/columns}%`} 
+              {...props} 
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 };

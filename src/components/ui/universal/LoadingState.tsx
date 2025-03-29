@@ -2,6 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import { MsLoading } from '@/components/ui/ms-loading';
 
 export interface LoadingStateProps {
   message?: string;
@@ -9,7 +10,7 @@ export interface LoadingStateProps {
   size?: 'sm' | 'md' | 'lg';
   center?: boolean;
   fullPage?: boolean;
-  variant?: 'default' | 'spinner' | 'skeleton' | 'inline';
+  variant?: 'default' | 'spinner' | 'skeleton' | 'inline' | 'shimmer' | 'progress' | 'dots';
   skeletonCount?: number;
   skeletonClassName?: string;
 }
@@ -24,6 +25,78 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   skeletonCount = 3,
   skeletonClassName,
 }) => {
+  // Map the size to MsLoading size
+  const msSize = size as 'sm' | 'md' | 'lg';
+  
+  // For skeleton variant, use MsLoading with skeleton variant
+  if (variant === 'skeleton') {
+    return (
+      <MsLoading
+        variant="skeleton"
+        count={skeletonCount}
+        skeletonClassName={skeletonClassName}
+        className={className}
+        center={center}
+      />
+    );
+  }
+  
+  // For inline variant, use MsLoading with inline prop
+  if (variant === 'inline') {
+    return (
+      <MsLoading
+        variant="spinner"
+        message={message}
+        size={msSize}
+        className={className}
+        inline={true}
+      />
+    );
+  }
+  
+  // For shimmer variant
+  if (variant === 'shimmer') {
+    return (
+      <MsLoading
+        variant="shimmer"
+        message={message}
+        size={msSize}
+        className={className}
+        center={center}
+        fullscreen={fullPage}
+      />
+    );
+  }
+  
+  // For progress variant
+  if (variant === 'progress') {
+    return (
+      <MsLoading
+        variant="progress"
+        message={message}
+        size={msSize}
+        className={className}
+        center={center}
+        fullscreen={fullPage}
+      />
+    );
+  }
+  
+  // For dots variant
+  if (variant === 'dots') {
+    return (
+      <MsLoading
+        variant="dots"
+        message={message}
+        size={msSize}
+        className={className}
+        center={center}
+        fullscreen={fullPage}
+      />
+    );
+  }
+
+  // Default fallback for backward compatibility
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
@@ -37,34 +110,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
     className
   );
 
-  // Render inline variant (used in buttons, etc.)
-  if (variant === 'inline') {
-    return (
-      <span className={cn('flex items-center gap-2', className)}>
-        <Loader2 className={cn('animate-spin', sizeClasses[size])} />
-        {message && <span className="text-sm">{message}</span>}
-      </span>
-    );
-  }
-
-  // Render skeleton loading placeholders
-  if (variant === 'skeleton') {
-    return (
-      <div className={cn('w-full space-y-4', className)}>
-        {Array.from({ length: skeletonCount }).map((_, index) => (
-          <div 
-            key={index}
-            className={cn(
-              'loading-skeleton rounded-md', 
-              skeletonClassName || 'h-20 w-full'
-            )}
-          />
-        ))}
-      </div>
-    );
-  }
-
-  // Default spinner variant
+  // Default spinner variant (for backward compatibility)
   return (
     <div className={containerClasses}>
       <Loader2 className={cn('animate-spin', sizeClasses[size])} />

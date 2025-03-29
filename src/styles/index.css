@@ -6,6 +6,9 @@
 /* Import modular theme components */
 @import './theme/index.css';
 
+/* Import loading animations */
+@import './modules/loading.css';
+
 /* Import other modules */
 @import './modules/accessibility/index.css';
 @import './global.css';
