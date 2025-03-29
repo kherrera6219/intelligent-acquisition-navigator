@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
@@ -6,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle, Filter } from 'lucide-react';
 import { SearchBar } from '@/components/proposals/SearchBar';
 import { ProposalList } from '@/components/proposals/ProposalList';
-import { Pagination } from '@/components/proposals/Pagination';
+import { SimplePagination } from '@/components/ui/pagination/SimplePagination';
 import { ProposalModal } from '@/components/proposals/ProposalModal';
 import UniversalInternalHeader from '@/components/layout/UniversalInternalHeader';
 import { InternalFooter } from '@/components/layout/InternalFooter';
+import { usePagination } from '@/hooks/usePagination';
 import type { Proposal } from '@/types/proposals';
 
 export default function ProposalsPage() {
@@ -19,10 +21,20 @@ export default function ProposalsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  const itemsPerPage = 5;
+  const { 
+    currentPage, 
+    itemsPerPage, 
+    changePageSize,
+    totalPages, 
+    goToPage, 
+    paginateArray 
+  } = usePagination({
+    initialPage: 1,
+    pageSize: 5,
+    totalItems: filteredProposals.length
+  });
   
   useEffect(() => {
     const fetchProposals = async () => {
@@ -65,15 +77,11 @@ export default function ProposalsPage() {
     );
     
     setFilteredProposals(filtered);
-    setCurrentPage(1); // Reset to first page when search changes
-  }, [searchTerm, proposals]);
+    goToPage(1); // Reset to first page when search changes
+  }, [searchTerm, proposals, goToPage]);
   
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-  };
-  
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
   };
   
   const handleProposalClick = (id: string) => {
@@ -92,12 +100,7 @@ export default function ProposalsPage() {
   };
   
   // Paginate the filtered proposals
-  const paginatedProposals = filteredProposals.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  
-  const totalPages = Math.ceil(filteredProposals.length / itemsPerPage);
+  const paginatedProposals = paginateArray(filteredProposals);
   
   return (
     <>
@@ -122,23 +125,44 @@ export default function ProposalsPage() {
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             <SearchBar onSearch={handleSearch} />
             
-            <Button variant="outline" size="sm" className="sm:self-end">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
+            <div className="flex items-center gap-2">
+              <select
+                className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+                value={itemsPerPage}
+                onChange={(e) => changePageSize(Number(e.target.value))}
+              >
+                <option value="5">5 per page</option>
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+              </select>
+            
+              <Button variant="outline" size="sm" className="h-9">
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+              </Button>
+            </div>
           </div>
           
           <Card className="p-6">
             <ProposalList 
               proposals={paginatedProposals} 
               onProposalClick={handleProposalClick}
+              isLoading={isLoading}
+              isError={!!error}
+              error={error}
+              emptyMessage={searchTerm ? "No proposals match your search criteria." : "No proposals found."}
             />
             
-            <Pagination 
-              currentPage={currentPage} 
-              totalPages={totalPages} 
-              onPageChange={handlePageChange} 
-            />
+            {filteredProposals.length > 0 && (
+              <div className="mt-6">
+                <SimplePagination 
+                  currentPage={currentPage} 
+                  totalPages={totalPages} 
+                  onPageChange={goToPage} 
+                  variant="default"
+                />
+              </div>
+            )}
           </Card>
         </div>
         

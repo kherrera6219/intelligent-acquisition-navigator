@@ -2,6 +2,7 @@
 import React from 'react';
 import { Table, TableHeader, TableRow, TableHead, TableBody } from '@/components/ui/table';
 import { TableCell } from '@/components/ui/table-cell';
+import { SimplePagination } from '@/components/ui/pagination/SimplePagination';
 
 export interface MarketResearchItem {
   id: string;
@@ -40,34 +41,6 @@ const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
       currency: 'USD',
       minimumFractionDigits: 0
     }).format(amount);
-  };
-  
-  const renderPagination = () => {
-    if (totalPages <= 1) return null;
-    
-    return (
-      <div className="flex justify-between items-center mt-4">
-        <button
-          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        
-        <button
-          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-    );
   };
   
   return (
@@ -111,7 +84,14 @@ const MarketResearchTable: React.FC<MarketResearchTableProps> = ({
         </TableBody>
       </Table>
       
-      {renderPagination()}
+      <div className="p-4 border-t">
+        <SimplePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          variant="default"
+        />
+      </div>
     </div>
   );
 };

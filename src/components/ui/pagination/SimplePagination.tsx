@@ -11,6 +11,8 @@ export interface SimplePaginationProps {
   showPageNumbers?: boolean;
   className?: string;
   size?: 'sm' | 'default' | 'lg';
+  pageNumbersToShow?: number;
+  variant?: 'default' | 'minimal' | 'compact';
 }
 
 export const SimplePagination: React.FC<SimplePaginationProps> = ({
@@ -19,7 +21,9 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
   onPageChange,
   showPageNumbers = true,
   className,
-  size = 'default'
+  size = 'default',
+  pageNumbersToShow = 5,
+  variant = 'default'
 }) => {
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -36,9 +40,8 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
   // Create an array of page numbers to display
   const getPageNumbers = () => {
     const pageNumbers = [];
-    const maxPagesToShow = 5; // Show at most 5 page numbers
     
-    if (totalPages <= maxPagesToShow) {
+    if (totalPages <= pageNumbersToShow) {
       // If we have fewer pages than the max, show them all
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
@@ -53,9 +56,9 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
       
       // Adjust if we're near the beginning or end
       if (currentPage <= 3) {
-        endPage = 4;
+        endPage = Math.min(4, totalPages - 1);
       } else if (currentPage >= totalPages - 2) {
-        startPage = totalPages - 3;
+        startPage = Math.max(totalPages - 3, 2);
       }
       
       // Add ellipsis if needed
@@ -88,6 +91,93 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
     lg: 'text-base py-3 px-6'
   };
 
+  // Render a minimal version with just the page info and arrows
+  if (variant === 'minimal') {
+    return (
+      <div className={cn("flex items-center justify-between", className)}>
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={goToPreviousPage}
+          disabled={currentPage === 1}
+          aria-label="Previous page"
+          className="h-8 w-8"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        
+        <span className="text-sm">
+          Page {currentPage} of {totalPages}
+        </span>
+        
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={goToNextPage}
+          disabled={currentPage === totalPages}
+          aria-label="Next page"
+          className="h-8 w-8"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  // Render a compact version with just page numbers (no "Previous"/"Next" text)
+  if (variant === 'compact') {
+    return (
+      <div className={cn("flex items-center justify-center space-x-1", className)}>
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={goToPreviousPage}
+          disabled={currentPage === 1}
+          aria-label="Previous page"
+          className="h-8 w-8"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        
+        {showPageNumbers && getPageNumbers().map((page, index) => (
+          typeof page === 'number' ? (
+            <button
+              key={index}
+              onClick={() => onPageChange(page)}
+              className={cn(
+                "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
+                "h-8 w-8",
+                currentPage === page 
+                  ? "bg-primary text-primary-foreground" 
+                  : "bg-transparent hover:bg-muted"
+              )}
+              aria-current={currentPage === page ? "page" : undefined}
+              aria-label={`Go to page ${page}`}
+            >
+              {page}
+            </button>
+          ) : (
+            <span key={index} className="px-1">
+              {page}
+            </span>
+          )
+        ))}
+        
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={goToNextPage}
+          disabled={currentPage === totalPages}
+          aria-label="Next page"
+          className="h-8 w-8"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  // Default variant with full controls
   return (
     <div className={cn("flex items-center justify-between", className)}>
       <Button 
