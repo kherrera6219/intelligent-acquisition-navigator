@@ -112,3 +112,121 @@
 .ms-responsive-section {
   @apply py-8 sm:py-12 md:py-16 lg:py-20;
 }
+
+/* Fluid typography */
+.fluid-text-sm {
+  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+}
+
+.fluid-text-base {
+  font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+}
+
+.fluid-text-lg {
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+}
+
+.fluid-text-xl {
+  font-size: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+}
+
+.fluid-text-2xl {
+  font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+}
+
+.fluid-text-3xl {
+  font-size: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+}
+
+.fluid-text-4xl {
+  font-size: clamp(1.875rem, 1.6rem + 1.375vw, 2.25rem);
+}
+
+/* Responsive spacing */
+.responsive-gap-small {
+  @apply gap-2 md:gap-3 lg:gap-4;
+}
+
+.responsive-gap-medium {
+  @apply gap-3 md:gap-5 lg:gap-6;
+}
+
+.responsive-gap-large {
+  @apply gap-4 md:gap-6 lg:gap-8;
+}
+
+.responsive-margin-small {
+  @apply m-2 md:m-3 lg:m-4;
+}
+
+.responsive-margin-medium {
+  @apply m-3 md:m-5 lg:m-6;
+}
+
+.responsive-margin-large {
+  @apply m-4 md:m-6 lg:m-8;
+}
+
+.responsive-padding-small {
+  @apply p-2 md:p-3 lg:p-4;
+}
+
+.responsive-padding-medium {
+  @apply p-3 md:p-5 lg:p-6;
+}
+
+.responsive-padding-large {
+  @apply p-4 md:p-6 lg:p-8;
+}
+
+/* Responsive cards */
+.responsive-card {
+  @apply p-3 md:p-4 lg:p-6 rounded-lg border border-border bg-card;
+}
+
+/* Animation delays for staggered entrances */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Responsive content width */
+.content-width-sm {
+  width: clamp(300px, 95%, 640px);
+  @apply mx-auto;
+}
+
+.content-width-md {
+  width: clamp(300px, 95%, 768px);
+  @apply mx-auto;
+}
+
+.content-width-lg {
+  width: clamp(300px, 95%, 1024px);
+  @apply mx-auto;
+}
+
+.content-width-xl {
+  width: clamp(300px, 95%, 1280px);
+  @apply mx-auto;
+}
+
+.content-width-2xl {
+  width: clamp(300px, 95%, 1536px);
+  @apply mx-auto;
+}

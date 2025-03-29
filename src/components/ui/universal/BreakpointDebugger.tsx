@@ -21,7 +21,6 @@ export const BreakpointDebugger: React.FC = () => {
           <Switch 
             checked={isVisible}
             onCheckedChange={setIsVisible}
-            size="sm"
           />
         </div>
         
@@ -30,7 +29,6 @@ export const BreakpointDebugger: React.FC = () => {
           <Switch 
             checked={showGrid}
             onCheckedChange={setShowGrid}
-            size="sm"
           />
         </div>
         
