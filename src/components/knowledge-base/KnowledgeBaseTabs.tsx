@@ -1,32 +1,44 @@
 
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KnowledgeBaseItemType } from "@/types/knowledge-base";
 
 interface KnowledgeBaseTabsProps {
-  activeTab: KnowledgeBaseItemType;
-  onTabChange: (tab: KnowledgeBaseItemType) => void;
-  children: React.ReactNode;
+  activeTab: KnowledgeBaseItemType | "all";
+  searchQuery: string;
+  selectedFilters: {
+    types: KnowledgeBaseItemType[];
+    tags: string[];
+  };
 }
 
-export const KnowledgeBaseTabs = ({
+export const KnowledgeBaseTabs: React.FC<KnowledgeBaseTabsProps> = ({
   activeTab,
-  onTabChange,
-  children
-}: KnowledgeBaseTabsProps) => {
+  searchQuery,
+  selectedFilters
+}) => {
   return (
-    <Tabs defaultValue={activeTab} onValueChange={(value) => onTabChange(value as KnowledgeBaseItemType)}>
-      <TabsList className="mb-6 w-full max-w-md mx-auto grid grid-cols-3 sm:grid-cols-6">
-        <TabsTrigger value="document">Documents</TabsTrigger>
-        <TabsTrigger value="regulation">Regulations</TabsTrigger>
-        <TabsTrigger value="template">Templates</TabsTrigger>
-        <TabsTrigger value="software">Software</TabsTrigger>
-        <TabsTrigger value="process">Processes</TabsTrigger>
-        <TabsTrigger value="research">Research</TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value={activeTab}>
-        {children}
-      </TabsContent>
-    </Tabs>
+    <div className="p-6">
+      {/* This would contain your actual knowledge base items filtered by tab, search, and filters */}
+      <div className="space-y-4">
+        <p className="text-sm text-muted-foreground">
+          {activeTab === "all" ? "All documents" : `Filtered by: ${activeTab}`}
+          {searchQuery && `, Search: "${searchQuery}"`}
+          {selectedFilters.types.length > 0 && `, Types: ${selectedFilters.types.join(", ")}`}
+          {selectedFilters.tags.length > 0 && `, Tags: ${selectedFilters.tags.join(", ")}`}
+        </p>
+        
+        <div className="rounded-md border p-4">
+          {/* This is a placeholder for actual content */}
+          <p className="text-center text-muted-foreground py-12">
+            {searchQuery 
+              ? `Showing results for "${searchQuery}"` 
+              : activeTab === "all" 
+                ? "All documents in knowledge base" 
+                : `Showing ${activeTab} items`}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
