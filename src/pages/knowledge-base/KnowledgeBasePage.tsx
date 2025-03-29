@@ -7,24 +7,28 @@ import { KnowledgeBaseFilters } from "@/components/knowledge-base/KnowledgeBaseF
 import { KnowledgeSearch } from "@/components/knowledge-base/KnowledgeSearch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UniversalInternalHeader } from "@/components/layout/UniversalInternalHeader";
+import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
 import { InternalFooter } from "@/components/layout/InternalFooter";
 import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
+import { KnowledgeBaseItemType } from "@/types/knowledge-base";
 
 const KnowledgeBasePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<KnowledgeBaseItemType | "all">("all");
+  const [selectedFilters, setSelectedFilters] = useState<{ types: KnowledgeBaseItemType[], tags: string[] }>({
+    types: [],
+    tags: []
+  });
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value);
+    setActiveTab(value as KnowledgeBaseItemType | "all");
   };
 
-  const handleFilterChange = (filters: string[]) => {
+  const handleFilterChange = (filters: { types: KnowledgeBaseItemType[], tags: string[] }) => {
     setSelectedFilters(filters);
   };
 
@@ -48,7 +52,10 @@ const KnowledgeBasePage: React.FC = () => {
 
           <Card className="overflow-hidden">
             <div className="p-4 border-b">
-              <KnowledgeSearch onSearch={handleSearch} />
+              <KnowledgeSearch 
+                query={searchQuery}
+                onChange={handleSearch}
+              />
             </div>
             <div className="p-4 border-b bg-muted/20">
               <KnowledgeBaseFilters
@@ -61,10 +68,10 @@ const KnowledgeBasePage: React.FC = () => {
                 <div className="border-b px-4">
                   <TabsList className="bg-transparent h-12">
                     <TabsTrigger value="all">All Documents</TabsTrigger>
-                    <TabsTrigger value="regulations">Regulations</TabsTrigger>
-                    <TabsTrigger value="templates">Templates</TabsTrigger>
-                    <TabsTrigger value="guidelines">Guidelines</TabsTrigger>
-                    <TabsTrigger value="recent">Recently Viewed</TabsTrigger>
+                    <TabsTrigger value="regulation">Regulations</TabsTrigger>
+                    <TabsTrigger value="template">Templates</TabsTrigger>
+                    <TabsTrigger value="process">Guidelines</TabsTrigger>
+                    <TabsTrigger value="document">Recently Viewed</TabsTrigger>
                   </TabsList>
                 </div>
                 <TabsContent value={activeTab} className="m-0">

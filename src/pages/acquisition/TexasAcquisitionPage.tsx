@@ -3,7 +3,7 @@ import { useTexasConversation } from "@/hooks/useTexasConversation";
 import { useTexasChatSubmit } from "@/hooks/useTexasChatSubmit";
 import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
-import { UniversalInternalHeader } from "@/components/layout/UniversalInternalHeader";
+import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
 import { InternalFooter } from "@/components/layout/InternalFooter";
 import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
