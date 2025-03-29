@@ -1,94 +1,60 @@
 
-import { RouteObject } from "react-router-dom";
-import { lazy } from "react";
+import React from 'react';
+import { RouteObject } from 'react-router-dom';
 
-// Lazy-load landing page components
-const HomePage = lazy(() => import("../pages/HomePage"));
-const AboutPage = lazy(() => import("../pages/AboutPage"));
-const FeaturesPage = lazy(() => import("../pages/FeaturesPage"));
-const PricingPage = lazy(() => import("../pages/PricingPage"));
-const ContactPage = lazy(() => import("../pages/ContactPage"));
-const HelpPage = lazy(() => import("../pages/HelpPage"));
-const PrivacyPage = lazy(() => import("../pages/PrivacyPage"));
-const TermsPage = lazy(() => import("../pages/TermsOfServicePage"));
-const SitemapPage = lazy(() => import("../pages/SitemapPage"));
-const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
-const KnowledgeBasePage = lazy(() => import("../pages/KnowledgeBasePage"));
-const WireframeShowcasePage = lazy(() => import("../pages/WireframeShowcasePage"));
-const CaseStudiesPage = lazy(() => import("../pages/CaseStudiesPage"));
-const BlogPage = lazy(() => import("../pages/BlogPage"));
-const ApiDocsPage = lazy(() => import("../pages/ApiDocsPage"));
-const SecurityPage = lazy(() => import("../pages/SecurityPage"));
-const TestimonialsPage = lazy(() => import("../pages/TestimonialsPage"));
+// Import route components
+const HomePage = React.lazy(() => import('@/pages/HomePage'));
+const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
+const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
+const PricingPage = React.lazy(() => import('@/pages/PricingPage'));
+const FeaturesPage = React.lazy(() => import('@/pages/FeaturesPage'));
+const TestimonialsPage = React.lazy(() => import('@/pages/TestimonialsPage'));
+const PrivacyPage = React.lazy(() => import('@/pages/PrivacyPage'));
+const TermsOfServicePage = React.lazy(() => import('@/pages/TermsOfServicePage'));
+const DocsPage = React.lazy(() => import('@/pages/DocsPage'));
+const DocDetailPage = React.lazy(() => import('@/pages/DocDetailPage'));
 
+// Define landing routes
 const landingRoutes: RouteObject[] = [
   {
-    path: "/",
+    path: '/',
     element: <HomePage />
   },
   {
-    path: "/about",
+    path: '/about',
     element: <AboutPage />
   },
   {
-    path: "/features",
-    element: <FeaturesPage />
-  },
-  {
-    path: "/pricing",
-    element: <PricingPage />
-  },
-  {
-    path: "/contact",
+    path: '/contact',
     element: <ContactPage />
   },
   {
-    path: "/help",
-    element: <HelpPage />
+    path: '/pricing',
+    element: <PricingPage />
   },
   {
-    path: "/privacy",
-    element: <PrivacyPage />
+    path: '/features',
+    element: <FeaturesPage />
   },
   {
-    path: "/terms",
-    element: <TermsPage />
-  },
-  {
-    path: "/sitemap",
-    element: <SitemapPage />
-  },
-  {
-    path: "/knowledge-base",
-    element: <KnowledgeBasePage />
-  },
-  {
-    path: "/wireframes",
-    element: <WireframeShowcasePage />
-  },
-  {
-    path: "/case-studies",
-    element: <CaseStudiesPage />
-  },
-  {
-    path: "/blog",
-    element: <BlogPage />
-  },
-  {
-    path: "/api-docs",
-    element: <ApiDocsPage />
-  },
-  {
-    path: "/security",
-    element: <SecurityPage />
-  },
-  {
-    path: "/testimonials",
+    path: '/testimonials',
     element: <TestimonialsPage />
   },
   {
-    path: "*",
-    element: <NotFoundPage />
+    path: '/privacy',
+    element: <PrivacyPage />
+  },
+  {
+    path: '/terms',
+    element: <TermsOfServicePage />
+  },
+  {
+    path: '/docs',
+    element: <DocsPage />
+  },
+  {
+    path: '/docs/:slug',
+    element: <DocDetailPage />
   }
 ];
 
