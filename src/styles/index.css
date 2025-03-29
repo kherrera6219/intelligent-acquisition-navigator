@@ -6,9 +6,53 @@
 /* Import modular theme components */
 @import './theme/index.css';
 
+/* Import Microsoft Fluent UI styles */
+@import './modules/ms-fluent/index.css';
+
 /* Import loading animations */
 @import './modules/loading.css';
 
 /* Import other modules */
 @import './modules/accessibility/index.css';
 @import './global.css';
+
+/* Mobile-first responsive design */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+@media screen and (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* Print styles - essential for marketplace applications */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+}
+
+/* Enhances viewport height calculation for mobile browsers */
+:root {
+  --vh: 1vh;
+}
+
+/* Device-specific optimizations */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: min(0vmax, env(safe-area-inset-left));
+    padding-right: min(0vmax, env(safe-area-inset-right));
+  }
+}

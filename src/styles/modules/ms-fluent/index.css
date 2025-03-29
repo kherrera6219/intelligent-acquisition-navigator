@@ -1,0 +1,13 @@
+
+/* Microsoft Fluent UI Main Stylesheet */
+
+/* Import core components and base styles */
+@import './core.css';
+@import './typography.css';
+@import './layout.css';
+@import './interactive.css';
+@import './animations.css';
+@import './status.css';
+@import './responsive.css';
+
+/* This file acts as a central import for all Microsoft Fluent UI styles */

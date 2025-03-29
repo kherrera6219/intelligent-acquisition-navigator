@@ -1,50 +1,25 @@
 
-import React, { useEffect } from 'react';
-import { RouterProvider } from 'react-router-dom';
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from '@/providers/AuthProvider';
-import { ThemeProvider } from '@/providers/ThemeProvider';
-import { QueryProvider } from '@/providers/QueryProvider';
-import CookieConsent from '@/components/CookieConsent';
-import { NetworkStatusMonitor } from '@/components/ui/universal/NetworkStatusMonitor';
-import { NetworkMonitorProvider } from '@/components/ui/universal/NetworkMonitorProvider';
-import { initOfflineDB, clearExpiredCache } from '@/utils/offlineStorage';
-import { generateCsrfToken } from '@/utils/csrfProtection';
-import { browserRouter } from './routes/index';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import Dashboard from './pages/Dashboard';
+
+// Lazy-loaded page components
+const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase'));
+const TypographyPage = lazy(() => import('./pages/TypographyPage'));
 
 function App() {
-  // Initialize security and storage features on app load
-  useEffect(() => {
-    // Initialize CSRF token
-    generateCsrfToken();
-    
-    // Initialize offline database
-    const setupOfflineStorage = async () => {
-      try {
-        await initOfflineDB();
-        // Clear expired cache items
-        await clearExpiredCache();
-      } catch (error) {
-        console.error('Error initializing offline storage:', error);
-      }
-    };
-    
-    setupOfflineStorage();
-  }, []);
-  
   return (
-    <QueryProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <NetworkMonitorProvider>
-            <NetworkStatusMonitor />
-            <RouterProvider router={browserRouter} />
-            <CookieConsent />
-            <Toaster />
-          </NetworkMonitorProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryProvider>
+    <Router>
+      <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/components" element={<ComponentsShowcase />} />
+          <Route path="/typography" element={<TypographyPage />} />
+        </Routes>
+      </Suspense>
+    </Router>
   );
 }
 

@@ -1,173 +1,273 @@
 
-/* Microsoft Fluent Motion System */
+/* Microsoft Fluent UI Animation System */
+
+@keyframes progressIndeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Animation Classes */
 .ms-motion-fadeIn {
-  animation: msFadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
-.ms-motion-slideUp {
-  animation: msSlideUp 0.3s ease-out forwards;
-}
-
-.ms-motion-slideIn {
-  animation: msSlideIn 0.3s ease-out forwards;
-}
-
-.ms-motion-scaleIn {
-  animation: msScaleIn 0.2s ease-out forwards;
-}
-
-.ms-motion-fadeInUp {
-  animation: msFadeInUp 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
-
-.ms-motion-fadeInLeft {
-  animation: msFadeInLeft 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
-
-.ms-motion-slideInBottom {
-  animation: msSlideInBottom 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
-
-.ms-motion-slideInTop {
-  animation: msSlideInTop 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+.ms-motion-fadeOut {
+  animation: fadeOut 0.3s ease-out forwards;
 }
 
 .ms-motion-slideInRight {
-  animation: msSlideInRight 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation: slideInFromRight 0.3s ease-out forwards;
 }
 
-.ms-motion-fadeInStagger > *:nth-child(1) { animation-delay: 0ms; }
-.ms-motion-fadeInStagger > *:nth-child(2) { animation-delay: 40ms; }
-.ms-motion-fadeInStagger > *:nth-child(3) { animation-delay: 80ms; }
-.ms-motion-fadeInStagger > *:nth-child(4) { animation-delay: 120ms; }
-.ms-motion-fadeInStagger > *:nth-child(5) { animation-delay: 160ms; }
-.ms-motion-fadeInStagger > *:nth-child(6) { animation-delay: 200ms; }
-.ms-motion-fadeInStagger > * {
-  opacity: 0;
-  animation: msFadeIn 0.4s ease-out forwards;
+.ms-motion-slideInLeft {
+  animation: slideInFromLeft 0.3s ease-out forwards;
 }
 
-@keyframes msFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.ms-motion-slideUp {
+  animation: slideInFromBottom 0.3s ease-out forwards;
 }
 
-@keyframes msSlideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.ms-motion-slideDown {
+  animation: slideInFromTop 0.3s ease-out forwards;
 }
 
-@keyframes msSlideIn {
-  from { opacity: 0; transform: translateX(10px); }
-  to { opacity: 1; transform: translateX(0); }
+.ms-motion-scaleIn {
+  animation: scaleIn 0.3s ease-out forwards;
 }
 
-@keyframes msFadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.ms-motion-scaleOut {
+  animation: scaleOut 0.3s ease-out forwards;
 }
 
-@keyframes msFadeInLeft {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+.ms-motion-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@keyframes msScaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+.ms-motion-spin {
+  animation: spin 1s linear infinite;
 }
 
-@keyframes msSlideInBottom {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.ms-motion-bounce {
+  animation: bounce 1s ease infinite;
 }
 
-@keyframes msSlideInTop {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes msSlideInRight {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* Entrance animations for specific components */
+/* Combined Animation Classes */
 .ms-card-entrance {
-  animation: msCardEntrance 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation: fadeIn 0.5s ease-out forwards, slideInFromBottom 0.5s ease-out forwards;
 }
 
 .ms-toast-entrance {
-  animation: msToastEntrance 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation: slideInFromRight 0.3s ease-out forwards, fadeIn 0.3s ease-out forwards;
 }
 
-@keyframes msCardEntrance {
-  from { 
-    opacity: 0; 
-    transform: translateY(10px) scale(0.98);
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0) scale(1);
-    box-shadow: var(--shadow-elevation-medium);
-  }
+.ms-notification-entrance {
+  animation: slideInFromTop 0.3s ease-out forwards, fadeIn 0.3s ease-out forwards;
 }
 
-@keyframes msToastEntrance {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px) scale(0.95);
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0) scale(1);
-  }
+/* Animation Durations */
+.ms-duration-75 {
+  transition-duration: 75ms;
 }
 
-/* Microsoft Fluent specific transition curves */
-.ms-transition-decelerate {
-  transition-timing-function: cubic-bezier(0.0, 0.0, 0.0, 1.0); /* Deceleration curve */
+.ms-duration-100 {
+  transition-duration: 100ms;
 }
 
-.ms-transition-accelerate {
-  transition-timing-function: cubic-bezier(1.0, 0.0, 1.0, 1.0); /* Acceleration curve */
+.ms-duration-150 {
+  transition-duration: 150ms;
 }
 
-.ms-transition-standard {
-  transition-timing-function: cubic-bezier(0.8, 0.0, 0.2, 1.0); /* Standard curve */
+.ms-duration-200 {
+  transition-duration: 200ms;
 }
 
-/* Duration classes */
-.ms-duration-1 { transition-duration: 100ms; animation-duration: 100ms; }
-.ms-duration-2 { transition-duration: 200ms; animation-duration: 200ms; }
-.ms-duration-3 { transition-duration: 300ms; animation-duration: 300ms; }
-.ms-duration-4 { transition-duration: 400ms; animation-duration: 400ms; }
-.ms-duration-5 { transition-duration: 500ms; animation-duration: 500ms; }
-
-/* Microsoft Fluent UI depth transitions */
-.ms-depth-transition {
-  transition: box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1), 
-              transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+.ms-duration-300 {
+  transition-duration: 300ms;
 }
 
-/* Responsive motion preferences */
+.ms-duration-500 {
+  transition-duration: 500ms;
+}
+
+.ms-duration-700 {
+  transition-duration: 700ms;
+}
+
+.ms-duration-1000 {
+  transition-duration: 1000ms;
+}
+
+/* Animation Timing Functions */
+.ms-ease-linear {
+  transition-timing-function: linear;
+}
+
+.ms-ease-in {
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.ms-ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+.ms-ease-in-out {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Transition Properties */
+.ms-transition-all {
+  transition-property: all;
+}
+
+.ms-transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+}
+
+.ms-transition-opacity {
+  transition-property: opacity;
+}
+
+.ms-transition-shadow {
+  transition-property: box-shadow;
+}
+
+.ms-transition-transform {
+  transition-property: transform;
+}
+
+/* Accessibility - Respect user preferences */
 @media (prefers-reduced-motion: reduce) {
-  .ms-motion-fadeIn, 
-  .ms-motion-slideUp,
-  .ms-motion-slideIn,
-  .ms-motion-scaleIn,
-  .ms-motion-fadeInUp,
-  .ms-motion-fadeInLeft,
-  .ms-motion-slideInBottom,
-  .ms-motion-slideInTop,
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .ms-motion-fadeIn,
+  .ms-motion-fadeOut,
   .ms-motion-slideInRight,
-  .ms-motion-fadeInStagger > *,
+  .ms-motion-slideInLeft,
+  .ms-motion-slideUp,
+  .ms-motion-slideDown,
+  .ms-motion-scaleIn,
+  .ms-motion-scaleOut,
+  .ms-motion-pulse,
+  .ms-motion-spin,
+  .ms-motion-bounce,
   .ms-card-entrance,
-  .ms-toast-entrance {
+  .ms-toast-entrance,
+  .ms-notification-entrance {
     animation: none !important;
-    transition: none !important;
-    opacity: 1 !important;
-    transform: none !important;
   }
 }

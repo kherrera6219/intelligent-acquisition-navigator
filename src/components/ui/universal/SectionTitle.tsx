@@ -4,21 +4,25 @@ import { cn } from '@/lib/utils';
 
 interface SectionTitleProps {
   title: string;
-  subtitle?: string;
-  align?: 'left' | 'center' | 'right';
+  description?: string;
   className?: string;
-  titleClassName?: string;
-  subtitleClassName?: string;
+  align?: 'left' | 'center' | 'right';
+  size?: 'small' | 'medium' | 'large';
 }
 
 export const SectionTitle: React.FC<SectionTitleProps> = ({
   title,
-  subtitle,
-  align = 'left',
+  description,
   className,
-  titleClassName,
-  subtitleClassName,
+  align = 'left',
+  size = 'medium',
 }) => {
+  const titleSizeClasses = {
+    small: 'text-xl font-semibold',
+    medium: 'text-2xl font-semibold',
+    large: 'text-3xl md:text-4xl font-bold',
+  };
+
   const alignClasses = {
     left: 'text-left',
     center: 'text-center mx-auto',
@@ -26,17 +30,15 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
   };
 
   return (
-    <div className={cn('mb-8 max-w-2xl', alignClasses[align], className)}>
-      <h2 className={cn('ms-heading-3 ms-tracking-tight', titleClassName)}>
+    <div className={cn(alignClasses[align], className)}>
+      <h2 className={cn(titleSizeClasses[size], 'ms-heading-3')}>
         {title}
       </h2>
-      {subtitle && (
-        <p className={cn('mt-3 ms-text-lg ms-text-muted', subtitleClassName)}>
-          {subtitle}
+      {description && (
+        <p className={cn('mt-2 text-muted-foreground')}>
+          {description}
         </p>
       )}
     </div>
   );
 };
-
-export default SectionTitle;
