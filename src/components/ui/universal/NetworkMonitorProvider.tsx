@@ -11,6 +11,7 @@ interface NetworkContextState {
 
 interface NetworkContextValue extends NetworkContextState {
   checkConnection: () => Promise<boolean>;
+  reconnect: () => void; // Add the missing reconnect function
 }
 
 const NetworkContext = createContext<NetworkContextValue | undefined>(undefined);
@@ -52,6 +53,25 @@ export const NetworkMonitorProvider: React.FC<NetworkMonitorProviderProps> = ({ 
     } catch (error) {
       return false;
     }
+  };
+
+  // Add the reconnect function
+  const reconnect = () => {
+    setState(prev => ({
+      ...prev,
+      isReconnecting: true,
+      reconnectAttempts: prev.reconnectAttempts + 1,
+    }));
+    
+    checkConnection().then(connected => {
+      setState(prev => ({
+        ...prev,
+        isOnline: navigator.onLine,
+        isReconnecting: false,
+        supabaseConnected: connected,
+        lastOnlineAt: connected ? new Date() : prev.lastOnlineAt,
+      }));
+    });
   };
 
   useEffect(() => {
@@ -103,6 +123,7 @@ export const NetworkMonitorProvider: React.FC<NetworkMonitorProviderProps> = ({ 
   const value = {
     ...state,
     checkConnection,
+    reconnect, // Include the reconnect function in the context value
   };
 
   return (
