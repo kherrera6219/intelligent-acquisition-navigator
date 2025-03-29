@@ -2,12 +2,12 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-interface MsGradientTextProps {
+export interface MsGradientTextProps {
   children: React.ReactNode;
   className?: string;
-  gradient?: 'primary' | 'secondary' | 'accent' | 'success' | 'custom';
+  gradient?: 'primary' | 'secondary' | 'accent' | 'custom';
   customGradient?: string;
-  variant?: string; // Added variant prop for backward compatibility
+  as?: React.ElementType;
 }
 
 export const MsGradientText: React.FC<MsGradientTextProps> = ({
@@ -15,28 +15,24 @@ export const MsGradientText: React.FC<MsGradientTextProps> = ({
   className,
   gradient = 'primary',
   customGradient,
-  variant
+  as: Component = 'span'
 }) => {
-  // If variant is provided, use it to determine gradient
-  const effectiveGradient = variant ? variant : gradient;
-  
-  const gradients = {
-    primary: 'from-blue-400 to-indigo-600',
-    secondary: 'from-purple-400 to-pink-600',
-    accent: 'from-amber-400 to-orange-600',
-    success: 'from-emerald-400 to-teal-600',
-    custom: customGradient || 'from-blue-400 to-indigo-600',
+  const gradientStyles = {
+    primary: 'from-blue-500 to-indigo-600',
+    secondary: 'from-fuchsia-500 to-purple-600',
+    accent: 'from-amber-500 to-orange-600',
+    custom: customGradient || 'from-gray-500 to-gray-600'
   };
-
+  
   return (
-    <span
+    <Component
       className={cn(
         'bg-clip-text text-transparent bg-gradient-to-r',
-        gradients[effectiveGradient as keyof typeof gradients] || gradients.primary,
+        gradientStyles[gradient],
         className
       )}
     >
       {children}
-    </span>
+    </Component>
   );
 };

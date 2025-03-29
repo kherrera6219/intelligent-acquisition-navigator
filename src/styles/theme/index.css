@@ -1,6 +1,161 @@
 
-@import './base.css';
-@import './elements.css';
+/* Theme Variables */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 355.7 100% 97.3%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 355.7 100% 97.3%;
+    --info: 200 98% 39%;
+    --info-foreground: 355.7 100% 97.3%;
+    
+    /* Microsoft Fluent specific variables */
+    --ms-header-height: 64px;
+    --ms-sidebar-width: 280px;
+    --ms-elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --ms-elevation-2: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --ms-elevation-3: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --ms-elevation-4: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    
+    /* Microsoft Fluent specific variables for dark mode */
+    --ms-elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+    --ms-elevation-2: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --ms-elevation-3: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --ms-elevation-4: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Microsoft Fluent UI Components */
+.ms-fluent-card {
+  @apply bg-card rounded-lg shadow-md border border-border/40;
+}
+
+.ms-fluent-header {
+  @apply sticky top-0 z-40 w-full bg-background/60 backdrop-blur-sm border-b border-border/40 h-16;
+}
+
+.ms-text-lg {
+  @apply text-lg;
+}
+
+.ms-heading-2 {
+  @apply text-2xl font-semibold;
+}
+
+.ms-heading-5 {
+  @apply text-lg font-medium;
+}
+
+.ms-text-muted {
+  @apply text-muted-foreground;
+}
+
+.ms-card-padding {
+  @apply p-6;
+}
+
+.ms-grid-sidebar {
+  @apply grid grid-cols-1 lg:grid-cols-[280px_1fr] min-h-[calc(100vh-4rem)];
+}
+
+.ms-badge-success {
+  @apply text-xs px-2 py-0.5 rounded-full bg-success/10 text-success;
+}
+
+.ms-badge-warning {
+  @apply text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500;
+}
+
+/* Fluent UI Animations */
+.ms-motion-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ms-motion-slideIn {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.ms-motion-scaleIn {
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Fluent Acrylic Effect */
+.fluent-acrylic {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.fluent-acrylic::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23ffffff' fill-opacity='0.02' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+  opacity: 0.05;
+  z-index: -1;
+}
+
+/* Import modular theme components */
+@import './typography.css';
 @import './components.css';
-@import './utilities.css';
-@import '../modules/accessibility/index.css';
+@import './fluent.css';

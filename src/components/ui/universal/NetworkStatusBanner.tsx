@@ -1,63 +1,73 @@
 
 import React from 'react';
+import { AlertTriangle, Wifi, WifiOff, ServerOff, RefreshCw } from 'lucide-react';
 import { useNetworkMonitor } from './NetworkMonitorProvider';
-import { useSupabaseHealth } from '@/hooks/useSupabaseHealth';
-import { NetworkStatusTooltip } from './NetworkStatusTooltip';
-import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export const NetworkStatusBanner = () => {
-  const { isOnline, isReconnecting } = useNetworkMonitor();
-  const { health, isChecking, checkHealth } = useSupabaseHealth();
+export const NetworkStatusBanner: React.FC = () => {
+  const { isOnline, isReconnecting, supabaseConnected, reconnect } = useNetworkMonitor();
   
-  // Determine if Supabase connection is available - safely check for the status
-  const supabaseConnected = health && 'status' in health ? health.status === 'available' : false;
-
-  // Only show banner if there's an issue or we're reconnecting
+  // Don't render if everything is fine
   if (isOnline && supabaseConnected && !isReconnecting) {
     return null;
   }
-
+  
+  // Determine banner style based on state
+  const getBannerStyle = () => {
+    if (!isOnline) {
+      return {
+        className: 'bg-destructive/10 text-destructive border-destructive/20',
+        icon: WifiOff
+      };
+    }
+    
+    if (isReconnecting) {
+      return {
+        className: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+        icon: RefreshCw
+      };
+    }
+    
+    if (!supabaseConnected) {
+      return {
+        className: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+        icon: ServerOff
+      };
+    }
+    
+    return {
+      className: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+      icon: Wifi
+    };
+  };
+  
+  const { className, icon: Icon } = getBannerStyle();
+  
   return (
     <div className={cn(
-      "w-full px-4 py-2 flex justify-between items-center text-sm border-b transition-colors",
-      !isOnline 
-        ? "bg-destructive/10 border-destructive/20 text-destructive dark:bg-destructive/20" 
-        : isReconnecting 
-          ? "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400" 
-          : "bg-blue-500/10 border-blue-500/20 text-blue-700 dark:text-blue-400"
+      'ms-network-status-banner px-4 py-2 text-sm border-b flex items-center justify-between',
+      className
     )}>
       <div className="flex items-center gap-2">
-        <NetworkStatusTooltip
-          isOnline={isOnline}
-          isReconnecting={isReconnecting}
-          supabaseConnected={Boolean(supabaseConnected)}
-        />
-        <span className="sm:inline hidden">
-          {!isOnline 
-            ? "You're offline. Some features are unavailable." 
-            : isReconnecting 
-              ? "Reconnecting..." 
-              : "Limited connection to services. Some features may be unavailable."}
-        </span>
-        <span className="sm:hidden inline">
-          {!isOnline 
-            ? "You're offline" 
-            : isReconnecting 
-              ? "Reconnecting..." 
-              : "Limited connection"}
+        <Icon className={cn(
+          'h-4 w-4',
+          isReconnecting && 'animate-spin'
+        )} />
+        <span>
+          {!isOnline && 'You are offline. Check your internet connection.'}
+          {isOnline && isReconnecting && 'Reconnecting to server...'}
+          {isOnline && !supabaseConnected && !isReconnecting && 'Database connection issue. Some features may be unavailable.'}
         </span>
       </div>
       
-      <button 
-        onClick={checkHealth}
-        disabled={isChecking}
-        className="text-xs flex items-center gap-1 px-2 py-1 bg-background/10 rounded hover:bg-background/20 transition-colors"
-        aria-label="Check connection"
-      >
-        <RefreshCw className={cn("h-3 w-3", isChecking && "animate-spin")} />
-        <span className="hidden sm:inline">Retry</span>
-      </button>
+      {isOnline && (
+        <button 
+          onClick={reconnect}
+          className="text-xs px-2 py-1 rounded border hover:bg-background/50 transition-colors"
+        >
+          Retry
+        </button>
+      )}
     </div>
   );
 };

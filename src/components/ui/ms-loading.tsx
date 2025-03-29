@@ -1,18 +1,19 @@
 
 import React from 'react';
-import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 export interface MsLoadingProps {
-  variant?: 'spinner' | 'shimmer' | 'progress' | 'dots' | 'skeleton';
+  variant?: 'spinner' | 'progress' | 'dots' | 'shimmer' | 'skeleton';
   size?: 'xs' | 'sm' | 'md' | 'lg';
   message?: string;
   className?: string;
+  messageClassName?: string;
+  center?: boolean;
+  inline?: boolean;
   fullscreen?: boolean;
   count?: number;
   skeletonClassName?: string;
-  center?: boolean;
-  inline?: boolean;
 }
 
 export const MsLoading: React.FC<MsLoadingProps> = ({
@@ -20,124 +21,151 @@ export const MsLoading: React.FC<MsLoadingProps> = ({
   size = 'md',
   message,
   className,
+  messageClassName,
+  center = true,
+  inline = false,
   fullscreen = false,
   count = 3,
-  skeletonClassName = "h-20 w-full",
-  center = true,
-  inline = false
+  skeletonClassName,
 }) => {
-  const getSizeClasses = () => {
-    switch (size) {
-      case 'xs': return 'h-3 w-3 border-2';
-      case 'sm': return 'h-4 w-4 border-2';
-      case 'lg': return 'h-12 w-12 border-4';
-      case 'md':
-      default: return 'h-8 w-8 border-3';
-    }
+  // Size classes for spinner
+  const sizeClasses = {
+    xs: 'ms-loading-xs',
+    sm: 'ms-loading-sm',
+    md: 'ms-loading-md',
+    lg: 'ms-loading-lg'
   };
 
-  const containerClasses = cn(
-    "ms-motion-fadeIn",
-    fullscreen ? "fixed inset-0 bg-background/80 backdrop-blur-sm z-50" : "",
-    center && !inline ? "flex flex-col items-center justify-center" : "",
-    inline ? "inline-flex items-center gap-2" : "",
-    className
-  );
-
-  const contentClasses = cn(
-    "text-center",
-    fullscreen ? "loading-scale-in" : "loading-fade-in",
-    !inline && "flex flex-col items-center"
-  );
-
-  // For inline variant (used in buttons, etc.)
-  if (inline) {
-    return (
-      <span className={containerClasses}>
-        <Loader2 className={cn('animate-spin', getSizeClasses())} />
-        {message && <span className="text-sm">{message}</span>}
-      </span>
+  // Spinner Component
+  if (variant === 'spinner') {
+    const containerClasses = cn(
+      'ms-loading',
+      inline ? 'inline-flex items-center gap-2' : 'flex flex-col items-center',
+      center && !inline && 'mx-auto',
+      fullscreen && 'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm',
+      className
     );
-  }
 
-  // For skeleton loading
-  if (variant === 'skeleton') {
     return (
-      <div className={cn('w-full space-y-4', containerClasses)}>
-        {Array.from({ length: count }).map((_, index) => (
-          <div 
-            key={index}
-            className={cn(
-              'ms-loading-shimmer rounded-md', 
-              skeletonClassName
-            )}
-          />
-        ))}
+      <div className={containerClasses}>
+        <Loader2 className={cn('animate-spin text-primary', sizeClasses[size])} />
+        {message && (
+          <span className={cn('text-muted-foreground mt-2', messageClassName)}>
+            {message}
+          </span>
+        )}
       </div>
     );
   }
 
-  const renderLoader = () => {
-    switch (variant) {
-      case 'shimmer':
-        return (
-          <div className={cn(
-            "ms-loading-shimmer rounded-md bg-white/10",
-            size === 'xs' && "w-6 h-6",
-            size === 'sm' && "w-12 h-12",
-            size === 'md' && "w-16 h-16",
-            size === 'lg' && "w-24 h-24"
-          )} />
-        );
-      case 'progress':
-        return (
-          <div className={cn(
-            "ms-loading-progress",
-            size === 'xs' && "w-16",
-            size === 'sm' && "w-24",
-            size === 'md' && "w-40",
-            size === 'lg' && "w-64"
-          )} />
-        );
-      case 'dots':
-        return (
-          <div className={cn(
-            "ms-loading-dots font-semibold",
-            size === 'xs' && "text-xs",
-            size === 'sm' && "text-sm",
-            size === 'md' && "text-base",
-            size === 'lg' && "text-lg"
-          )}>
-            {message || "Loading"}
-          </div>
-        );
-      case 'spinner':
-      default:
-        return (
-          <Loader2 className={cn(
-            "animate-spin text-primary", 
-            getSizeClasses()
-          )} />
-        );
-    }
-  };
+  // Progress Bar Component
+  if (variant === 'progress') {
+    const containerClasses = cn(
+      'ms-loading',
+      center && 'mx-auto',
+      fullscreen && 'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm',
+      className
+    );
 
-  return (
-    <div className={containerClasses}>
-      <div className={contentClasses}>
-        {renderLoader()}
-        {message && variant !== 'dots' && (
-          <p className={cn(
-            "font-medium mt-3 text-muted-foreground",
-            size === 'xs' && "text-xs",
-            size === 'sm' && "text-xs",
-            size === 'md' && "text-sm",
-            size === 'lg' && "text-base"
-          )}>
+    return (
+      <div className={containerClasses}>
+        <div className="ms-progress-indeterminate w-full max-w-xs"></div>
+        {message && (
+          <span className={cn('text-muted-foreground mt-2 ms-loading-dots', messageClassName)}>
+            {message}
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  // Dots Loading Component
+  if (variant === 'dots') {
+    const containerClasses = cn(
+      'ms-loading',
+      center && 'mx-auto',
+      fullscreen && 'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm',
+      className
+    );
+
+    return (
+      <div className={containerClasses}>
+        <span className={cn('text-muted-foreground ms-loading-dots', messageClassName)}>
+          {message || 'Loading'}
+        </span>
+      </div>
+    );
+  }
+
+  // Shimmer Component
+  if (variant === 'shimmer') {
+    const containerClasses = cn(
+      'ms-loading',
+      center && 'mx-auto',
+      fullscreen && 'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm',
+      className
+    );
+
+    // Shimmer elements
+    const shimmerElements = Array.from({ length: count }).map((_, index) => (
+      <div 
+        key={index} 
+        className={cn(
+          'ms-shimmer rounded-md h-4 w-full mb-2 last:mb-0',
+          index % 3 === 0 && 'w-3/4',
+          index % 3 === 1 && 'w-2/3',
+          skeletonClassName
+        )} 
+      />
+    ));
+
+    return (
+      <div className={containerClasses}>
+        <div className="w-full">
+          {shimmerElements}
+        </div>
+        {message && (
+          <p className={cn('text-muted-foreground mt-2', messageClassName)}>
             {message}
           </p>
         )}
       </div>
+    );
+  }
+
+  // Skeleton Component
+  if (variant === 'skeleton') {
+    const containerClasses = cn(
+      'w-full',
+      center && 'mx-auto',
+      className
+    );
+
+    // Skeleton elements
+    const skeletonElements = Array.from({ length: count }).map((_, index) => (
+      <div 
+        key={index} 
+        className={cn(
+          'ms-shimmer rounded-md h-4 w-full mb-2 last:mb-0',
+          index % 3 === 0 && 'w-3/4',
+          index % 3 === 1 && 'w-2/3',
+          skeletonClassName
+        )} 
+      />
+    ));
+
+    return (
+      <div className={containerClasses}>
+        {skeletonElements}
+      </div>
+    );
+  }
+
+  // Default fallback
+  return (
+    <div className={cn('ms-loading', center && 'mx-auto', className)}>
+      <Loader2 className={cn('animate-spin', sizeClasses[size])} />
+      {message && <p className="mt-2 text-muted-foreground">{message}</p>}
     </div>
   );
 };
