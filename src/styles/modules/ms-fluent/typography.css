@@ -1,245 +1,366 @@
 
 /* Microsoft Fluent UI Typography System */
 
-/* Base typography */
+/* Base font settings */
+:root {
+  --ms-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  --ms-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  
+  /* Type scale definition with fluid sizes */
+  --ms-font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem); /* 12-14px */
+  --ms-font-size-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);  /* 14-16px */
+  --ms-font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem); /* 16-18px */
+  --ms-font-size-lg: clamp(1.125rem, 1.05rem + 0.375vw, 1.25rem); /* 18-20px */
+  --ms-font-size-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);   /* 20-24px */
+  --ms-font-size-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem); /* 24-30px */
+  --ms-font-size-3xl: clamp(1.875rem, 1.65rem + 1.125vw, 2.25rem); /* 30-36px */
+  --ms-font-size-4xl: clamp(2.25rem, 1.95rem + 1.5vw, 3rem);    /* 36-48px */
+  --ms-font-size-5xl: clamp(3rem, 2.55rem + 2.25vw, 3.75rem);   /* 48-60px */
+  
+  /* Line heights */
+  --ms-line-height-none: 1;
+  --ms-line-height-tight: 1.25;
+  --ms-line-height-snug: 1.375;
+  --ms-line-height-normal: 1.5;
+  --ms-line-height-relaxed: 1.625;
+  --ms-line-height-loose: 2;
+  
+  /* Letter spacing */
+  --ms-letter-spacing-tighter: -0.05em;
+  --ms-letter-spacing-tight: -0.025em; 
+  --ms-letter-spacing-normal: 0em;
+  --ms-letter-spacing-wide: 0.025em;
+  --ms-letter-spacing-wider: 0.05em;
+  --ms-letter-spacing-widest: 0.1em;
+  
+  /* Font weights */
+  --ms-font-weight-thin: 100;
+  --ms-font-weight-extralight: 200;
+  --ms-font-weight-light: 300;
+  --ms-font-weight-normal: 400;
+  --ms-font-weight-medium: 500;
+  --ms-font-weight-semibold: 600;
+  --ms-font-weight-bold: 700;
+  --ms-font-weight-extrabold: 800;
+  --ms-font-weight-black: 900;
+}
+
+/* Base text settings */
+.ms-text-base {
+  font-size: var(--ms-font-size-base);
+  line-height: var(--ms-line-height-normal);
+  font-family: var(--ms-font-family-base);
+}
+
+/* Fluid typographic scale using the variables */
 .ms-text-xs {
-  @apply text-xs leading-4;
+  font-size: var(--ms-font-size-xs);
+  line-height: var(--ms-line-height-normal);
 }
 
 .ms-text-sm {
-  @apply text-sm leading-5;
+  font-size: var(--ms-font-size-sm);
+  line-height: var(--ms-line-height-normal);
 }
 
-.ms-text-base {
-  @apply text-base leading-6;
+.ms-text-md {
+  font-size: var(--ms-font-size-base);
+  line-height: var(--ms-line-height-normal);
 }
 
 .ms-text-lg {
-  @apply text-lg leading-7;
+  font-size: var(--ms-font-size-lg);
+  line-height: var(--ms-line-height-normal);
 }
 
 .ms-text-xl {
-  @apply text-xl leading-8;
+  font-size: var(--ms-font-size-xl);
+  line-height: var(--ms-line-height-normal);
 }
 
 .ms-text-2xl {
-  @apply text-2xl leading-9;
+  font-size: var(--ms-font-size-2xl);
+  line-height: var(--ms-line-height-tight);
 }
 
 .ms-text-3xl {
-  @apply text-3xl leading-tight;
+  font-size: var(--ms-font-size-3xl);
+  line-height: var(--ms-line-height-tight);
 }
 
-/* Headings */
+.ms-text-4xl {
+  font-size: var(--ms-font-size-4xl);
+  line-height: var(--ms-line-height-tight);
+}
+
+.ms-text-5xl {
+  font-size: var(--ms-font-size-5xl);
+  line-height: var(--ms-line-height-tight);
+}
+
+/* Heading styles */
 .ms-heading-1 {
-  @apply text-4xl font-bold tracking-tight;
+  font-size: var(--ms-font-size-5xl);
+  line-height: var(--ms-line-height-tight);
+  font-weight: var(--ms-font-weight-bold);
+  letter-spacing: var(--ms-letter-spacing-tight);
+  margin-bottom: 0.75em;
 }
 
 .ms-heading-2 {
-  @apply text-3xl font-semibold tracking-tight;
+  font-size: var(--ms-font-size-4xl);
+  line-height: var(--ms-line-height-tight);
+  font-weight: var(--ms-font-weight-bold);
+  letter-spacing: var(--ms-letter-spacing-tight);
+  margin-bottom: 0.75em;
 }
 
 .ms-heading-3 {
-  @apply text-2xl font-semibold tracking-tight;
+  font-size: var(--ms-font-size-3xl);
+  line-height: var(--ms-line-height-tight);
+  font-weight: var(--ms-font-weight-semibold);
+  letter-spacing: var(--ms-letter-spacing-tight);
+  margin-bottom: 0.75em;
 }
 
 .ms-heading-4 {
-  @apply text-xl font-semibold tracking-tight;
+  font-size: var(--ms-font-size-2xl);
+  line-height: var(--ms-line-height-tight);
+  font-weight: var(--ms-font-weight-semibold);
+  margin-bottom: 0.5em;
 }
 
 .ms-heading-5 {
-  @apply text-lg font-semibold tracking-tight;
+  font-size: var(--ms-font-size-xl);
+  line-height: var(--ms-line-height-snug);
+  font-weight: var(--ms-font-weight-semibold);
+  margin-bottom: 0.5em;
 }
 
 .ms-heading-6 {
-  @apply text-base font-semibold tracking-tight;
+  font-size: var(--ms-font-size-lg);
+  line-height: var(--ms-line-height-normal);
+  font-weight: var(--ms-font-weight-medium);
+  margin-bottom: 0.5em;
 }
 
-/* Utility text styles */
-.ms-text-muted {
-  @apply text-muted-foreground;
+/* Caption and helper text styles */
+.ms-caption {
+  font-size: var(--ms-font-size-xs);
+  line-height: var(--ms-line-height-snug);
+  color: var(--muted-foreground);
 }
 
-.ms-text-primary {
-  @apply text-primary;
+.ms-helper-text {
+  font-size: var(--ms-font-size-xs);
+  line-height: var(--ms-line-height-normal);
+  color: var(--muted-foreground);
+  margin-top: 0.25rem;
 }
 
-.ms-text-secondary {
-  @apply text-secondary;
+/* Text alignment */
+.ms-text-left {
+  text-align: left;
 }
 
-.ms-text-success {
-  @apply text-success;
+.ms-text-center {
+  text-align: center;
 }
 
-.ms-text-warning {
-  @apply text-warning;
+.ms-text-right {
+  text-align: right;
 }
 
-.ms-text-destructive {
-  @apply text-destructive;
+.ms-text-justify {
+  text-align: justify;
 }
 
-/* Weight utilities */
+/* Font weights */
+.ms-font-thin {
+  font-weight: var(--ms-font-weight-thin);
+}
+
+.ms-font-extralight {
+  font-weight: var(--ms-font-weight-extralight);
+}
+
 .ms-font-light {
-  @apply font-light;
+  font-weight: var(--ms-font-weight-light);
 }
 
 .ms-font-normal {
-  @apply font-normal;
+  font-weight: var(--ms-font-weight-normal);
 }
 
 .ms-font-medium {
-  @apply font-medium;
+  font-weight: var(--ms-font-weight-medium);
 }
 
 .ms-font-semibold {
-  @apply font-semibold;
+  font-weight: var(--ms-font-weight-semibold);
 }
 
 .ms-font-bold {
-  @apply font-bold;
+  font-weight: var(--ms-font-weight-bold);
 }
 
-/* Special text treatments */
-.ms-text-truncate {
-  @apply truncate;
+.ms-font-extrabold {
+  font-weight: var(--ms-font-weight-extrabold);
 }
 
-.ms-text-balance {
-  text-wrap: balance;
+.ms-font-black {
+  font-weight: var(--ms-font-weight-black);
 }
 
-.ms-text-pretty {
-  text-wrap: pretty;
+/* Text colors */
+.ms-text-primary {
+  color: hsl(var(--primary));
 }
 
-/* Links */
-.ms-link {
-  @apply text-primary hover:underline cursor-pointer;
+.ms-text-secondary {
+  color: hsl(var(--secondary));
 }
 
-.ms-link-subtle {
-  @apply text-muted-foreground hover:text-foreground hover:underline cursor-pointer;
+.ms-text-muted {
+  color: hsl(var(--muted-foreground));
 }
 
-.ms-link-nav {
-  @apply text-foreground hover:text-primary transition-colors cursor-pointer;
+.ms-text-accent {
+  color: hsl(var(--accent));
 }
 
-/* Gradients and special effects */
-.ms-text-gradient {
-  @apply bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent;
+/* Font families */
+.ms-font-sans {
+  font-family: var(--ms-font-family-base);
 }
 
-.ms-text-gradient-purple {
-  @apply bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent;
+.ms-font-mono {
+  font-family: var(--ms-font-family-mono);
 }
 
-.ms-text-gradient-green {
-  @apply bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent;
+/* Letter spacing */
+.ms-tracking-tighter {
+  letter-spacing: var(--ms-letter-spacing-tighter);
 }
 
-.ms-text-gradient-gold {
-  @apply bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent;
+.ms-tracking-tight {
+  letter-spacing: var(--ms-letter-spacing-tight);
 }
 
-/* Code and preformatted text */
-.ms-code {
-  @apply bg-muted/50 rounded px-1.5 py-0.5 font-mono text-sm;
+.ms-tracking-normal {
+  letter-spacing: var(--ms-letter-spacing-normal);
 }
 
-.ms-pre {
-  @apply bg-muted/30 rounded-lg p-4 font-mono text-sm overflow-x-auto;
+.ms-tracking-wide {
+  letter-spacing: var(--ms-letter-spacing-wide);
 }
 
-/* Badges and labels */
-.ms-badge-text {
-  @apply inline-flex items-center rounded-full bg-muted/30 px-2 py-0.5 text-xs font-medium;
+.ms-tracking-wider {
+  letter-spacing: var(--ms-letter-spacing-wider);
 }
 
-/* Responsive typography */
-.ms-text-responsive {
-  @apply text-sm sm:text-base;
+.ms-tracking-widest {
+  letter-spacing: var(--ms-letter-spacing-widest);
 }
 
-.ms-heading-responsive {
-  @apply text-xl sm:text-2xl md:text-3xl;
+/* Line heights */
+.ms-leading-none {
+  line-height: var(--ms-line-height-none);
 }
 
-/* Interactive text */
-.ms-text-interactive {
-  @apply cursor-pointer hover:underline transition-all;
+.ms-leading-tight {
+  line-height: var(--ms-line-height-tight);
 }
 
-.ms-text-interactive-subtle {
-  @apply cursor-pointer hover:text-primary transition-colors;
+.ms-leading-snug {
+  line-height: var(--ms-line-height-snug);
 }
 
-/* Text with icons */
-.ms-text-with-icon {
-  @apply flex items-center gap-1.5;
+.ms-leading-normal {
+  line-height: var(--ms-line-height-normal);
 }
 
-/* Long form text */
-.ms-prose {
-  @apply space-y-4 leading-7;
+.ms-leading-relaxed {
+  line-height: var(--ms-line-height-relaxed);
 }
 
-.ms-prose h2 {
-  @apply text-xl font-semibold mt-6 mb-2;
+.ms-leading-loose {
+  line-height: var(--ms-line-height-loose);
 }
 
-.ms-prose h3 {
-  @apply text-lg font-semibold mt-5 mb-2;
+/* Text transforms */
+.ms-uppercase {
+  text-transform: uppercase;
 }
 
-.ms-prose p {
-  @apply my-3;
+.ms-lowercase {
+  text-transform: lowercase;
 }
 
-.ms-prose ul {
-  @apply list-disc pl-6 my-3;
+.ms-capitalize {
+  text-transform: capitalize;
 }
 
-.ms-prose ol {
-  @apply list-decimal pl-6 my-3;
+.ms-normal-case {
+  text-transform: none;
 }
 
-.ms-prose code {
-  @apply bg-muted/50 rounded px-1.5 py-0.5 font-mono text-sm;
+/* Responsive text classes with combination of size and weight */
+.ms-display {
+  font-size: var(--ms-font-size-5xl);
+  line-height: var(--ms-line-height-tight);
+  font-weight: var(--ms-font-weight-bold);
+  letter-spacing: var(--ms-letter-spacing-tight);
 }
 
-.ms-prose a {
-  @apply text-primary hover:underline;
+.ms-title {
+  font-size: var(--ms-font-size-3xl);
+  line-height: var(--ms-line-height-tight);
+  font-weight: var(--ms-font-weight-semibold);
 }
 
-.ms-prose blockquote {
-  @apply border-l-4 border-muted pl-4 italic;
+.ms-subtitle {
+  font-size: var(--ms-font-size-xl);
+  line-height: var(--ms-line-height-snug);
+  font-weight: var(--ms-font-weight-medium);
+  color: var(--muted-foreground);
 }
 
-/* Fluid typography */
-.ms-fluid-text-sm {
-  font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  line-height: 1.5;
+.ms-paragraph {
+  font-size: var(--ms-font-size-base);
+  line-height: var(--ms-line-height-relaxed);
 }
 
-.ms-fluid-text-base {
-  font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
-  line-height: 1.5;
+/* Text truncation */
+.ms-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.ms-fluid-text-lg {
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-  line-height: 1.5;
+/* Multi-line truncation */
+.ms-line-clamp-1,
+.ms-line-clamp-2,
+.ms-line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.ms-fluid-heading {
-  font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  line-height: 1.2;
+.ms-line-clamp-1 {
+  -webkit-line-clamp: 1;
 }
 
-.ms-fluid-title {
-  font-size: clamp(2rem, 1.8rem + 1vw, 3rem);
-  line-height: 1.1;
+.ms-line-clamp-2 {
+  -webkit-line-clamp: 2;
+}
+
+.ms-line-clamp-3 {
+  -webkit-line-clamp: 3;
+}
+
+/* Text selection styles */
+::selection {
+  background-color: hsl(var(--primary) / 30%);
+  color: hsl(var(--primary));
 }

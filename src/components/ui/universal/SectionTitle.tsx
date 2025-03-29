@@ -27,11 +27,11 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
 
   return (
     <div className={cn('mb-8 max-w-2xl', alignClasses[align], className)}>
-      <h2 className={cn('text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight', titleClassName)}>
+      <h2 className={cn('ms-heading-3 ms-tracking-tight', titleClassName)}>
         {title}
       </h2>
       {subtitle && (
-        <p className={cn('mt-3 text-lg text-muted-foreground', subtitleClassName)}>
+        <p className={cn('mt-3 ms-text-lg ms-text-muted', subtitleClassName)}>
           {subtitle}
         </p>
       )}

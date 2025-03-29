@@ -1,26 +1,42 @@
 
-import { RouteObject } from "react-router-dom";
-import { wrapWithLayout } from "./routeTypes";
-import { lazy } from "react";
+import React, { lazy } from 'react';
+import { Navigate } from 'react-router-dom';
+import { Layout } from '@/app/layout/Layout';
 
-// Lazy-load dashboard components
-const DashboardPage = lazy(() => import("../pages/dashboard/DashboardHomePage"));
-const AnalyticsPage = lazy(() => import("../pages/AnalyticsPage"));
-const ActivityPage = lazy(() => import("../pages/ActivityPage"));
+// Lazy-loaded dashboard pages
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const TypographyDemoPage = lazy(() => import('@/pages/TypographyDemoPage'));
+const ValidationPage = lazy(() => import('@/pages/ValidationPage'));
 
-const routes: RouteObject[] = [
+const dashboardRoutes = [
   {
-    path: "/dashboard",
-    element: wrapWithLayout(DashboardPage, true)
+    path: '/dashboard',
+    element: (
+      <Layout>
+        <Dashboard />
+      </Layout>
+    )
   },
   {
-    path: "/analytics",
-    element: wrapWithLayout(AnalyticsPage, true, "manager")
+    path: '/dashboard/home',
+    element: <Navigate to="/dashboard" replace />
   },
   {
-    path: "/activity",
-    element: wrapWithLayout(ActivityPage, true)
+    path: '/typography',
+    element: (
+      <Layout>
+        <TypographyDemoPage />
+      </Layout>
+    )
+  },
+  {
+    path: '/validation',
+    element: (
+      <Layout>
+        <ValidationPage />
+      </Layout>
+    )
   }
 ];
 
-export default routes;
+export default dashboardRoutes;
