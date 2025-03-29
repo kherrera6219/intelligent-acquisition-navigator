@@ -27,4 +27,9 @@ export const devConfig = {
    * Enable mock data for development
    */
   USE_MOCK_DATA: false,
+  
+  /**
+   * When true, development indicators are shown in the UI
+   */
+  SHOW_DEV_INDICATORS: true,
 };
