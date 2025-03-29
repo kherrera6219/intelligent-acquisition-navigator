@@ -32,6 +32,9 @@ const KnowledgeBasePage: React.FC = () => {
     setSelectedFilters(filters);
   };
 
+  // Create an array of available tags for the filter component
+  const availableTags = ["Federal", "Texas", "FAR", "Procurement", "Template", "Solicitation", "Contract"];
+
   return (
     <>
       <UniversalInternalHeader />
@@ -59,8 +62,8 @@ const KnowledgeBasePage: React.FC = () => {
             </div>
             <div className="p-4 border-b bg-muted/20">
               <KnowledgeBaseFilters
-                selectedFilters={selectedFilters}
                 onFilterChange={handleFilterChange}
+                availableTags={availableTags}
               />
             </div>
             <CardContent className="p-0">
