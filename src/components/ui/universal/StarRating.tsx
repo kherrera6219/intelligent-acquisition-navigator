@@ -1,61 +1,54 @@
 
 import React from 'react';
+import { cn } from '@/lib/utils';
 import { Star } from 'lucide-react';
 
-export interface StarRatingProps {
-  score?: number;
-  value?: number; // Added for backward compatibility
+interface StarRatingProps {
+  score: number;
   showScore?: boolean;
   className?: string;
-  readOnly?: boolean;
-  size?: 'sm' | 'md' | 'lg';
-  onChange?: (rating: number) => void;
 }
 
 export const StarRating: React.FC<StarRatingProps> = ({ 
   score, 
-  value, // Added for backward compatibility
-  showScore = false, 
-  className = '',
-  readOnly = false,
-  size = 'md',
-  onChange
+  showScore = false,
+  className
 }) => {
-  // Use value prop if score is not provided for backward compatibility
-  const ratingValue = score !== undefined ? score : (value !== undefined ? value : 0);
-  
-  // Size mappings
-  const sizeMap = {
-    sm: 'h-3 w-3',
-    md: 'h-4 w-4',
-    lg: 'h-5 w-5'
-  };
-  
-  const starSize = sizeMap[size] || sizeMap.md;
-  
-  // Handle star click
-  const handleStarClick = (index: number) => {
-    if (!readOnly && onChange) {
-      onChange(index + 1);
-    }
-  };
+  // Calculate the full and partial stars
+  const fullStars = Math.floor(score);
+  const hasHalfStar = score % 1 >= 0.5;
   
   return (
-    <div className={`flex items-center ${className}`}>
-      {[...Array(5)].map((_, index) => (
-        <Star
-          key={index}
-          className={`${starSize} ${
-            index < ratingValue
-              ? 'text-amber-400 fill-amber-400'
-              : 'text-gray-400'
-          } ${!readOnly && onChange ? 'cursor-pointer' : ''}`}
-          onClick={() => handleStarClick(index)}
-        />
-      ))}
+    <div className={cn("flex items-center", className)}>
+      <div className="flex">
+        {[...Array(5)].map((_, index) => {
+          // Render a full star
+          if (index < fullStars) {
+            return (
+              <Star 
+                key={index}
+                className="text-amber-400 fill-amber-400 h-4 w-4"
+              />
+            );
+          }
+          // Render a half star
+          else if (index === fullStars && hasHalfStar) {
+            return (
+              <span key={index} className="relative">
+                <Star className="text-muted h-4 w-4" />
+                <span className="absolute top-0 left-0 overflow-hidden w-[50%]">
+                  <Star className="text-amber-400 fill-amber-400 h-4 w-4" />
+                </span>
+              </span>
+            );
+          }
+          // Render an empty star
+          return <Star key={index} className="text-muted h-4 w-4" />;
+        })}
+      </div>
       
       {showScore && (
-        <span className="ml-2 text-sm font-medium text-amber-400">{ratingValue.toFixed(1)}</span>
+        <span className="ml-2 text-sm font-medium">{score.toFixed(1)}</span>
       )}
     </div>
   );

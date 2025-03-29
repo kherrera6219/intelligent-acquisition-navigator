@@ -19,6 +19,7 @@ const CaseStudiesPage = lazy(() => import("../pages/CaseStudiesPage"));
 const BlogPage = lazy(() => import("../pages/BlogPage"));
 const ApiDocsPage = lazy(() => import("../pages/ApiDocsPage"));
 const SecurityPage = lazy(() => import("../pages/SecurityPage"));
+const TestimonialsPage = lazy(() => import("../pages/TestimonialsPage"));
 
 const landingRoutes: RouteObject[] = [
   {
@@ -80,6 +81,10 @@ const landingRoutes: RouteObject[] = [
   {
     path: "/security",
     element: <SecurityPage />
+  },
+  {
+    path: "/testimonials",
+    element: <TestimonialsPage />
   },
   {
     path: "*",
