@@ -1,4 +1,3 @@
-
 import { RouteObject } from "react-router-dom";
 import { lazy } from "react";
 
@@ -14,8 +13,9 @@ const TermsPage = lazy(() => import("../pages/TermsOfServicePage"));
 const SitemapPage = lazy(() => import("../pages/SitemapPage"));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 const KnowledgeBasePage = lazy(() => import("../pages/KnowledgeBasePage"));
+import WireframeShowcasePage from '@/pages/WireframeShowcasePage';
 
-const routes: RouteObject[] = [
+const landingRoutes: RouteObject[] = [
   {
     path: "/",
     element: <HomePage />
@@ -57,9 +57,13 @@ const routes: RouteObject[] = [
     element: <KnowledgeBasePage />
   },
   {
+    path: "/wireframes",
+    element: <WireframeShowcasePage />
+  },
+  {
     path: "*",
     element: <NotFoundPage />
   }
 ];
 
-export default routes;
+export default landingRoutes;
