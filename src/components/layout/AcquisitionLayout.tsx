@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
-import { MsGradientText } from '@/components/ui/universal/MsGradientText';
+import { GradientText } from '@/components/ui/universal/GradientText';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -53,7 +53,7 @@ export const AcquisitionLayout: React.FC<AcquisitionLayoutProps> = ({
       breadcrumbs={breadcrumbs}
       fullWidth={true}
     >
-      <MsGradientText className="text-3xl font-bold mb-4">{title}</MsGradientText>
+      <GradientText className="text-3xl font-bold mb-4">{title}</GradientText>
       
       {metrics && metrics.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mb-6">

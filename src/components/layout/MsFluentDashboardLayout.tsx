@@ -1,54 +1,31 @@
 
-import React, { ReactNode } from 'react';
+import React from 'react';
+import { cn } from '@/lib/utils';
 
-interface MsFluentDashboardLayoutProps {
-  children: ReactNode;
-  title: string;
-  description?: string;
-  header?: ReactNode;
-  footer?: ReactNode;
-  sidebar?: ReactNode;
+export interface MsFluentDashboardLayoutProps {
+  children: React.ReactNode;
+  sidebar?: React.ReactNode;
+  title?: string;
+  className?: string;
 }
 
 export const MsFluentDashboardLayout: React.FC<MsFluentDashboardLayoutProps> = ({
   children,
+  sidebar,
   title,
-  description,
-  header,
-  footer,
-  sidebar
+  className
 }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Header (optional) */}
-      {header}
-      
-      {/* Main Content */}
-      <div className="flex flex-1">
-        {/* Sidebar (optional) */}
-        {sidebar && (
-          <aside className="w-64 border-r border-border/30 hidden lg:block">
-            {sidebar}
-          </aside>
-        )}
-        
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto p-6">
-            {/* Page Title and Description */}
-            <div className="sr-only">
-              <h1>{title}</h1>
-              {description && <p>{description}</p>}
-            </div>
-            
-            {/* Page Content */}
-            {children}
-          </div>
-        </main>
+    <div className={cn("ms-dashboard-layout flex", className)}>
+      {sidebar && (
+        <aside className="ms-dashboard-sidebar w-64 border-r border-border shrink-0 p-4 hidden lg:block">
+          {sidebar}
+        </aside>
+      )}
+      <div className="ms-dashboard-content flex-grow p-4">
+        {title && <h2 className="text-2xl font-semibold mb-6">{title}</h2>}
+        {children}
       </div>
-      
-      {/* Footer (optional) */}
-      {footer}
     </div>
   );
 };

@@ -18,6 +18,7 @@ const Dashboard: React.FC = () => {
     >
       <MsFluentDashboardLayout 
         sidebar={<DashboardSidebar />}
+        title="Dashboard Overview"
       >
         <div className="space-y-6">
           <h1 className="ms-heading-2">Welcome to Procurity</h1>

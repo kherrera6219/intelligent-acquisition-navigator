@@ -1,670 +1,386 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
-import { Section } from '@/components/ui/universal/PageSections';
-import { SectionTitle } from '@/components/ui/universal/SectionTitle';
 import { 
-  MsButton, 
-  MsCard, 
-  MsCardHeader, 
-  MsCardTitle, 
-  MsCardDescription, 
-  MsCardContent, 
-  MsCardFooter,
-  MsAlert,
-  MsForm,
-  MsFormField,
-  MsInput,
-  MsTextarea,
-  MsProgress,
-  MsSpinner,
-  MsStatusBadge,
-  MsTable, 
-  MsTableHeader, 
-  MsTableRow, 
-  MsTableHead, 
-  MsTableBody, 
-  MsTableCell,
-  MsBadge,
-  MsToast,
-  MsNotification,
+  MsFluentCard, 
+  MsFluentCardHeader, 
+  MsFluentCardTitle,
+  MsFluentCardDescription,
+  MsFluentCardContent
+} from '@/components/ui/ms-fluent/MsFluentCard';
+import { MsFluentButton } from '@/components/ui/ms-fluent/MsFluentButton';
+import { MsFluentAlert } from '@/components/ui/ms-fluent/MsFluentAlert';
+import {
   MsNavigation,
-  MsNavigationGroup,
   MsNavigationItem,
-  MsStat,
-  MsDataPoint,
-  MsMetricGroup,
-  MsTimeline,
-  MsTimelineItem,
-  MsFileInput
-} from '@/components/ui/ms-fluent';
+  MsNavigationGroup,
+  MsNavigationSeparator
+} from '@/components/ui/ms-fluent/MsNavigation';
+import { MsFluentTable, MsFluentTableHeader, MsFluentTableRow, MsFluentTableHead, MsFluentTableBody, MsFluentTableCell } from '@/components/ui/ms-fluent/MsFluentTable';
 import { 
-  Calendar, 
-  Check, 
-  CreditCard, 
-  Download, 
-  Mail, 
-  Moon, 
-  Settings,
-  User,
-  AlertTriangle,
-  Bell,
-  FileText,
-  Home,
-  Inbox,
-  LayoutDashboard,
-  Search,
-  Share,
-  ShoppingCart,
-  Sun,
-} from 'lucide-react';
+  MsFileInput, 
+  MsFileInputUploader, 
+  MsFileInputPreview 
+} from '@/components/ui/ms-fluent/MsFileInput';
+import { MsProgressIndicator } from '@/components/ui/ms-fluent/MsProgressIndicator';
+import { SectionTitle } from '@/components/ui/universal/SectionTitle';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Bell, Check, Info, AlertTriangle, X, Home, Settings, User, Search, Mail, FileText, Database, Shield } from 'lucide-react';
+
+// Mock status cell component since it doesn't exist yet
+const MsStatusCell = ({ status }: { status: string }) => {
+  const getStatusColor = () => {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'bg-green-500/10 text-green-500';
+      case 'pending':
+        return 'bg-amber-500/10 text-amber-500';
+      case 'inactive':
+        return 'bg-gray-500/10 text-gray-500';
+      case 'error':
+        return 'bg-red-500/10 text-red-500';
+      default:
+        return 'bg-blue-500/10 text-blue-500';
+    }
+  };
+
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor()}`}>
+      {status}
+    </span>
+  );
+};
 
 const ComponentsShowcase: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('basic');
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const handleFileChange = (files: File[]) => {
+    setUploadedFiles(files);
+    // Simulate upload progress
+    setUploadProgress(0);
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 300);
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <ProtectedPageLayout
       title="Microsoft Fluent UI Components"
-      description="A showcase of the Microsoft Fluent UI components library"
+      description="Showcase of Microsoft Fluent UI design system components"
       breadcrumbs={[
         { label: 'Home', href: '/' },
-        { label: 'UI Components', href: '/components' }
+        { label: 'Components', href: '/components' }
       ]}
     >
-      <div className="space-y-16">
-        <Section>
-          <SectionTitle 
-            title="Button Components" 
-            description="Buttons for actions in forms, dialogs, and more with support for multiple sizes, states, and variants."
-          />
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+        <TabsList className="w-full flex justify-start overflow-x-auto">
+          <TabsTrigger value="basic">Basic Components</TabsTrigger>
+          <TabsTrigger value="navigation">Navigation</TabsTrigger>
+          <TabsTrigger value="data">Data Display</TabsTrigger>
+          <TabsTrigger value="feedback">Feedback</TabsTrigger>
+          <TabsTrigger value="files">File Management</TabsTrigger>
+          <TabsTrigger value="progress">Progress</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="basic" className="space-y-6">
+          <SectionTitle title="Button Components" description="Microsoft Fluent UI Button styles and variants" />
           
-          <div className="space-y-8 mt-8">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Button Variants</h3>
-              <div className="flex flex-wrap gap-4">
-                <MsButton variant="default">Default</MsButton>
-                <MsButton variant="primary">Primary</MsButton>
-                <MsButton variant="secondary">Secondary</MsButton>
-                <MsButton variant="accent">Accent</MsButton>
-                <MsButton variant="outline">Outline</MsButton>
-                <MsButton variant="ghost">Ghost</MsButton>
-                <MsButton variant="link">Link</MsButton>
-                <MsButton variant="destructive">Destructive</MsButton>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Button Sizes</h3>
-              <div className="flex flex-wrap items-center gap-4">
-                <MsButton size="xs">Extra Small</MsButton>
-                <MsButton size="sm">Small</MsButton>
-                <MsButton size="md">Medium</MsButton>
-                <MsButton size="lg">Large</MsButton>
-                <MsButton size="xl">Extra Large</MsButton>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Button States</h3>
-              <div className="flex flex-wrap gap-4">
-                <MsButton>Normal</MsButton>
-                <MsButton loading>Loading</MsButton>
-                <MsButton disabled>Disabled</MsButton>
-                <MsButton icon={<Check className="h-4 w-4" />}>With Icon</MsButton>
-                <MsButton icon={<Calendar className="h-4 w-4" />} iconPosition="right">Icon Right</MsButton>
-              </div>
-            </div>
-          </div>
-        </Section>
-        
-        <Section>
-          <SectionTitle 
-            title="Card Components" 
-            description="Cards are surfaces that display content and actions on a single topic."
-          />
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>Button Variants</MsFluentCardTitle>
+              <MsFluentCardDescription>Different button styles for various use cases</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent className="flex flex-wrap gap-4">
+              <MsFluentButton>Default Button</MsFluentButton>
+              <MsFluentButton variant="primary">Primary</MsFluentButton>
+              <MsFluentButton variant="outline">Outline</MsFluentButton>
+              <MsFluentButton variant="subtle">Subtle</MsFluentButton>
+              <MsFluentButton variant="destructive">Destructive</MsFluentButton>
+              <MsFluentButton variant="ghost">Ghost</MsFluentButton>
+              <MsFluentButton variant="link">Link Button</MsFluentButton>
+            </MsFluentCardContent>
+          </MsFluentCard>
+
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>Button Sizes</MsFluentCardTitle>
+              <MsFluentCardDescription>Different button sizes for various UI contexts</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent className="flex flex-wrap items-center gap-4">
+              <MsFluentButton size="xs">Extra Small</MsFluentButton>
+              <MsFluentButton size="sm">Small</MsFluentButton>
+              <MsFluentButton size="md">Medium</MsFluentButton>
+              <MsFluentButton size="lg">Large</MsFluentButton>
+              <MsFluentButton size="xl">Extra Large</MsFluentButton>
+            </MsFluentCardContent>
+          </MsFluentCard>
+
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>Button With Icons</MsFluentCardTitle>
+              <MsFluentCardDescription>Buttons with leading or trailing icons</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent className="flex flex-wrap gap-4">
+              <MsFluentButton leadingIcon={<Check />}>With Leading Icon</MsFluentButton>
+              <MsFluentButton trailingIcon={<Check />}>With Trailing Icon</MsFluentButton>
+              <MsFluentButton variant="primary" leadingIcon={<Bell />}>Notifications</MsFluentButton>
+              <MsFluentButton variant="outline" leadingIcon={<Settings />}>Settings</MsFluentButton>
+              <MsFluentButton variant="destructive" leadingIcon={<X />}>Delete</MsFluentButton>
+              <MsFluentButton iconOnly={<Search />} aria-label="Search" />
+              <MsFluentButton variant="outline" iconOnly={<User />} aria-label="User profile" />
+            </MsFluentCardContent>
+          </MsFluentCard>
+
+          <SectionTitle title="Alert Components" description="Microsoft Fluent UI Alert styles" />
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <MsCard>
-              <MsCardHeader>
-                <MsCardTitle>Default Card</MsCardTitle>
-                <MsCardDescription>This is a default card with standard styling.</MsCardDescription>
-              </MsCardHeader>
-              <MsCardContent>
-                <p>Cards have flexible components with fixed padding options.</p>
-              </MsCardContent>
-              <MsCardFooter>
-                <MsButton size="sm" variant="outline">Action</MsButton>
-              </MsCardFooter>
-            </MsCard>
-            
-            <MsCard variant="primary" hover="lift">
-              <MsCardHeader>
-                <MsCardTitle>Primary Card</MsCardTitle>
-                <MsCardDescription>A card with primary styling that lifts on hover.</MsCardDescription>
-              </MsCardHeader>
-              <MsCardContent>
-                <p>This card will lift slightly when hovered.</p>
-              </MsCardContent>
-              <MsCardFooter>
-                <MsButton size="sm">Action</MsButton>
-              </MsCardFooter>
-            </MsCard>
-            
-            <MsCard variant="glass" hover="shine">
-              <MsCardHeader>
-                <MsCardTitle>Glass Card</MsCardTitle>
-                <MsCardDescription>A card with glass morphism styling.</MsCardDescription>
-              </MsCardHeader>
-              <MsCardContent>
-                <p>This card has a glass effect with backdrop blur.</p>
-              </MsCardContent>
-              <MsCardFooter>
-                <MsButton size="sm" variant="ghost">Cancel</MsButton>
-                <MsButton size="sm" className="ml-2">Submit</MsButton>
-              </MsCardFooter>
-            </MsCard>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <MsCard horizontal className="h-32">
-              <div className="flex-shrink-0 h-full w-32 bg-muted rounded-l-lg flex items-center justify-center">
-                <FileText className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <div className="flex-1 p-4">
-                <h3 className="font-medium">Horizontal Card</h3>
-                <p className="text-sm text-muted-foreground mt-1">Cards can also be displayed horizontally.</p>
-              </div>
-            </MsCard>
-            
-            <MsCard variant="outline" loading>
-              <MsCardHeader>
-                <MsCardTitle>Loading Card</MsCardTitle>
-                <MsCardDescription>This card shows a loading state.</MsCardDescription>
-              </MsCardHeader>
-              <MsCardContent>
-                <p>The content is visible but with an overlay and spinner.</p>
-              </MsCardContent>
-            </MsCard>
-          </div>
-        </Section>
-        
-        <Section>
-          <SectionTitle 
-            title="Alert and Notification Components" 
-            description="Components for displaying alerts, statuses, notifications and feedback."
-          />
-          
-          <div className="space-y-8 mt-8">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Alert Variants</h3>
-              <div className="space-y-4">
-                <MsAlert variant="default" title="Default Alert">
-                  This is a default alert with a title and description.
-                </MsAlert>
-                <MsAlert variant="info" title="Information">
-                  This is an informational alert with a title and description.
-                </MsAlert>
-                <MsAlert variant="success" title="Success">
-                  Your action was completed successfully.
-                </MsAlert>
-                <MsAlert variant="warning" title="Warning">
-                  This action might have consequences.
-                </MsAlert>
-                <MsAlert variant="error" title="Error">
-                  There was a problem with your submission.
-                </MsAlert>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Status Badges</h3>
-              <div className="flex flex-wrap gap-4">
-                <MsStatusBadge status="online" />
-                <MsStatusBadge status="offline" />
-                <MsStatusBadge status="away" />
-                <MsStatusBadge status="busy" />
-                <MsStatusBadge status="pending" />
-                <MsStatusBadge status="approved" />
-                <MsStatusBadge status="rejected" />
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Badges</h3>
-              <div className="flex flex-wrap gap-4">
-                <MsBadge>Default</MsBadge>
-                <MsBadge variant="primary">Primary</MsBadge>
-                <MsBadge variant="secondary">Secondary</MsBadge>
-                <MsBadge variant="outline">Outline</MsBadge>
-                <MsBadge variant="success">Success</MsBadge>
-                <MsBadge variant="warning">Warning</MsBadge>
-                <MsBadge variant="error">Error</MsBadge>
-                <MsBadge 
-                  variant="primary" 
-                  icon={<Bell className="h-3 w-3" />}
-                  dismissible
-                  onDismiss={() => console.log('Dismissed')}
-                >
-                  Notifications
-                </MsBadge>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Toasts & Notifications</h3>
-              <div className="space-y-4">
-                <MsToast 
-                  variant="default" 
-                  position="topRight" 
-                  title="Update Available"
-                  onClose={() => console.log('Closed')}
-                >
-                  A new version of the application is available.
-                </MsToast>
-                
-                <MsNotification
-                  title="New Message"
-                  description="You received a new message from your team member"
-                  variant="info"
-                  icon={<Mail className="h-5 w-5" />}
-                  action={<MsButton size="sm" variant="outline">View Message</MsButton>}
-                  onDismiss={() => console.log('Dismissed')}
-                />
-              </div>
-            </div>
-          </div>
-        </Section>
-        
-        <Section>
-          <SectionTitle 
-            title="Form Components" 
-            description="Form controls for user input with validation and state handling."
-          />
-          
-          <div className="space-y-8 mt-8">
-            <MsForm>
-              <div className="grid gap-6 md:grid-cols-2">
-                <MsFormField
-                  label="Full Name"
-                  htmlFor="full-name"
-                  required
-                >
-                  <MsInput
-                    id="full-name"
-                    placeholder="John Doe"
-                    icon={<User className="h-4 w-4" />}
-                  />
-                </MsFormField>
-                
-                <MsFormField
-                  label="Email Address"
-                  htmlFor="email"
-                  required
-                  description="We'll never share your email."
-                >
-                  <MsInput
-                    id="email"
-                    type="email"
-                    placeholder="john.doe@example.com"
-                    icon={<Mail className="h-4 w-4" />}
-                  />
-                </MsFormField>
-                
-                <MsFormField
-                  label="Password"
-                  htmlFor="password"
-                  required
-                  error="Password must be at least 8 characters"
-                >
-                  <MsInput
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                  />
-                </MsFormField>
-                
-                <MsFormField
-                  label="Card Details"
-                  htmlFor="card"
-                >
-                  <MsInput
-                    id="card"
-                    placeholder="4242 4242 4242 4242"
-                    icon={<CreditCard className="h-4 w-4" />}
-                  />
-                </MsFormField>
-                
-                <MsFormField
-                  label="Message"
-                  htmlFor="message"
-                  className="md:col-span-2"
-                >
-                  <MsTextarea
-                    id="message"
-                    placeholder="Type your message here..."
-                  />
-                </MsFormField>
-                
-                <div className="md:col-span-2">
-                  <MsButton type="submit">Submit Form</MsButton>
-                </div>
-              </div>
-            </MsForm>
-          </div>
-          
-          <div className="mt-10">
-            <h3 className="text-lg font-semibold border-b pb-2 mb-4">File Input</h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              <MsFileInput 
-                label="Single File Upload"
-                acceptedTypes="image/*,.pdf"
-                maxSize={5}
-                description="Max file size: 5MB. Accepted formats: images, PDF."
-              />
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>Alert Variants</MsFluentCardTitle>
+              <MsFluentCardDescription>Different alert styles for various status messages</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent className="space-y-4">
+              <MsFluentAlert icon={<Info />} title="Informational Alert">
+                This is an informational alert with additional details.
+              </MsFluentAlert>
               
-              <MsFileInput 
-                label="Multiple File Upload"
-                multiple
-                acceptedTypes="image/*,.pdf,.docx"
-                preview
-                previewType="grid"
-                description="Max file size: 5MB per file. Accepted formats: images, PDF, DOCX."
-              />
-            </div>
-          </div>
-        </Section>
-        
-        <Section>
-          <SectionTitle 
-            title="Progress & Loading Components" 
-            description="Components to show progress and loading states."
-          />
+              <MsFluentAlert variant="success" icon={<Check />} title="Success Alert">
+                Operation completed successfully.
+              </MsFluentAlert>
+              
+              <MsFluentAlert variant="warning" icon={<AlertTriangle />} title="Warning Alert">
+                Please review the information before proceeding.
+              </MsFluentAlert>
+              
+              <MsFluentAlert variant="error" icon={<X />} title="Error Alert">
+                An error occurred while processing your request.
+              </MsFluentAlert>
+            </MsFluentCardContent>
+          </MsFluentCard>
+        </TabsContent>
+
+        <TabsContent value="navigation" className="space-y-6">
+          <SectionTitle title="Navigation Components" description="Microsoft Fluent UI Navigation styles" />
           
-          <div className="space-y-8 mt-8">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Progress Bars</h3>
-              <div className="space-y-4">
-                <MsProgress value={25} max={100} showValue />
-                <MsProgress value={50} max={100} variant="success" showValue />
-                <MsProgress value={75} max={100} variant="warning" showValue valueFormat="fraction" />
-                <MsProgress value={100} max={100} variant="success" showValue />
-                <MsProgress indeterminate variant="primary" />
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Spinners</h3>
-              <div className="flex flex-wrap gap-8">
-                <MsSpinner size="xs" variant="primary" />
-                <MsSpinner size="sm" variant="secondary" />
-                <MsSpinner size="md" variant="primary" />
-                <MsSpinner size="lg" variant="accent" />
-                <MsSpinner size="xl" variant="success" />
-                <MsSpinner size="md" variant="warning" label="Loading..." />
-              </div>
-            </div>
-          </div>
-        </Section>
-        
-        <Section>
-          <SectionTitle 
-            title="Navigation Components" 
-            description="Components for application navigation and organization."
-          />
-          
-          <div className="space-y-8 mt-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-card/30 rounded-lg border border-border/40 p-4">
-                <h3 className="text-lg font-semibold mb-4">Vertical Navigation</h3>
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>Navigation Items</MsFluentCardTitle>
+              <MsFluentCardDescription>Main navigation patterns</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent className="space-y-6">
+              <div>
+                <h4 className="text-sm font-semibold mb-2">Horizontal Navigation</h4>
                 <MsNavigation>
-                  <MsNavigationGroup title="Main">
-                    <MsNavigationItem icon={<Home className="h-4 w-4" />} label="Dashboard" active href="#" />
-                    <MsNavigationItem icon={<Inbox className="h-4 w-4" />} label="Inbox" href="#" badge={<MsBadge variant="primary">3</MsBadge>} />
-                    <MsNavigationItem icon={<FileText className="h-4 w-4" />} label="Documents" href="#" />
-                  </MsNavigationGroup>
-                  
-                  <MsNavigationGroup title="Account" collapsible defaultOpen>
-                    <MsNavigationItem icon={<User className="h-4 w-4" />} label="Profile" href="#" />
-                    <MsNavigationItem icon={<Settings className="h-4 w-4" />} label="Settings" href="#" collapsible>
-                      <MsNavigationItem label="Account Settings" href="#" depth={1} />
-                      <MsNavigationItem label="Notifications" href="#" depth={1} />
-                      <MsNavigationItem label="Appearance" href="#" depth={1} />
-                    </MsNavigationItem>
-                  </MsNavigationGroup>
+                  <MsNavigationItem icon={<Home />}>Home</MsNavigationItem>
+                  <MsNavigationItem icon={<Database />}>Products</MsNavigationItem>
+                  <MsNavigationItem icon={<FileText />}>Documents</MsNavigationItem>
+                  <MsNavigationItem icon={<Settings />}>Settings</MsNavigationItem>
                 </MsNavigation>
               </div>
               
-              <div className="bg-card/30 rounded-lg border border-border/40 p-4">
-                <h3 className="text-lg font-semibold mb-4">Horizontal Navigation</h3>
-                <div className="bg-card rounded-lg border border-border p-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Home className="h-6 w-6" />
-                      <span className="font-semibold">App Name</span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-1">
-                      <MsNavigationMenu>
-                        <MsNavigationMenuItem href="#" active>Home</MsNavigationMenuItem>
-                        <MsNavigationMenuItem href="#">Products</MsNavigationMenuItem>
-                        <MsNavigationMenuItem href="#">Pricing</MsNavigationMenuItem>
-                        <MsNavigationMenuItem href="#">About</MsNavigationMenuItem>
-                      </MsNavigationMenu>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <MsButton size="sm" variant="ghost" icon={<Sun className="h-4 w-4" />}></MsButton>
-                      <MsButton size="sm" variant="ghost" icon={<Search className="h-4 w-4" />}></MsButton>
-                      <MsButton size="sm" icon={<User className="h-4 w-4" />}>Login</MsButton>
+              <div className="w-64">
+                <h4 className="text-sm font-semibold mb-2">Vertical Navigation</h4>
+                <MsNavigation vertical>
+                  <MsNavigationItem icon={<Home />} active>Dashboard</MsNavigationItem>
+                  
+                  <MsNavigationGroup label="Content" icon={<FileText />}>
+                    <MsNavigationItem>Pages</MsNavigationItem>
+                    <MsNavigationItem>Posts</MsNavigationItem>
+                    <MsNavigationItem>Media</MsNavigationItem>
+                  </MsNavigationGroup>
+                  
+                  <MsNavigationSeparator />
+                  
+                  <MsNavigationItem icon={<Settings />}>Settings</MsNavigationItem>
+                  <MsNavigationItem icon={<Shield />}>Security</MsNavigationItem>
+                  <MsNavigationItem icon={<User />}>Profile</MsNavigationItem>
+                  
+                  <MsNavigationSeparator />
+                  
+                  <MsNavigationItem destructive>Logout</MsNavigationItem>
+                </MsNavigation>
+              </div>
+            </MsFluentCardContent>
+          </MsFluentCard>
+        </TabsContent>
+
+        <TabsContent value="data" className="space-y-6">
+          <SectionTitle title="Data Display Components" description="Microsoft Fluent UI Data Display styles" />
+          
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>Table Component</MsFluentCardTitle>
+              <MsFluentCardDescription>Tabular data presentation</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent>
+              <MsFluentTable variant="striped">
+                <MsFluentTableHeader>
+                  <MsFluentTableRow>
+                    <MsFluentTableHead>ID</MsFluentTableHead>
+                    <MsFluentTableHead>Name</MsFluentTableHead>
+                    <MsFluentTableHead>Department</MsFluentTableHead>
+                    <MsFluentTableHead>Status</MsFluentTableHead>
+                    <MsFluentTableHead>Actions</MsFluentTableHead>
+                  </MsFluentTableRow>
+                </MsFluentTableHeader>
+                <MsFluentTableBody>
+                  <MsFluentTableRow>
+                    <MsFluentTableCell>001</MsFluentTableCell>
+                    <MsFluentTableCell>John Smith</MsFluentTableCell>
+                    <MsFluentTableCell>Engineering</MsFluentTableCell>
+                    <MsFluentTableCell>
+                      <MsStatusCell status="Active" />
+                    </MsFluentTableCell>
+                    <MsFluentTableCell>
+                      <div className="flex gap-2">
+                        <MsFluentButton variant="outline" size="sm">Edit</MsFluentButton>
+                        <MsFluentButton variant="destructive" size="sm">Delete</MsFluentButton>
+                      </div>
+                    </MsFluentTableCell>
+                  </MsFluentTableRow>
+                  <MsFluentTableRow>
+                    <MsFluentTableCell>002</MsFluentTableCell>
+                    <MsFluentTableCell>Jane Doe</MsFluentTableCell>
+                    <MsFluentTableCell>Marketing</MsFluentTableCell>
+                    <MsFluentTableCell>
+                      <MsStatusCell status="Pending" />
+                    </MsFluentTableCell>
+                    <MsFluentTableCell>
+                      <div className="flex gap-2">
+                        <MsFluentButton variant="outline" size="sm">Edit</MsFluentButton>
+                        <MsFluentButton variant="destructive" size="sm">Delete</MsFluentButton>
+                      </div>
+                    </MsFluentTableCell>
+                  </MsFluentTableRow>
+                  <MsFluentTableRow>
+                    <MsFluentTableCell>003</MsFluentTableCell>
+                    <MsFluentTableCell>Robert Johnson</MsFluentTableCell>
+                    <MsFluentTableCell>Finance</MsFluentTableCell>
+                    <MsFluentTableCell>
+                      <MsStatusCell status="Inactive" />
+                    </MsFluentTableCell>
+                    <MsFluentTableCell>
+                      <div className="flex gap-2">
+                        <MsFluentButton variant="outline" size="sm">Edit</MsFluentButton>
+                        <MsFluentButton variant="destructive" size="sm">Delete</MsFluentButton>
+                      </div>
+                    </MsFluentTableCell>
+                  </MsFluentTableRow>
+                </MsFluentTableBody>
+              </MsFluentTable>
+            </MsFluentCardContent>
+          </MsFluentCard>
+        </TabsContent>
+
+        <TabsContent value="feedback" className="space-y-6">
+          <SectionTitle title="Feedback Components" description="Microsoft Fluent UI Feedback components" />
+          
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>Alert Types</MsFluentCardTitle>
+              <MsFluentCardDescription>Various alert types for different feedback scenarios</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent className="space-y-4">
+              <MsFluentAlert icon={<Info />} title="Information">
+                This action will be logged for auditing purposes.
+              </MsFluentAlert>
+              
+              <MsFluentAlert variant="success" icon={<Check />} title="Success">
+                The changes have been saved successfully.
+              </MsFluentAlert>
+              
+              <MsFluentAlert variant="warning" icon={<AlertTriangle />} title="Warning">
+                Your account subscription will expire in 3 days.
+              </MsFluentAlert>
+              
+              <MsFluentAlert variant="error" icon={<X />} title="Error">
+                Unable to connect to the server. Please try again later.
+              </MsFluentAlert>
+            </MsFluentCardContent>
+          </MsFluentCard>
+        </TabsContent>
+
+        <TabsContent value="files" className="space-y-6">
+          <SectionTitle title="File Management Components" description="Microsoft Fluent UI File Management components" />
+          
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>File Upload</MsFluentCardTitle>
+              <MsFluentCardDescription>Drag and drop file uploader with preview</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent>
+              <MsFileInput 
+                onChange={handleFileChange}
+                value={uploadedFiles}
+                maxFiles={5}
+                maxSize={5000000}
+                acceptedTypes={['image/*', 'application/pdf']}
+              >
+                <MsFileInputUploader />
+                
+                {uploadedFiles.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-sm font-medium mb-2">Uploaded Files</h4>
+                    <div className="space-y-2">
+                      {uploadedFiles.map((file, index) => (
+                        <MsFileInputPreview 
+                          key={index}
+                          file={file}
+                          onRemove={() => removeFile(index)}
+                          progress={uploadProgress}
+                        />
+                      ))}
                     </div>
                   </div>
+                )}
+              </MsFileInput>
+            </MsFluentCardContent>
+          </MsFluentCard>
+        </TabsContent>
+
+        <TabsContent value="progress" className="space-y-6">
+          <SectionTitle title="Progress Components" description="Microsoft Fluent UI Progress Indicators" />
+          
+          <MsFluentCard>
+            <MsFluentCardHeader>
+              <MsFluentCardTitle>Progress Indicators</MsFluentCardTitle>
+              <MsFluentCardDescription>Various progress indicator styles</MsFluentCardDescription>
+            </MsFluentCardHeader>
+            <MsFluentCardContent className="space-y-6">
+              <div>
+                <h4 className="text-sm font-semibold mb-2">Linear Progress</h4>
+                <div className="space-y-4">
+                  <MsProgressIndicator value={30} label="Processing files" />
+                  <MsProgressIndicator value={65} label="Uploading documents" />
+                  <MsProgressIndicator value={100} label="Completed" />
+                  <MsProgressIndicator value={undefined} label="Loading data..." />
                 </div>
               </div>
-            </div>
-          </div>
-        </Section>
-        
-        <Section>
-          <SectionTitle 
-            title="Table Components" 
-            description="Components for displaying tabular data."
-          />
-          
-          <div className="space-y-4 mt-8">
-            <MsTable striped hoverable bordered>
-              <MsTableHeader>
-                <MsTableRow>
-                  <MsTableHead>Invoice</MsTableHead>
-                  <MsTableHead>Status</MsTableHead>
-                  <MsTableHead>Method</MsTableHead>
-                  <MsTableHead>Amount</MsTableHead>
-                  <MsTableHead>Actions</MsTableHead>
-                </MsTableRow>
-              </MsTableHeader>
-              <MsTableBody>
-                <MsTableRow>
-                  <MsTableCell>#INV-001</MsTableCell>
-                  <MsTableCell>
-                    <MsStatusCell status="success" text="Paid" />
-                  </MsTableCell>
-                  <MsTableCell>Credit Card</MsTableCell>
-                  <MsTableCell>$250.00</MsTableCell>
-                  <MsTableCell>
-                    <div className="flex space-x-2">
-                      <MsButton size="sm" variant="outline" icon={<Download className="h-4 w-4" />}>
-                        Download
-                      </MsButton>
-                    </div>
-                  </MsTableCell>
-                </MsTableRow>
-                <MsTableRow>
-                  <MsTableCell>#INV-002</MsTableCell>
-                  <MsTableCell>
-                    <MsStatusCell status="warning" text="Pending" />
-                  </MsTableCell>
-                  <MsTableCell>PayPal</MsTableCell>
-                  <MsTableCell>$150.00</MsTableCell>
-                  <MsTableCell>
-                    <div className="flex space-x-2">
-                      <MsButton size="sm" variant="outline" icon={<Download className="h-4 w-4" />}>
-                        Download
-                      </MsButton>
-                    </div>
-                  </MsTableCell>
-                </MsTableRow>
-                <MsTableRow>
-                  <MsTableCell>#INV-003</MsTableCell>
-                  <MsTableCell>
-                    <MsStatusCell status="error" text="Failed" />
-                  </MsTableCell>
-                  <MsTableCell>Bank Transfer</MsTableCell>
-                  <MsTableCell>$350.00</MsTableCell>
-                  <MsTableCell>
-                    <div className="flex space-x-2">
-                      <MsButton size="sm" variant="outline" icon={<Download className="h-4 w-4" />}>
-                        Download
-                      </MsButton>
-                    </div>
-                  </MsTableCell>
-                </MsTableRow>
-              </MsTableBody>
-            </MsTable>
-          </div>
-        </Section>
-        
-        <Section>
-          <SectionTitle 
-            title="Data Display Components" 
-            description="Components for visualizing data and metrics."
-          />
-          
-          <div className="space-y-8 mt-8">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Statistics and Metrics</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <MsStat
-                  value="$13,456"
-                  label="Total Revenue"
-                  icon={<CreditCard className="h-4 w-4" />}
-                  trend={{ value: 12.5, direction: 'up', label: 'vs last month' }}
-                />
-                
-                <MsStat
-                  value="2,345"
-                  label="New Customers"
-                  icon={<User className="h-4 w-4" />}
-                  trend={{ value: 5.2, direction: 'up', label: 'vs last month' }}
-                  variant="primary"
-                />
-                
-                <MsStat
-                  value="$8.5"
-                  label="Average Order"
-                  icon={<ShoppingCart className="h-4 w-4" />}
-                  trend={{ value: 1.2, direction: 'down', label: 'vs last month' }}
-                />
-                
-                <MsStat
-                  value="89%"
-                  label="Satisfaction"
-                  icon={<Check className="h-4 w-4" />}
-                  trend={{ value: 4, direction: 'up', label: 'vs last month' }}
-                />
+              
+              <div>
+                <h4 className="text-sm font-semibold mb-2">Circular Progress</h4>
+                <div className="flex flex-wrap gap-6">
+                  <MsProgressIndicator type="circular" value={25} size="sm" />
+                  <MsProgressIndicator type="circular" value={50} />
+                  <MsProgressIndicator type="circular" value={75} size="lg" />
+                  <MsProgressIndicator type="circular" value={undefined} />
+                </div>
               </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Data Points</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <MsCard>
-                  <MsCardHeader>
-                    <MsCardTitle>Customer Details</MsCardTitle>
-                  </MsCardHeader>
-                  <MsCardContent className="space-y-4">
-                    <MsDataPoint 
-                      label="Name" 
-                      value="John Doe" 
-                      icon={<User className="h-4 w-4" />}
-                    />
-                    <MsDataPoint 
-                      label="Email" 
-                      value="john.doe@example.com" 
-                      icon={<Mail className="h-4 w-4" />}
-                    />
-                    <MsDataPoint 
-                      label="Status" 
-                      value={<MsStatusBadge status="active" />}
-                    />
-                    <MsDataPoint 
-                      label="Last Order" 
-                      value="June 9, 2023" 
-                      icon={<Calendar className="h-4 w-4" />}
-                      tooltip="Date of most recent purchase"
-                    />
-                  </MsCardContent>
-                </MsCard>
-                
-                <MsCard variant="outline">
-                  <MsCardHeader>
-                    <MsCardTitle>Timeline</MsCardTitle>
-                  </MsCardHeader>
-                  <MsCardContent>
-                    <MsTimeline>
-                      <MsTimelineItem
-                        title="Order Placed"
-                        description="Order #1234 was placed successfully."
-                        timestamp="2 hours ago"
-                        status="success"
-                      />
-                      <MsTimelineItem
-                        title="Payment Processed"
-                        description="Payment was processed via Credit Card."
-                        timestamp="1 hour ago"
-                        status="success"
-                      />
-                      <MsTimelineItem
-                        title="Order Shipped"
-                        description="Your order has been shipped with UPS."
-                        timestamp="30 minutes ago"
-                        status="default"
-                      />
-                      <MsTimelineItem
-                        title="Delivery Attempt"
-                        description="First delivery attempt was unsuccessful."
-                        timestamp="Just now"
-                        status="warning"
-                      />
-                    </MsTimeline>
-                  </MsCardContent>
-                </MsCard>
-                
-                <MsCard variant="primary">
-                  <MsCardHeader>
-                    <MsCardTitle>System Status</MsCardTitle>
-                  </MsCardHeader>
-                  <MsCardContent className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">API</span>
-                      <MsStatusBadge status="online" />
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Database</span>
-                      <MsStatusBadge status="online" />
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Storage</span>
-                      <MsStatusBadge status="online" />
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Authentication</span>
-                      <MsStatusBadge status="pending" />
-                    </div>
-                    <MsProgress value={92} max={100} variant="success" showValue />
-                  </MsCardContent>
-                </MsCard>
-              </div>
-            </div>
-          </div>
-        </Section>
-      </div>
+            </MsFluentCardContent>
+          </MsFluentCard>
+        </TabsContent>
+      </Tabs>
     </ProtectedPageLayout>
   );
 };

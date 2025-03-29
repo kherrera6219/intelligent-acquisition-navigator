@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ChevronRight, Home } from 'lucide-react';
 
 export interface BreadcrumbItem {
   label: string;
@@ -18,37 +17,40 @@ export const BreadcrumbNavigation: React.FC<BreadcrumbNavigationProps> = ({
   items,
   className,
 }) => {
-  if (!items || items.length === 0) return null;
-  
   return (
-    <nav aria-label="Breadcrumb" className={cn("mb-4", className)}>
-      <ol className="flex items-center space-x-1 text-sm text-muted-foreground">
-        <li>
-          <Link 
-            to="/" 
-            className="flex items-center hover:text-primary transition-colors"
+    <nav
+      className={cn("flex items-center text-sm", className)}
+      aria-label="Breadcrumb"
+    >
+      <ol className="flex items-center space-x-2">
+        <li className="flex items-center">
+          <a
+            href="/"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Home"
           >
             <Home className="h-4 w-4" />
-          </Link>
+          </a>
         </li>
         
         {items.map((item, index) => (
-          <li key={index} className="flex items-center">
-            <ChevronRight className="h-4 w-4 mx-1" />
-            {index === items.length - 1 ? (
-              <span className="font-medium text-foreground" aria-current="page">
-                {item.label}
-              </span>
-            ) : (
-              <Link 
-                to={item.href} 
-                className="hover:text-primary transition-colors"
-              >
-                {item.label}
-              </Link>
-            )}
-          </li>
+          <React.Fragment key={index}>
+            <li className="flex items-center">
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </li>
+            <li>
+              {index === items.length - 1 ? (
+                <span className="text-foreground font-medium">{item.label}</span>
+              ) : (
+                <a
+                  href={item.href}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {item.label}
+                </a>
+              )}
+            </li>
+          </React.Fragment>
         ))}
       </ol>
     </nav>

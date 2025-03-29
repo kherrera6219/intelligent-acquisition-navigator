@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { ContainerConstraint, ContainerSize } from './ContainerConstraint';
 import { SectionTitle } from './SectionTitle';
@@ -23,7 +23,6 @@ export const Section: React.FC<SectionProps> = ({
       className={cn('py-8', className)}
     >
       <ContainerConstraint 
-        fullWidth={fullWidth} 
         size={fullWidth ? 'full' : undefined}
       >
         {children}
@@ -67,7 +66,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       )}
       
       <ContainerConstraint 
-        fullWidth={fullWidth}
         size={fullWidth ? 'full' : undefined}
       >
         <div className={cn(
@@ -121,7 +119,6 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
   return (
     <section id={id} className={cn('py-8 md:py-12', className)}>
       <ContainerConstraint 
-        fullWidth={fullWidth}
         size={fullWidth ? 'full' : undefined}
       >
         {title && (

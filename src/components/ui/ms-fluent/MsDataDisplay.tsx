@@ -1,314 +1,376 @@
 
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
-import { MsSpinner } from './MsProgressIndicator';
-import { Calendar, Info, LucideIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
-export interface MsStatProps extends React.HTMLAttributes<HTMLDivElement> {
-  value: string | number;
-  label: string;
-  icon?: React.ReactNode;
-  trend?: {
-    value: number;
-    label?: string;
-    direction: 'up' | 'down' | 'neutral';
+interface MsDataGridProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  variant?: 'default' | 'bordered';
+  className?: string;
+}
+
+export const MsDataGrid: React.FC<MsDataGridProps> = ({
+  children,
+  className,
+  variant = 'default',
+  ...props
+}) => {
+  return (
+    <div 
+      className={cn(
+        "ms-data-grid w-full", 
+        variant === 'bordered' && "border border-border rounded-md overflow-hidden",
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+interface MsDataGridHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const MsDataGridHeader: React.FC<MsDataGridHeaderProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <div 
+      className={cn(
+        "ms-data-grid-header px-4 py-3 bg-muted/20 border-b border-border flex items-center justify-between",
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+interface MsDataGridTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const MsDataGridTitle: React.FC<MsDataGridTitleProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <h3 
+      className={cn(
+        "ms-data-grid-title text-base font-medium",
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </h3>
+  );
+};
+
+interface MsDataGridDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const MsDataGridDescription: React.FC<MsDataGridDescriptionProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <p 
+      className={cn(
+        "ms-data-grid-description text-sm text-muted-foreground",
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </p>
+  );
+};
+
+interface MsDataGridActionsProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const MsDataGridActions: React.FC<MsDataGridActionsProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <div 
+      className={cn(
+        "ms-data-grid-actions flex items-center space-x-2",
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+interface MsDataGridContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+  padding?: boolean;
+}
+
+export const MsDataGridContent: React.FC<MsDataGridContentProps> = ({
+  children,
+  className,
+  padding = true,
+  ...props
+}) => {
+  return (
+    <div 
+      className={cn(
+        "ms-data-grid-content",
+        padding && "p-4",
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+interface MsDataGridFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const MsDataGridFooter: React.FC<MsDataGridFooterProps> = ({
+  children,
+  className,
+  ...props
+}) => {
+  return (
+    <div 
+      className={cn(
+        "ms-data-grid-footer px-4 py-3 bg-muted/10 border-t border-border flex items-center justify-between",
+        className
+      )} 
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+interface MsDataGridPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  className?: string;
+  siblingCount?: number;
+}
+
+export const MsDataGridPagination: React.FC<MsDataGridPaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  className,
+  siblingCount = 1,
+}) => {
+  const generatePaginationItems = () => {
+    const items = [];
+    
+    // Previous button
+    items.push(
+      <button
+        key="prev"
+        className={cn(
+          "flex items-center justify-center h-8 w-8 rounded-md",
+          currentPage === 1 
+            ? "text-muted-foreground cursor-not-allowed" 
+            : "hover:bg-accent/50"
+        )}
+        disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPage - 1)}
+        aria-label="Previous page"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+    );
+    
+    // First page
+    items.push(
+      <button
+        key="first"
+        className={cn(
+          "flex items-center justify-center h-8 w-8 rounded-md text-sm",
+          currentPage === 1 ? "bg-primary text-primary-foreground" : "hover:bg-accent/50"
+        )}
+        onClick={() => onPageChange(1)}
+      >
+        1
+      </button>
+    );
+    
+    // Calculate range of visible pages
+    const startPage = Math.max(2, currentPage - siblingCount);
+    const endPage = Math.min(totalPages - 1, currentPage + siblingCount);
+    
+    // Add ellipsis at start if needed
+    if (startPage > 2) {
+      items.push(
+        <span key="start-ellipsis" className="flex items-center justify-center h-8 w-8">
+          <MoreHorizontal className="h-4 w-4" />
+        </span>
+      );
+    }
+    
+    // Add numbered pages between first and last
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <button
+          key={i}
+          className={cn(
+            "flex items-center justify-center h-8 w-8 rounded-md text-sm",
+            currentPage === i ? "bg-primary text-primary-foreground" : "hover:bg-accent/50"
+          )}
+          onClick={() => onPageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    
+    // Add ellipsis at end if needed
+    if (endPage < totalPages - 1) {
+      items.push(
+        <span key="end-ellipsis" className="flex items-center justify-center h-8 w-8">
+          <MoreHorizontal className="h-4 w-4" />
+        </span>
+      );
+    }
+    
+    // Last page (if more than 1 page)
+    if (totalPages > 1) {
+      items.push(
+        <button
+          key="last"
+          className={cn(
+            "flex items-center justify-center h-8 w-8 rounded-md text-sm",
+            currentPage === totalPages ? "bg-primary text-primary-foreground" : "hover:bg-accent/50"
+          )}
+          onClick={() => onPageChange(totalPages)}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+    
+    // Next button
+    items.push(
+      <button
+        key="next"
+        className={cn(
+          "flex items-center justify-center h-8 w-8 rounded-md",
+          currentPage === totalPages 
+            ? "text-muted-foreground cursor-not-allowed" 
+            : "hover:bg-accent/50"
+        )}
+        disabled={currentPage === totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
+        aria-label="Next page"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    );
+    
+    return items;
   };
-  loading?: boolean;
-  variant?: 'default' | 'primary' | 'outline';
-  align?: 'left' | 'center' | 'right';
-}
+  
+  return (
+    <div 
+      className={cn(
+        "ms-pagination flex items-center space-x-1",
+        className
+      )}
+    >
+      {generatePaginationItems()}
+    </div>
+  );
+};
 
-export const MsStat = forwardRef<HTMLDivElement, MsStatProps>(
-  ({ 
-    className, 
-    value, 
-    label, 
-    icon,
-    trend,
-    loading = false,
-    variant = 'default',
-    align = 'left',
-    ...props 
-  }, ref) => {
-    const variantClasses = {
-      default: "bg-card/50 border-border/40 shadow-sm",
-      primary: "bg-primary/5 border-primary/20",
-      outline: "bg-transparent border-border",
-    };
-    
-    const alignClasses = {
-      left: "text-left",
-      center: "text-center",
-      right: "text-right",
-    };
-    
-    const trendColorClasses = trend ? {
-      up: "text-success",
-      down: "text-destructive",
-      neutral: "text-muted-foreground",
-    } : {};
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "ms-stat rounded-lg border p-4",
-          variantClasses[variant],
-          alignClasses[align],
-          className
-        )}
-        {...props}
-      >
-        <div className="flex items-center mb-2">
-          {icon && (
-            <div className="mr-2 text-muted-foreground">
-              {icon}
-            </div>
-          )}
-          <div className="text-sm font-medium text-muted-foreground">{label}</div>
-        </div>
-        
-        <div className="relative">
-          {loading ? (
-            <MsSpinner size="md" className="mx-auto my-2" />
-          ) : (
-            <div className="text-2xl font-bold">{value}</div>
-          )}
-        </div>
-        
-        {trend && !loading && (
-          <div className={cn("text-xs mt-1", trendColorClasses[trend.direction])}>
-            <span>
-              {trend.direction === 'up' && '↑ '}
-              {trend.direction === 'down' && '↓ '}
-              {trend.direction === 'neutral' && '→ '}
-              {trend.value}%
-            </span>
-            {trend.label && <span className="ml-1 text-muted-foreground">{trend.label}</span>}
-          </div>
-        )}
-      </div>
-    );
-  }
-);
-
-MsStat.displayName = "MsStat";
-
-export interface MsDataPointProps extends React.HTMLAttributes<HTMLDivElement> {
-  label: string;
-  value: React.ReactNode;
+interface MsDataGridEmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
-  tooltip?: string;
-  size?: 'sm' | 'md' | 'lg';
-}
-
-export const MsDataPoint = forwardRef<HTMLDivElement, MsDataPointProps>(
-  ({ 
-    className, 
-    label, 
-    value, 
-    icon,
-    tooltip,
-    size = 'md',
-    ...props 
-  }, ref) => {
-    const sizeClasses = {
-      sm: {
-        container: "gap-1",
-        label: "text-xs",
-        value: "text-sm font-medium",
-      },
-      md: {
-        container: "gap-1",
-        label: "text-sm",
-        value: "text-base font-medium",
-      },
-      lg: {
-        container: "gap-2",
-        label: "text-sm",
-        value: "text-lg font-medium",
-      },
-    };
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "ms-data-point",
-          className
-        )}
-        {...props}
-      >
-        <div className="flex items-center text-muted-foreground">
-          {icon && <span className="mr-1.5">{icon}</span>}
-          <span className={cn(sizeClasses[size].label)}>{label}</span>
-          {tooltip && (
-            <span className="ml-1 cursor-help" title={tooltip}>
-              <Info className="h-3 w-3" />
-            </span>
-          )}
-        </div>
-        <div className={cn(sizeClasses[size].value)}>
-          {value}
-        </div>
-      </div>
-    );
-  }
-);
-
-MsDataPoint.displayName = "MsDataPoint";
-
-export interface MsMetricGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  title?: string;
-  layout?: 'grid' | 'flex';
-  columns?: 1 | 2 | 3 | 4;
-  spacing?: 'sm' | 'md' | 'lg';
-}
-
-export const MsMetricGroup = forwardRef<HTMLDivElement, MsMetricGroupProps>(
-  ({ 
-    className, 
-    children,
-    title,
-    layout = 'grid',
-    columns = 3,
-    spacing = 'md',
-    ...props 
-  }, ref) => {
-    const layoutClasses = {
-      grid: cn(
-        "grid gap-4",
-        columns === 1 && "grid-cols-1",
-        columns === 2 && "grid-cols-1 sm:grid-cols-2",
-        columns === 3 && "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
-        columns === 4 && "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
-      ),
-      flex: cn(
-        "flex flex-wrap",
-        spacing === 'sm' && "gap-3",
-        spacing === 'md' && "gap-4",
-        spacing === 'lg' && "gap-6",
-      ),
-    };
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "ms-metric-group",
-          className
-        )}
-        {...props}
-      >
-        {title && (
-          <h3 className="text-lg font-medium mb-3">{title}</h3>
-        )}
-        <div className={layoutClasses[layout]}>
-          {children}
-        </div>
-      </div>
-    );
-  }
-);
-
-MsMetricGroup.displayName = "MsMetricGroup";
-
-export interface MsTimelineItemProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description?: string;
-  timestamp: string | Date;
-  icon?: React.ReactNode;
-  status?: 'default' | 'success' | 'warning' | 'error';
-  last?: boolean;
+  action?: React.ReactNode;
+  className?: string;
 }
 
-export const MsTimelineItem = forwardRef<HTMLDivElement, MsTimelineItemProps>(
-  ({ 
-    className, 
-    title, 
-    description, 
-    timestamp,
-    icon,
-    status = 'default',
-    last = false,
-    ...props 
-  }, ref) => {
-    const statusClasses = {
-      default: "bg-muted-foreground",
-      success: "bg-success",
-      warning: "bg-warning",
-      error: "bg-destructive",
-    };
-    
-    const formattedDate = timestamp instanceof Date 
-      ? timestamp.toLocaleString() 
-      : timestamp;
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "ms-timeline-item relative pl-6",
-          !last && "pb-6",
-          className
-        )}
-        {...props}
-      >
-        {/* Timeline connector */}
-        <div 
-          className={cn(
-            "absolute left-0 top-1.5 h-3 w-3 rounded-full border-2 border-background",
-            statusClasses[status]
-          )}
-        >
+export const MsDataGridEmptyState: React.FC<MsDataGridEmptyStateProps> = ({
+  icon,
+  title,
+  description,
+  action,
+  className,
+  ...props
+}) => {
+  return (
+    <div 
+      className={cn(
+        "ms-data-grid-empty-state flex flex-col items-center justify-center py-12 px-4 text-center",
+        className
+      )}
+      {...props}
+    >
+      {icon && (
+        <div className="mb-4 text-muted-foreground">
           {icon}
         </div>
-        
-        {!last && (
-          <div className="absolute left-1.5 top-4 bottom-0 w-px -translate-x-1/2 bg-border" />
-        )}
-        
-        <div>
-          <div className="font-medium">{title}</div>
-          {description && (
-            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-          )}
-          <div className="mt-1 flex items-center text-xs text-muted-foreground">
-            <Calendar className="mr-1 h-3 w-3" /> {formattedDate}
-          </div>
+      )}
+      <h3 className="text-lg font-medium">{title}</h3>
+      {description && (
+        <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
+          {description}
+        </p>
+      )}
+      {action && (
+        <div className="mt-6">
+          {action}
         </div>
-      </div>
-    );
-  }
-);
+      )}
+    </div>
+  );
+};
 
-MsTimelineItem.displayName = "MsTimelineItem";
+interface MsDataGridLoadingStateProps extends React.HTMLAttributes<HTMLDivElement> {
+  message?: string;
+  className?: string;
+}
 
-export interface MsTimelineProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export const MsTimeline = forwardRef<HTMLDivElement, MsTimelineProps>(
-  ({ className, children, ...props }, ref) => {
-    // Modify children to add the last prop to the last child
-    const childrenArray = React.Children.toArray(children);
-    const modifiedChildren = childrenArray.map((child, index) => {
-      if (React.isValidElement(child)) {
-        return React.cloneElement(child, {
-          last: index === childrenArray.length - 1,
-        });
-      }
-      return child;
-    });
-
-    return (
-      <div
-        ref={ref}
-        className={cn("ms-timeline", className)}
-        {...props}
-      >
-        {modifiedChildren}
-      </div>
-    );
-  }
-);
-
-MsTimeline.displayName = "MsTimeline";
+export const MsDataGridLoadingState: React.FC<MsDataGridLoadingStateProps> = ({
+  message = "Loading data...",
+  className,
+  ...props
+}) => {
+  return (
+    <div 
+      className={cn(
+        "ms-data-grid-loading-state flex flex-col items-center justify-center py-12 px-4 text-center",
+        className
+      )}
+      {...props}
+    >
+      <div className="h-6 w-6 border-2 border-primary/30 border-t-primary animate-spin rounded-full mb-4"></div>
+      <p className="text-sm text-muted-foreground">{message}</p>
+    </div>
+  );
+};

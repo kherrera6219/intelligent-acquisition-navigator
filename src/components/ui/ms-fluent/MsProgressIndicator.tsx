@@ -1,219 +1,112 @@
 
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 
-export interface MsProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+interface MsProgressIndicatorProps {
+  type?: 'linear' | 'circular';
   value?: number;
-  max?: number;
+  label?: string;
   size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error';
-  showValue?: boolean;
-  valueFormat?: 'percentage' | 'fraction' | 'raw';
-  indeterminate?: boolean;
+  className?: string;
 }
 
-export const MsProgress = forwardRef<HTMLDivElement, MsProgressProps>(
-  ({ 
-    className, 
-    value = 0, 
-    max = 100, 
-    size = 'md', 
-    variant = 'primary',
-    showValue = false,
-    valueFormat = 'percentage',
-    indeterminate = false,
-    ...props 
-  }, ref) => {
-    const percentage = Math.min(Math.max(0, (value / max) * 100), 100);
-    
-    const sizeClasses = {
-      sm: "h-1",
-      md: "h-2",
-      lg: "h-3",
-    };
-    
-    const variantClasses = {
-      default: "bg-primary",
-      primary: "bg-primary",
-      secondary: "bg-secondary",
-      accent: "bg-accent",
-      success: "bg-success",
-      warning: "bg-warning",
-      error: "bg-destructive",
-    };
-    
-    const formatValue = () => {
-      switch (valueFormat) {
-        case 'percentage':
-          return `${Math.round(percentage)}%`;
-        case 'fraction':
-          return `${value}/${max}`;
-        case 'raw':
-          return value.toString();
-        default:
-          return `${Math.round(percentage)}%`;
-      }
-    };
-
+export const MsProgressIndicator: React.FC<MsProgressIndicatorProps> = ({
+  type = 'linear',
+  value,
+  label,
+  size = 'md',
+  className,
+}) => {
+  if (type === 'linear') {
     return (
-      <div ref={ref} className={cn("w-full", className)} {...props}>
-        <div className="flex items-center mb-1">
-          {props.children}
-          {showValue && (
-            <span className="text-xs ml-auto font-medium">{formatValue()}</span>
-          )}
-        </div>
-        <div className={cn("w-full overflow-hidden rounded-full bg-muted", sizeClasses[size])}>
-          <div 
-            className={cn(
-              "h-full rounded-full transition-all",
-              variantClasses[variant],
-              indeterminate && "animate-[progressIndeterminate_1s_ease-in-out_infinite]"
+      <div className={cn("ms-progress-indicator-linear", className)}>
+        {label && (
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="text-sm font-medium">{label}</span>
+            {typeof value === 'number' && (
+              <span className="text-sm text-muted-foreground">{value}%</span>
             )}
-            style={{ width: indeterminate ? '100%' : `${percentage}%` }}
-          />
-        </div>
-      </div>
-    );
-  }
-);
-
-MsProgress.displayName = "MsProgress";
-
-export interface MsSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  variant?: 'default' | 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error';
-  label?: string;
-  center?: boolean;
-}
-
-export const MsSpinner = forwardRef<HTMLDivElement, MsSpinnerProps>(
-  ({ 
-    className, 
-    size = 'md', 
-    variant = 'primary',
-    label,
-    center = false,
-    ...props 
-  }, ref) => {
-    const sizeClasses = {
-      xs: "h-3 w-3",
-      sm: "h-4 w-4",
-      md: "h-6 w-6",
-      lg: "h-8 w-8",
-      xl: "h-12 w-12",
-    };
-    
-    const variantClasses = {
-      default: "text-primary",
-      primary: "text-primary",
-      secondary: "text-secondary",
-      accent: "text-accent",
-      success: "text-success",
-      warning: "text-warning",
-      error: "text-destructive",
-    };
-    
-    const spinner = (
-      <Loader2 
-        className={cn(
-          "animate-spin",
-          sizeClasses[size],
-          variantClasses[variant],
-          !label && className
-        )} 
-      />
-    );
-    
-    if (center) {
-      return (
-        <div
-          ref={ref}
-          className={cn(
-            "flex flex-col items-center justify-center",
-            className
-          )}
-          {...props}
-        >
-          {spinner}
-          {label && (
-            <span className={cn("mt-2 text-sm text-muted-foreground", variantClasses[variant])}>
-              {label}
-            </span>
-          )}
-        </div>
-      );
-    }
-    
-    if (label) {
-      return (
-        <div
-          ref={ref}
-          className={cn(
-            "flex items-center",
-            className
-          )}
-          {...props}
-        >
-          {spinner}
-          <span className={cn("ml-2 text-sm", variantClasses[variant])}>
-            {label}
-          </span>
-        </div>
-      );
-    }
-    
-    return spinner;
-  }
-);
-
-MsSpinner.displayName = "MsSpinner";
-
-export interface MsLoadingOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
-  active: boolean;
-  spinner?: boolean;
-  blur?: boolean;
-  label?: string;
-}
-
-export const MsLoadingOverlay = forwardRef<HTMLDivElement, MsLoadingOverlayProps>(
-  ({ 
-    className, 
-    active, 
-    spinner = true,
-    blur = true,
-    label,
-    ...props 
-  }, ref) => {
-    if (!active) return null;
-    
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "absolute inset-0 flex items-center justify-center z-50",
-          blur ? "backdrop-blur-sm bg-background/50" : "bg-background/80",
-          className
-        )}
-        {...props}
-      >
-        {spinner && (
-          <MsSpinner 
-            size="lg" 
-            variant="primary" 
-            label={label} 
-            center
-          />
-        )}
-        {!spinner && label && (
-          <div className="text-center">
-            <p className="text-sm font-medium">{label}</p>
           </div>
         )}
+        <Progress value={value} className="h-2" />
       </div>
     );
   }
-);
-
-MsLoadingOverlay.displayName = "MsLoadingOverlay";
+  
+  // For circular progress
+  const getSize = () => {
+    switch (size) {
+      case 'sm': return 'h-8 w-8';
+      case 'lg': return 'h-16 w-16';
+      default: return 'h-12 w-12';
+    }
+  };
+  
+  const strokeWidth = size === 'sm' ? 3 : size === 'lg' ? 5 : 4;
+  const radius = size === 'sm' ? 14 : size === 'lg' ? 30 : 22;
+  const circumference = 2 * Math.PI * radius;
+  
+  return (
+    <div className={cn("ms-progress-indicator-circular relative", getSize(), className)}>
+      <svg
+        className="w-full h-full"
+        viewBox="0 0 100 100"
+      >
+        {/* Background circle */}
+        <circle
+          className="text-muted/30"
+          cx="50"
+          cy="50"
+          r={radius}
+          fill="none"
+          strokeWidth={strokeWidth}
+          stroke="currentColor"
+        />
+        
+        {/* Progress circle */}
+        {typeof value === 'number' && (
+          <circle
+            className="text-primary transition-all duration-200 ease-in-out"
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="none"
+            strokeWidth={strokeWidth}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={circumference - (value / 100) * circumference}
+            transform="rotate(-90 50 50)"
+          />
+        )}
+        
+        {/* Indeterminate animation */}
+        {typeof value !== 'number' && (
+          <circle
+            className="text-primary"
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="none"
+            strokeWidth={strokeWidth}
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeDasharray={circumference * 0.75}
+            strokeDashoffset={0}
+            transform="rotate(-90 50 50)"
+            style={{
+              animation: 'spin 1.5s linear infinite',
+            }}
+          />
+        )}
+      </svg>
+      
+      {typeof value === 'number' && size !== 'sm' && (
+        <div className="absolute inset-0 flex items-center justify-center text-sm font-medium">
+          {value}%
+        </div>
+      )}
+    </div>
+  );
+};
