@@ -1,10 +1,10 @@
 
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { KnowledgeBaseItemType } from "@/types/knowledge-base";
+import { KnowledgeBaseItemType, KnowledgeBaseFilter } from "@/types/knowledge-base";
 
 interface KnowledgeBaseTabsProps {
-  activeTab: KnowledgeBaseItemType | "all";
+  activeTab: KnowledgeBaseFilter;
   searchQuery: string;
   selectedFilters: {
     types: KnowledgeBaseItemType[];

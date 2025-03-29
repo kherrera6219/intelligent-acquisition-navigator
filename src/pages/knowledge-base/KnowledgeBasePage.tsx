@@ -10,11 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
 import { InternalFooter } from "@/components/layout/InternalFooter";
 import { NetworkStatusBanner } from "@/components/ui/universal/NetworkStatusBanner";
-import { KnowledgeBaseItemType } from "@/types/knowledge-base";
+import { KnowledgeBaseItemType, KnowledgeBaseFilter } from "@/types/knowledge-base";
 
 const KnowledgeBasePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<KnowledgeBaseItemType | "all">("all");
+  const [activeTab, setActiveTab] = useState<KnowledgeBaseFilter>("all");
   const [selectedFilters, setSelectedFilters] = useState<{ types: KnowledgeBaseItemType[], tags: string[] }>({
     types: [],
     tags: []
@@ -25,7 +25,7 @@ const KnowledgeBasePage: React.FC = () => {
   };
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value as KnowledgeBaseItemType | "all");
+    setActiveTab(value as KnowledgeBaseFilter);
   };
 
   const handleFilterChange = (filters: { types: KnowledgeBaseItemType[], tags: string[] }) => {
