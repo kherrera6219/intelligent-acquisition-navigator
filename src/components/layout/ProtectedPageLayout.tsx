@@ -4,12 +4,12 @@ import { Helmet } from 'react-helmet';
 import { BreadcrumbNavigation, BreadcrumbItem } from '@/components/ui/universal/BreadcrumbNavigation';
 import { AccessibilityEnhancements } from '@/components/ui/universal/AccessibilityEnhancements';
 import { PageTransition } from '@/components/ui/universal/PageTransition';
-import { ContainerConstraint } from '@/components/ui/universal/ContainerConstraint';
+import { ContainerConstraint, ContainerSize } from '@/components/ui/universal/ContainerConstraint';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 
-interface ProtectedPageLayoutProps {
+export interface ProtectedPageLayoutProps {
   title: string;
   description?: string;
   children: React.ReactNode;
@@ -18,7 +18,7 @@ interface ProtectedPageLayoutProps {
   className?: string;
   action?: React.ReactNode;
   isLoading?: boolean;
-  error?: Error;
+  error?: Error | null;
   backLink?: { label: string; href: string };
   fullWidth?: boolean;
 }
@@ -36,10 +36,10 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
   backLink,
   fullWidth = false,
 }) => {
-  const getContainerSize = () => {
+  const getContainerSize = (): ContainerSize | undefined => {
     if (containerWidth === 'default') return undefined;
     if (containerWidth === 'full' || fullWidth) return 'full';
-    return containerWidth;
+    return containerWidth as ContainerSize;
   };
   
   return (
@@ -53,6 +53,7 @@ export const ProtectedPageLayout: React.FC<ProtectedPageLayoutProps> = ({
         <ContainerConstraint 
           size={getContainerSize()} 
           className={className}
+          fullWidth={fullWidth}
         >
           <div className="py-4">
             {backLink && (

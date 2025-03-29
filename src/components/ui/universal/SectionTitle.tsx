@@ -6,7 +6,7 @@ interface SectionTitleProps {
   title: string;
   description?: string;
   className?: string;
-  align?: 'left' | 'center' | 'right';
+  centered?: boolean;
   size?: 'small' | 'medium' | 'large';
 }
 
@@ -14,7 +14,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
   title,
   description,
   className,
-  align = 'left',
+  centered = false,
   size = 'medium',
 }) => {
   const titleSizeClasses = {
@@ -23,19 +23,13 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
     large: 'text-3xl md:text-4xl font-bold',
   };
 
-  const alignClasses = {
-    left: 'text-left',
-    center: 'text-center mx-auto',
-    right: 'text-right ml-auto',
-  };
-
   return (
-    <div className={cn(alignClasses[align], className)}>
+    <div className={cn(centered && 'text-center', className)}>
       <h2 className={cn(titleSizeClasses[size], 'ms-heading-3')}>
         {title}
       </h2>
       {description && (
-        <p className={cn('mt-2 text-muted-foreground')}>
+        <p className={cn('mt-2 text-muted-foreground', centered && 'mx-auto max-w-3xl')}>
           {description}
         </p>
       )}

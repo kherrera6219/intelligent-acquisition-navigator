@@ -56,7 +56,6 @@ export default function DashboardPage() {
   return (
     <MsFluentDashboardLayout
       title="Procurement Dashboard"
-      description="Manage your procurement activities and monitor performance metrics"
       header={<UniversalInternalHeader />}
       footer={<InternalFooter />}
     >

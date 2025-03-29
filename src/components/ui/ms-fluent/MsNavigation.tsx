@@ -1,153 +1,138 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import { cva } from 'class-variance-authority';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
 
-const navigationItemVariants = cva(
-  "ms-navigation-item flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-  {
-    variants: {
-      variant: {
-        default: "text-foreground hover:bg-accent/10",
-        active: "bg-accent/20 text-foreground",
-        destructive: "text-destructive hover:bg-destructive/10",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
-
-export interface MsNavigationItemProps extends React.HTMLAttributes<HTMLDivElement> {
-  icon?: React.ReactNode;
-  active?: boolean;
-  destructive?: boolean;
-  as?: React.ElementType;
-  href?: string;
-}
-
-export const MsNavigationItem: React.FC<MsNavigationItemProps> = ({
-  children,
-  className,
-  icon,
-  active,
-  destructive,
-  as: Component = 'div',
-  href,
-  onClick,
-  ...props
-}) => {
-  const handleClick = (event: React.MouseEvent) => {
-    if (onClick) {
-      onClick(event as React.MouseEvent<HTMLDivElement>);
-    }
-  };
-
-  const variant = active ? "active" : destructive ? "destructive" : "default";
-  const componentProps = href ? { href } : {};
-
-  return (
-    <Component
-      className={cn(navigationItemVariants({ variant }), className)}
-      onClick={handleClick}
-      {...componentProps}
-      {...props}
-    >
-      {icon && <span className="flex-shrink-0">{icon}</span>}
-      <span className="flex-grow">{children}</span>
-    </Component>
-  );
-};
-
-export interface MsNavigationProps extends React.HTMLAttributes<HTMLDivElement> {
+interface MsNavigationProps {
+  children: React.ReactNode;
   vertical?: boolean;
+  className?: string;
 }
 
 export const MsNavigation: React.FC<MsNavigationProps> = ({
   children,
-  className,
   vertical = false,
-  ...props
+  className,
 }) => {
   return (
     <nav
       className={cn(
-        "ms-navigation",
-        vertical ? "flex flex-col gap-1" : "flex items-center gap-1",
+        'ms-navigation', 
+        vertical ? 'flex flex-col space-y-1' : 'flex items-center space-x-1',
         className
       )}
-      {...props}
     >
       {children}
     </nav>
   );
 };
 
-export interface MsNavigationGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+interface MsNavigationItemProps {
+  children: React.ReactNode;
+  href?: string;
+  icon?: React.ReactNode;
+  active?: boolean;
+  disabled?: boolean;
+  destructive?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
+  className?: string;
+}
+
+export const MsNavigationItem: React.FC<MsNavigationItemProps> = ({
+  children,
+  href,
+  icon,
+  active = false,
+  disabled = false,
+  destructive = false,
+  onClick,
+  className,
+}) => {
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+    
+    if (onClick) {
+      onClick(e);
+    }
+  };
+  
+  const Comp = href ? 'a' : 'button';
+  const props = href ? { href } : { type: 'button' };
+
+  return (
+    <Comp
+      {...props}
+      onClick={handleClick}
+      className={cn(
+        'ms-navigation-item flex items-center px-3 py-2 text-sm rounded-md transition-colors',
+        'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
+        active ? 'bg-primary/10 text-primary font-medium' : 'text-foreground hover:bg-accent',
+        disabled && 'opacity-50 pointer-events-none',
+        destructive && 'text-destructive hover:bg-destructive/10',
+        className
+      )}
+      aria-disabled={disabled}
+    >
+      {icon && <span className="mr-2 h-4 w-4">{icon}</span>}
+      {children}
+    </Comp>
+  );
+};
+
+interface MsNavigationGroupProps {
+  children: React.ReactNode;
   label: string;
   icon?: React.ReactNode;
   defaultOpen?: boolean;
+  className?: string;
 }
 
 export const MsNavigationGroup: React.FC<MsNavigationGroupProps> = ({
   children,
-  className,
   label,
   icon,
   defaultOpen = false,
-  ...props
+  className,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState<number | undefined>(
-    defaultOpen ? undefined : 0
-  );
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setContentHeight(isOpen ? contentRef.current.scrollHeight : 0);
-    }
-  }, [isOpen]);
 
   return (
-    <div className={cn("ms-navigation-group", className)} {...props}>
-      <div
+    <div className={cn('ms-navigation-group', className)}>
+      <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          navigationItemVariants({ variant: "default" }),
-          "cursor-pointer"
+          'flex items-center justify-between w-full px-3 py-2 text-sm rounded-md transition-colors',
+          'hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
+          isOpen && 'bg-accent/50'
         )}
       >
-        {icon && <span className="flex-shrink-0">{icon}</span>}
-        <span className="flex-grow">{label}</span>
+        <div className="flex items-center">
+          {icon && <span className="mr-2 h-4 w-4">{icon}</span>}
+          <span>{label}</span>
+        </div>
         <ChevronDown
           className={cn(
-            "transition-transform duration-200",
-            isOpen ? "rotate-180" : "rotate-0"
+            'h-4 w-4 transition-transform',
+            isOpen && 'transform rotate-180'
           )}
-          size={16}
         />
-      </div>
-      <div
-        ref={contentRef}
-        style={{ height: contentHeight }}
-        className="overflow-hidden transition-all duration-200 ease-in-out"
-      >
-        <div className="pl-4 border-l border-border/50 ml-3 mt-1">{children}</div>
-      </div>
+      </button>
+      
+      {isOpen && (
+        <div className="pl-8 mt-1 space-y-1">
+          {children}
+        </div>
+      )}
     </div>
   );
 };
 
-export interface MsNavigationSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export const MsNavigationSeparator: React.FC<MsNavigationSeparatorProps> = ({ className, ...props }) => {
-  return (
-    <div
-      className={cn("h-px bg-border/50 my-1", className)}
-      {...props}
-    />
-  );
-};
+export const MsNavigationSeparator: React.FC<{ className?: string }> = ({
+  className,
+}) => (
+  <div className={cn('ms-navigation-separator h-px bg-border my-2', className)} />
+);

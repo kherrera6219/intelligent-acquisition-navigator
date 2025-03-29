@@ -24,6 +24,7 @@ export const Section: React.FC<SectionProps> = ({
     >
       <ContainerConstraint 
         size={fullWidth ? 'full' : undefined}
+        fullWidth={fullWidth}
       >
         {children}
       </ContainerConstraint>
@@ -67,6 +68,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       
       <ContainerConstraint 
         size={fullWidth ? 'full' : undefined}
+        fullWidth={fullWidth}
       >
         <div className={cn(
           'relative z-10',
@@ -120,6 +122,7 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
     <section id={id} className={cn('py-8 md:py-12', className)}>
       <ContainerConstraint 
         size={fullWidth ? 'full' : undefined}
+        fullWidth={fullWidth}
       >
         {title && (
           <SectionTitle

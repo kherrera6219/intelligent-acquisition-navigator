@@ -8,15 +8,17 @@ export interface ContainerConstraintProps {
   children: React.ReactNode;
   className?: string;
   size?: ContainerSize;
+  fullWidth?: boolean;
 }
 
 export const ContainerConstraint: React.FC<ContainerConstraintProps> = ({
   children,
   className,
   size,
+  fullWidth = false,
 }) => {
   const getWidthClass = () => {
-    if (size === 'full') return 'w-full';
+    if (fullWidth || size === 'full') return 'w-full';
     if (size === 'narrow') return 'max-w-3xl mx-auto';
     if (size === 'wide') return 'max-w-7xl mx-auto';
     return 'max-w-5xl mx-auto';

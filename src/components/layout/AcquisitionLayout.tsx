@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
+import { ProtectedPageLayout, BreadcrumbItem } from '@/components/layout/ProtectedPageLayout';
 import { GradientText } from '@/components/ui/universal/GradientText';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
@@ -26,8 +26,10 @@ export interface AcquisitionLayoutProps {
   metrics?: AcquisitionMetric[];
   defaultTab?: string;
   action?: React.ReactNode;
-  breadcrumbs?: { label: string; href: string }[];
+  breadcrumbs?: BreadcrumbItem[];
   isLoading?: boolean;
+  fullWidth?: boolean;
+  error?: Error | null;
   children?: React.ReactNode;
 }
 
@@ -40,6 +42,8 @@ export const AcquisitionLayout: React.FC<AcquisitionLayoutProps> = ({
   action,
   breadcrumbs,
   isLoading,
+  fullWidth = true,
+  error,
   children
 }) => {
   const [activeTab, setActiveTab] = React.useState<string>(defaultTab || tabs[0].id);
@@ -51,7 +55,8 @@ export const AcquisitionLayout: React.FC<AcquisitionLayoutProps> = ({
       action={action}
       isLoading={isLoading}
       breadcrumbs={breadcrumbs}
-      fullWidth={true}
+      fullWidth={fullWidth}
+      error={error}
     >
       <GradientText className="text-3xl font-bold mb-4">{title}</GradientText>
       

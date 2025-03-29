@@ -5,43 +5,27 @@ import { cn } from '@/lib/utils';
 interface GradientTextProps {
   children: React.ReactNode;
   className?: string;
-  gradientFrom?: string;
-  gradientTo?: string;
-  gradientDirection?: 'left-to-right' | 'right-to-left' | 'top-to-bottom' | 'bottom-to-top';
+  from?: string;
+  to?: string;
+  direction?: 'to-r' | 'to-l' | 'to-t' | 'to-b' | 'to-tr' | 'to-tl' | 'to-br' | 'to-bl';
 }
 
 export const GradientText: React.FC<GradientTextProps> = ({
   children,
   className,
-  gradientFrom = '#3B82F6',
-  gradientTo = '#8B5CF6',
-  gradientDirection = 'left-to-right',
+  from = 'from-primary',
+  to = 'to-purple-600',
+  direction = 'to-r',
 }) => {
-  const getGradientDirection = () => {
-    switch (gradientDirection) {
-      case 'left-to-right':
-        return 'bg-gradient-to-r';
-      case 'right-to-left':
-        return 'bg-gradient-to-l';
-      case 'top-to-bottom':
-        return 'bg-gradient-to-b';
-      case 'bottom-to-top':
-        return 'bg-gradient-to-t';
-      default:
-        return 'bg-gradient-to-r';
-    }
-  };
-
   return (
-    <span
+    <span 
       className={cn(
-        'text-transparent bg-clip-text',
-        getGradientDirection(),
+        'bg-clip-text text-transparent bg-gradient-to-r',
+        `bg-gradient-${direction}`,
+        from,
+        to,
         className
       )}
-      style={{
-        backgroundImage: `linear-gradient(to right, ${gradientFrom}, ${gradientTo})`
-      }}
     >
       {children}
     </span>

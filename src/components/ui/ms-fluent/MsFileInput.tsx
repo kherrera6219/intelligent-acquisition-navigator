@@ -1,31 +1,125 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Upload, File, X, CheckCircle } from 'lucide-react';
-import { MsFluentButton } from './MsFluentButton';
-import { Progress } from '@/components/ui/progress';
+import { Upload, File, X, Check } from 'lucide-react';
+import { MsFluentButton } from '../MsFluentButton';
 
-interface MsFileInputProps {
-  onChange: (files: File[]) => void;
+export interface MsFileInputProps {
   value: File[];
+  onChange: (files: File[]) => void;
   maxFiles?: number;
   maxSize?: number; // in bytes
   acceptedTypes?: string[];
-  className?: string;
   children: React.ReactNode;
+  className?: string;
 }
 
 export const MsFileInput: React.FC<MsFileInputProps> = ({
-  onChange,
   value,
+  onChange,
   maxFiles = 1,
-  maxSize,
+  maxSize = 5000000, // 5MB
   acceptedTypes,
-  className,
   children,
+  className,
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    processFiles(Array.from(files));
+    // Reset the input value so the same file can be selected again
+    if (inputRef.current) inputRef.current.value = '';
+  };
+
+  const processFiles = (files: File[]) => {
+    setError(null);
+    
+    // Check if adding these files would exceed the maximum
+    if (value.length + files.length > maxFiles) {
+      setError(`Maximum ${maxFiles} file${maxFiles === 1 ? '' : 's'} allowed`);
+      return;
+    }
+    
+    // Validate size and file type
+    const validFiles = files.filter(file => {
+      // Validate file size
+      if (file.size > maxSize) {
+        setError(`File "${file.name}" exceeds maximum size of ${formatFileSize(maxSize)}`);
+        return false;
+      }
+      
+      // Validate file type if specified
+      if (acceptedTypes && acceptedTypes.length > 0) {
+        const fileType = file.type;
+        const validType = acceptedTypes.some(type => {
+          // Handle wildcard types like "image/*"
+          if (type.endsWith('/*')) {
+            const category = type.split('/')[0];
+            return fileType.startsWith(`${category}/`);
+          }
+          return type === fileType;
+        });
+        
+        if (!validType) {
+          setError(`File "${file.name}" has an unsupported file type`);
+          return false;
+        }
+      }
+      
+      return true;
+    });
+    
+    if (validFiles.length > 0) {
+      onChange([...value, ...validFiles]);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+    
+    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      processFiles(Array.from(event.dataTransfer.files));
+    }
+  };
+
+  const formatFileSize = (sizeInBytes: number): string => {
+    if (sizeInBytes < 1024) return `${sizeInBytes} B`;
+    if (sizeInBytes < 1024 * 1024) return `${(sizeInBytes / 1024).toFixed(1)} KB`;
+    return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
   return (
-    <div className={cn("ms-file-input", className)}>
+    <div className={cn('ms-file-input', className)}>
+      <input
+        ref={inputRef}
+        type="file"
+        className="sr-only"
+        multiple={maxFiles > 1}
+        accept={acceptedTypes?.join(',')}
+        onChange={handleFileChange}
+      />
+      
+      {error && (
+        <div className="text-destructive text-sm mb-2 bg-destructive/10 p-2 rounded-md">
+          {error}
+        </div>
+      )}
+      
       {children}
     </div>
   );
@@ -33,24 +127,42 @@ export const MsFileInput: React.FC<MsFileInputProps> = ({
 
 interface MsFileInputUploaderProps {
   className?: string;
+  dragActiveClassName?: string;
+  label?: string;
+  description?: string;
+  icon?: React.ReactNode;
 }
 
 export const MsFileInputUploader: React.FC<MsFileInputUploaderProps> = ({
   className,
+  dragActiveClassName,
+  label = "Upload files",
+  description = "Drag and drop files here or click to browse",
+  icon = <Upload className="h-6 w-6" />,
 }) => {
+  const { isDragging, inputRef, handleDragOver, handleDragLeave, handleDrop } = 
+    React.useContext(MsFileInputContext as React.Context<any>);
+    
   return (
     <div
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
       className={cn(
-        "ms-file-input-uploader border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center text-center hover:bg-muted/50 transition-colors cursor-pointer",
+        'ms-file-input-uploader border-2 border-dashed rounded-lg p-6 text-center cursor-pointer',
+        isDragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50',
+        isDragging && dragActiveClassName,
         className
       )}
+      onClick={() => inputRef.current?.click()}
     >
-      <Upload className="h-12 w-12 text-muted-foreground mb-4" />
-      <h3 className="text-lg font-medium mb-1">Drop files here or click to upload</h3>
-      <p className="text-sm text-muted-foreground mb-4">
-        Upload files for processing (PDF, Images, Documents)
-      </p>
-      <MsFluentButton variant="primary">Select Files</MsFluentButton>
+      <div className="mx-auto flex flex-col items-center justify-center gap-2">
+        <div className="rounded-full bg-muted p-3">
+          {icon}
+        </div>
+        <h3 className="font-medium mt-2">{label}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
     </div>
   );
 };
@@ -68,68 +180,90 @@ export const MsFileInputPreview: React.FC<MsFileInputPreviewProps> = ({
   progress,
   className,
 }) => {
-  const isComplete = progress === 100;
   const isImage = file.type.startsWith('image/');
-  
-  const getFileIcon = () => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  React.useEffect(() => {
     if (isImage) {
-      return <img 
-        src={URL.createObjectURL(file)} 
-        alt={file.name} 
-        className="h-10 w-10 object-cover rounded" 
-      />;
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
+      reader.readAsDataURL(file);
     }
     
-    return <File className="h-10 w-10 text-muted-foreground" />;
-  };
-  
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' bytes';
-    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-    else return (bytes / 1048576).toFixed(1) + ' MB';
-  };
-  
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [file, isImage]);
+
   return (
-    <div 
-      className={cn(
-        "ms-file-input-preview border border-border rounded-md p-3 flex items-center",
-        className
-      )}
-    >
-      <div className="flex-shrink-0 mr-3">
-        {getFileIcon()}
-      </div>
-      
-      <div className="flex-grow min-w-0">
-        <div className="flex justify-between items-start">
-          <div className="truncate">
-            <p className="text-sm font-medium truncate">{file.name}</p>
-            <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+    <div className={cn(
+      'ms-file-input-preview flex items-center p-2 bg-muted/50 rounded-md',
+      className
+    )}>
+      <div className="flex-shrink-0 mr-2">
+        {isImage && previewUrl ? (
+          <div className="h-10 w-10 rounded overflow-hidden">
+            <img 
+              src={previewUrl} 
+              alt={file.name} 
+              className="h-full w-full object-cover"
+            />
           </div>
-          
-          <button
-            onClick={onRemove}
-            className="ml-2 flex-shrink-0 text-muted-foreground hover:text-foreground"
-            aria-label="Remove file"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        
-        {typeof progress === 'number' && (
-          <div className="mt-2">
-            <div className="flex justify-between items-center text-xs mb-1">
-              <span>{isComplete ? 'Complete' : 'Uploading...'}</span>
-              <span>{progress}%</span>
-            </div>
-            <Progress value={progress} />
+        ) : (
+          <div className="h-10 w-10 flex items-center justify-center bg-muted rounded">
+            <File className="h-5 w-5" />
           </div>
         )}
       </div>
       
-      {isComplete && (
-        <CheckCircle className="h-5 w-5 text-green-500 ml-2 flex-shrink-0" />
-      )}
+      <div className="flex-grow min-w-0">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium truncate">{file.name}</p>
+          <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
+            {formatFileSize(file.size)}
+          </span>
+        </div>
+        
+        {typeof progress === 'number' && (
+          <div className="w-full bg-muted h-1.5 rounded-full mt-1 overflow-hidden">
+            <div 
+              className={cn(
+                "h-full rounded-full transition-all",
+                progress === 100 ? "bg-success" : "bg-primary"
+              )}
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
+      </div>
+      
+      <div className="flex items-center ml-4">
+        {progress === 100 ? (
+          <Check className="h-4 w-4 text-success mr-2" />
+        ) : null}
+        <MsFluentButton
+          variant="ghost"
+          size="xs"
+          iconOnly={<X className="h-4 w-4" />}
+          onClick={onRemove}
+          aria-label="Remove file"
+        />
+      </div>
     </div>
   );
 };
+
+// Create a context to share state between the parent and child components
+const MsFileInputContext = React.createContext<{
+  isDragging: boolean;
+  inputRef: React.RefObject<HTMLInputElement>;
+  handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+  handleDragLeave: () => void;
+  handleDrop: (event: React.DragEvent<HTMLDivElement>) => void;
+} | null>(null);
+
+function formatFileSize(sizeInBytes: number): string {
+  if (sizeInBytes < 1024) return `${sizeInBytes} B`;
+  if (sizeInBytes < 1024 * 1024) return `${(sizeInBytes / 1024).toFixed(1)} KB`;
+  return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
