@@ -1,99 +1,77 @@
 
+import React from 'react';
 import { SoftwareBuildItem } from "@/types/knowledge-base";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Calendar, 
-  Code, 
-  Github, 
-  Package, 
-  Server, 
-  Tag
-} from "lucide-react";
+import { MsFluentCard, MsFluentCardHeader, MsFluentCardTitle, MsFluentCardContent } from '@/components/ui/MsFluentCard';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Tag, Server, Package } from 'lucide-react';
 
 interface SoftwareBuildCardProps {
   build: SoftwareBuildItem;
   onClick: (build: SoftwareBuildItem) => void;
 }
 
-export const SoftwareBuildCard = ({ build, onClick }: SoftwareBuildCardProps) => {
+export const SoftwareBuildCard: React.FC<SoftwareBuildCardProps> = ({ build, onClick }) => {
   const statusColors = {
-    development: "bg-blue-500",
-    staging: "bg-yellow-500",
-    production: "bg-green-500",
-    archived: "bg-gray-500"
+    development: "bg-yellow-500/15 text-yellow-500 border-yellow-500/30",
+    staging: "bg-blue-500/15 text-blue-500 border-blue-500/30",
+    production: "bg-green-500/15 text-green-500 border-green-500/30",
+    archived: "bg-gray-500/15 text-gray-400 border-gray-500/30"
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    }).format(date);
   };
 
   return (
-    <Card 
-      className="p-4 hover:shadow-md transition-shadow cursor-pointer border border-gray-800 bg-gray-900/60"
+    <MsFluentCard 
+      variant="interactive" 
       onClick={() => onClick(build)}
+      className="ms-motion-fadeIn"
     >
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="font-medium text-lg">{build.title}</h3>
-        <Badge className={statusColors[build.status]}>
-          {build.status}
-        </Badge>
-      </div>
+      <MsFluentCardHeader>
+        <div className="flex justify-between items-start">
+          <MsFluentCardTitle className="line-clamp-1">{build.title}</MsFluentCardTitle>
+          <Badge className={statusColors[build.status]}>{build.status}</Badge>
+        </div>
+      </MsFluentCardHeader>
       
-      <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-        {build.description}
-      </p>
-      
-      <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-300">
-        <div className="flex items-center gap-2">
-          <Tag className="h-4 w-4 text-gray-400" />
-          <span>v{build.version}</span>
-        </div>
+      <MsFluentCardContent>
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{build.description}</p>
         
-        <div className="flex items-center gap-2">
-          <Code className="h-4 w-4 text-gray-400" />
-          <span>Build #{build.buildNumber}</span>
+        <div className="space-y-2 text-xs">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            <span>Build date: {formatDate(build.buildDate)}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Package className="h-3.5 w-3.5" />
+            <span>Version: {build.version}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Server className="h-3.5 w-3.5" />
+            <span>Build: #{build.buildNumber}</span>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-gray-400" />
-          <span>{new Date(build.buildDate).toLocaleDateString()}</span>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Github className="h-4 w-4 text-gray-400" />
-          <span className="truncate">{build.repository.split('/').pop()}</span>
-        </div>
-      </div>
-      
-      <div className="mt-4">
-        <div className="flex items-center gap-2 mb-1">
-          <Server className="h-4 w-4 text-gray-400" />
-          <span className="text-xs text-gray-400">Platforms:</span>
-        </div>
-        <div className="flex flex-wrap gap-1 mb-2">
-          {build.platform.map(platform => (
-            <Badge key={platform} variant="outline" className="text-xs py-0">
-              {platform}
-            </Badge>
+
+        <div className="flex flex-wrap gap-1 mt-3">
+          {build.tags.map((tag, index) => (
+            <span 
+              key={index}
+              className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-secondary/20 text-muted-foreground"
+            >
+              <Tag className="h-3 w-3 mr-1" />
+              {tag}
+            </span>
           ))}
         </div>
-      </div>
-      
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <Package className="h-4 w-4 text-gray-400" />
-          <span className="text-xs text-gray-400">Dependencies:</span>
-        </div>
-        <div className="flex flex-wrap gap-1">
-          {build.dependencies.slice(0, 3).map(dep => (
-            <Badge key={dep} variant="outline" className="text-xs py-0">
-              {dep}
-            </Badge>
-          ))}
-          {build.dependencies.length > 3 && (
-            <Badge variant="outline" className="text-xs py-0">
-              +{build.dependencies.length - 3} more
-            </Badge>
-          )}
-        </div>
-      </div>
-    </Card>
+      </MsFluentCardContent>
+    </MsFluentCard>
   );
 };
