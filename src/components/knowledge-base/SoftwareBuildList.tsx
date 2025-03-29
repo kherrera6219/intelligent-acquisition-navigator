@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { SoftwareBuildItem } from "@/types/knowledge-base";
 import { SoftwareBuildCard } from './SoftwareBuildCard';
 import { BuildDetailModal } from './BuildDetailModal';
-import { Grid } from '@/components/ui/universal/Grid';
+import { MsDashboardGrid } from '@/components/layout/MsDashboardGrid';
 
 interface SoftwareBuildListProps {
   builds: SoftwareBuildItem[];
@@ -44,7 +44,7 @@ export const SoftwareBuildList: React.FC<SoftwareBuildListProps> = ({
 
   return (
     <div className="w-full">
-      <Grid className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <MsDashboardGrid columns={3} gap="md">
         {builds.map((build) => (
           <SoftwareBuildCard 
             key={build.id}
@@ -52,7 +52,7 @@ export const SoftwareBuildList: React.FC<SoftwareBuildListProps> = ({
             onClick={handleBuildClick}
           />
         ))}
-      </Grid>
+      </MsDashboardGrid>
       
       <BuildDetailModal
         build={selectedBuild}
