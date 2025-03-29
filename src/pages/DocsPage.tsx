@@ -33,10 +33,10 @@ const DocsPage: React.FC = () => {
           <div className="space-y-4">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold leading-tight">
-                  Documentation <MsGradientText>Center</MsGradientText>
+                <h1 className="text-3xl md:text-4xl font-bold leading-tight text-emerald-400">
+                  Documentation <MsGradientText gradient="accent">Center</MsGradientText>
                 </h1>
-                <p className="text-muted-foreground mt-2 max-w-2xl">
+                <p className="text-blue-300 mt-2 max-w-2xl">
                   Comprehensive guides and resources to help you master the procurement process
                 </p>
               </div>
@@ -67,10 +67,10 @@ const DocsPage: React.FC = () => {
             {searchQuery ? (
               <div className="mb-6">
                 <Badge variant="outline" className="mb-2">Search Results</Badge>
-                <h2 className="text-2xl font-bold">
+                <h2 className="text-2xl font-bold text-cyan-400">
                   Results for "{searchQuery}"
                 </h2>
-                <p className="text-muted-foreground mt-1">
+                <p className="text-amber-300 mt-1">
                   Found {filteredDocs.length} {filteredDocs.length === 1 ? 'document' : 'documents'}
                 </p>
               </div>
@@ -79,10 +79,10 @@ const DocsPage: React.FC = () => {
                 <Badge variant="outline" className="mb-2">
                   {docCategories.find(c => c.id === activeCategory)?.label || 'All Documentation'}
                 </Badge>
-                <h2 className="text-2xl font-bold">
+                <h2 className="text-2xl font-bold text-cyan-400">
                   {docCategories.find(c => c.id === activeCategory)?.title || 'Documentation'}
                 </h2>
-                <p className="text-muted-foreground mt-1">
+                <p className="text-amber-300 mt-1">
                   {docCategories.find(c => c.id === activeCategory)?.description || 'Browse our comprehensive documentation'}
                 </p>
               </div>
@@ -90,8 +90,8 @@ const DocsPage: React.FC = () => {
             
             {filteredDocs.length === 0 ? (
               <div className="text-center py-12 px-4 border rounded-lg bg-card/50">
-                <h3 className="text-xl font-semibold mb-2">No documents found</h3>
-                <p className="text-muted-foreground mb-4">
+                <h3 className="text-xl font-semibold mb-2 text-pink-400">No documents found</h3>
+                <p className="text-teal-300 mb-4">
                   We couldn't find any documents matching your search criteria
                 </p>
                 <button 
@@ -99,7 +99,7 @@ const DocsPage: React.FC = () => {
                     setSearchQuery('');
                     setActiveCategory(docCategories[0]?.id || 'getting-started');
                   }}
-                  className="text-primary hover:underline"
+                  className="text-primary hover:underline text-purple-300"
                 >
                   View all documentation
                 </button>

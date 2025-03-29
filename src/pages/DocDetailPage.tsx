@@ -4,11 +4,12 @@ import { useParams, Link } from 'react-router-dom';
 import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 import { Container } from '@/components/ui/universal/Container';
 import { docCategories } from '@/components/docs/docsData';
-import { ArrowLeft, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { formatDistanceToNow } from 'date-fns';
 import { DocsSidebar } from '@/components/docs/DocsSidebar';
+import { Button } from '@/components/ui/button';
 
 const DocDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -50,8 +51,8 @@ const DocDetailPage: React.FC = () => {
         description="The requested document was not found"
       >
         <Container className="pt-16 pb-16 text-center">
-          <h1 className="text-3xl font-bold mb-4">Document Not Found</h1>
-          <p className="text-muted-foreground mb-8">
+          <h1 className="text-3xl font-bold mb-4 text-red-400">Document Not Found</h1>
+          <p className="text-amber-300 mb-8">
             We couldn't find the document you're looking for.
           </p>
           <Link 
@@ -73,35 +74,50 @@ const DocDetailPage: React.FC = () => {
       <div className="bg-gradient-to-b from-background/80 to-background/30 pt-8 pb-6 border-b">
         <Container>
           <div className="space-y-4">
-            <Link to="/docs" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/docs" className="flex items-center text-blue-400 hover:text-blue-300 transition-colors">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to All Documents
             </Link>
             
             <div>
-              <Badge variant={doc.level === 'beginner' ? 'default' : doc.level === 'intermediate' ? 'secondary' : 'destructive'}>
+              <Badge 
+                variant={doc.level === 'beginner' ? 'default' : doc.level === 'intermediate' ? 'secondary' : 'destructive'}
+                className="font-medium"
+              >
                 {doc.level}
               </Badge>
               
-              <h1 className="text-3xl md:text-4xl font-bold mt-2">{doc.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold mt-2 text-cyan-400">{doc.title}</h1>
               
-              <p className="text-muted-foreground mt-2 max-w-3xl">
+              <p className="text-green-300 mt-2 max-w-3xl">
                 {doc.description}
               </p>
               
               <div className="flex flex-wrap gap-4 mt-4">
-                <div className="flex items-center text-sm text-muted-foreground">
+                <div className="flex items-center text-sm text-amber-300">
                   <Clock className="h-4 w-4 mr-1" />
                   <span>{doc.readTime} min read</span>
                 </div>
                 
-                <div className="flex items-center text-sm text-muted-foreground">
+                <div className="flex items-center text-sm text-amber-300">
                   <Calendar className="h-4 w-4 mr-1" />
                   <span>
                     Updated {formatDistanceToNow(new Date(doc.updatedAt), { addSuffix: true })}
                   </span>
                 </div>
               </div>
+
+              {doc.externalUrl && (
+                <a 
+                  href={doc.externalUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-900/40 hover:bg-blue-800/50 text-blue-300 font-medium rounded-md transition-colors"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  View Official Acquisition Resource
+                </a>
+              )}
             </div>
           </div>
         </Container>
@@ -119,50 +135,50 @@ const DocDetailPage: React.FC = () => {
           
           <main>
             <div className="prose prose-slate dark:prose-invert max-w-none">
-              <p>
+              <p className="text-amber-100">
                 This is a placeholder for the full content of the "{doc.title}" document.
                 In a real application, this would contain the complete documentation with
                 formatted text, code examples, images, and more.
               </p>
               
-              <h2>Example Section</h2>
-              <p>
+              <h2 className="text-cyan-400">Example Section</h2>
+              <p className="text-amber-100">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi.
                 Phasellus euismod, nisl eget aliquam tincidunt, nisl nisl aliquam nisl,
                 eget aliquam nisl nisl eget nisl.
               </p>
               
-              <h3>Subsection Example</h3>
-              <p>
+              <h3 className="text-fuchsia-400">Subsection Example</h3>
+              <p className="text-amber-100">
                 Phasellus euismod, nisl eget aliquam tincidunt, nisl nisl aliquam nisl,
                 eget aliquam nisl nisl eget nisl.
               </p>
               
               <pre className="bg-muted/50 p-4 rounded-md overflow-x-auto">
-                <code>
+                <code className="text-green-300">
                   // Example code
-                  const fetchData = async () => {
+                  const fetchData = async () => {'{'}
                     const response = await fetch('/api/data');
                     const data = await response.json();
                     return data;
-                  };
+                  {'}'};
                 </code>
               </pre>
               
-              <h2>Additional Resources</h2>
-              <ul>
+              <h2 className="text-cyan-400">Additional Resources</h2>
+              <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-primary hover:underline">
+                  <a href="#" className="text-blue-400 hover:underline">
                     Related Documentation
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-primary hover:underline">
+                  <a href="#" className="text-blue-400 hover:underline">
                     API Reference
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-primary hover:underline">
+                  <a href="#" className="text-blue-400 hover:underline">
                     Video Tutorials
                   </a>
                 </li>
@@ -171,14 +187,14 @@ const DocDetailPage: React.FC = () => {
               <Separator className="my-6" />
               
               <div className="bg-accent/20 p-4 rounded-md">
-                <h4 className="text-lg font-medium mb-2">Was this document helpful?</h4>
+                <h4 className="text-lg font-medium mb-2 text-pink-400">Was this document helpful?</h4>
                 <div className="flex gap-2">
-                  <button className="bg-primary/10 hover:bg-primary/20 text-primary px-4 py-1 rounded-md transition-colors">
+                  <Button className="bg-primary/10 hover:bg-primary/20 text-cyan-400">
                     Yes
-                  </button>
-                  <button className="bg-muted hover:bg-muted/80 px-4 py-1 rounded-md transition-colors">
+                  </Button>
+                  <Button variant="outline" className="bg-muted hover:bg-muted/80 text-amber-300">
                     No
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

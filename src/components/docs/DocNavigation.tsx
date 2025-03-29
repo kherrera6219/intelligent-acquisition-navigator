@@ -31,8 +31,8 @@ export const DocNavigation: React.FC<DocNavigationProps> = ({
               className={cn(
                 "flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors whitespace-nowrap",
                 item.id === activeCategory
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  ? "bg-primary/20 text-cyan-400 font-medium"
+                  : "text-amber-300 hover:text-cyan-300 hover:bg-accent/50"
               )}
             >
               {IconComponent && <IconComponent className="h-4 w-4 flex-shrink-0" />}

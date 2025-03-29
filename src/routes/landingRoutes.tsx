@@ -13,6 +13,7 @@ const PrivacyPage = React.lazy(() => import('@/pages/PrivacyPage'));
 const TermsOfServicePage = React.lazy(() => import('@/pages/TermsOfServicePage'));
 const DocsPage = React.lazy(() => import('@/pages/DocsPage'));
 const DocDetailPage = React.lazy(() => import('@/pages/DocDetailPage'));
+const ApiDocsPage = React.lazy(() => import('@/pages/ApiDocsPage'));
 
 // Define landing routes
 const landingRoutes: RouteObject[] = [
@@ -55,6 +56,10 @@ const landingRoutes: RouteObject[] = [
   {
     path: '/docs/:slug',
     element: <DocDetailPage />
+  },
+  {
+    path: '/api-docs',
+    element: <ApiDocsPage />
   }
 ];
 
