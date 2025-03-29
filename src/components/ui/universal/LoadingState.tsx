@@ -7,7 +7,7 @@ import { MsLoading } from '@/components/ui/ms-loading';
 export interface LoadingStateProps {
   message?: string;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   center?: boolean;
   fullPage?: boolean;
   variant?: 'default' | 'spinner' | 'skeleton' | 'inline' | 'shimmer' | 'progress' | 'dots';
@@ -25,9 +25,6 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   skeletonCount = 3,
   skeletonClassName,
 }) => {
-  // Map the size to MsLoading size
-  const msSize = size as 'sm' | 'md' | 'lg';
-  
   // For skeleton variant, use MsLoading with skeleton variant
   if (variant === 'skeleton') {
     return (
@@ -47,7 +44,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       <MsLoading
         variant="spinner"
         message={message}
-        size={msSize}
+        size={size}
         className={className}
         inline={true}
       />
@@ -60,7 +57,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       <MsLoading
         variant="shimmer"
         message={message}
-        size={msSize}
+        size={size}
         className={className}
         center={center}
         fullscreen={fullPage}
@@ -74,7 +71,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       <MsLoading
         variant="progress"
         message={message}
-        size={msSize}
+        size={size}
         className={className}
         center={center}
         fullscreen={fullPage}
@@ -88,7 +85,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       <MsLoading
         variant="dots"
         message={message}
-        size={msSize}
+        size={size}
         className={className}
         center={center}
         fullscreen={fullPage}
@@ -98,6 +95,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
 
   // Default fallback for backward compatibility
   const sizeClasses = {
+    xs: 'h-3 w-3',
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
     lg: 'h-12 w-12'

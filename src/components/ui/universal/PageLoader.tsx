@@ -5,7 +5,7 @@ import { MsLoading } from "@/components/ui/ms-loading";
 interface PageLoaderProps {
   message?: string;
   variant?: 'standard' | 'minimal' | 'fluent' | 'fullscreen';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export const PageLoader: React.FC<PageLoaderProps> = ({ 
@@ -24,7 +24,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
   if (variant === 'fluent') {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm z-50">
-        <div className="ms-fluent-card p-8 loading-scale-in flex flex-col items-center">
+        <div className="ms-fluent-card p-8 ms-motion-fadeIn flex flex-col items-center loading-scale-in">
           <MsLoading variant="progress" size={size} className="mb-4" />
           <p className="text-lg font-semibold text-foreground mt-4 ms-loading-dots">{message}</p>
         </div>
