@@ -189,12 +189,14 @@
 }
 
 /* Special Cases */
-.ms-prose {
-  @apply prose prose-sm md:prose-base text-foreground max-w-none;
-}
+@layer utilities {
+  .ms-prose {
+    @apply prose prose-sm md:prose-base text-foreground max-w-none;
+  }
 
-.ms-prose-sm {
-  @apply prose-sm text-foreground max-w-none;
+  .ms-prose-sm {
+    @apply prose-sm text-foreground max-w-none;
+  }
 }
 
 /* Responsive Typography - Fluid Type Scales */

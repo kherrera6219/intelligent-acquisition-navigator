@@ -85,12 +85,3 @@ export const MsFluentCardFooter = ({ children, className }: MsFluentCardFooterPr
   </div>
 );
 MsFluentCardFooter.displayName = 'MsFluentCardFooter';
-
-export {
-  MsFluentCard,
-  MsFluentCardHeader,
-  MsFluentCardTitle,
-  MsFluentCardDescription,
-  MsFluentCardContent,
-  MsFluentCardFooter
-};

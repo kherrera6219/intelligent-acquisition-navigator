@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
 import { 
@@ -35,8 +34,7 @@ import { SectionTitle } from '@/components/ui/universal/SectionTitle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Bell, Check, Info, AlertTriangle, X, Home, Settings, User, Search, Mail, FileText, Database, Shield } from 'lucide-react';
 
-// Mock status cell component since it doesn't exist yet
-const MsStatusCell = ({ status }: { status: string }) => {
+const MsStatusCellDemo = ({ status }: { status: string }) => {
   const getStatusColor = () => {
     switch (status.toLowerCase()) {
       case 'active':
@@ -66,7 +64,6 @@ const ComponentsShowcase: React.FC = () => {
 
   const handleFileChange = (files: File[]) => {
     setUploadedFiles(files);
-    // Simulate upload progress
     setUploadProgress(0);
     const interval = setInterval(() => {
       setUploadProgress(prev => {
@@ -248,7 +245,7 @@ const ComponentsShowcase: React.FC = () => {
                     <MsFluentTableCell>John Smith</MsFluentTableCell>
                     <MsFluentTableCell>Engineering</MsFluentTableCell>
                     <MsFluentTableCell>
-                      <MsStatusCell status="Active" />
+                      <MsStatusCellDemo status="Active" />
                     </MsFluentTableCell>
                     <MsFluentTableCell>
                       <div className="flex gap-2">
@@ -262,7 +259,7 @@ const ComponentsShowcase: React.FC = () => {
                     <MsFluentTableCell>Jane Doe</MsFluentTableCell>
                     <MsFluentTableCell>Marketing</MsFluentTableCell>
                     <MsFluentTableCell>
-                      <MsStatusCell status="Pending" />
+                      <MsStatusCellDemo status="Pending" />
                     </MsFluentTableCell>
                     <MsFluentTableCell>
                       <div className="flex gap-2">
@@ -276,7 +273,7 @@ const ComponentsShowcase: React.FC = () => {
                     <MsFluentTableCell>Robert Johnson</MsFluentTableCell>
                     <MsFluentTableCell>Finance</MsFluentTableCell>
                     <MsFluentTableCell>
-                      <MsStatusCell status="Inactive" />
+                      <MsStatusCellDemo status="Inactive" />
                     </MsFluentTableCell>
                     <MsFluentTableCell>
                       <div className="flex gap-2">

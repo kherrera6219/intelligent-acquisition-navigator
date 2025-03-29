@@ -8,7 +8,7 @@ interface SectionTitleProps {
   className?: string;
   centered?: boolean;
   size?: 'small' | 'medium' | 'large';
-  align?: 'left' | 'center' | 'right'; // Add align prop
+  align?: 'left' | 'center' | 'right';
 }
 
 export const SectionTitle: React.FC<SectionTitleProps> = ({
