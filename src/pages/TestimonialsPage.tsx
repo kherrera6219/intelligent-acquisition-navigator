@@ -5,7 +5,7 @@ import { TestimonialFilters } from '@/components/testimonials/TestimonialFilters
 import { FeaturedTestimonials } from '@/components/testimonials/FeaturedTestimonials';
 import { TestimonialGrid } from '@/components/testimonials/TestimonialGrid';
 import { TestimonialCta } from '@/components/testimonials/TestimonialCta';
-import { testimonials } from '@/components/testimonials/TestimonialData';
+import { testimonials as importedTestimonials } from '@/components/testimonials/TestimonialData';
 import { TestimonialData, TestimonialSector } from '@/components/testimonials/types';
 
 const TestimonialsPage: React.FC = () => {
@@ -69,6 +69,12 @@ const TestimonialsPage: React.FC = () => {
     }
   ];
 
+  // Convert imported testimonials to match the TestimonialData type
+  const typedTestimonials: TestimonialData[] = importedTestimonials.map(t => ({
+    ...t,
+    sector: t.sector as TestimonialSector
+  }));
+
   return (
     <ExternalPageLayout
       title="Customer Testimonials | ProcurityIQ"
@@ -81,10 +87,10 @@ const TestimonialsPage: React.FC = () => {
         onSortChange={setSortByRating}
       />
 
-      <FeaturedTestimonials testimonials={testimonials} />
+      <FeaturedTestimonials testimonials={typedTestimonials} />
 
       <TestimonialGrid 
-        testimonials={testimonials} 
+        testimonials={typedTestimonials} 
         filter={filter} 
         sortByRating={sortByRating}
       />
