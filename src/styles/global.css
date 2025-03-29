@@ -12,6 +12,7 @@
 @import './modules/ms-dashboard.css';
 @import './modules/ms-fluent/layout-responsive.css';
 @import './modules/ms-fluent/responsive.css';
+@import './modules/ms-fluent/breakpoints.css';
 @import './modules/ms-fluent/layout.css';
 @import './modules/ms-fluent/core.css';
 @import './modules/ms-fluent/typography.css';

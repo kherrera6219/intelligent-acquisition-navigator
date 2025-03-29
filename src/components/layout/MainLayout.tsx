@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
 import { SkipLinks } from '../ui/universal/SkipLinks';
 import { useNetworkMonitor } from '../ui/universal/NetworkMonitorProvider';
+import { BreakpointDebugger } from '../ui/universal/BreakpointDebugger';
 
 interface MainLayoutProps extends PropsWithChildren {
   variant?: 'default' | 'fluent' | 'minimal' | 'modern';
@@ -25,6 +26,7 @@ interface MainLayoutProps extends PropsWithChildren {
   containerSize?: string;
   forceExternalHeader?: boolean;
   forceExternalFooter?: boolean;
+  showBreakpointDebugger?: boolean;
 }
 
 export interface PrivacyBannerProps {
@@ -80,6 +82,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   containerSize,
   forceExternalHeader,
   forceExternalFooter,
+  showBreakpointDebugger = process.env.NODE_ENV === 'development',
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -169,6 +172,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         )}
         
         {shouldShowCookieConsent && <CookieConsent />}
+        
+        {showBreakpointDebugger && <BreakpointDebugger />}
       </NetworkErrorBoundary>
     </div>
   );
