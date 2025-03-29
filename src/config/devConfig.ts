@@ -1,18 +1,30 @@
 
 /**
- * Development Configuration
- * 
- * This file contains configuration settings for development mode.
- * Values here should be set to false in production.
+ * Development configuration settings
+ * These settings should be used to make development easier
+ * but should NOT be enabled in production
  */
 
 export const devConfig = {
-  // Disable authentication redirects and checks
-  BYPASS_AUTH: true,
+  /**
+   * When true, authentication checks are bypassed
+   * All users are treated as authenticated with admin privileges
+   */
+  BYPASS_AUTH: false,
   
-  // Disable session timeout warnings
-  DISABLE_SESSION_TIMEOUT: true,
+  /**
+   * When true, session timeout is disabled
+   */
+  DISABLE_SESSION_TIMEOUT: false,
   
-  // Show development indicators
-  SHOW_DEV_INDICATORS: true
+  /**
+   * Log level for development
+   * 0 = none, 1 = errors, 2 = warnings, 3 = info, 4 = debug
+   */
+  LOG_LEVEL: 3,
+  
+  /**
+   * Enable mock data for development
+   */
+  USE_MOCK_DATA: false,
 };

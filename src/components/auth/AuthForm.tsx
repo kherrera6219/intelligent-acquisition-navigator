@@ -7,11 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AuthFormProps {
   mode: 'login' | 'register';
   returnUrl?: string;
+  onError?: (message: string) => void;
+  onLoad?: (loading: boolean) => void;
 }
 
 interface FormData {
@@ -20,7 +23,12 @@ interface FormData {
   confirmPassword?: string;
 }
 
-const AuthForm = ({ mode, returnUrl = '/dashboard' }: AuthFormProps) => {
+const AuthForm = ({ 
+  mode, 
+  returnUrl = '/dashboard',
+  onError,
+  onLoad
+}: AuthFormProps) => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
   const [isLoading, setIsLoading] = useState(false);
   const { login, signup } = useAuth();
@@ -29,43 +37,72 @@ const AuthForm = ({ mode, returnUrl = '/dashboard' }: AuthFormProps) => {
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
+    if (onLoad) onLoad(true);
+    
     try {
       if (mode === 'register') {
-        await signup(data.email, data.password);
+        const { error } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+        });
+        
+        if (error) throw error;
+        
         toast({
           title: "Account created",
-          description: "Welcome! Your account has been created successfully.",
+          description: "Please check your email to verify your account",
         });
+        
+        navigate('/login');
       } else {
-        await login(data.email, data.password);
+        const { error } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
+        
+        if (error) throw error;
+        
         toast({
           title: "Welcome back!",
           description: "You have been logged in successfully.",
         });
+        
+        navigate(returnUrl);
       }
-      navigate(returnUrl);
-    } catch (error) {
-      // Error is already handled in useAuthActions, showing toast there
+    } catch (error: any) {
       console.error('Authentication error:', error);
+      
+      // Handle different error types
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      
+      if (error.message) {
+        if (error.message.includes("credentials")) {
+          errorMessage = "Invalid email or password. Please try again.";
+        } else if (error.message.includes("email") && error.message.includes("confirm")) {
+          errorMessage = "Please verify your email before logging in.";
+        } else if (error.message.includes("rate limit")) {
+          errorMessage = "Too many attempts. Please try again later.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      if (onError) onError(errorMessage);
+      
+      toast({
+        title: mode === 'login' ? "Login failed" : "Registration failed",
+        description: errorMessage,
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
+      if (onLoad) onLoad(false);
     }
   };
 
   return (
-    <div className="glass-card p-6 rounded-lg shadow-lg animate-fade-in">
+    <div className="glass-card rounded-lg animate-fade-in">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">
-            {mode === 'login' ? 'Welcome back' : 'Create an account'}
-          </h1>
-          <p className="text-sm text-gray-400">
-            {mode === 'login' 
-              ? 'Enter your credentials to access your account' 
-              : 'Enter your details to create your account'}
-          </p>
-        </div>
-
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -81,6 +118,7 @@ const AuthForm = ({ mode, returnUrl = '/dashboard' }: AuthFormProps) => {
                 }
               })}
               className="bg-white/5"
+              disabled={isLoading}
               aria-invalid={errors.email ? "true" : "false"}
             />
             {errors.email && (
@@ -104,6 +142,7 @@ const AuthForm = ({ mode, returnUrl = '/dashboard' }: AuthFormProps) => {
                 }
               })}
               className="bg-white/5"
+              disabled={isLoading}
               aria-invalid={errors.password ? "true" : "false"}
             />
             {errors.password && (
@@ -125,6 +164,7 @@ const AuthForm = ({ mode, returnUrl = '/dashboard' }: AuthFormProps) => {
                   validate: value => value === watch('password') || 'Passwords do not match'
                 })}
                 className="bg-white/5"
+                disabled={isLoading}
                 aria-invalid={errors.confirmPassword ? "true" : "false"}
               />
               {errors.confirmPassword && (
@@ -133,17 +173,6 @@ const AuthForm = ({ mode, returnUrl = '/dashboard' }: AuthFormProps) => {
                   {errors.confirmPassword.message}
                 </p>
               )}
-            </div>
-          )}
-
-          {mode === 'login' && (
-            <div className="text-right">
-              <Link 
-                to="/auth/reset-password" 
-                className="text-primary hover:underline text-sm"
-              >
-                Forgot password?
-              </Link>
             </div>
           )}
         </div>
@@ -156,39 +185,13 @@ const AuthForm = ({ mode, returnUrl = '/dashboard' }: AuthFormProps) => {
         >
           {isLoading ? (
             <span className="flex items-center gap-2">
-              <span className="animate-spin">⟳</span>
+              <Loader2 className="h-4 w-4 animate-spin" />
               {mode === 'login' ? 'Signing in...' : 'Creating account...'}
             </span>
           ) : (
             mode === 'login' ? 'Sign in' : 'Create account'
           )}
         </Button>
-
-        <p className="text-sm text-center text-gray-400">
-          {mode === 'login' ? (
-            <>
-              Don't have an account?{' '}
-              <Button 
-                variant="link" 
-                className="p-0 h-auto font-normal"
-                onClick={() => navigate('/auth?mode=register')}
-              >
-                Sign up
-              </Button>
-            </>
-          ) : (
-            <>
-              Already have an account?{' '}
-              <Button 
-                variant="link" 
-                className="p-0 h-auto font-normal"
-                onClick={() => navigate('/auth?mode=login')}
-              >
-                Sign in
-              </Button>
-            </>
-          )}
-        </p>
       </form>
     </div>
   );
