@@ -1,63 +1,54 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 import { Container } from '@/components/ui/universal/Container';
-import { PricingHeader } from '@/components/pricing/PricingHeader';
-import { PricingPlansSection } from '@/components/pricing/PricingPlansSection';
-import { EnterpriseSection } from '@/components/pricing/EnterpriseSection';
-import { TestimonialsSection } from '@/components/pricing/TestimonialsSection';
-import { FAQSection } from '@/components/pricing/FAQSection';
+import { PricingPlans } from '@/components/pricing/PricingPlans';
+import { PricingFaq } from '@/components/pricing/PricingFaq';
 import { PricingCta } from '@/components/pricing/PricingCta';
-import { pricingPlans, faqItems, testimonials } from '@/components/pricing/pricingData';
+import { PricingComparison } from '@/components/pricing/PricingComparison';
+import { Helmet } from 'react-helmet';
+import { MsGradientText } from '@/components/ui/universal/MsGradientText';
 
-const PricingPage: React.FC = () => {
+export default function PricingPage() {
   return (
-    <>
+    <ExternalPageLayout
+      showHeader={true}
+      showFooter={true}
+    >
       <Helmet>
         <title>Pricing | ProcurityIQ</title>
-        <meta name="description" content="Flexible pricing plans for federal, state, and local acquisition teams." />
+        <meta name="description" content="Explore our flexible pricing plans designed for government agencies of all sizes." />
       </Helmet>
       
-      <div className="py-16 w-full bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800">
-        <Container>
-          <PricingHeader 
-            title="Simple, Transparent Pricing"
-            description="Choose the perfect plan for your organization's acquisition needs. Scale as you grow with no hidden fees."
-          />
-        </Container>
-      </div>
-      
-      <div className="py-12 bg-gray-800">
-        <Container>
-          <PricingPlansSection plans={pricingPlans} />
-        </Container>
-      </div>
-      
-      <div className="py-20 bg-gradient-to-b from-gray-800 to-gray-900">
-        <Container>
-          <EnterpriseSection />
-        </Container>
-      </div>
-      
-      <div className="py-20 bg-gray-900">
-        <Container>
-          <TestimonialsSection testimonials={testimonials} />
-        </Container>
-      </div>
-      
-      <div className="py-20 bg-gradient-to-b from-gray-900 to-gray-800">
-        <Container>
-          <FAQSection faqItems={faqItems} />
-        </Container>
-      </div>
-      
-      <div className="py-16 bg-gray-800">
-        <Container>
+      <Container className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Transparent <MsGradientText>Pricing</MsGradientText></h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Flexible plans designed to accommodate the needs of government agencies of all sizes.
+          </p>
+        </div>
+        
+        {/* Pricing Plans */}
+        <div className="mb-24">
+          <PricingPlans />
+        </div>
+        
+        {/* Pricing Comparison */}
+        <div className="mb-24">
+          <PricingComparison />
+        </div>
+        
+        {/* FAQ Section */}
+        <div className="mb-24">
+          <PricingFaq />
+        </div>
+        
+        {/* CTA Section */}
+        <div className="mb-12">
           <PricingCta />
-        </Container>
-      </div>
-    </>
+        </div>
+      </Container>
+    </ExternalPageLayout>
   );
-};
-
-export default PricingPage;
+}
