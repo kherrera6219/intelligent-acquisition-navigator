@@ -40,3 +40,15 @@ svg line {
   transition: fill var(--transition-duration) var(--transition-timing),
               stroke var(--transition-duration) var(--transition-timing);
 }
+
+/* Add transition for container backgrounds */
+.bg-card,
+.bg-background,
+.bg-primary,
+.bg-secondary,
+.bg-muted,
+.bg-accent,
+.theme-transition {
+  transition: background-color var(--transition-duration) var(--transition-timing),
+              border-color var(--transition-duration) var(--transition-timing);
+}
