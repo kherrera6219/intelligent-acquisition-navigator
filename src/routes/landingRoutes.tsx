@@ -1,3 +1,4 @@
+
 import { RouteObject } from "react-router-dom";
 import { lazy } from "react";
 
@@ -13,7 +14,11 @@ const TermsPage = lazy(() => import("../pages/TermsOfServicePage"));
 const SitemapPage = lazy(() => import("../pages/SitemapPage"));
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 const KnowledgeBasePage = lazy(() => import("../pages/KnowledgeBasePage"));
-import WireframeShowcasePage from '@/pages/WireframeShowcasePage';
+const WireframeShowcasePage = lazy(() => import("../pages/WireframeShowcasePage"));
+const CaseStudiesPage = lazy(() => import("../pages/CaseStudiesPage"));
+const BlogPage = lazy(() => import("../pages/BlogPage"));
+const ApiDocsPage = lazy(() => import("../pages/ApiDocsPage"));
+const SecurityPage = lazy(() => import("../pages/SecurityPage"));
 
 const landingRoutes: RouteObject[] = [
   {
@@ -59,6 +64,22 @@ const landingRoutes: RouteObject[] = [
   {
     path: "/wireframes",
     element: <WireframeShowcasePage />
+  },
+  {
+    path: "/case-studies",
+    element: <CaseStudiesPage />
+  },
+  {
+    path: "/blog",
+    element: <BlogPage />
+  },
+  {
+    path: "/api-docs",
+    element: <ApiDocsPage />
+  },
+  {
+    path: "/security",
+    element: <SecurityPage />
   },
   {
     path: "*",
