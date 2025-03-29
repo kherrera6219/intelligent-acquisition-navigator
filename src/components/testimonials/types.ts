@@ -1,4 +1,6 @@
 
+export type TestimonialSector = 'local' | 'federal' | 'state' | 'private' | 'education' | 'healthcare';
+
 export interface TestimonialData {
   name: string;
   role: string;
@@ -6,6 +8,6 @@ export interface TestimonialData {
   content: string;
   image: string;
   score: number;
-  sector: 'federal' | 'state' | 'local';
+  sector: TestimonialSector;
   featured: boolean;
 }

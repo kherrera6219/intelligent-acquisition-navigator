@@ -1,112 +1,55 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 import { Container } from '@/components/ui/universal/Container';
-import { MsGradientText } from '@/components/ui/universal/MsGradientText';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DocsSidebar } from '@/components/docs/DocsSidebar';
+import { DocContentDisplay } from '@/components/docs/DocContent';
+import { docCategories } from '@/components/docs/docsData';
 import { DocsSearch } from '@/components/docs/DocsSearch';
-import { DocNavigation } from '@/components/docs/DocNavigation';
-import { Badge } from '@/components/ui/badge';
-import { DocContent } from '@/components/docs/DocContent';
-import { docCategories, getDocsByCategory } from '@/components/docs/docsData';
 
 const DocsPage: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState<string>(docCategories[0]?.id || 'getting-started');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
-  
-  const filteredDocs = searchQuery 
-    ? getDocsByCategory('all', searchQuery) 
-    : getDocsByCategory(activeCategory);
-  
   return (
     <ExternalPageLayout
       title="Documentation | ProcurityIQ"
-      description="Learn how to use ProcurityIQ acquisition framework effectively"
+      description="Browse through our documentation"
     >
-      <div className="bg-gradient-to-b from-background/80 to-background/30 pt-8 pb-6 border-b">
-        <Container>
-          <div className="space-y-4">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold leading-tight text-emerald-400">
-                  Documentation <MsGradientText gradient="accent">Center</MsGradientText>
-                </h1>
-                <p className="text-blue-300 mt-2 max-w-2xl">
-                  Comprehensive guides and resources to help you master the procurement process
-                </p>
-              </div>
-              
-              <DocsSearch onSearch={handleSearch} />
-            </div>
-            
-            <DocNavigation 
-              categories={docCategories} 
-              activeCategory={activeCategory}
-              onCategoryChange={setActiveCategory}
-            />
-          </div>
-        </Container>
-      </div>
-      
       <Container className="pt-8 pb-16">
+        <h1 className="text-4xl font-bold mb-8">Documentation</h1>
+        
+        <div className="mb-8">
+          <DocsSearch />
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] gap-8">
-          <aside className="hidden md:block">
-            <DocsSidebar 
-              categories={docCategories} 
-              activeCategory={activeCategory} 
-              onCategoryChange={setActiveCategory}
-            />
+          <aside>
+            <DocsSidebar categories={docCategories} activeCategory="" onCategoryChange={() => {}} />
           </aside>
           
           <main>
-            {searchQuery ? (
-              <div className="mb-6">
-                <Badge variant="outline" className="mb-2">Search Results</Badge>
-                <h2 className="text-2xl font-bold text-cyan-400">
-                  Results for "{searchQuery}"
-                </h2>
-                <p className="text-amber-300 mt-1">
-                  Found {filteredDocs.length} {filteredDocs.length === 1 ? 'document' : 'documents'}
-                </p>
-              </div>
-            ) : (
-              <div className="mb-6">
-                <Badge variant="outline" className="mb-2">
-                  {docCategories.find(c => c.id === activeCategory)?.label || 'All Documentation'}
-                </Badge>
-                <h2 className="text-2xl font-bold text-cyan-400">
-                  {docCategories.find(c => c.id === activeCategory)?.title || 'Documentation'}
-                </h2>
-                <p className="text-amber-300 mt-1">
-                  {docCategories.find(c => c.id === activeCategory)?.description || 'Browse our comprehensive documentation'}
-                </p>
-              </div>
-            )}
+            <p className="text-lg mb-6">
+              Select a document from the sidebar to view its contents.
+            </p>
             
-            {filteredDocs.length === 0 ? (
-              <div className="text-center py-12 px-4 border rounded-lg bg-card/50">
-                <h3 className="text-xl font-semibold mb-2 text-pink-400">No documents found</h3>
-                <p className="text-teal-300 mb-4">
-                  We couldn't find any documents matching your search criteria
-                </p>
-                <button 
-                  onClick={() => {
-                    setSearchQuery('');
-                    setActiveCategory(docCategories[0]?.id || 'getting-started');
-                  }}
-                  className="text-primary hover:underline text-purple-300"
-                >
-                  View all documentation
-                </button>
-              </div>
-            ) : (
-              <DocContent documents={filteredDocs} />
-            )}
+            <div className="space-y-8">
+              {docCategories.map((category) => (
+                <div key={category.id} className="space-y-4">
+                  <h2 className="text-2xl font-semibold">{category.title}</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {category.items.map((doc) => (
+                      <div 
+                        key={doc.slug} 
+                        className="p-4 rounded-lg border hover:border-primary hover:bg-card/50 transition-colors"
+                      >
+                        <h3 className="font-medium mb-1">
+                          <Link to={`/docs/${doc.slug}`}>{doc.title}</Link>
+                        </h3>
+                        <p className="text-sm text-muted-foreground">{doc.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </main>
         </div>
       </Container>
