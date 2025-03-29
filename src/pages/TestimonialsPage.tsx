@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
 import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
 import { TestimonialFilters } from '@/components/testimonials/TestimonialFilters';
 import { FeaturedTestimonials } from '@/components/testimonials/FeaturedTestimonials';
 import { TestimonialGrid } from '@/components/testimonials/TestimonialGrid';
 import { TestimonialCta } from '@/components/testimonials/TestimonialCta';
-import { testimonials as TestimonialData } from '@/components/testimonials/TestimonialData';
+import { testimonials } from '@/components/testimonials/TestimonialData';
+import { TestimonialData } from '@/components/testimonials/types';
 
 const TestimonialsPage: React.FC = () => {
   const [filter, setFilter] = useState<string>('all');
@@ -14,7 +16,7 @@ const TestimonialsPage: React.FC = () => {
     setFilter(sector);
   };
 
-  const testimonials: TestimonialData[] = [
+  const hardcodedTestimonials: TestimonialData[] = [
     {
       name: "Sarah Johnson",
       role: "Procurement Director",
@@ -32,7 +34,7 @@ const TestimonialsPage: React.FC = () => {
       content: "ProcurityIQ's AI-driven solutions have been instrumental in streamlining our IT operations. We've saved over $1.5M in costs and improved our overall efficiency.",
       image: "/avatars/john-doe.jpg",
       score: 4.7,
-      sector: "city",
+      sector: "local",
       featured: false
     },
     {
@@ -42,7 +44,7 @@ const TestimonialsPage: React.FC = () => {
       content: "ProcurityIQ's AI-powered analytics have helped us identify and mitigate risks in our IT infrastructure. We've saved over $1.2M in costs and improved our security posture.",
       image: "/avatars/jane-smith.jpg",
       score: 4.8,
-      sector: "county",
+      sector: "local",
       featured: true
     },
     {
@@ -62,7 +64,7 @@ const TestimonialsPage: React.FC = () => {
       content: "ProcurityIQ's AI-powered insights have helped us identify and mitigate risks in our IT infrastructure. We've saved over $2.0M in costs and improved our security posture.",
       image: "/avatars/michael-wilson.jpg",
       score: 4.5,
-      sector: "defense",
+      sector: "federal",
       featured: true
     }
   ];
