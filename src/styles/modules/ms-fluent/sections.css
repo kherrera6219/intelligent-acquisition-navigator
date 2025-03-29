@@ -1,0 +1,110 @@
+
+/* Microsoft Fluent UI Section Components */
+
+/* Standard section paddings */
+.ms-section {
+  @apply py-6 sm:py-8 md:py-12;
+}
+
+.ms-section-sm {
+  @apply py-3 sm:py-4 md:py-6;
+}
+
+.ms-section-lg {
+  @apply py-8 sm:py-12 md:py-16 lg:py-20;
+}
+
+/* Section variants */
+.ms-section-primary {
+  @apply bg-primary/5 text-primary-foreground;
+}
+
+.ms-section-secondary {
+  @apply bg-secondary text-secondary-foreground;
+}
+
+.ms-section-muted {
+  @apply bg-muted text-muted-foreground;
+}
+
+.ms-section-accent {
+  @apply bg-accent text-accent-foreground;
+}
+
+.ms-section-dark {
+  @apply bg-gray-900 text-white;
+}
+
+.ms-section-light {
+  @apply bg-gray-50 text-gray-900;
+}
+
+/* Section dividers */
+.ms-section-divider {
+  @apply relative py-12 sm:py-16 md:py-20;
+}
+
+.ms-section-divider::before {
+  content: '';
+  @apply absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-primary/30 rounded-full;
+}
+
+/* Text and content alignment */
+.ms-section-text-center {
+  @apply text-center mx-auto;
+}
+
+.ms-section-text-left {
+  @apply text-left;
+}
+
+.ms-section-text-right {
+  @apply text-right;
+}
+
+/* Section headers */
+.ms-section-header {
+  @apply max-w-3xl mx-auto mb-8 sm:mb-12;
+}
+
+.ms-section-title {
+  @apply text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight;
+}
+
+.ms-section-subtitle {
+  @apply text-lg text-muted-foreground mt-3;
+}
+
+/* Content width constraints */
+.ms-section-content-sm {
+  @apply max-w-screen-sm mx-auto;
+}
+
+.ms-section-content-md {
+  @apply max-w-screen-md mx-auto;
+}
+
+.ms-section-content-lg {
+  @apply max-w-screen-lg mx-auto;
+}
+
+.ms-section-content-xl {
+  @apply max-w-screen-xl mx-auto;
+}
+
+/* Card grid layouts within sections */
+.ms-section-grid {
+  @apply grid gap-4 sm:gap-6;
+}
+
+.ms-section-grid-2 {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6;
+}
+
+.ms-section-grid-3 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6;
+}
+
+.ms-section-grid-4 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6;
+}

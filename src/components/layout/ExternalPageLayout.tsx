@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { UniversalExternalFooter } from './UniversalExternalFooter';
+import { UniversalExternalHeader } from './UniversalExternalHeader';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { useThemeTransition } from '@/hooks/use-theme-transition';
+import { cn } from '@/lib/utils';
 
 interface ExternalPageLayoutProps {
   children: React.ReactNode;
@@ -10,6 +12,9 @@ interface ExternalPageLayoutProps {
   description?: string;
   showHeader?: boolean;
   showFooter?: boolean;
+  headerVariant?: 'default' | 'transparent' | 'solid';
+  className?: string;
+  contentClassName?: string;
 }
 
 export const ExternalPageLayout: React.FC<ExternalPageLayoutProps> = ({ 
@@ -17,7 +22,10 @@ export const ExternalPageLayout: React.FC<ExternalPageLayoutProps> = ({
   title,
   description,
   showHeader = true,
-  showFooter = true
+  showFooter = true,
+  headerVariant = 'default',
+  className,
+  contentClassName
 }) => {
   // Apply theme transitions
   useThemeTransition();
@@ -43,14 +51,18 @@ export const ExternalPageLayout: React.FC<ExternalPageLayoutProps> = ({
   
   return (
     <ThemeProvider>
-      <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors">
+      <div className={cn(
+        "min-h-screen flex flex-col bg-background text-foreground transition-colors",
+        className
+      )}>
         {showHeader && (
-          <header>
-            {/* Header content can be added here */}
-          </header>
+          <UniversalExternalHeader variant={headerVariant} />
         )}
         
-        <main className="flex-grow">
+        <main className={cn(
+          "flex-grow pt-16", // Add padding to account for fixed header
+          contentClassName
+        )}>
           {children}
         </main>
         
@@ -59,3 +71,5 @@ export const ExternalPageLayout: React.FC<ExternalPageLayoutProps> = ({
     </ThemeProvider>
   );
 };
+
+export default ExternalPageLayout;

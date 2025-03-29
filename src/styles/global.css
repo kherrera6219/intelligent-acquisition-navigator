@@ -17,6 +17,7 @@
 @import './modules/ms-fluent/core.css';
 @import './modules/ms-fluent/typography.css';
 @import './modules/ms-fluent/interactive.css';
+@import './modules/ms-fluent/sections.css';
 @import './modules/responsive.css';
 
 /* Network status indicators */
