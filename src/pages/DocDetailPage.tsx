@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ExternalPageLayout } from '@/components/layout/ExternalPageLayout';
@@ -157,11 +156,11 @@ const DocDetailPage: React.FC = () => {
               <pre className="bg-muted/50 p-4 rounded-md overflow-x-auto">
                 <code className="text-green-300">
                   // Example code
-                  const fetchData = async () => {'{'}
+                  const fetchData = async () => {"{"}
                     const response = await fetch('/api/data');
                     const data = await response.json();
                     return data;
-                  {'}'};
+                  {"}"};
                 </code>
               </pre>
               
