@@ -1,93 +1,35 @@
 
-import { useState } from "react";
-import { useAzureAI } from "@/hooks/useAzureAI";
-import { TexasAgencyType, TexasRole, TexasMessage, ResponseLevel, RESPONSE_LEVEL_LABELS } from "@/types/texas-chat";
-import { AIChatMessage } from "@/types/chat";
 import { useTexasConversation } from "@/hooks/useTexasConversation";
+import { useTexasChatSubmit } from "@/hooks/useTexasChatSubmit";
 import { TexasChatContainer } from "@/components/texas/TexasChatContainer";
-import { useToast } from "@/hooks/use-toast";
 import { ProtectedPageLayout } from '@/components/layout/ProtectedPageLayout';
-import { BackButton } from "@/components/navigation/BackButton";
-import UniversalInternalHeader from "@/components/layout/UniversalInternalHeader";
+import { UniversalInternalHeader } from "@/components/layout/UniversalInternalHeader";
 import { InternalFooter } from "@/components/layout/InternalFooter";
 import { NetworkStatusBanner } from '@/components/ui/universal/NetworkStatusBanner';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Building2, MessageSquare, HelpCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { RESPONSE_LEVEL_LABELS } from "@/types/texas-chat";
 
 const TexasAcquisitionPage = () => {
-  const [input, setInput] = useState("");
-  const [selectedAgency, setSelectedAgency] = useState<TexasAgencyType>("TEXAS_GOVERNMENT");
-  const [selectedRole, setSelectedRole] = useState<TexasRole>("CONTRACTING_OFFICER");
-  const [selectedResponseLevel, setSelectedResponseLevel] = useState<ResponseLevel>("STANDARD");
   const { messages, conversationId, addMessage, isLoading: isInitializing } = useTexasConversation();
-  const { toast } = useToast();
-
-  const aiMutation = useAzureAI(messages, {
-    onSuccess: async (data) => {
-      const success = await addMessage({
-        role: "assistant",
-        content: data.choices[0].message.content,
-        agencyType: selectedAgency,
-        userRole: selectedRole,
-        responseLevel: selectedResponseLevel
-      });
-      
-      if (!success) {
-        toast({
-          title: "Error saving message",
-          description: "Your message was displayed but couldn't be saved.",
-          variant: "destructive",
-        });
-      }
-    },
-    onError: (error) => {
-      console.error('AI Error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to get AI response. Please try again.",
-        variant: "destructive",
-      });
-    }
+  
+  const {
+    input,
+    setInput,
+    selectedAgency,
+    setSelectedAgency,
+    selectedRole,
+    setSelectedRole,
+    selectedResponseLevel,
+    setSelectedResponseLevel,
+    handleSubmit,
+    isProcessing
+  } = useTexasChatSubmit({
+    messages,
+    conversationId,
+    addMessage
   });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || aiMutation.isPending || !conversationId) return;
-
-    const success = await addMessage({
-      role: "user",
-      content: input.trim(),
-      agencyType: selectedAgency,
-      userRole: selectedRole,
-      responseLevel: selectedResponseLevel
-    });
-    
-    if (!success) {
-      toast({
-        title: "Error saving message",
-        description: "Your message couldn't be saved. Please try again.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const currentInput = input;
-    setInput("");
-    
-    const aiContext = `You are a procurement expert for the ${selectedAgency.replace('_', ' ').toLowerCase()} sector, 
-                      specifically assisting a ${selectedRole.replace('_', ' ').toLowerCase()}. 
-                      Please provide a ${selectedResponseLevel.toLowerCase()} response that is appropriate for a ${RESPONSE_LEVEL_LABELS[selectedResponseLevel].toLowerCase()}.
-                      Provide guidance specific to Texas state regulations and requirements.`;
-    
-    const aiMessages: AIChatMessage[] = [
-      { role: "system", content: aiContext },
-      ...messages.map(msg => ({ 
-        role: msg.role as "user" | "assistant", 
-        content: msg.content 
-      })),
-      { role: "user", content: currentInput.trim() }
-    ];
-
-    aiMutation.mutate(aiMessages);
-  };
 
   return (
     <>
@@ -102,10 +44,79 @@ const TexasAcquisitionPage = () => {
         ]}
         isLoading={isInitializing}
       >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-medium flex items-center">
+                <Building2 className="mr-2 h-5 w-5 text-primary" />
+                Texas Acquisition Resources
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center">
+                  <Badge variant="outline" className="mr-2">Guide</Badge>
+                  <span>Texas Procurement Manual</span>
+                </li>
+                <li className="flex items-center">
+                  <Badge variant="outline" className="mr-2">Form</Badge>
+                  <span>HUB Subcontracting Plan</span>
+                </li>
+                <li className="flex items-center">
+                  <Badge variant="outline" className="mr-2">Checklist</Badge>
+                  <span>SPD Contract Review</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-medium flex items-center">
+                <MessageSquare className="mr-2 h-5 w-5 text-primary" />
+                Conversation Context
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <dl className="space-y-2 text-sm">
+                <div>
+                  <dt className="font-medium">Agency Type:</dt>
+                  <dd>{selectedAgency.replace('_', ' ')}</dd>
+                </div>
+                <div>
+                  <dt className="font-medium">Your Role:</dt>
+                  <dd>{selectedRole.replace('_', ' ')}</dd>
+                </div>
+                <div>
+                  <dt className="font-medium">Response Level:</dt>
+                  <dd>{RESPONSE_LEVEL_LABELS[selectedResponseLevel]}</dd>
+                </div>
+              </dl>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-medium flex items-center">
+                <HelpCircle className="mr-2 h-5 w-5 text-primary" />
+                Quick Tips
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm list-disc pl-4">
+                <li>Use specific questions about Texas regulations</li>
+                <li>Ask about HUB requirements for your project</li>
+                <li>Inquire about procurement thresholds</li>
+                <li>Request templates for solicitation documents</li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+
         <TexasChatContainer
           conversationId={conversationId || ""}
           messages={messages}
-          isLoading={isInitializing || aiMutation.isPending}
+          isLoading={isInitializing || isProcessing}
           input={input}
           selectedAgency={selectedAgency}
           selectedRole={selectedRole}
