@@ -35,15 +35,19 @@ class APIClient {
 
   async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
     const { baseURL = this.baseURL, headers = {}, ...restConfig } = config;
-    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30_000);
+
     try {
       const response = await fetch(`${baseURL}${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
           ...headers,
         },
+        signal: controller.signal,
         ...restConfig,
       });
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const error = new Error(`HTTP error! status: ${response.status}`) as APIError;
@@ -55,6 +59,7 @@ class APIClient {
       const data = await response.json();
       return data as T;
     } catch (error) {
+      clearTimeout(timeoutId);
       return this.handleError(error);
     }
   }

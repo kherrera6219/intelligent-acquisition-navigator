@@ -90,6 +90,8 @@ class AuditLogger {
     }
   }
 
+  private readonly MAX_LOCAL_LOGS = 200;
+
   private createLocalFailureLog(payload: AuditLogPayload, error: unknown): void {
     const failureLog = {
       ...payload,
@@ -98,11 +100,15 @@ class AuditLogger {
       error: error instanceof Error ? error.message : 'Unknown error',
       sessionId: this.sessionId
     };
-    
+
     try {
       const logs = JSON.parse(localStorage.getItem('failedAuditLogs') || '[]');
       logs.push(failureLog);
-      localStorage.setItem('failedAuditLogs', JSON.stringify(logs));
+      // Keep only the most recent entries to avoid exceeding localStorage limits
+      const trimmed = logs.length > this.MAX_LOCAL_LOGS
+        ? logs.slice(logs.length - this.MAX_LOCAL_LOGS)
+        : logs;
+      localStorage.setItem('failedAuditLogs', JSON.stringify(trimmed));
     } catch (e) {
       console.error('Failed to store local audit log:', e);
     }

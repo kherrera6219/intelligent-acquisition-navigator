@@ -1,5 +1,7 @@
 
-export type Permission = 
+import { auditLogger } from '../audit';
+
+export type Permission =
   | 'READ_SOLICITATIONS'
   | 'WRITE_SOLICITATIONS'
   | 'APPROVE_SOLICITATIONS'
@@ -181,6 +183,3 @@ export class AccessControl {
 }
 
 export const accessControl = AccessControl.getInstance();
-
-// Import the audit logger
-import { auditLogger } from '../audit';

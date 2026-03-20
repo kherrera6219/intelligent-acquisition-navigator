@@ -21,6 +21,11 @@ interface AIError {
   status: number;
 }
 
+interface AIRequestError extends Error {
+  code?: string;
+  status?: number;
+}
+
 interface UseAzureAIOptions {
   enabled?: boolean;
   onSuccess?: (data: AIResponse) => void;
@@ -45,9 +50,9 @@ export const useAzureAI = (
 
       if (!response.ok) {
         const errorData: AIError = await response.json();
-        const error = new Error(errorData.error);
-        (error as any).code = errorData.code;
-        (error as any).status = errorData.status;
+        const error: AIRequestError = new Error(errorData.error);
+        error.code = errorData.code;
+        error.status = errorData.status;
         throw error;
       }
 
@@ -55,9 +60,10 @@ export const useAzureAI = (
     },
     onSettled: (data, error) => {
       if (error) {
+        const aiError = error as AIRequestError;
         toast({
-          title: (error as any).code || "Error",
-          description: error.message,
+          title: aiError.code || "Error",
+          description: aiError.message,
           variant: "destructive",
         });
         options.onError?.(error);

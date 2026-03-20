@@ -85,9 +85,20 @@ const Chat = () => {
     initializeConversation();
   }, []);
 
+  const MAX_INPUT_LENGTH = 10_000;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !conversationId) return;
+
+    if (input.length > MAX_INPUT_LENGTH) {
+      toast({
+        title: "Message too long",
+        description: `Please keep messages under ${MAX_INPUT_LENGTH.toLocaleString()} characters.`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
