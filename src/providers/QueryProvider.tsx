@@ -1,5 +1,5 @@
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query';
 import { useState, ReactNode } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { errorTracker } from '@/lib/security/errorTracking';
@@ -9,77 +9,77 @@ interface QueryProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Wrap the entire app with TanStack Query.
+ *
+ * Error handling note: TanStack Query v5 removed per-query meta.onError callbacks.
+ * Global error handling is done via QueryCache / MutationCache constructors instead.
+ * See: https://tanstack.com/query/v5/docs/framework/react/guides/migrating-to-v5
+ */
 export const QueryProvider = ({ children }: QueryProviderProps) => {
   const { toast } = useToast();
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 1000 * 60 * 5, // 5 minutes
-        gcTime: 1000 * 60 * 30, // 30 minutes (formerly cacheTime)
-        retry: 2,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: true,
-        refetchOnMount: false,
-        meta: {
-          onError: (error: Error) => {
-            // Track error
-            errorTracker.trackError({
-              message: error.message,
-              severity: 'MEDIUM',
-              errorType: 'SYSTEM', // Changed from 'API' to 'SYSTEM'
-              status: 'NEW'
-            });
 
-            // Log to audit system
-            auditLogger.log({
-              action: 'API_ERROR',
-              resourceType: 'API',
-              resourceId: 'query',
-              severity: 'WARNING',
-              details: { error: error.message }
-            }).catch(console.error);
+  const [queryClient] = useState(() => {
+    const handleQueryError = (error: Error) => {
+      errorTracker.trackError({
+        message: error.message,
+        severity: 'MEDIUM',
+        errorType: 'SYSTEM',
+        status: 'NEW',
+      });
+      auditLogger.log({
+        action: 'API_ERROR',
+        resourceType: 'API',
+        resourceId: 'query',
+        severity: 'WARNING',
+        details: { error: error.message },
+      }).catch(console.error);
+      toast({
+        variant: 'destructive',
+        title: 'Failed to load data',
+        description: 'Please try refreshing the page.',
+      });
+    };
 
-            // Show toast
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Failed to fetch data. Please try again."
-            });
-          }
-        }
+    const handleMutationError = (error: Error) => {
+      errorTracker.trackError({
+        message: error.message,
+        severity: 'HIGH',
+        errorType: 'SYSTEM',
+        status: 'NEW',
+      });
+      auditLogger.log({
+        action: 'API_ERROR',
+        resourceType: 'API',
+        resourceId: 'mutation',
+        severity: 'ERROR',
+        details: { error: error.message },
+      }).catch(console.error);
+      toast({
+        variant: 'destructive',
+        title: 'Failed to save changes',
+        description: 'Please try again.',
+      });
+    };
+
+    return new QueryClient({
+      queryCache: new QueryCache({ onError: handleQueryError }),
+      mutationCache: new MutationCache({ onError: handleMutationError }),
+      defaultOptions: {
+        queries: {
+          staleTime: 1000 * 60 * 5,    // 5 minutes
+          gcTime:    1000 * 60 * 30,   // 30 minutes
+          retry: 2,
+          refetchOnWindowFocus: false,
+          refetchOnReconnect: true,
+          refetchOnMount: false,
+        },
+        mutations: {
+          retry: 1,
+        },
       },
-      mutations: {
-        retry: 1,
-        meta: {
-          onError: (error: Error) => {
-            // Track error
-            errorTracker.trackError({
-              message: error.message,
-              severity: 'HIGH',
-              errorType: 'SYSTEM', // Changed from 'API' to 'SYSTEM'
-              status: 'NEW'
-            });
-
-            // Log to audit system
-            auditLogger.log({
-              action: 'API_ERROR',
-              resourceType: 'API',
-              resourceId: 'mutation',
-              severity: 'ERROR',
-              details: { error: error.message }
-            }).catch(console.error);
-
-            // Show toast
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Failed to save changes. Please try again."
-            });
-          }
-        }
-      }
-    }
-  }));
+    });
+  });
 
   return (
     <QueryClientProvider client={queryClient}>

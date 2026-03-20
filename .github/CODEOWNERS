@@ -1,0 +1,33 @@
+# CODEOWNERS — ProcurityIQ
+#
+# Each line is a file pattern followed by one or more owners.
+# The last matching pattern takes the most precedence.
+# Owners are automatically requested for review on PRs that
+# touch the matched paths.
+#
+# Syntax: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything not matched below
+* @kherrera6219
+
+# Security-sensitive modules — require explicit review
+src/lib/security/           @kherrera6219
+src/lib/audit.ts            @kherrera6219
+src/integrations/supabase/  @kherrera6219
+
+# AI service layer
+src/services/               @kherrera6219
+
+# Core application providers and routing
+src/App.tsx                 @kherrera6219
+src/providers/              @kherrera6219
+
+# Environment and CI configuration
+.env.example                @kherrera6219
+vite.config.ts              @kherrera6219
+package.json                @kherrera6219
+
+# Documentation
+*.md                        @kherrera6219
+docs/                       @kherrera6219
+.github/                    @kherrera6219

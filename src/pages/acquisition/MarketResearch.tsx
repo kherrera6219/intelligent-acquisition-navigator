@@ -6,6 +6,7 @@ import { Grid } from "@/components/ui/universal/Grid";
 import { Container } from "@/components/ui/universal/Container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -13,9 +14,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Building2, BarChart2, TrendingUp, Star, InboxIcon } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { Search, Building2, BarChart2, TrendingUp, Star, InboxIcon, ExternalLink, Award, FileCheck } from "lucide-react";
 import { MetricsChart } from "@/components/MetricsChart";
-import { useToast } from "@/hooks/use-toast";
 
 const mockData = [
   { month: "Jan", efficiency: 85, compliance: 90, risk: 15 },
@@ -30,12 +37,64 @@ interface Vendor {
   rating: number;
   contracts: number;
   performance: number;
+  cage?: string;
+  uei?: string;
+  naics?: string[];
+  setAsides?: string[];
+  activeContracts?: number;
+  totalValue?: string;
+  pastPerformanceSummary?: string;
 }
 
 const mockVendors: Vendor[] = [
-  { id: "1", name: "TechCorp Solutions",  category: "IT Services",    rating: 4.5, contracts: 12, performance: 92 },
-  { id: "2", name: "Global Office Supply", category: "Office Supplies", rating: 4.2, contracts: 8,  performance: 88 },
-  { id: "3", name: "SecureNet Systems",   category: "Cybersecurity",  rating: 4.8, contracts: 15, performance: 95 },
+  {
+    id: "1",
+    name: "TechCorp Solutions",
+    category: "IT Services",
+    rating: 4.5,
+    contracts: 12,
+    performance: 92,
+    cage: "3TK21",
+    uei: "ABCDEF123456",
+    naics: ["541512", "541511", "541519"],
+    setAsides: ["Small Business", "8(a)"],
+    activeContracts: 4,
+    totalValue: "$14.2M",
+    pastPerformanceSummary:
+      "Consistently delivered IT support services on time across DoD and civilian agency contracts. CPARS ratings average 'Very Good' with no significant deficiencies.",
+  },
+  {
+    id: "2",
+    name: "Global Office Supply",
+    category: "Office Supplies",
+    rating: 4.2,
+    contracts: 8,
+    performance: 88,
+    cage: "7HK93",
+    uei: "GHIJKL789012",
+    naics: ["424120", "453210"],
+    setAsides: ["Small Business", "HUBZone"],
+    activeContracts: 2,
+    totalValue: "$3.8M",
+    pastPerformanceSummary:
+      "Reliable GSA Schedule vendor for office supplies. Minor delivery delays recorded in FY24 Q2 but resolved through corrective action plan.",
+  },
+  {
+    id: "3",
+    name: "SecureNet Systems",
+    category: "Cybersecurity",
+    rating: 4.8,
+    contracts: 15,
+    performance: 95,
+    cage: "5MR40",
+    uei: "MNOPQR345678",
+    naics: ["541512", "541690", "518210"],
+    setAsides: ["Small Business", "SDVOSB"],
+    activeContracts: 6,
+    totalValue: "$28.6M",
+    pastPerformanceSummary:
+      "Top-rated cybersecurity contractor with CMMC Level 3 certification. Holds active FedRAMP authorization. Exceptional performance on DHS and DoD SIEM implementation contracts.",
+  },
 ];
 
 const categories = Array.from(new Set(mockVendors.map((v) => v.category)));
@@ -43,7 +102,7 @@ const categories = Array.from(new Set(mockVendors.map((v) => v.category)));
 const MarketResearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const { toast } = useToast();
+  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
 
   const filteredVendors = useMemo(() => {
     const term = searchTerm.toLowerCase();
@@ -53,10 +112,6 @@ const MarketResearch = () => {
       return matchesSearch && matchesCategory;
     });
   }, [searchTerm, categoryFilter]);
-
-  const handleViewDetails = (vendor: Vendor) => {
-    toast({ title: "Vendor Details", description: `Loading details for ${vendor.name}…` });
-  };
 
   return (
     <Container>
@@ -78,8 +133,8 @@ const MarketResearch = () => {
               <Building2 className="h-6 w-6 text-violet-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-400">Active Vendors</h3>
-              <p className="text-2xl font-bold text-white">234</p>
+              <h3 className="text-sm font-medium text-gray-400">Tracked Vendors</h3>
+              <p className="text-2xl font-bold text-white">{mockVendors.length}</p>
             </div>
           </div>
         </Card>
@@ -90,7 +145,9 @@ const MarketResearch = () => {
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-400">Avg Performance</h3>
-              <p className="text-2xl font-bold text-white">91%</p>
+              <p className="text-2xl font-bold text-white">
+                {Math.round(mockVendors.reduce((a, v) => a + v.performance, 0) / mockVendors.length)}%
+              </p>
             </div>
           </div>
         </Card>
@@ -100,8 +157,10 @@ const MarketResearch = () => {
               <TrendingUp className="h-6 w-6 text-pink-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-400">Market Growth</h3>
-              <p className="text-2xl font-bold text-white">+12.5%</p>
+              <h3 className="text-sm font-medium text-gray-400">Total Contracts</h3>
+              <p className="text-2xl font-bold text-white">
+                {mockVendors.reduce((a, v) => a + v.contracts, 0)}
+              </p>
             </div>
           </div>
         </Card>
@@ -119,7 +178,7 @@ const MarketResearch = () => {
       <Card>
         <div className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <h2 className="text-xl font-semibold text-white">Top Vendors</h2>
+            <h2 className="text-xl font-semibold text-white">Vendors</h2>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative">
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -145,7 +204,6 @@ const MarketResearch = () => {
             </div>
           </div>
 
-          {/* Results count */}
           {(searchTerm || categoryFilter !== "all") && (
             <p className="text-sm text-gray-400 mb-4" aria-live="polite">
               {filteredVendors.length} vendor{filteredVendors.length !== 1 ? "s" : ""} found
@@ -192,7 +250,7 @@ const MarketResearch = () => {
                         variant="outline"
                         size="sm"
                         className="border-white/10"
-                        onClick={() => handleViewDetails(vendor)}
+                        onClick={() => setSelectedVendor(vendor)}
                       >
                         View Details
                       </Button>
@@ -204,6 +262,108 @@ const MarketResearch = () => {
           )}
         </div>
       </Card>
+
+      {/* Vendor detail sheet */}
+      <Sheet open={!!selectedVendor} onOpenChange={(open) => { if (!open) setSelectedVendor(null); }}>
+        <SheetContent className="bg-gray-900 border-white/10 w-full sm:max-w-lg overflow-y-auto">
+          {selectedVendor && (
+            <>
+              <SheetHeader className="mb-6">
+                <SheetTitle className="text-white text-xl">{selectedVendor.name}</SheetTitle>
+                <SheetDescription className="text-gray-400">{selectedVendor.category}</SheetDescription>
+              </SheetHeader>
+
+              {/* Identifiers */}
+              <section className="mb-6">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Identifiers</h3>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  {selectedVendor.cage && (
+                    <div>
+                      <p className="text-gray-500 text-xs">CAGE Code</p>
+                      <p className="text-gray-200 font-mono">{selectedVendor.cage}</p>
+                    </div>
+                  )}
+                  {selectedVendor.uei && (
+                    <div>
+                      <p className="text-gray-500 text-xs">UEI</p>
+                      <p className="text-gray-200 font-mono">{selectedVendor.uei}</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* Set-asides */}
+              {selectedVendor.setAsides && selectedVendor.setAsides.length > 0 && (
+                <section className="mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Socioeconomic / Set-Asides</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedVendor.setAsides.map((s) => (
+                      <Badge key={s} variant="outline" className="border-violet-500/30 text-violet-400 text-xs">{s}</Badge>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* NAICS codes */}
+              {selectedVendor.naics && selectedVendor.naics.length > 0 && (
+                <section className="mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">NAICS Codes</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedVendor.naics.map((n) => (
+                      <Badge key={n} variant="outline" className="border-white/10 text-gray-300 text-xs font-mono">{n}</Badge>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Metrics */}
+              <section className="mb-6">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Performance Metrics</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-white/5 rounded-lg p-3 text-center">
+                    <Award className="h-4 w-4 text-yellow-400 mx-auto mb-1" aria-hidden="true" />
+                    <p className="text-lg font-bold text-white">{selectedVendor.rating}/5</p>
+                    <p className="text-xs text-gray-500">Rating</p>
+                  </div>
+                  <div className="bg-white/5 rounded-lg p-3 text-center">
+                    <FileCheck className="h-4 w-4 text-emerald-400 mx-auto mb-1" aria-hidden="true" />
+                    <p className="text-lg font-bold text-white">{selectedVendor.performance}%</p>
+                    <p className="text-xs text-gray-500">Performance</p>
+                  </div>
+                  <div className="bg-white/5 rounded-lg p-3 text-center">
+                    <Building2 className="h-4 w-4 text-violet-400 mx-auto mb-1" aria-hidden="true" />
+                    <p className="text-lg font-bold text-white">{selectedVendor.activeContracts ?? "—"}</p>
+                    <p className="text-xs text-gray-500">Active</p>
+                  </div>
+                </div>
+                {selectedVendor.totalValue && (
+                  <p className="text-sm text-gray-400 mt-3">
+                    Total contract value: <span className="text-white font-medium">{selectedVendor.totalValue}</span>
+                  </p>
+                )}
+              </section>
+
+              {/* Past performance */}
+              {selectedVendor.pastPerformanceSummary && (
+                <section className="mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Past Performance Summary</h3>
+                  <p className="text-sm text-gray-300 leading-relaxed">{selectedVendor.pastPerformanceSummary}</p>
+                </section>
+              )}
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full border-white/10 text-gray-300 hover:text-white mt-2"
+                onClick={() => window.open(`https://sam.gov/entity/${selectedVendor.uei}`, "_blank", "noopener,noreferrer")}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" aria-hidden="true" />
+                View on SAM.gov
+              </Button>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </Container>
   );
 };

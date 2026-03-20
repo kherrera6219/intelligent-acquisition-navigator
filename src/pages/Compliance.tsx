@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -139,9 +139,20 @@ function ComplianceScannerModal({ open, onClose, onResults }: ScannerModalProps)
   const [isScanning, setIsScanning] = useState(false);
   const { toast } = useToast();
 
+  const MAX_SCAN_CHARS = 40_000; // ~10k tokens — safe budget for the compliance prompt
+
   const handleScan = async () => {
-    if (documentText.trim().length < 50) {
+    const trimmed = documentText.trim();
+    if (trimmed.length < 50) {
       toast({ title: "Too short", description: "Paste at least 50 characters of document text.", variant: "destructive" });
+      return;
+    }
+    if (trimmed.length > MAX_SCAN_CHARS) {
+      toast({
+        title: "Document too large",
+        description: `Please paste under ${(MAX_SCAN_CHARS / 1000).toFixed(0)}k characters. Try pasting a specific section.`,
+        variant: "destructive",
+      });
       return;
     }
 
@@ -237,13 +248,33 @@ Be specific and actionable. Reference actual FAR/DFARS clause numbers.`;
   );
 }
 
+const COMPLIANCE_STORAGE_KEY = "procurityiq:compliance-items";
+
+function loadPersistedItems(): ComplianceItem[] {
+  try {
+    const raw = localStorage.getItem(COMPLIANCE_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as ComplianceItem[]) : initialItems;
+  } catch {
+    return initialItems;
+  }
+}
+
 // ── Main Page ────────────────────────────────────────────────────────────────
 const Compliance = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [scannerOpen, setScannerOpen] = useState(false);
-  const [items, setItems] = useState<ComplianceItem[]>(initialItems);
+  const [items, setItems] = useState<ComplianceItem[]>(loadPersistedItems);
+
+  // Persist items to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(COMPLIANCE_STORAGE_KEY, JSON.stringify(items));
+    } catch {
+      // Storage quota exceeded — ignore
+    }
+  }, [items]);
 
   const handleScanResults = (newItems: ComplianceItem[]) => {
     setItems((prev) => [...newItems, ...prev]);

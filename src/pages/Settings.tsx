@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,31 +21,64 @@ import {
 } from "lucide-react";
 import { accessControl } from "@/lib/security/accessControl";
 
+const STORAGE_KEY = "procurityiq:settings";
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveSettings(data: Record<string, unknown>) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // Storage quota exceeded or private browsing — ignore
+  }
+}
+
 const Settings = () => {
   const { toast } = useToast();
   const canManageUsers = accessControl.hasPermission("MANAGE_USERS");
 
-  const [notifications, setNotifications] = useState({
-    email: true,
-    solicitations: true,
-    proposals: false,
-    compliance: true,
-    system: false,
-  });
+  const saved = loadSettings();
 
-  const [security, setSecurity] = useState({
-    sessionTimeout: "15",
-    auditLogging: true,
-    mfaRequired: false,
-  });
+  const [notifications, setNotifications] = useState(
+    saved?.notifications ?? {
+      email: true,
+      solicitations: true,
+      proposals: false,
+      compliance: true,
+      system: false,
+    }
+  );
 
-  const [preferences, setPreferences] = useState({
-    defaultRole: "CONTRACT_SPECIALIST",
-    defaultAgency: "DFARS",
-    theme: "dark",
-  });
+  const [security, setSecurity] = useState(
+    saved?.security ?? {
+      sessionTimeout: "15",
+      auditLogging: true,
+      mfaRequired: false,
+    }
+  );
+
+  const [preferences, setPreferences] = useState(
+    saved?.preferences ?? {
+      defaultRole: "CONTRACT_SPECIALIST",
+      defaultAgency: "DFARS",
+      theme: "dark",
+    }
+  );
+
+  // Sync to localStorage whenever any section changes
+  useEffect(() => {
+    saveSettings({ notifications, security, preferences });
+  }, [notifications, security, preferences]);
 
   const handleSave = (section: string) => {
+    saveSettings({ notifications, security, preferences });
     toast({
       title: "Settings saved",
       description: `${section} settings have been updated.`,
