@@ -1,24 +1,12 @@
 
+import { useRef } from "react";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { getAICompletion, type AzureAIResponse } from "@/services/azure/aiService";
 
 interface AIChatMessage {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
-}
-
-interface AIResponse {
-  choices: Array<{
-    message: {
-      content: string;
-    };
-  }>;
-}
-
-interface AIError {
-  error: string;
-  code: string;
-  status: number;
 }
 
 interface AIRequestError extends Error {
@@ -27,42 +15,33 @@ interface AIRequestError extends Error {
 }
 
 interface UseAzureAIOptions {
-  enabled?: boolean;
-  onSuccess?: (data: AIResponse) => void;
+  onSuccess?: (data: AzureAIResponse) => void;
   onError?: (error: Error) => void;
 }
 
 export const useAzureAI = (
-  messages: AIChatMessage[], 
+  _messages: AIChatMessage[],
   options: UseAzureAIOptions = {}
-): UseMutationResult<AIResponse, Error, AIChatMessage[], unknown> => {
+): UseMutationResult<AzureAIResponse, Error, AIChatMessage[], unknown> => {
   const { toast } = useToast();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   return useMutation({
     mutationFn: async (messages: AIChatMessage[]) => {
-      const response = await fetch('/api/azure-ai', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ messages }),
-      });
+      // Cancel any in-flight request before starting a new one
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = new AbortController();
 
-      if (!response.ok) {
-        const errorData: AIError = await response.json();
-        const error: AIRequestError = new Error(errorData.error);
-        error.code = errorData.code;
-        error.status = errorData.status;
-        throw error;
-      }
-
-      return response.json();
+      return getAICompletion(messages, undefined, abortControllerRef.current.signal);
     },
     onSettled: (data, error) => {
       if (error) {
+        // Ignore AbortError — user intentionally cancelled
+        if (error.name === 'AbortError') return;
+
         const aiError = error as AIRequestError;
         toast({
-          title: aiError.code || "Error",
+          title: aiError.code || "AI Error",
           description: aiError.message,
           variant: "destructive",
         });

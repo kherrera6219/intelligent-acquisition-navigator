@@ -73,7 +73,8 @@ const rolePermissions: Record<Role, Permission[]> = {
     'EVALUATE_PROPOSALS',
     'MANAGE_USERS',
     'VIEW_AUDIT_LOGS',
-    'EXPORT_DATA'
+    'EXPORT_DATA',
+    'MANAGE_CONTRACTS'
   ]
 };
 
@@ -81,6 +82,7 @@ export class AccessControl {
   private static instance: AccessControl;
   private securityContext: SecurityContext | null = null;
   private readonly sessionTimeout = 1000 * 60 * 15; // 15 minutes
+  private sessionMonitorId: ReturnType<typeof setInterval> | null = null;
 
   private constructor() {
     this.startSessionMonitor();
@@ -94,13 +96,24 @@ export class AccessControl {
   }
 
   private startSessionMonitor() {
-    setInterval(() => {
+    // Clear any existing monitor to prevent timer accumulation
+    this.stopSessionMonitor();
+
+    this.sessionMonitorId = setInterval(() => {
       if (this.securityContext && this.securityContext.authMethod.expiresAt < new Date()) {
+        this.stopSessionMonitor();
         this.logout();
-        // Trigger re-authentication
-        window.location.href = '/login';
+        // Dispatch event so UI can redirect via React Router rather than hard reload
+        window.dispatchEvent(new CustomEvent('auth:session-expired'));
       }
-    }, 60000); // Check every minute
+    }, 30_000); // Check every 30 seconds
+  }
+
+  private stopSessionMonitor() {
+    if (this.sessionMonitorId !== null) {
+      clearInterval(this.sessionMonitorId);
+      this.sessionMonitorId = null;
+    }
   }
 
   async authenticateWithPIV(): Promise<boolean> {
@@ -180,6 +193,7 @@ export class AccessControl {
       });
     }
     this.securityContext = null;
+    this.stopSessionMonitor();
   }
 }
 

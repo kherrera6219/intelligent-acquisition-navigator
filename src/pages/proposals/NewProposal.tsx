@@ -30,6 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getAICompletion } from "@/services/azure/aiService";
 import { useCreateSolicitation } from "@/hooks/useSolicitations";
 import { pushNotification } from "@/hooks/useNotifications";
+import { supabase } from "@/integrations/supabase/client";
 
 // --- Types ---
 type Step = "requirements" | "sections" | "draft" | "review";
@@ -170,10 +171,8 @@ Section purpose: ${sectionMeta.description}`;
 
   const generateAll = async () => {
     setIsGeneratingAll(true);
-    const toGenerate = [...selectedSections];
-    for (const id of toGenerate) {
-      await generateSection(id);
-    }
+    // Generate all selected sections concurrently — significantly faster than sequential
+    await Promise.allSettled([...selectedSections].map((id) => generateSection(id)));
     setIsGeneratingAll(false);
     pushNotification({
       type: "ai_complete",
@@ -189,13 +188,16 @@ Section purpose: ${sectionMeta.description}`;
 
   const handleSave = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const createdBy = user?.id ?? 'anonymous';
+
       await createSolicitation.mutateAsync({
         title: rfpTitle,
         type: "RFP",
         description: requirements,
         due_date: null,
         estimated_value: null,
-        created_by: "current-user",
+        created_by: createdBy,
       });
       pushNotification({
         type: "status_change",

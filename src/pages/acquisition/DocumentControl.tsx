@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/universal/Card";
 import { Grid } from "@/components/ui/universal/Grid";
@@ -64,7 +65,20 @@ function DocumentSkeleton() {
   );
 }
 
-const DEMO_USER_ID = "demo-user-00000000";
+/** Allowed MIME types for document uploads (whitelist approach). */
+const ALLOWED_MIME_TYPES = new Set([
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'text/plain',
+  'text/csv',
+]);
+
+const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
 const DocumentControl = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -100,7 +114,29 @@ const DocumentControl = () => {
     if (!file) return;
     e.target.value = ""; // reset so same file can be re-selected
 
-    await uploadDocument.mutateAsync({ file, userId: DEMO_USER_ID });
+    // --- Client-side validation ---
+    if (!ALLOWED_MIME_TYPES.has(file.type)) {
+      toast({
+        title: "File type not allowed",
+        description: "Accepted types: PDF, Word, Excel, PowerPoint, plain text, CSV.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      toast({
+        title: "File too large",
+        description: `Maximum upload size is 50 MB. This file is ${formatBytes(file.size)}.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // --- Resolve real user ID ---
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id ?? 'anonymous';
+
+    await uploadDocument.mutateAsync({ file, userId });
     pushNotification({
       type: "status_change",
       title: "Document uploaded",
@@ -140,7 +176,7 @@ const DocumentControl = () => {
         className="sr-only"
         onChange={handleFileChange}
         aria-hidden="true"
-        accept="*/*"
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
       />
 
       <PageHeader

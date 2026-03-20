@@ -68,7 +68,11 @@ const Chat = () => {
       setIsInitializing(true);
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+          // Not authenticated — still allow chat without persistence
+          setIsInitializing(false);
+          return;
+        }
 
         const { data: conversation, error } = await supabase
           .from('conversations')
@@ -81,17 +85,23 @@ const Chat = () => {
 
         if (error) {
           console.error('Error creating conversation:', error);
+          toast({
+            title: "Chat history unavailable",
+            description: "Messages won't be saved this session. You can still use the assistant.",
+          });
           return;
         }
 
         setConversationId(conversation.id);
+      } catch (err) {
+        console.error('Unexpected error initializing conversation:', err);
       } finally {
         setIsInitializing(false);
       }
     };
 
     initializeConversation();
-  }, []);
+  }, [toast]);
 
   const MAX_INPUT_LENGTH = 10_000;
 
@@ -149,13 +159,17 @@ const Chat = () => {
     const aiContext = `You are responding as a ${ROLE_LABELS[selectedRole]} working under ${AGENCY_LABELS[selectedAgency]}.
                       Provide a ${selectedDetailLevel.toLowerCase()} response.`;
 
+    // Limit conversation history to prevent context-window overflow.
+    // The service layer applies its own truncation as well; this keeps
+    // the request payload small before it even leaves the component.
+    const CHAT_HISTORY_WINDOW = 20;
     const aiMessages = [
       { role: "system", content: aiContext },
-      ...messages.map(msg => ({
+      ...messages.slice(-CHAT_HISTORY_WINDOW).map(msg => ({
         role: msg.role,
-        content: msg.content
+        content: msg.content,
       })),
-      { role: "user", content: userMessage.content }
+      { role: "user", content: userMessage.content },
     ];
 
     aiMutation.mutate(aiMessages);
