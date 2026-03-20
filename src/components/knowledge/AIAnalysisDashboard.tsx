@@ -21,7 +21,7 @@ export const AIAnalysisDashboard = () => {
   });
 
   // Process data for the metrics chart
-  const chartData = analysisRecords?.reduce((acc: any[], record) => {
+  const chartData = analysisRecords?.reduce((acc: { month: string; efficiency: number; compliance: number; risk: number }[], record) => {
     const date = new Date(record.created_at);
     const month = date.toLocaleString('default', { month: 'short' });
     

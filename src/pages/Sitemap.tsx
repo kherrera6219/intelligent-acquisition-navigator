@@ -1,10 +1,11 @@
 
+import React from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Brain, Shield, Zap, BarChart } from 'lucide-react';
 
-const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: any }> }) => (
+const SitemapSection = ({ title, links }: { title: string, links: Array<{ path: string, label: string, icon: React.ComponentType<{ className?: string }> }> }) => (
   <Card className="p-6 glass-card">
     <h2 className="text-xl font-semibold mb-4 text-gradient">{title}</h2>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

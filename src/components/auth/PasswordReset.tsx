@@ -37,10 +37,10 @@ const PasswordReset = () => {
         title: "Reset link sent",
         description: "Check your email for password reset instructions.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Failed to send reset link. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to send reset link. Please try again.",
         variant: "destructive",
       });
     } finally {

@@ -69,6 +69,7 @@ export const useProposals = () => {
   return useQuery({
     queryKey: ["proposals"],
     queryFn: async (): Promise<Proposal[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase as any)
         .from("proposals")
         .select("*")
@@ -90,6 +91,7 @@ export const useCreateProposal = () => {
 
   return useMutation({
     mutationFn: async (proposal: Omit<Proposal, "id" | "created_at" | "updated_at">) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase as any)
         .from("proposals")
         .insert({ ...proposal, created_at: new Date().toISOString(), updated_at: new Date().toISOString() })
@@ -114,6 +116,7 @@ export const useUpdateProposalStatus = () => {
 
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: ProposalStatus }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase as any)
         .from("proposals")
         .update({ status, updated_at: new Date().toISOString() })

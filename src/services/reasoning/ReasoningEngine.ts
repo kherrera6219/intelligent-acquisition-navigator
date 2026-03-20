@@ -19,7 +19,7 @@ import { generateWithAI } from "./aiService";
 export class ReasoningEngine {
   private complianceRules: Record<string, ComplianceRule>;
   private currentState: WorkflowState;
-  private analysisHistory: any[];
+  private analysisHistory: Record<string, unknown>[];
   private sessionId: string;
 
   constructor(complianceRules: Record<string, ComplianceRule>) {
@@ -30,7 +30,7 @@ export class ReasoningEngine {
   }
 
   public async processReasoning(
-    retrievalResults: any[],
+    retrievalResults: unknown[],
     context: Context
   ): Promise<ReasoningResult> {
     try {
@@ -78,7 +78,7 @@ export class ReasoningEngine {
   }
 
   private async applyReasoningSteps(
-    retrievalResults: any[],
+    retrievalResults: unknown[],
     context: Context
   ): Promise<string[]> {
     const stepIds: string[] = [];
@@ -111,7 +111,7 @@ export class ReasoningEngine {
 
   private async validateCompliance(
     reasoningStepIds: string[],
-    retrievalResults: any[]
+    retrievalResults: unknown[]
   ): Promise<string[]> {
     const checkIds: string[] = [];
 
@@ -191,7 +191,7 @@ export class ReasoningEngine {
 
   private createStepPrompt(
     template: { step: number; description: string },
-    retrievalResults: any[],
+    retrievalResults: unknown[],
     context: Context
   ): string {
     return `
@@ -209,7 +209,7 @@ Provide a detailed analysis and conclusion for this step.
     `.trim();
   }
 
-  private createCompliancePrompt(rule: ComplianceRule, retrievalResults: any[]): string {
+  private createCompliancePrompt(rule: ComplianceRule, retrievalResults: unknown[]): string {
     return `
 Evaluate compliance with the following rule:
 
@@ -224,8 +224,8 @@ Determine if the evidence complies with the rule and provide a detailed explanat
   }
 
   private createConclusionPrompt(
-    steps: any[],
-    checks: any[],
+    steps: unknown[],
+    checks: unknown[],
     context: Context
   ): string {
     return `
@@ -251,7 +251,7 @@ Provide a clear and concise conclusion that incorporates the reasoning steps and
     return 'passed';
   }
 
-  private addToHistory(action: string, data: Record<string, any>): void {
+  private addToHistory(action: string, data: Record<string, unknown>): void {
     this.analysisHistory.push({
       timestamp: new Date().toISOString(),
       state: this.currentState,

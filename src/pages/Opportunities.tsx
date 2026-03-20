@@ -1,4 +1,6 @@
 import { useState } from "react";
+
+let oppSearchTimer: ReturnType<typeof setTimeout> | undefined;
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
@@ -172,8 +174,8 @@ const Opportunities = () => {
   // Debounce search input
   const handleKeywordChange = (val: string) => {
     setKeyword(val);
-    clearTimeout((window as any)._oppSearchTimer);
-    (window as any)._oppSearchTimer = setTimeout(() => setDebouncedKeyword(val), 500);
+    clearTimeout(oppSearchTimer);
+    oppSearchTimer = setTimeout(() => setDebouncedKeyword(val), 500);
   };
 
   const { data, isLoading, isError, error } = useQuery({

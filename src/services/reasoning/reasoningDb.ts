@@ -99,11 +99,11 @@ export async function insertReasoningResult(
     supporting_evidence: (resultData.supporting_evidence as Json[] || []).map(item => 
       typeof item === 'string' ? JSON.parse(item) : item
     ),
-    metadata: resultData.metadata as Record<string, any> | undefined
+    metadata: resultData.metadata as Record<string, unknown> | undefined
   };
 }
 
-export async function getReasoningSteps(stepIds: string[]): Promise<any[]> {
+export async function getReasoningSteps(stepIds: string[]): Promise<Record<string, unknown>[]> {
   const { data, error } = await supabase
     .from('reasoning_steps')
     .select('*')
@@ -117,7 +117,7 @@ export async function getReasoningSteps(stepIds: string[]): Promise<any[]> {
   return data || [];
 }
 
-export async function getComplianceChecks(checkIds: string[]): Promise<any[]> {
+export async function getComplianceChecks(checkIds: string[]): Promise<Record<string, unknown>[]> {
   const { data, error } = await supabase
     .from('compliance_checks')
     .select('*')

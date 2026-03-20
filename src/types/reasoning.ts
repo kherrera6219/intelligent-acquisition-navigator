@@ -16,7 +16,7 @@ export interface ComplianceCheck {
   severity: number;
   evidence: Json[];
   confidence_score: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ReasoningStep {
@@ -28,7 +28,7 @@ export interface ReasoningStep {
   output: string;
   confidence_score: number;
   supporting_evidence: Json[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ReasoningResult {
@@ -38,14 +38,14 @@ export interface ReasoningResult {
   reasoning_steps: string[];
   compliance_checks: string[];
   supporting_evidence: Json[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface Context {
   reasoning_type?: string;
   user_role?: string;
   domain?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export enum WorkflowState {

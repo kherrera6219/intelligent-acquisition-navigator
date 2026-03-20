@@ -50,7 +50,7 @@ export interface OpportunitySearchParams {
 }
 
 const SAM_API_BASE = "https://api.sam.gov/opportunities/v2/search";
-const API_KEY = (import.meta as any).env?.VITE_SAM_GOV_API_KEY as string | undefined;
+const API_KEY = import.meta.env.VITE_SAM_GOV_API_KEY;
 
 const MOCK_OPPORTUNITIES: SamOpportunity[] = [
   {
