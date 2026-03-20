@@ -18,14 +18,12 @@ import { generateWithAI } from "./aiService";
 
 export class ReasoningEngine {
   private complianceRules: Record<string, ComplianceRule>;
-  private apiKey: string;
   private currentState: WorkflowState;
   private analysisHistory: any[];
   private sessionId: string;
 
-  constructor(complianceRules: Record<string, ComplianceRule>, apiKey: string) {
+  constructor(complianceRules: Record<string, ComplianceRule>) {
     this.complianceRules = complianceRules;
-    this.apiKey = apiKey;
     this.currentState = WorkflowState.QUERY_PARSING;
     this.analysisHistory = [];
     this.sessionId = `session_${new Date().toISOString()}`;
@@ -88,7 +86,7 @@ export class ReasoningEngine {
 
     for (const stepTemplate of template) {
       const prompt = this.createStepPrompt(stepTemplate, retrievalResults, context);
-      const response = await generateWithAI(prompt, this.apiKey);
+      const response = await generateWithAI(prompt);
       
       const step: Omit<ReasoningStep, 'id'> = {
         step_id: `step_${stepIds.length + 1}`,
@@ -119,7 +117,7 @@ export class ReasoningEngine {
 
     for (const [ruleId, rule] of Object.entries(this.complianceRules)) {
       const prompt = this.createCompliancePrompt(rule, retrievalResults);
-      const response = await generateWithAI(prompt, this.apiKey);
+      const response = await generateWithAI(prompt);
       
       const check: Omit<ComplianceCheck, 'id'> = {
         rule_id: ruleId,
@@ -149,7 +147,7 @@ export class ReasoningEngine {
     const checks = await getComplianceChecks(complianceCheckIds);
 
     const prompt = this.createConclusionPrompt(steps, checks, context);
-    const response = await generateWithAI(prompt, this.apiKey);
+    const response = await generateWithAI(prompt);
 
     return {
       conclusion: response,

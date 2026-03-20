@@ -1,5 +1,4 @@
 
-import { AzureKeyCredential, OpenAIClient } from "@azure/openai";
 import { toast } from "@/hooks/use-toast";
 
 interface AzureAIResponse {
@@ -11,10 +10,7 @@ interface AzureAIResponse {
     finish_reason: string;
     index: number;
   }>;
-  created: number;
-  id: string;
   model: string;
-  object: string;
   usage: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -22,82 +18,46 @@ interface AzureAIResponse {
   };
 }
 
-let client: OpenAIClient | null = null;
-
-const initializeClient = (apiKey: string) => {
-  if (!apiKey) {
-    toast({
-      title: "Missing API Key",
-      description: "Please provide a valid Azure OpenAI API key",
-      variant: "destructive"
-    });
-    throw new Error('Azure OpenAI API key is required');
-  }
-  
-  try {
-    client = new OpenAIClient(
-      "https://knowledgedev2443059259.services.ai.azure.com/",
-      new AzureKeyCredential(apiKey)
-    );
-    return client;
-  } catch (error) {
-    console.error('Failed to initialize Azure OpenAI client:', error);
-    toast({
-      title: "Initialization Error",
-      description: "Failed to initialize AI client. Please check your API key.",
-      variant: "destructive"
-    });
-    throw error;
-  }
+// Helper function to extract FAR citations from the response
+const extractFARCitations = (content: string): string[] => {
+  const farRegex = /FAR\s+\d+(\.\d+)*(\([a-z]\))?/g;
+  return Array.from(new Set(content.match(farRegex) || []));
 };
 
-export const getAICompletion = async (messages: Array<{ role: string; content: string }>, apiKey: string) => {
+// Helper function to calculate confidence score based on token usage
+const calculateConfidenceScore = (result: AzureAIResponse): number => {
+  const baseScore = 0.8;
+  const tokenRatio = (result.usage?.completion_tokens || 0) / 16000;
+  return Math.min(baseScore + (tokenRatio * 0.2), 1);
+};
+
+/**
+ * Send messages to the AI service via the internal API endpoint.
+ * The API key is kept server-side only; this function never exposes it to the browser.
+ */
+export const getAICompletion = async (
+  messages: Array<{ role: string; content: string }>,
+  // apiKey is kept for backwards-compat call sites but is no longer used client-side
+  _apiKey?: string
+): Promise<AzureAIResponse> => {
   try {
-    if (!client) {
-      initializeClient(apiKey);
-    }
-
-    if (!client) {
-      throw new Error('Azure OpenAI client not initialized');
-    }
-
-    const deploymentId = 'gpt-4o';
-    const result = await client.getChatCompletions(deploymentId, messages, {
-      maxTokens: 4096,
-      temperature: 1,
-      topP: 1,
+    const response = await fetch('/api/azure-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages }),
     });
 
-    if (!result || !result.choices || result.choices.length === 0) {
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
       toast({
-        title: "No Response",
-        description: "The AI service did not generate a response. Please try again.",
+        title: "AI Service Error",
+        description: errorData.message || 'Failed to process request',
         variant: "destructive"
       });
-      throw new Error('No completion generated');
+      throw new Error(errorData.message || `Request failed: ${response.status}`);
     }
 
-    const response: AzureAIResponse = {
-      choices: result.choices.map(choice => ({
-        message: {
-          content: choice.message?.content || '',
-          role: choice.message?.role || 'assistant'
-        },
-        finish_reason: choice.finishReason || '',
-        index: choice.index
-      })),
-      created: Date.now(),
-      id: result.id,
-      model: deploymentId,
-      object: 'chat.completion',
-      usage: {
-        prompt_tokens: result.usage?.promptTokens || 0,
-        completion_tokens: result.usage?.completionTokens || 0,
-        total_tokens: result.usage?.totalTokens || 0
-      }
-    };
-
-    return response;
+    return response.json();
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     toast({
@@ -105,54 +65,38 @@ export const getAICompletion = async (messages: Array<{ role: string; content: s
       description: `Failed to process request: ${errorMessage}`,
       variant: "destructive"
     });
-    console.error('Azure OpenAI Error:', error);
     throw error;
   }
 };
 
-export const getResearchCompletion = async (query: string, apiKey: string) => {
+export const getResearchCompletion = async (query: string, _apiKey?: string) => {
   try {
-    if (!client) {
-      initializeClient(apiKey);
-    }
+    const response = await fetch('/api/azure-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: query }],
+        isResearch: true,
+      }),
+    });
 
-    if (!client) {
-      throw new Error('Azure OpenAI client not initialized');
-    }
-
-    const systemMessage = {
-      role: "system",
-      content: `You are an AI assistant specialized in federal acquisition research. 
-                Focus on FAR compliance, procurement strategies, and market research. 
-                Provide detailed, regulation-compliant responses with relevant FAR citations.`
-    };
-
-    const result = await client.getChatCompletions(
-      'gpt-4o',
-      [
-        systemMessage,
-        { role: "user", content: query }
-      ],
-      {
-        maxTokens: 4096,
-        temperature: 0.7,
-        topP: 0.95,
-      }
-    );
-
-    if (!result.choices[0]?.message?.content) {
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
       toast({
         title: "Research Error",
-        description: "No research results generated. Please try a different query.",
+        description: errorData.message || 'Failed to process research request',
         variant: "destructive"
       });
-      throw new Error('No research completion generated');
+      throw new Error(errorData.message || `Request failed: ${response.status}`);
     }
 
+    const data: AzureAIResponse = await response.json();
+    const content = data.choices[0]?.message?.content || '';
+
     return {
-      content: result.choices[0].message.content,
-      citations: extractFARCitations(result.choices[0].message.content),
-      confidence: calculateConfidenceScore(result)
+      content,
+      citations: extractFARCitations(content),
+      confidence: calculateConfidenceScore(data),
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -163,17 +107,4 @@ export const getResearchCompletion = async (query: string, apiKey: string) => {
     });
     throw error;
   }
-};
-
-// Helper function to extract FAR citations from the response
-const extractFARCitations = (content: string): string[] => {
-  const farRegex = /FAR\s+\d+(\.\d+)*(\([a-z]\))?/g;
-  return Array.from(new Set(content.match(farRegex) || []));
-};
-
-// Helper function to calculate confidence score based on response metadata
-const calculateConfidenceScore = (result: any): number => {
-  const baseScore = 0.8;
-  const tokenRatio = (result.usage?.completionTokens || 0) / 4096;
-  return Math.min(baseScore + (tokenRatio * 0.2), 1);
 };
