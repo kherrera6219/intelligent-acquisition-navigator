@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAzureAI } from "@/hooks/useAzureAI";
 import { CodeEnvironment } from "@/components/CodeEnvironment";
 import { ChatToolbar } from "@/components/chat/ChatToolbar";
@@ -8,6 +9,7 @@ import { ChatSelectors } from "@/components/chat/ChatSelectors";
 import { ChatMessages } from "@/components/chat/ChatMessages";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { FileUpload } from "@/components/chat/FileUpload";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Message, AcquisitionRole, AgencyRegulation, DetailLevel } from "@/types/chat";
 import { ROLE_LABELS, AGENCY_LABELS } from "@/constants/chatOptions";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +23,7 @@ const Chat = () => {
   const [selectedDetailLevel, setSelectedDetailLevel] = useState<DetailLevel>("BRIEF");
   const [isEnvironmentOpen, setIsEnvironmentOpen] = useState(false);
   const [conversationId, setConversationId] = useState<string>("");
+  const [isInitializing, setIsInitializing] = useState(true);
   const { toast } = useToast();
 
   const aiMutation = useAzureAI(
@@ -36,7 +39,7 @@ const Chat = () => {
           content: data.choices[0].message.content,
           timestamp: new Date(),
         };
-        
+
         setMessages((prev) => [...prev, assistantMessage]);
 
         if (conversationId) {
@@ -62,24 +65,29 @@ const Chat = () => {
 
   useEffect(() => {
     const initializeConversation = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      setIsInitializing(true);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-      const { data: conversation, error } = await supabase
-        .from('conversations')
-        .insert({
-          title: `Chat ${new Date().toLocaleDateString()}`,
-          user_id: user.id,
-        })
-        .select()
-        .single();
+        const { data: conversation, error } = await supabase
+          .from('conversations')
+          .insert({
+            title: `Chat ${new Date().toLocaleDateString()}`,
+            user_id: user.id,
+          })
+          .select()
+          .single();
 
-      if (error) {
-        console.error('Error creating conversation:', error);
-        return;
+        if (error) {
+          console.error('Error creating conversation:', error);
+          return;
+        }
+
+        setConversationId(conversation.id);
+      } finally {
+        setIsInitializing(false);
       }
-
-      setConversationId(conversation.id);
     };
 
     initializeConversation();
@@ -113,7 +121,6 @@ const Chat = () => {
       detailLevel: selectedDetailLevel,
     };
 
-    // Save message to database
     const { error: dbError } = await supabase.from('chat_messages').insert({
       conversation_id: conversationId,
       content: userMessage.content,
@@ -138,16 +145,15 @@ const Chat = () => {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    
-    // Prepare context for AI
-    const aiContext = `You are responding as a ${ROLE_LABELS[selectedRole]} working under ${AGENCY_LABELS[selectedAgency]}. 
+
+    const aiContext = `You are responding as a ${ROLE_LABELS[selectedRole]} working under ${AGENCY_LABELS[selectedAgency]}.
                       Provide a ${selectedDetailLevel.toLowerCase()} response.`;
-    
+
     const aiMessages = [
       { role: "system", content: aiContext },
-      ...messages.map(msg => ({ 
-        role: msg.role, 
-        content: msg.content 
+      ...messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
       })),
       { role: "user", content: userMessage.content }
     ];
@@ -155,55 +161,68 @@ const Chat = () => {
     aiMutation.mutate(aiMessages);
   };
 
+  if (isInitializing) {
+    return (
+      <div className="space-y-4 animate-fade-in" aria-busy="true" aria-label="Loading chat">
+        <div className="mb-6 space-y-2">
+          <Skeleton className="h-8 w-44 bg-white/5 rounded-md" />
+          <Skeleton className="h-4 w-72 bg-white/5 rounded-md" />
+        </div>
+        <Skeleton className="h-[600px] w-full bg-white/5 rounded-xl" />
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Card className="bg-black/40 backdrop-blur-sm border-white/10">
-            <div className="h-[600px] flex flex-col">
-              <div className="p-4 border-b border-white/10">
-                <ChatToolbar
-                  onDocumentCreation={() => {}}
-                  onCodeCreation={() => {}}
-                  onRunEnvironment={() => setIsEnvironmentOpen(true)}
-                />
-                <ChatSelectors
-                  selectedRole={selectedRole}
-                  selectedAgency={selectedAgency}
-                  selectedDetailLevel={selectedDetailLevel}
-                  onRoleChange={setSelectedRole}
-                  onAgencyChange={setSelectedAgency}
-                  onDetailLevelChange={setSelectedDetailLevel}
-                />
-                {conversationId && (
-                  <FileUpload 
-                    conversationId={conversationId}
-                    onUploadComplete={(documentId) => {
-                      toast({
-                        title: "Document uploaded",
-                        description: "The document will be available for reference in this conversation.",
-                      });
-                    }}
-                  />
-                )}
-              </div>
-              <ChatMessages 
-                messages={messages} 
-                isLoading={aiMutation.isPending} 
+      <PageHeader
+        title="AI Assistant"
+        description="Ask about FAR/DFARS compliance, solicitations, market research, or acquisition strategy."
+        breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "AI Assistant" }]}
+      />
+      <Card className="bg-black/40 backdrop-blur-sm border-white/10">
+        <div className="h-[600px] flex flex-col">
+          <div className="p-4 border-b border-white/10">
+            <ChatToolbar
+              onDocumentCreation={() => {}}
+              onCodeCreation={() => {}}
+              onRunEnvironment={() => setIsEnvironmentOpen(true)}
+            />
+            <ChatSelectors
+              selectedRole={selectedRole}
+              selectedAgency={selectedAgency}
+              selectedDetailLevel={selectedDetailLevel}
+              onRoleChange={setSelectedRole}
+              onAgencyChange={setSelectedAgency}
+              onDetailLevelChange={setSelectedDetailLevel}
+            />
+            {conversationId && (
+              <FileUpload
+                conversationId={conversationId}
+                onUploadComplete={() => {
+                  toast({
+                    title: "Document uploaded",
+                    description: "The document will be available for reference in this conversation.",
+                  });
+                }}
               />
-              <ChatInput
-                input={input}
-                isLoading={aiMutation.isPending}
-                onInputChange={setInput}
-                onSubmit={handleSubmit}
-              />
-            </div>
-          </Card>
+            )}
+          </div>
+          <ChatMessages
+            messages={messages}
+            isLoading={aiMutation.isPending}
+          />
+          <ChatInput
+            input={input}
+            isLoading={aiMutation.isPending}
+            onInputChange={setInput}
+            onSubmit={handleSubmit}
+          />
         </div>
-      </div>
-      <CodeEnvironment 
-        isOpen={isEnvironmentOpen} 
-        onClose={() => setIsEnvironmentOpen(false)} 
+      </Card>
+      <CodeEnvironment
+        isOpen={isEnvironmentOpen}
+        onClose={() => setIsEnvironmentOpen(false)}
       />
     </>
   );

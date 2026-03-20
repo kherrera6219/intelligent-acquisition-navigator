@@ -67,6 +67,7 @@ const Dashboard = () => {
       <PageHeader
         title="Dashboard"
         description="Welcome to your acquisition workflow management system"
+        breadcrumbs={[{ label: "Dashboard" }]}
       />
 
       {/* KPI cards */}

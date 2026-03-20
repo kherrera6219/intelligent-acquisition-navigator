@@ -1,10 +1,10 @@
 
-import { 
-  Home, 
-  FileText, 
-  Shield, 
-  BarChart2, 
-  Settings, 
+import {
+  Home,
+  FileText,
+  Shield,
+  BarChart2,
+  Settings,
   HelpCircle,
   Map,
   FileCheck,
@@ -14,90 +14,86 @@ import {
   Scale,
   ClipboardCheck,
   AlertCircle,
-  BookOpen
+  BookOpen,
+  MessageSquare,
+  FileStack,
+  Search
 } from 'lucide-react';
 
 export const navigationItems = [
-  { 
-    icon: Home, 
-    label: 'Dashboard', 
+  {
+    icon: Home,
+    label: 'Dashboard',
     route: '/dashboard',
     permission: null,
     description: 'View your personalized dashboard'
   },
-  { 
+  {
     icon: BookOpen,
     label: 'Knowledge Base',
     route: '/knowledge-base',
     permission: null,
     description: 'Access the Multi-Domain Knowledge Framework'
   },
-  { 
-    icon: FileText, 
-    label: 'Solicitation Review', 
-    route: '/solicitation-review',
+  {
+    icon: MessageSquare,
+    label: 'AI Assistant',
+    route: '/chat',
+    permission: null,
+    description: 'Chat with the AI acquisition assistant'
+  },
+  {
+    icon: FileStack,
+    label: 'Proposals',
+    route: '/proposals',
+    permission: null,
+    description: 'Track and manage proposal submissions'
+  },
+  {
+    icon: FileText,
+    label: 'Solicitation Review',
+    route: '/acquisition/solicitation-review',
     permission: 'READ_SOLICITATIONS' as const,
     description: 'Review and manage solicitations'
   },
   {
-    icon: FileCheck,
-    label: 'Source Selection',
-    route: '/source-selection',
-    permission: 'MANAGE_EVALUATIONS' as const,
-    description: 'Manage source selection evaluations'
+    icon: Search,
+    label: 'Market Research',
+    route: '/acquisition/market-research',
+    permission: 'READ_SOLICITATIONS' as const,
+    description: 'Conduct and review market research'
   },
   {
-    icon: Building2,
-    label: 'Contract Management',
-    route: '/contract-management',
+    icon: FileCheck,
+    label: 'Document Control',
+    route: '/acquisition/document-control',
     permission: 'MANAGE_CONTRACTS' as const,
-    description: 'Oversee contract execution and modifications'
+    description: 'Manage acquisition documents'
   },
-  { 
-    icon: Shield, 
-    label: 'Compliance', 
+  {
+    icon: Shield,
+    label: 'Compliance',
     route: '/compliance',
     permission: 'VIEW_AUDIT_LOGS' as const,
     description: 'Monitor compliance and audit logs'
   },
   {
-    icon: Scale,
-    label: 'Legal Review',
-    route: '/legal-review',
-    permission: 'LEGAL_REVIEW' as const,
-    description: 'Review and approve legal documents'
-  },
-  {
-    icon: Users,
-    label: 'Small Business',
-    route: '/small-business',
-    permission: 'SMALL_BUSINESS_REVIEW' as const,
-    description: 'Small business program management'
-  },
-  {
-    icon: ClipboardCheck,
-    label: 'Quality Assurance',
-    route: '/quality-assurance',
-    permission: 'QA_ACCESS' as const,
-    description: 'Quality assurance and inspections'
-  },
-  { 
-    icon: BarChart2, 
-    label: 'Analytics', 
+    icon: BarChart2,
+    label: 'Analytics',
     route: '/analytics',
     permission: 'EXPORT_DATA' as const,
     description: 'View system analytics and reports'
   },
-  { 
-    icon: Settings, 
-    label: 'Settings', 
+  {
+    icon: Settings,
+    label: 'Settings',
     route: '/settings',
     permission: 'MANAGE_USERS' as const,
     description: 'Manage system settings'
   },
-  { 
-    icon: HelpCircle, 
-    label: 'Help', 
+  {
+    icon: HelpCircle,
+    label: 'Help',
     route: '/help',
     permission: null,
     description: 'Access help and documentation'
@@ -109,4 +105,20 @@ export const navigationItems = [
     permission: null,
     description: 'View complete site structure'
   }
+] as const;
+
+// Items grouped for display in the sidebar
+export const navGroups = [
+  {
+    label: 'Core',
+    items: [0, 1, 2, 3],
+  },
+  {
+    label: 'Acquisition',
+    items: [4, 5, 6],
+  },
+  {
+    label: 'System',
+    items: [7, 8, 9, 10, 11],
+  },
 ] as const;
