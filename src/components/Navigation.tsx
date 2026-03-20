@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { accessControl } from '@/lib/security/accessControl';
 import { errorTracker } from '@/lib/security/errorTracking';
 import { auditLogger } from '@/lib/audit';
@@ -12,10 +12,15 @@ import { NavigationFooter } from './navigation/NavigationFooter';
 import { SystemStatus } from './navigation/SystemStatus';
 import { Separator } from '@/components/ui/separator';
 
-const Navigation = () => {
-  const [activeRoute, setActiveRoute] = useState('/dashboard');
+interface NavigationProps {
+  onClose?: () => void;
+}
+
+const Navigation = ({ onClose }: NavigationProps) => {
   const [errors, setErrors] = useState<number>(0);
   const navigate = useNavigate();
+  const location = useLocation();
+  const activeRoute = location.pathname;
   const { toast } = useToast();
 
   useEffect(() => {
@@ -39,8 +44,8 @@ const Navigation = () => {
   }, [toast]);
 
   const handleNavigation = async (route: string) => {
+    onClose?.();
     try {
-      setActiveRoute(route);
       await auditLogger.log({
         action: 'NAVIGATION',
         resourceType: 'ROUTE',
