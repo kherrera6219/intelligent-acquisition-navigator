@@ -17,7 +17,8 @@ import {
   BookOpen,
   MessageSquare,
   FileStack,
-  Search
+  Search,
+  Radar,
 } from 'lucide-react';
 
 export const navigationItems = [
@@ -48,6 +49,13 @@ export const navigationItems = [
     route: '/proposals',
     permission: null,
     description: 'Track and manage proposal submissions'
+  },
+  {
+    icon: Radar,
+    label: 'Opportunities',
+    route: '/opportunities',
+    permission: null,
+    description: 'Browse active SAM.gov contracting opportunities'
   },
   {
     icon: FileText,
@@ -108,17 +116,20 @@ export const navigationItems = [
 ] as const;
 
 // Items grouped for display in the sidebar
+// 0=Dashboard 1=KnowledgeBase 2=AI 3=Proposals 4=Opportunities
+// 5=SolicitationReview 6=MarketResearch 7=DocumentControl
+// 8=Compliance 9=Analytics 10=Settings 11=Help 12=Sitemap
 export const navGroups = [
   {
     label: 'Core',
-    items: [0, 1, 2, 3],
+    items: [0, 1, 2, 3, 4],
   },
   {
     label: 'Acquisition',
-    items: [4, 5, 6],
+    items: [5, 6, 7],
   },
   {
     label: 'System',
-    items: [7, 8, 9, 10, 11],
+    items: [8, 9, 10, 11, 12],
   },
 ] as const;

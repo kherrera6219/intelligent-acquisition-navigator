@@ -38,6 +38,10 @@ import SolicitationReview from "./pages/acquisition/SolicitationReview";
 import MarketResearch from "./pages/acquisition/MarketResearch";
 import DocumentControl from "./pages/acquisition/DocumentControl";
 
+// New feature pages
+import Opportunities from "./pages/Opportunities";
+import NewProposal from "./pages/proposals/NewProposal";
+
 const App = () => (
   <ErrorBoundary>
     <QueryProvider>
@@ -75,6 +79,10 @@ const App = () => (
               <Route path="/acquisition/solicitation-review" element={<SolicitationReview />} />
               <Route path="/acquisition/market-research" element={<MarketResearch />} />
               <Route path="/acquisition/document-control" element={<DocumentControl />} />
+
+              {/* New features */}
+              <Route path="/opportunities" element={<Opportunities />} />
+              <Route path="/proposals/new" element={<NewProposal />} />
 
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />

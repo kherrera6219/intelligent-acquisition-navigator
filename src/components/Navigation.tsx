@@ -13,6 +13,7 @@ import { NavigationFooter } from './navigation/NavigationFooter';
 import { SystemStatus } from './navigation/SystemStatus';
 import { Separator } from '@/components/ui/separator';
 import { Search } from 'lucide-react';
+import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 
 interface NavigationProps {
   onClose?: () => void;
@@ -85,9 +86,10 @@ const Navigation = ({ onClose, onOpenCommand }: NavigationProps) => {
   };
 
   // Group navigation items
-  const coreNavItems = navigationItems.slice(0, 4);
-  const acquisitionNavItems = navigationItems.slice(4, 7);
-  const systemNavItems = navigationItems.slice(7);
+  // 0-4=Core, 5-7=Acquisition, 8+=System
+  const coreNavItems = navigationItems.slice(0, 5);
+  const acquisitionNavItems = navigationItems.slice(5, 8);
+  const systemNavItems = navigationItems.slice(8);
 
   return (
     <Card className="fixed left-0 top-0 bottom-0 w-64 bg-gray-900/95 backdrop-blur-sm border-r border-white/10 flex flex-col rounded-none">
@@ -191,6 +193,9 @@ const Navigation = ({ onClose, onOpenCommand }: NavigationProps) => {
           errors={errors}
           onClick={() => handleNavigation('/system-status')}
         />
+        <div className="flex items-center justify-between">
+          <NotificationCenter />
+        </div>
         <NavigationFooter
           onProfileClick={() => handleNavigation('/profile')}
           onLogout={handleLogout}
