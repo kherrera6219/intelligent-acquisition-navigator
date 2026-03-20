@@ -109,7 +109,12 @@ const DocumentControl = () => {
     <Container>
       <PageHeader
         title="Document Control"
-        description="Manage and track procurement documentation"
+        description="Manage, version, and track all procurement documentation through its lifecycle."
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Acquisition" },
+          { label: "Document Control" },
+        ]}
       />
 
       {/* Toolbar */}

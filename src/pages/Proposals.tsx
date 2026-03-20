@@ -1,5 +1,6 @@
 
 import { useState, useMemo } from "react";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,22 +94,23 @@ const Proposals = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400">
-            Proposals
-          </h1>
-          <p className="text-gray-400 mt-1">Manage and review procurement proposals</p>
-        </div>
-        <Button
-          onClick={handleNewProposal}
-          className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600 self-start sm:self-auto"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          New Proposal
-        </Button>
-      </div>
+      <PageHeader
+        title="Proposals"
+        description="Manage and review procurement proposals through the evaluation lifecycle."
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Proposals" },
+        ]}
+        actions={
+          <Button
+            onClick={handleNewProposal}
+            className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+          >
+            <Plus className="h-4 w-4 mr-2" aria-hidden="true" />
+            New Proposal
+          </Button>
+        }
+      />
 
       {/* Filters */}
       <Card className="p-4 bg-black/40 backdrop-blur-sm border-white/5">

@@ -62,7 +62,12 @@ const MarketResearch = () => {
     <Container>
       <PageHeader
         title="Market Research"
-        description="Analyze market trends and vendor performance"
+        description="Analyze market trends and evaluate vendor performance for informed procurement decisions."
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Acquisition" },
+          { label: "Market Research" },
+        ]}
       />
 
       {/* Summary metrics */}

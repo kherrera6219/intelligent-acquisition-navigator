@@ -94,7 +94,12 @@ const SolicitationReview = () => {
     <Container>
       <PageHeader
         title="Solicitation Review"
-        description="Review and approve procurement solicitations"
+        description="Review and approve procurement solicitations for FAR/DFARS compliance."
+        breadcrumbs={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Acquisition" },
+          { label: "Solicitation Review" },
+        ]}
       />
 
       {/* Filters */}

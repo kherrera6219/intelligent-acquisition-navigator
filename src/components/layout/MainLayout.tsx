@@ -19,7 +19,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   const isHomePage = location.pathname === '/';
-  const isAuthPage = ['/login', '/signup', '/reset-password'].includes(location.pathname);
+  const isAuthPage = ['/login', '/signup', '/reset-password', '/profile'].includes(location.pathname);
   const showNav = !isAuthPage && !isHomePage;
 
   // Close mobile nav on route change

@@ -9,7 +9,8 @@ export type Permission =
   | 'EVALUATE_PROPOSALS'
   | 'MANAGE_USERS'
   | 'VIEW_AUDIT_LOGS'
-  | 'EXPORT_DATA';
+  | 'EXPORT_DATA'
+  | 'MANAGE_CONTRACTS';
 
 export type Role = 
   | 'CONTRACTING_OFFICER'
