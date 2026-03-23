@@ -1,5 +1,5 @@
 
-export type Permission = 
+export type Permission =
   | 'READ_SOLICITATIONS'
   | 'WRITE_SOLICITATIONS'
   | 'APPROVE_SOLICITATIONS'
@@ -7,7 +7,13 @@ export type Permission =
   | 'EVALUATE_PROPOSALS'
   | 'MANAGE_USERS'
   | 'VIEW_AUDIT_LOGS'
-  | 'EXPORT_DATA';
+  | 'EXPORT_DATA'
+  // Extended permissions matching navigation items
+  | 'MANAGE_EVALUATIONS'
+  | 'MANAGE_CONTRACTS'
+  | 'LEGAL_REVIEW'
+  | 'SMALL_BUSINESS_REVIEW'
+  | 'QA_ACCESS';
 
 export type Role = 
   | 'CONTRACTING_OFFICER'
@@ -40,27 +46,33 @@ const rolePermissions: Record<Role, Permission[]> = {
     'APPROVE_SOLICITATIONS',
     'READ_PROPOSALS',
     'EVALUATE_PROPOSALS',
+    'MANAGE_EVALUATIONS',
+    'MANAGE_CONTRACTS',
     'VIEW_AUDIT_LOGS'
   ],
   CONTRACT_SPECIALIST: [
     'READ_SOLICITATIONS',
     'WRITE_SOLICITATIONS',
     'READ_PROPOSALS',
-    'EVALUATE_PROPOSALS'
+    'EVALUATE_PROPOSALS',
+    'MANAGE_EVALUATIONS'
   ],
   PROGRAM_MANAGER: [
     'READ_SOLICITATIONS',
     'READ_PROPOSALS',
-    'EVALUATE_PROPOSALS'
+    'EVALUATE_PROPOSALS',
+    'MANAGE_CONTRACTS'
   ],
   LEGAL_REVIEWER: [
     'READ_SOLICITATIONS',
     'READ_PROPOSALS',
-    'VIEW_AUDIT_LOGS'
+    'VIEW_AUDIT_LOGS',
+    'LEGAL_REVIEW'
   ],
   SMALL_BUSINESS_SPECIALIST: [
     'READ_SOLICITATIONS',
-    'READ_PROPOSALS'
+    'READ_PROPOSALS',
+    'SMALL_BUSINESS_REVIEW'
   ],
   SYSTEM_ADMIN: [
     'READ_SOLICITATIONS',
@@ -68,9 +80,14 @@ const rolePermissions: Record<Role, Permission[]> = {
     'APPROVE_SOLICITATIONS',
     'READ_PROPOSALS',
     'EVALUATE_PROPOSALS',
+    'MANAGE_EVALUATIONS',
+    'MANAGE_CONTRACTS',
     'MANAGE_USERS',
     'VIEW_AUDIT_LOGS',
-    'EXPORT_DATA'
+    'EXPORT_DATA',
+    'LEGAL_REVIEW',
+    'SMALL_BUSINESS_REVIEW',
+    'QA_ACCESS'
   ]
 };
 
@@ -101,29 +118,29 @@ export class AccessControl {
   }
 
   async authenticateWithPIV(): Promise<boolean> {
-    try {
-      // Implement PIV card authentication logic here
-      // This would typically involve:
-      // 1. Reading the PIV card certificate
-      // 2. Validating the certificate chain
-      // 3. Checking certificate revocation status
-      // 4. Verifying the PIN
-      return true;
-    } catch (error) {
-      console.error('PIV authentication failed:', error);
-      return false;
-    }
+    // PIV card authentication requires a WebAuthn / PKCS#11 integration.
+    // This feature is not yet implemented. Gate it so callers receive an
+    // explicit false rather than a silently-passing stub.
+    errorTracker.trackError({
+      message: 'PIV authentication attempted but is not yet implemented',
+      severity: 'HIGH',
+      errorType: 'SECURITY',
+      status: 'NEW',
+    });
+    return false;
   }
 
   async authenticateWithCAC(): Promise<boolean> {
-    try {
-      // Implement CAC card authentication logic here
-      // Similar to PIV but with CAC-specific requirements
-      return true;
-    } catch (error) {
-      console.error('CAC authentication failed:', error);
-      return false;
-    }
+    // CAC card authentication requires a WebAuthn / PKCS#11 integration.
+    // This feature is not yet implemented. Gate it so callers receive an
+    // explicit false rather than a silently-passing stub.
+    errorTracker.trackError({
+      message: 'CAC authentication attempted but is not yet implemented',
+      severity: 'HIGH',
+      errorType: 'SECURITY',
+      status: 'NEW',
+    });
+    return false;
   }
 
   setSecurityContext(context: SecurityContext) {
@@ -182,5 +199,6 @@ export class AccessControl {
 
 export const accessControl = AccessControl.getInstance();
 
-// Import the audit logger
+// Import the audit logger and error tracker
 import { auditLogger } from '../audit';
+import { errorTracker } from './errorTracking';

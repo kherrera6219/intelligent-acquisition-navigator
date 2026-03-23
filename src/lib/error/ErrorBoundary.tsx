@@ -27,7 +27,6 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
     
     // Track error
     errorTracker.trackError({
@@ -49,7 +48,7 @@ export class ErrorBoundary extends Component<Props, State> {
         error: error.message,
         componentStack: errorInfo.componentStack
       }
-    }).catch(console.error);
+    }).catch(() => {/* audit log failure is non-fatal */});
   }
 
   private handleReset = () => {

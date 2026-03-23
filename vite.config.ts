@@ -21,5 +21,14 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['@azure/openai'],
-  }
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.ts"],
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 }));

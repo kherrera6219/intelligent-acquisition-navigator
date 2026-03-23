@@ -92,7 +92,7 @@ class ErrorTracker {
       resourceId: errorDetails.errorCode || 'system',
       severity: this.mapSeverityToAudit(errorDetails.severity),
       details: auditDetails
-    }).catch(console.error);
+    }).catch(() => {/* audit log failure is non-fatal */});
   }
 
   private isSecurityIncident(error: ErrorDetails): boolean {
