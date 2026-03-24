@@ -1,26 +1,41 @@
 import { toast } from "@/hooks/use-toast";
-import { 
-  ComplianceRule, 
-  ComplianceCheck, 
-  ReasoningStep, 
-  ReasoningResult, 
-  Context, 
-  WorkflowState 
+import { errorTracker } from "@/lib/security/errorTracking";
+import {
+  ComplianceRule,
+  ComplianceCheck,
+  ReasoningStep,
+  ReasoningResult,
+  Context,
+  WorkflowState
 } from "@/types/reasoning";
-import { 
-  insertReasoningStep, 
-  insertComplianceCheck, 
+import {
+  insertReasoningStep,
+  insertComplianceCheck,
   insertReasoningResult,
   getReasoningSteps,
   getComplianceChecks
 } from "./reasoningDb";
 import { generateWithAI } from "./aiService";
+import type { VectorMatch } from "@/services/rag/vectorStore";
+
+interface AnalysisHistoryEntry {
+  timestamp: string;
+  state: WorkflowState;
+  action: string;
+  data: Record<string, unknown>;
+  session_id: string;
+}
+
+interface StepTemplate {
+  step: number;
+  description: string;
+}
 
 export class ReasoningEngine {
   private complianceRules: Record<string, ComplianceRule>;
   private apiKey: string;
   private currentState: WorkflowState;
-  private analysisHistory: any[];
+  private analysisHistory: AnalysisHistoryEntry[];
   private sessionId: string;
 
   constructor(complianceRules: Record<string, ComplianceRule>, apiKey: string) {
@@ -32,7 +47,7 @@ export class ReasoningEngine {
   }
 
   public async processReasoning(
-    retrievalResults: any[],
+    retrievalResults: VectorMatch[],
     context: Context
   ): Promise<ReasoningResult> {
     try {
@@ -60,16 +75,22 @@ export class ReasoningEngine {
         supporting_evidence: [],
         metadata: {
           timestamp: new Date().toISOString(),
-          reasoning_type: context.reasoning_type || 'general',
-          user_role: context.user_role || 'general',
-          domain: context.domain || 'general'
+          reasoning_type: context.reasoning_type ?? 'general',
+          user_role: context.user_role ?? 'general',
+          domain: context.domain ?? 'general'
         }
       };
 
       return await insertReasoningResult(result, reasoningStepIds, complianceCheckIds);
 
     } catch (error) {
-      console.error('Error in reasoning process:', error);
+      errorTracker.trackError({
+        message: error instanceof Error ? error.message : 'Reasoning process failed',
+        stack: error instanceof Error ? error.stack : undefined,
+        severity: 'HIGH',
+        errorType: 'APPLICATION',
+        status: 'NEW',
+      });
       toast({
         title: "Reasoning Process Error",
         description: "An error occurred during the reasoning process. Please try again.",
@@ -80,23 +101,23 @@ export class ReasoningEngine {
   }
 
   private async applyReasoningSteps(
-    retrievalResults: any[],
+    retrievalResults: VectorMatch[],
     context: Context
   ): Promise<string[]> {
     const stepIds: string[] = [];
-    const template = this.getReasoningTemplate(context.reasoning_type || 'general');
+    const template = this.getReasoningTemplate(context.reasoning_type ?? 'general');
 
     for (const stepTemplate of template) {
       const prompt = this.createStepPrompt(stepTemplate, retrievalResults, context);
       const response = await generateWithAI(prompt, this.apiKey);
-      
+
       const step: Omit<ReasoningStep, 'id'> = {
         step_id: `step_${stepIds.length + 1}`,
         description: stepTemplate.description,
-        inputs: retrievalResults,
+        inputs: retrievalResults as unknown as import("@/integrations/supabase/types").Json[],
         logic_applied: response,
         output: response,
-        confidence_score: 0.85, // Default confidence, could be extracted from AI response
+        confidence_score: this.extractConfidenceFromResponse(response),
         supporting_evidence: [],
         metadata: {
           template_step: stepTemplate.step,
@@ -113,23 +134,24 @@ export class ReasoningEngine {
 
   private async validateCompliance(
     reasoningStepIds: string[],
-    retrievalResults: any[]
+    retrievalResults: VectorMatch[]
   ): Promise<string[]> {
     const checkIds: string[] = [];
 
     for (const [ruleId, rule] of Object.entries(this.complianceRules)) {
       const prompt = this.createCompliancePrompt(rule, retrievalResults);
       const response = await generateWithAI(prompt, this.apiKey);
-      
+
       const check: Omit<ComplianceCheck, 'id'> = {
         rule_id: ruleId,
         description: rule.description,
         status: this.parseComplianceStatus(response),
         severity: rule.severity,
         evidence: [],
-        confidence_score: 0.85, // Default confidence, could be extracted from AI response
+        confidence_score: this.extractConfidenceFromResponse(response),
         metadata: {
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          reasoning_step_count: reasoningStepIds.length,
         }
       };
 
@@ -153,11 +175,11 @@ export class ReasoningEngine {
 
     return {
       conclusion: response,
-      confidence: 0.85 // Default confidence, could be extracted from AI response
+      confidence: this.extractConfidenceFromResponse(response)
     };
   }
 
-  private getReasoningTemplate(type: string): Array<{ step: number; description: string }> {
+  private getReasoningTemplate(type: string): StepTemplate[] {
     switch (type) {
       case 'analytical':
         return [
@@ -192,46 +214,56 @@ export class ReasoningEngine {
   }
 
   private createStepPrompt(
-    template: { step: number; description: string },
-    retrievalResults: any[],
+    template: StepTemplate,
+    retrievalResults: VectorMatch[],
     context: Context
   ): string {
+    const contextText = retrievalResults
+      .map((r) => r.metadata.text)
+      .filter(Boolean)
+      .join('\n\n');
+
     return `
-Execute the following reasoning step:
+Execute the following reasoning step for a federal acquisition scenario:
 
 Step ${template.step}: ${template.description}
 
-Available Information:
-${JSON.stringify(retrievalResults, null, 2)}
+Retrieved Knowledge:
+${contextText || 'No RAG context available — use general FAR/DFARS knowledge.'}
 
-Context:
+Acquisition Context:
 ${JSON.stringify(context, null, 2)}
 
-Provide a detailed analysis and conclusion for this step.
+Provide a detailed analysis and conclusion for this step, citing applicable FAR clauses where relevant.
     `.trim();
   }
 
-  private createCompliancePrompt(rule: ComplianceRule, retrievalResults: any[]): string {
+  private createCompliancePrompt(rule: ComplianceRule, retrievalResults: VectorMatch[]): string {
+    const contextText = retrievalResults
+      .map((r) => r.metadata.text)
+      .filter(Boolean)
+      .join('\n\n');
+
     return `
-Evaluate compliance with the following rule:
+Evaluate compliance with the following acquisition rule:
 
 Rule: ${rule.description}
-Criteria: ${rule.criteria}
+Criteria: ${rule.validation_logic}
 
-Evidence:
-${JSON.stringify(retrievalResults, null, 2)}
+Retrieved Evidence:
+${contextText || 'No RAG context available — use general FAR/DFARS knowledge.'}
 
-Determine if the evidence complies with the rule and provide a detailed explanation.
+Determine if the evidence complies with the rule and provide a detailed explanation citing specific FAR/DFARS clauses.
     `.trim();
   }
 
   private createConclusionPrompt(
-    steps: any[],
-    checks: any[],
+    steps: ReasoningStep[],
+    checks: ComplianceCheck[],
     context: Context
   ): string {
     return `
-Synthesize a final conclusion based on:
+Synthesize a final acquisition guidance conclusion based on:
 
 Reasoning Steps:
 ${JSON.stringify(steps, null, 2)}
@@ -243,17 +275,32 @@ Context:
 ${JSON.stringify(context, null, 2)}
 
 Provide a clear and concise conclusion that incorporates the reasoning steps and compliance results.
+Include specific FAR/DFARS citations and actionable next steps for the contracting professional.
     `.trim();
   }
 
   private parseComplianceStatus(response: string): 'passed' | 'failed' | 'warning' {
-    // In a real implementation, we would parse the AI response more carefully
-    if (response.toLowerCase().includes('fail')) return 'failed';
-    if (response.toLowerCase().includes('warn')) return 'warning';
+    const lower = response.toLowerCase();
+    if (lower.includes('fail') || lower.includes('non-compliant') || lower.includes('violation')) {
+      return 'failed';
+    }
+    if (lower.includes('warn') || lower.includes('caution') || lower.includes('risk')) {
+      return 'warning';
+    }
     return 'passed';
   }
 
-  private addToHistory(action: string, data: Record<string, any>): void {
+  /** Attempts to extract a confidence score from the model response text (0–1). */
+  private extractConfidenceFromResponse(response: string): number {
+    const match = response.match(/confidence[:\s]+([0-9.]+)/i);
+    if (match) {
+      const val = parseFloat(match[1]);
+      if (!isNaN(val)) return Math.min(Math.max(val > 1 ? val / 100 : val, 0), 1);
+    }
+    return 0.75;
+  }
+
+  private addToHistory(action: string, data: Record<string, unknown>): void {
     this.analysisHistory.push({
       timestamp: new Date().toISOString(),
       state: this.currentState,

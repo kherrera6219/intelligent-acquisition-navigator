@@ -74,6 +74,9 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
+  // SECURITY: dangerouslySetInnerHTML is safe here because __html is constructed
+  // entirely from developer-controlled ChartConfig keys and static color strings.
+  // It never renders user-supplied input or external API data.
   return (
     <style
       dangerouslySetInnerHTML={{

@@ -1,11 +1,12 @@
 
+import { useState } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/universal/Card";
 import { Grid } from "@/components/ui/universal/Grid";
 import { Container } from "@/components/ui/universal/Container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FileText, Search, Filter, Clock, CheckCircle, AlertTriangle } from "lucide-react";
+import { FileText, Search, Filter, Clock, CheckCircle, AlertTriangle, FolderOpen } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const mockSolicitations = [
@@ -49,7 +50,13 @@ const getRiskBadgeColor = (risk: string) => {
 };
 
 const SolicitationReview = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
+
+  const filtered = mockSolicitations.filter((s) =>
+    s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.department.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleReviewClick = (id: string) => {
     toast({
@@ -68,10 +75,13 @@ const SolicitationReview = () => {
       <Card className="mb-8">
         <div className="flex gap-4 p-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" aria-hidden="true" />
             <Input
               placeholder="Search solicitations..."
               className="pl-10 bg-white/5 border-white/10"
+              aria-label="Search solicitations"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <Button variant="outline" className="border-white/10">
@@ -81,8 +91,18 @@ const SolicitationReview = () => {
         </div>
       </Card>
 
+      {filtered.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 text-center" role="status">
+          <FolderOpen className="h-12 w-12 text-gray-600 mb-4" aria-hidden="true" />
+          <h3 className="text-lg font-medium text-gray-300 mb-1">No solicitations found</h3>
+          <p className="text-sm text-gray-500">
+            {searchTerm ? `No results for "${searchTerm}". Try adjusting your search.` : 'No solicitations are available yet.'}
+          </p>
+        </div>
+      )}
+
       <Grid columns={1} gap="lg">
-        {mockSolicitations.map((solicitation) => (
+        {filtered.map((solicitation) => (
           <Card
             key={solicitation.id}
             className="hover:bg-white/5 transition-all duration-200"
@@ -105,6 +125,8 @@ const SolicitationReview = () => {
                       className={`px-2 py-0.5 rounded-full text-xs ${getRiskBadgeColor(
                         solicitation.riskLevel
                       )}`}
+                      role="status"
+                      aria-label={`Risk level: ${solicitation.riskLevel}`}
                     >
                       {solicitation.riskLevel.toUpperCase()} RISK
                     </div>

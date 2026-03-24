@@ -6,7 +6,7 @@ import { Grid } from "@/components/ui/universal/Grid";
 import { Container } from "@/components/ui/universal/Container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, Building2, BarChart2, TrendingUp } from "lucide-react";
+import { Search, Filter, Building2, BarChart2, TrendingUp, FolderOpen } from "lucide-react";
 import { MetricsChart } from "@/components/MetricsChart";
 
 const mockData = [
@@ -137,8 +137,24 @@ const MarketResearch = () => {
             </div>
           </div>
 
+          {mockVendors.filter((v) =>
+            v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            v.category.toLowerCase().includes(searchTerm.toLowerCase())
+          ).length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12 text-center" role="status">
+              <FolderOpen className="h-10 w-10 text-gray-600 mb-3" aria-hidden="true" />
+              <p className="text-gray-300 font-medium">No vendors found</p>
+              <p className="text-sm text-gray-500 mt-1">
+                {searchTerm ? `No results for "${searchTerm}".` : 'No vendor data available.'}
+              </p>
+            </div>
+          )}
+
           <div className="space-y-4">
-            {mockVendors.map((vendor) => (
+            {mockVendors.filter((v) =>
+              v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              v.category.toLowerCase().includes(searchTerm.toLowerCase())
+            ).map((vendor) => (
               <Card
                 key={vendor.id}
                 className="hover:bg-white/5 transition-all duration-200"

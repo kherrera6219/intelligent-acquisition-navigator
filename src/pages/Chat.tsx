@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { useAzureAI } from "@/hooks/useAzureAI";
 import { CodeEnvironment } from "@/components/CodeEnvironment";
@@ -12,6 +12,9 @@ import { Message, AcquisitionRole, AgencyRegulation, DetailLevel } from "@/types
 import { ROLE_LABELS, AGENCY_LABELS } from "@/constants/chatOptions";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { errorTracker } from "@/lib/security/errorTracking";
+
+const SUBMIT_DEBOUNCE_MS = 500;
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -21,6 +24,8 @@ const Chat = () => {
   const [selectedDetailLevel, setSelectedDetailLevel] = useState<DetailLevel>("BRIEF");
   const [isEnvironmentOpen, setIsEnvironmentOpen] = useState(false);
   const [conversationId, setConversationId] = useState<string>("");
+  const [isInitializingConversation, setIsInitializingConversation] = useState(false);
+  const lastSubmitRef = useRef<number>(0);
   const { toast } = useToast();
 
   const aiMutation = useAzureAI(
@@ -36,7 +41,7 @@ const Chat = () => {
           content: data.choices[0].message.content,
           timestamp: new Date(),
         };
-        
+
         setMessages((prev) => [...prev, assistantMessage]);
 
         if (conversationId) {
@@ -48,7 +53,12 @@ const Chat = () => {
           });
 
           if (error) {
-            console.error('Error saving message:', error);
+            errorTracker.trackError({
+              message: `Failed to save assistant message: ${error.message}`,
+              severity: 'MEDIUM',
+              errorType: 'APPLICATION',
+              status: 'NEW',
+            });
             toast({
               title: "Error saving message",
               description: "Your message was displayed but couldn't be saved.",
@@ -62,32 +72,58 @@ const Chat = () => {
 
   useEffect(() => {
     const initializeConversation = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      setIsInitializingConversation(true);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-      const { data: conversation, error } = await supabase
-        .from('conversations')
-        .insert({
-          title: `Chat ${new Date().toLocaleDateString()}`,
-          user_id: user.id,
-        })
-        .select()
-        .single();
+        const { data: conversation, error } = await supabase
+          .from('conversations')
+          .insert({
+            title: `Chat ${new Date().toLocaleDateString()}`,
+            user_id: user.id,
+          })
+          .select()
+          .single();
 
-      if (error) {
-        console.error('Error creating conversation:', error);
-        return;
+        if (error) {
+          errorTracker.trackError({
+            message: `Failed to create conversation: ${error.message}`,
+            severity: 'MEDIUM',
+            errorType: 'APPLICATION',
+            status: 'NEW',
+          });
+          return;
+        }
+
+        setConversationId(conversation.id);
+      } finally {
+        setIsInitializingConversation(false);
       }
-
-      setConversationId(conversation.id);
     };
 
     initializeConversation();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !conversationId) return;
+    if (!input.trim()) return;
+
+    // Debounce guard — prevents double-submission
+    const now = Date.now();
+    if (now - lastSubmitRef.current < SUBMIT_DEBOUNCE_MS) return;
+    lastSubmitRef.current = now;
+
+    // Block submission while conversation is still being created
+    if (isInitializingConversation || !conversationId) {
+      toast({
+        title: "Please wait",
+        description: "Conversation is being initialized...",
+      });
+      return;
+    }
+
+    if (aiMutation.isPending) return;
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -102,7 +138,6 @@ const Chat = () => {
       detailLevel: selectedDetailLevel,
     };
 
-    // Save message to database
     const { error: dbError } = await supabase.from('chat_messages').insert({
       conversation_id: conversationId,
       content: userMessage.content,
@@ -116,7 +151,12 @@ const Chat = () => {
     });
 
     if (dbError) {
-      console.error('Error saving message:', dbError);
+      errorTracker.trackError({
+        message: `Failed to save user message: ${dbError.message}`,
+        severity: 'MEDIUM',
+        errorType: 'APPLICATION',
+        status: 'NEW',
+      });
       toast({
         title: "Error saving message",
         description: "Your message couldn't be saved. Please try again.",
@@ -127,22 +167,21 @@ const Chat = () => {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    
-    // Prepare context for AI
-    const aiContext = `You are responding as a ${ROLE_LABELS[selectedRole]} working under ${AGENCY_LABELS[selectedAgency]}. 
+
+    const aiContext = `You are responding as a ${ROLE_LABELS[selectedRole]} working under ${AGENCY_LABELS[selectedAgency]}.
                       Provide a ${selectedDetailLevel.toLowerCase()} response.`;
-    
+
     const aiMessages = [
-      { role: "system", content: aiContext },
-      ...messages.map(msg => ({ 
-        role: msg.role, 
-        content: msg.content 
+      { role: "system" as const, content: aiContext },
+      ...messages.map(msg => ({
+        role: msg.role as "user" | "assistant",
+        content: msg.content
       })),
-      { role: "user", content: userMessage.content }
+      { role: "user" as const, content: userMessage.content }
     ];
 
     aiMutation.mutate(aiMessages);
-  };
+  }, [input, conversationId, isInitializingConversation, aiMutation, messages, selectedRole, selectedAgency, selectedDetailLevel, toast]);
 
   return (
     <>
@@ -165,9 +204,9 @@ const Chat = () => {
                   onDetailLevelChange={setSelectedDetailLevel}
                 />
                 {conversationId && (
-                  <FileUpload 
+                  <FileUpload
                     conversationId={conversationId}
-                    onUploadComplete={(documentId) => {
+                    onUploadComplete={() => {
                       toast({
                         title: "Document uploaded",
                         description: "The document will be available for reference in this conversation.",
@@ -176,13 +215,13 @@ const Chat = () => {
                   />
                 )}
               </div>
-              <ChatMessages 
-                messages={messages} 
-                isLoading={aiMutation.isPending} 
+              <ChatMessages
+                messages={messages}
+                isLoading={aiMutation.isPending}
               />
               <ChatInput
                 input={input}
-                isLoading={aiMutation.isPending}
+                isLoading={aiMutation.isPending || isInitializingConversation}
                 onInputChange={setInput}
                 onSubmit={handleSubmit}
               />
@@ -190,9 +229,9 @@ const Chat = () => {
           </Card>
         </div>
       </div>
-      <CodeEnvironment 
-        isOpen={isEnvironmentOpen} 
-        onClose={() => setIsEnvironmentOpen(false)} 
+      <CodeEnvironment
+        isOpen={isEnvironmentOpen}
+        onClose={() => setIsEnvironmentOpen(false)}
       />
     </>
   );

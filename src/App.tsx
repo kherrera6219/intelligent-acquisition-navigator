@@ -24,6 +24,14 @@ import MarketResearch from "./pages/acquisition/MarketResearch";
 import DocumentControl from "./pages/acquisition/DocumentControl";
 import KnowledgeBase from "./pages/KnowledgeBase";
 
+/** Lightweight per-route fallback shown instead of a full blank page. */
+const PageErrorFallback = (
+  <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-4">
+    <p className="text-lg font-semibold text-white">This page encountered an error.</p>
+    <p className="text-gray-400 text-sm">Please refresh or navigate to another section.</p>
+  </div>
+);
+
 const App = () => (
   <ErrorBoundary>
     <QueryProvider>
@@ -31,23 +39,23 @@ const App = () => (
         <BrowserRouter>
           <MainLayout>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/signup" element={<SignUpForm />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/reset-password" element={<PasswordReset />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/proposals" element={<Proposals />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/sitemap" element={<Sitemap />} />
-              <Route path="/knowledge-base" element={<KnowledgeBase />} />
-              <Route path="/acquisition/solicitation-review" element={<SolicitationReview />} />
-              <Route path="/acquisition/market-research" element={<MarketResearch />} />
-              <Route path="/acquisition/document-control" element={<DocumentControl />} />
+              <Route path="/" element={<ErrorBoundary fallback={PageErrorFallback}><Index /></ErrorBoundary>} />
+              <Route path="/features" element={<ErrorBoundary fallback={PageErrorFallback}><Features /></ErrorBoundary>} />
+              <Route path="/pricing" element={<ErrorBoundary fallback={PageErrorFallback}><Pricing /></ErrorBoundary>} />
+              <Route path="/about" element={<ErrorBoundary fallback={PageErrorFallback}><About /></ErrorBoundary>} />
+              <Route path="/contact" element={<ErrorBoundary fallback={PageErrorFallback}><Contact /></ErrorBoundary>} />
+              <Route path="/privacy" element={<ErrorBoundary fallback={PageErrorFallback}><Privacy /></ErrorBoundary>} />
+              <Route path="/signup" element={<ErrorBoundary fallback={PageErrorFallback}><SignUpForm /></ErrorBoundary>} />
+              <Route path="/profile" element={<ErrorBoundary fallback={PageErrorFallback}><UserProfile /></ErrorBoundary>} />
+              <Route path="/reset-password" element={<ErrorBoundary fallback={PageErrorFallback}><PasswordReset /></ErrorBoundary>} />
+              <Route path="/dashboard" element={<ErrorBoundary fallback={PageErrorFallback}><Dashboard /></ErrorBoundary>} />
+              <Route path="/proposals" element={<ErrorBoundary fallback={PageErrorFallback}><Proposals /></ErrorBoundary>} />
+              <Route path="/chat" element={<ErrorBoundary fallback={PageErrorFallback}><Chat /></ErrorBoundary>} />
+              <Route path="/sitemap" element={<ErrorBoundary fallback={PageErrorFallback}><Sitemap /></ErrorBoundary>} />
+              <Route path="/knowledge-base" element={<ErrorBoundary fallback={PageErrorFallback}><KnowledgeBase /></ErrorBoundary>} />
+              <Route path="/acquisition/solicitation-review" element={<ErrorBoundary fallback={PageErrorFallback}><SolicitationReview /></ErrorBoundary>} />
+              <Route path="/acquisition/market-research" element={<ErrorBoundary fallback={PageErrorFallback}><MarketResearch /></ErrorBoundary>} />
+              <Route path="/acquisition/document-control" element={<ErrorBoundary fallback={PageErrorFallback}><DocumentControl /></ErrorBoundary>} />
             </Routes>
           </MainLayout>
           <Toaster />

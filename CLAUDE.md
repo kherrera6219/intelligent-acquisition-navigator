@@ -13,18 +13,41 @@ Guidance for AI assistants working in this codebase.
 ## Development Commands
 
 ```bash
-npm run dev        # Start dev server on http://localhost:8080
-npm run build      # Production build → dist/
-npm run build:dev  # Development build
-npm run lint       # ESLint validation
-npm run preview    # Preview production build locally
+npm run dev          # Start dev server on http://localhost:8080
+npm run build        # Production build → dist/
+npm run build:dev    # Development build
+npm run lint         # ESLint validation (0 errors expected)
+npm run preview      # Preview production build locally
+npm run test         # Run test suite (Vitest)
+npm run test:watch   # Vitest in watch mode
+npm run test:coverage # Coverage report
 ```
 
 > The dev server binds to `::` (all interfaces) on port **8080**.
 
 ### Package Manager
 
-Both `bun.lockb` and `package-lock.json` are present. Use **npm** for consistency unless Bun is explicitly required.
+Use **npm**. `bun.lockb` is a legacy artifact and can be ignored.
+
+---
+
+## Environment Setup
+
+**Required:** Copy `.env.example` to `.env.local` and fill in all values before running the app. Missing variables will cause an explicit startup error in development.
+
+```
+VITE_SUPABASE_URL          — Supabase project URL
+VITE_SUPABASE_ANON_KEY     — Supabase anon/public key (rotate if exposed)
+VITE_AZURE_ENDPOINT        — Azure OpenAI resource endpoint
+VITE_AZURE_OPENAI_API_KEY  — Azure OpenAI API key
+VITE_AZURE_DEPLOYMENT_ID   — Deployment name (default: gpt-4o)
+VITE_PINECONE_API_KEY      — Pinecone API key (optional; RAG degrades gracefully without it)
+VITE_PINECONE_INDEX_NAME   — Pinecone index (default: acquisition-knowledge-base)
+VITE_CONTACT_EMAIL         — Contact page email (optional; falls back to default)
+VITE_CONTACT_PHONE         — Contact page phone (optional; falls back to default)
+```
+
+> **Security:** Never commit `.env.local`. Secrets are validated at startup and must never be hardcoded in source files. The Supabase anon key committed prior to March 2026 has been rotated.
 
 ---
 
@@ -32,7 +55,7 @@ Both `bun.lockb` and `package-lock.json` are present. Use **npm** for consistenc
 
 ```
 src/
-├── components/          # React components (~98 total)
+├── components/          # React components
 │   ├── auth/            # Login, signup, password reset UI
 │   ├── chat/            # Chat interface components
 │   ├── knowledge/       # Knowledge base components
@@ -40,11 +63,10 @@ src/
 │   ├── layout/          # AppLayout, Sidebar, Header
 │   ├── navigation/      # Navigation menus, breadcrumbs
 │   ├── sections/        # Page section components
-│   └── ui/              # shadcn/ui + custom universal components
+│   └── ui/              # shadcn/ui + custom universal components (NOT linted)
 │       └── universal/   # Custom wrappers: Card, Grid, Container, GradientButton, etc.
 ├── pages/               # Route-level page components
 │   ├── acquisition/     # SolicitationReview, MarketResearch, DocumentControl
-│   ├── api/             # Client-side API route handlers
 │   ├── Dashboard.tsx
 │   ├── Chat.tsx
 │   ├── KnowledgeBase.tsx
@@ -56,7 +78,7 @@ src/
 │   ├── rag/             # vectorStore.ts — Pinecone integration
 │   └── reasoning/       # ReasoningEngine.ts, aiService.ts, reasoningDb.ts
 ├── hooks/               # Custom React hooks
-│   ├── useAzureAI.ts    # Mutation hook for Azure AI calls
+│   ├── useAzureAI.ts    # Mutation hook — direct Azure calls + 3-attempt retry/backoff
 │   ├── useAudit.ts      # Audit logging hook
 │   └── useQueryWithCache.ts
 ├── types/               # TypeScript interfaces (never inline in components)
@@ -67,14 +89,16 @@ src/
 │   └── akf.ts           # Advanced Knowledge Framework
 ├── lib/                 # Utilities and cross-cutting concerns
 │   ├── apiClient.ts     # HTTP client wrapper
-│   ├── audit.ts         # auditLogger singleton
+│   ├── audit.ts         # auditLogger singleton (falls back to localStorage)
 │   ├── utils.ts         # General helpers (cn(), etc.)
 │   ├── error/           # ErrorBoundary component
 │   ├── security/        # accessControl.ts, errorTracking.ts
 │   └── validation/      # forms.ts — Zod validation schemas
+├── test/                # Test setup
+│   └── setup.ts         # @testing-library/jest-dom setup
 ├── integrations/
 │   └── supabase/
-│       ├── client.ts    # Supabase client instance
+│       ├── client.ts    # Supabase client — reads from VITE_SUPABASE_* env vars
 │       └── types.ts     # Auto-generated DB types — DO NOT EDIT MANUALLY
 ├── providers/
 │   └── QueryProvider.tsx  # React Query + global error handling
@@ -84,8 +108,8 @@ src/
 │   └── chatOptions.ts   # Acquisition roles and agency regulation enums
 ├── data/                # Static data (charts, section content)
 ├── styles/              # Global CSS (global.css, application.css, index.css)
-├── App.tsx              # Root component with routes
-└── main.tsx             # Entry point
+├── App.tsx              # Root component with per-route ErrorBoundary wrapping
+└── main.tsx             # Entry point + env variable validation
 ```
 
 ---
@@ -95,12 +119,15 @@ src/
 ### Component Hierarchy
 
 ```
-App.tsx
-└── AppLayout (layout/AppLayout.tsx)
-    ├── Sidebar / Navigation
-    └── Page Components (pages/)
-        └── Feature Components (components/)
-            └── UI Primitives (components/ui/)
+App.tsx  (global ErrorBoundary)
+└── QueryProvider
+    └── TooltipProvider
+        └── BrowserRouter
+            └── MainLayout (layout/MainLayout.tsx)
+                └── <Route> each wrapped in <ErrorBoundary fallback={PageErrorFallback}>
+                    └── Page Components (pages/)
+                        └── Feature Components (components/)
+                            └── UI Primitives (components/ui/)
 ```
 
 ### State Management
@@ -108,7 +135,7 @@ App.tsx
 | Concern | Tool |
 |---|---|
 | Server/async state | TanStack React Query (5-min stale, 30-min cache) |
-| Form state | React Hook Form + Zod |
+| Form state | React Hook Form + Zod (`zodResolver`) |
 | Local UI state | `useState` / `useReducer` |
 | Global context | Context providers (QueryProvider, TooltipProvider) |
 
@@ -116,14 +143,17 @@ App.tsx
 
 ```
 User Query
-  → masterLLM.ts (orchestrator)
-  → Query Parsing
-  → ReasoningEngine.ts (multi-step reasoning)
-  → complianceLLM.ts (FAR/agency compliance check)
-  → RAG lookup via vectorStore.ts (Pinecone)
-  → Azure GPT-4o (gpt-4o deployment)
-  → Conclusion with citations
+  → useAzureAI hook (3-attempt exponential backoff: 2s → 4s → 8s)
+  → masterLLM.ts (orchestrator — real Azure GPT-4o call, JSON-structured response)
+  → ReasoningEngine.ts (multi-step reasoning — analytical/inductive/deductive templates)
+  → complianceLLM.ts (FAR/agency compliance check — real Azure GPT-4o call)
+  → vectorStore.ts (Pinecone RAG — gracefully degrades to empty matches if unconfigured)
+  → Conclusion with FAR citations stored in Supabase reasoning_results table
 ```
+
+> **AI Services:** All LLM calls go through `getAICompletion()` in `src/services/azure/aiService.ts`.
+> There is no backend proxy — calls are made browser-side using the Azure SDK.
+> The dead `src/pages/api/azure-ai.ts` Express route has been removed.
 
 ### Data Flow
 
@@ -156,6 +186,16 @@ import { Button } from "../../../components/ui/button";
 - **PascalCase** for component files and names
 - Co-locate component-specific types in the same file; shared types go in `src/types/`
 - Prefer the `universal/` wrappers (Card, Grid, GradientButton) over raw shadcn/ui for consistent styling
+- Every list/table component must include an **empty state** UI when there are no items
+
+### Accessibility (a11y)
+
+- All icon-only buttons require `aria-label`
+- All decorative SVGs and icons require `aria-hidden="true"`
+- All search inputs require `aria-label`
+- Status badges use `role="status"` and `aria-label`
+- Form fields use `htmlFor` + `id` pairing and `aria-describedby` for error messages
+- Error messages use `role="alert"`
 
 ### Styling
 
@@ -166,22 +206,30 @@ import { Button } from "../../../components/ui/button";
   - Secondary: `#00A86B` (Emerald Green)
   - Accent: `#FFA500` (Orange)
 - Animations: Framer Motion for page transitions; Tailwind keyframes (`fade-up`, `fade-in`, `scale-in`) for UI
+- **Do not use `pl-64` or other hardcoded sidebar offsets** — use `md:pl-64` for responsive safety
 
 ### TypeScript
 
 - All shared interfaces live in `src/types/` and are named exports
 - `src/integrations/supabase/types.ts` is **auto-generated** — do not edit manually; regenerate via Supabase CLI
 - Path aliases: `@/*` → `./src/*`
-- Unused variables/params are permitted by ESLint config (rule is `off`)
+- `noImplicitAny: true` and `strictNullChecks: true` are enabled — do not use `any` without justification
+- `src/components/ui/` is excluded from ESLint (shadcn generated files)
 
 ### Error Handling
 
-Always use the centralized systems — do not write ad-hoc `console.error` or silent catches:
+Always use the centralized systems — do not write `console.error` or silent catches:
 
 ```typescript
 // Error tracking
 import { errorTracker } from "@/lib/security/errorTracking";
-errorTracker.track(error, { severity: "HIGH", type: "APPLICATION" });
+errorTracker.trackError({
+  message: error.message,
+  stack: error.stack,
+  severity: "HIGH",
+  errorType: "APPLICATION",
+  status: "NEW",
+});
 
 // Audit logging
 import { auditLogger } from "@/lib/audit";
@@ -196,8 +244,8 @@ Wrap all async operations in React Query mutations or queries:
 
 ```typescript
 const { mutate } = useMutation({
-  mutationFn: async (input) => azureAIService.query(input),
-  onError: (error) => errorTracker.track(error),
+  mutationFn: async (input) => getAICompletion(messages, apiKey),
+  onError: (error) => errorTracker.trackError({ message: error.message, ... }),
   onSuccess: (data) => { /* update state */ },
 });
 ```
@@ -208,8 +256,36 @@ All forms must use React Hook Form + Zod:
 
 ```typescript
 const schema = z.object({ field: z.string().min(1) });
-const form = useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema) });
+const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof schema>>({
+  resolver: zodResolver(schema),
+});
 ```
+
+---
+
+## Security
+
+### Authentication
+
+- **PIV/CAC card:** Not yet implemented. `authenticateWithPIV()` and `authenticateWithCAC()` return `false` and log a `SECURITY` error. Do not bypass.
+- **Password auth:** Via Supabase Auth (`supabase.auth.signUp()` / `supabase.auth.signInWithPassword()`).
+- **Session timeout:** 15 minutes (enforced by `AccessControl` singleton).
+
+### Permissions
+
+The `Permission` type in `src/lib/security/accessControl.ts` is the authoritative source. Navigation items in `src/config/navigationItems.ts` must use only permissions defined there. Current permissions:
+
+```
+READ_SOLICITATIONS | WRITE_SOLICITATIONS | APPROVE_SOLICITATIONS
+READ_PROPOSALS | EVALUATE_PROPOSALS | MANAGE_USERS | VIEW_AUDIT_LOGS | EXPORT_DATA
+MANAGE_EVALUATIONS | MANAGE_CONTRACTS | LEGAL_REVIEW | SMALL_BUSINESS_REVIEW | QA_ACCESS
+```
+
+### Secrets
+
+- All secrets are in `.env.local` (gitignored). Never hardcode them.
+- Startup validation in `src/main.tsx` will throw if required vars are missing (dev only).
+- If a secret is accidentally committed, rotate it immediately in the service dashboard.
 
 ---
 
@@ -256,19 +332,39 @@ DFARS, GSARS, HHSARS, DEARS, DOSAR, AIDAR, DLAD, NMCARS, AFFARS, EPAAR, FEHBAR, 
 
 ## External Services
 
-| Service | Purpose | Config Location |
+| Service | Purpose | Config |
 |---|---|---|
-| Azure OpenAI (GPT-4o) | LLM responses | `src/services/azure/aiService.ts` |
-| Pinecone | Vector search (RAG) | `src/services/rag/vectorStore.ts` |
-| Supabase | Database + Auth | `src/integrations/supabase/client.ts` |
-
-> **Note:** Azure endpoint and Supabase project URL/anon key are currently hardcoded in their respective client files. When adding new environment-specific config, use `import.meta.env.VITE_*` variables and document them here.
+| Azure OpenAI (GPT-4o) | LLM responses | `VITE_AZURE_ENDPOINT` + `VITE_AZURE_OPENAI_API_KEY` |
+| Pinecone | Vector search (RAG) | `VITE_PINECONE_API_KEY` + `VITE_PINECONE_INDEX_NAME` |
+| Supabase | Database + Auth | `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` |
 
 ---
 
 ## Testing
 
-No test framework is currently configured. When adding tests, prefer **Vitest** (already compatible with the Vite setup) with **React Testing Library** for component tests.
+**Framework:** Vitest + React Testing Library + jsdom
+
+**Run tests:**
+```bash
+npm test              # single run
+npm run test:watch    # watch mode
+npm run test:coverage # with coverage
+```
+
+**Test locations:**
+```
+src/lib/security/__tests__/accessControl.test.ts   — Permission matrix unit tests
+src/lib/__tests__/audit.test.ts                    — AuditLogger unit tests
+src/services/rag/__tests__/vectorStore.test.ts     — RAG graceful degradation tests
+src/services/llm/__tests__/masterLLM.test.ts       — MasterLLM response parsing tests
+src/services/llm/__tests__/complianceLLM.test.ts   — ComplianceLLM response parsing tests
+src/services/reasoning/__tests__/ReasoningEngine.test.ts — Full pipeline integration tests
+```
+
+**Conventions:**
+- Mock all external services (Azure, Pinecone, Supabase) in unit tests
+- Use `vi.stubEnv()` to control `import.meta.env` values in tests
+- All mocks go at the top level of the test file (hoisting requirement)
 
 ---
 
@@ -278,5 +374,9 @@ No test framework is currently configured. When adding tests, prefer **Vitest** 
 2. **Do not add custom CSS** in component files; use Tailwind classes exclusively.
 3. **Always use `@/` imports** — relative imports across feature boundaries make refactoring fragile.
 4. **Wrap AI/async calls in React Query** — avoids inconsistent loading/error states.
-5. **Use the audit logger** for any user-initiated action — required for compliance traceability.
-6. **Access control**: Check `src/config/navigationItems.ts` when adding new routes — some require specific role permissions.
+5. **Use `errorTracker.trackError()`** — never `console.error`. This is enforced by ESLint.
+6. **Use the audit logger** for any user-initiated action — required for compliance traceability.
+7. **Access control:** Every new permission must be added to `accessControl.ts` AND assigned to the correct roles before being referenced in `navigationItems.ts`.
+8. **PIV/CAC auth stubs return `false`** — do not assume they succeed. Backend WebAuthn integration required before enabling.
+9. **Pinecone RAG degrades gracefully** — if `VITE_PINECONE_API_KEY` is not set, `queryVectorStore()` returns `{ matches: [] }` and the reasoning engine continues with LLM-only context.
+10. **`src/components/ui/` is excluded from ESLint** — do not put application logic there.

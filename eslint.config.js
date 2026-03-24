@@ -5,7 +5,16 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist"] },
+  {
+    ignores: [
+      "dist",
+      "node_modules",
+      // shadcn/ui generated components — do not lint
+      "src/components/ui/**",
+      // Tailwind config uses require() for plugins
+      "tailwind.config.ts",
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -23,7 +32,18 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
-      "@typescript-eslint/no-unused-vars": "off",
+      // Warn on console usage — use errorTracker or auditLogger instead
+      "no-console": ["warn", { allow: ["warn"] }],
+      // Security: prevent eval-based code execution
+      "no-eval": "error",
+      "no-implied-eval": "error",
+      // Catch unused vars (except vars prefixed with _)
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }
+      ],
+      // Discourage unsafe any usage
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   }
 );

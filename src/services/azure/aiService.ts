@@ -35,13 +35,16 @@ const initializeClient = (apiKey: string) => {
   }
   
   try {
+    const endpoint = import.meta.env.VITE_AZURE_ENDPOINT as string;
+    if (!endpoint) {
+      throw new Error('Azure OpenAI endpoint (VITE_AZURE_ENDPOINT) is not configured');
+    }
     client = new OpenAIClient(
-      "https://knowledgedev2443059259.services.ai.azure.com/",
+      endpoint,
       new AzureKeyCredential(apiKey)
     );
     return client;
   } catch (error) {
-    console.error('Failed to initialize Azure OpenAI client:', error);
     toast({
       title: "Initialization Error",
       description: "Failed to initialize AI client. Please check your API key.",
@@ -105,7 +108,6 @@ export const getAICompletion = async (messages: Array<{ role: string; content: s
       description: `Failed to process request: ${errorMessage}`,
       variant: "destructive"
     });
-    console.error('Azure OpenAI Error:', error);
     throw error;
   }
 };
@@ -172,7 +174,7 @@ const extractFARCitations = (content: string): string[] => {
 };
 
 // Helper function to calculate confidence score based on response metadata
-const calculateConfidenceScore = (result: any): number => {
+const calculateConfidenceScore = (result: { usage?: { completionTokens?: number } }): number => {
   const baseScore = 0.8;
   const tokenRatio = (result.usage?.completionTokens || 0) / 4096;
   return Math.min(baseScore + (tokenRatio * 0.2), 1);
