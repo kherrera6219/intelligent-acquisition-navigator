@@ -3,6 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { accessControl, type Permission, type Role } from "@/lib/security/accessControl";
 import { errorTracker } from "@/lib/security/errorTracking";
+import { SESSION_TIMEOUT_MS } from "@/lib/security/sessionPolicy";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -62,7 +63,7 @@ export const ProtectedRoute = ({ children, requiredPermission }: ProtectedRouteP
               lastAuthenticated: new Date(),
               expiresAt: session.expires_at
                 ? new Date(session.expires_at * 1000)
-                : new Date(Date.now() + 15 * 60 * 1000),
+                : new Date(Date.now() + SESSION_TIMEOUT_MS),
             },
             sessionId: session.access_token.slice(0, 16),
             ipAddress: window.location.hostname,

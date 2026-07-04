@@ -131,12 +131,13 @@ class ErrorTracker {
   updateErrorStatus(errorCode: string, status: ErrorDetails['status']): void {
     const error = this.errors.find(e => e.errorCode === errorCode);
     if (error) {
+      const oldStatus = error.status;
       error.status = status;
       auditLogger.log({
         action: 'ERROR_STATUS_UPDATED',
         resourceType: 'ERROR',
         resourceId: errorCode,
-        details: { oldStatus: error.status, newStatus: status }
+        details: { oldStatus, newStatus: status }
       });
     }
   }

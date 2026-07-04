@@ -287,7 +287,15 @@ Include specific FAR/DFARS citations and actionable next steps for the contracti
     if (lower.includes('warn') || lower.includes('caution') || lower.includes('risk')) {
       return 'warning';
     }
-    return 'passed';
+    // Fail closed: only report "passed" when the model response contains an
+    // explicit, unambiguous compliance signal. Ambiguous or unrecognized
+    // responses default to "warning" (flagged for human review) rather than
+    // silently passing — defaulting to success on unclear output would
+    // undermine a FAR/DFARS compliance check.
+    if (lower.includes('pass') || lower.includes('compliant') || lower.includes('approved')) {
+      return 'passed';
+    }
+    return 'warning';
   }
 
   /** Attempts to extract a confidence score from the model response text (0–1). */

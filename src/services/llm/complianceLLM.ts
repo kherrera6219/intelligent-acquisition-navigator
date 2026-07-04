@@ -37,11 +37,24 @@ export const checkCompliance = async (suggestion: string): Promise<ComplianceChe
 
     try {
       const parsed = JSON.parse(raw) as ComplianceCheck;
+      const validRiskLevel = ['low', 'medium', 'high'].includes(parsed.riskLevel);
+      // Fail closed: if the model's response is missing or mistypes the
+      // `approved` field, treat it as NOT approved rather than defaulting to
+      // success. For a FAR/DFARS compliance gate, defaulting to "approved" on
+      // ambiguous/malformed model output would silently defeat the purpose
+      // of the check.
+      const approvedFieldPresent = typeof parsed.approved === 'boolean';
       return {
-        approved: typeof parsed.approved === 'boolean' ? parsed.approved : true,
-        reason: parsed.reason ?? 'Compliance review completed.',
-        riskLevel: ['low', 'medium', 'high'].includes(parsed.riskLevel) ? parsed.riskLevel : 'medium',
-        suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
+        approved: approvedFieldPresent ? parsed.approved : false,
+        reason: parsed.reason ?? (
+          approvedFieldPresent
+            ? 'Compliance review completed.'
+            : 'Compliance response was missing a clear approval determination. Manual review required.'
+        ),
+        riskLevel: validRiskLevel ? parsed.riskLevel : 'high',
+        suggestions: Array.isArray(parsed.suggestions) && parsed.suggestions.length > 0
+          ? parsed.suggestions
+          : (approvedFieldPresent ? [] : ['Perform manual compliance review before proceeding.']),
       };
     } catch {
       return {

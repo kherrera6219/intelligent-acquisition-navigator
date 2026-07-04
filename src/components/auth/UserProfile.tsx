@@ -1,5 +1,5 @@
-
-import { useEffect, useRef, type ChangeEvent } from "react";
+
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -21,7 +21,6 @@ const profileSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   organization: z.string().min(2, "Organization must be at least 2 characters"),
   department: z.string().min(2, "Department must be at least 2 characters"),
-  role: z.string().min(2, "Role must be at least 2 characters"),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -29,6 +28,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 const UserProfile = () => {
   const { toast } = useToast();
   const importInputRef = useRef<HTMLInputElement>(null);
+  const [currentRole, setCurrentRole] = useState("");
 
   const {
     register,
@@ -42,7 +42,6 @@ const UserProfile = () => {
       email: "",
       organization: "",
       department: "",
-      role: "",
     },
   });
 
@@ -54,8 +53,11 @@ const UserProfile = () => {
         email: data?.user?.email ?? "",
         organization: String(metadata.organization ?? ""),
         department: String(metadata.department ?? ""),
-        role: String(metadata.role ?? ""),
       });
+      // Role is authorization-sensitive and is never user-editable — see
+      // supabase/client.ts updateUser(), which strips this key even if
+      // submitted. Displayed here read-only for reference only.
+      setCurrentRole(String(metadata.role ?? "CONTRACT_SPECIALIST"));
     });
   }, [reset]);
 
@@ -65,7 +67,6 @@ const UserProfile = () => {
         fullName: data.fullName,
         organization: data.organization,
         department: data.department,
-        role: data.role,
       },
     });
 
@@ -285,17 +286,16 @@ const UserProfile = () => {
                     <Input
                       id="role"
                       type="text"
-                      {...register("role")}
+                      value={currentRole}
+                      readOnly
+                      disabled
                       className="pl-10"
-                      aria-describedby={errors.role ? "role-error" : undefined}
-                      aria-invalid={!!errors.role}
+                      aria-describedby="role-help"
                     />
                   </div>
-                  {errors.role && (
-                    <p id="role-error" className="mt-1 text-sm text-red-400" role="alert">
-                      {errors.role.message}
-                    </p>
-                  )}
+                  <p id="role-help" className="mt-1 text-xs text-gray-500">
+                    Your role is assigned by an administrator and cannot be changed here.
+                  </p>
                 </div>
 
                 <Button

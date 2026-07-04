@@ -1,4 +1,5 @@
 import type { Json } from "./types";
+import { SESSION_TIMEOUT_MINUTES } from "@/lib/security/sessionPolicy";
 
 type AuthChangeCallback = (
   event: "SIGNED_IN" | "SIGNED_OUT" | "TOKEN_REFRESHED",
@@ -8,7 +9,8 @@ type AuthChangeCallback = (
 interface LocalUser {
   id: string;
   email: string;
-  password: string;
+  passwordHash: string;
+  passwordSalt: string;
   user_metadata: Record<string, unknown>;
 }
 
@@ -32,6 +34,7 @@ const STORAGE_KEYS = {
   users: "__ian_users",
   session: "__ian_session",
   tables: "__ian_tables",
+  tablesVersion: "__ian_tables_version",
   uploads: "__ian_uploads",
   backupVersion: "__ian_backup_version",
 } as const;
@@ -232,6 +235,41 @@ const writeJSON = (key: string, value: unknown) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
+const PBKDF2_ITERATIONS = 100_000;
+
+const toHex = (buffer: ArrayBuffer): string =>
+  Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+
+/**
+ * Derives a PBKDF2-SHA256 hash of a password using a per-user random salt.
+ * Even in this self-contained/local-only app, passwords must never be stored
+ * in plaintext — users frequently reuse passwords across services, and
+ * localStorage is readable by any XSS payload or browser extension.
+ */
+const hashPassword = async (password: string, salt: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"]
+  );
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: encoder.encode(salt),
+      iterations: PBKDF2_ITERATIONS,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    256
+  );
+  return toHex(derivedBits);
+};
+
 const getTables = (): LocalTables => {
   const existing = readJSON<LocalTables | null>(STORAGE_KEYS.tables, null);
   if (existing) {
@@ -243,6 +281,50 @@ const getTables = (): LocalTables => {
 };
 
 const saveTables = (tables: LocalTables) => writeJSON(STORAGE_KEYS.tables, tables);
+
+const getTablesVersion = (): number => {
+  const raw = localStorage.getItem(STORAGE_KEYS.tablesVersion);
+  const parsed = raw ? Number(raw) : 0;
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const setTablesVersion = (version: number) => {
+  localStorage.setItem(STORAGE_KEYS.tablesVersion, String(version));
+};
+
+/**
+ * Applies `mutator` to the freshest available table snapshot and persists
+ * the result. localStorage has no cross-tab locking primitive, so two tabs
+ * writing around the same moment can otherwise silently clobber each
+ * other's inserts (last writer wins, wholesale). This uses a lightweight
+ * version stamp to detect the case where another tab wrote in between our
+ * read and our write, and if so, re-applies the same mutation on top of
+ * that newer snapshot instead of overwriting it — see code review Finding
+ * #7 (cross-tab data loss). This is a pragmatic mitigation, not a full
+ * transactional guarantee (true mutual exclusion would require the Web
+ * Locks API and an async client contract, which isn't compatible with the
+ * synchronous `.insert().select()` chaining used throughout the app).
+ */
+const mutateTables = (mutator: (tables: LocalTables) => void): LocalTables => {
+  const versionBeforeRead = getTablesVersion();
+  const tables = getTables();
+  mutator(tables);
+
+  const versionAfterMutation = getTablesVersion();
+  if (versionAfterMutation !== versionBeforeRead) {
+    // Another tab wrote after we read — redo the mutation against the
+    // latest snapshot rather than overwriting that write.
+    const latestTables = getTables();
+    mutator(latestTables);
+    saveTables(latestTables);
+    setTablesVersion(versionAfterMutation + 1);
+    return latestTables;
+  }
+
+  saveTables(tables);
+  setTablesVersion(versionBeforeRead + 1);
+  return tables;
+};
 
 const getUsers = (): LocalUser[] => readJSON<LocalUser[]>(STORAGE_KEYS.users, []);
 const saveUsers = (users: LocalUser[]) => writeJSON(STORAGE_KEYS.users, users);
@@ -412,10 +494,14 @@ export const supabase = {
         return { data: null, error: { message: "A user with this email already exists." } };
       }
 
+      const passwordSalt = crypto.randomUUID();
+      const passwordHash = await hashPassword(password, passwordSalt);
+
       const user: LocalUser = {
         id: crypto.randomUUID(),
         email: email.trim(),
-        password,
+        passwordHash,
+        passwordSalt,
         user_metadata: { role: "CONTRACT_SPECIALIST" },
       };
       users.push(user);
@@ -423,7 +509,7 @@ export const supabase = {
 
       const session: LocalSession = {
         access_token: crypto.randomUUID(),
-        expires_at: nowPlusMinutes(60),
+        expires_at: nowPlusMinutes(SESSION_TIMEOUT_MINUTES),
         user: asAuthUser(user),
       };
       saveSession(session);
@@ -440,16 +526,21 @@ export const supabase = {
       password: string;
     }): Promise<QueryResult<{ user: LocalSession["user"]; session: LocalSession }>> {
       const users = getUsers();
-      const user = users.find(
-        (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-      );
-      if (!user) {
+      const candidate = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+      if (!candidate) {
         return { data: null, error: { message: "Invalid email or password." } };
       }
 
+      const candidateHash = await hashPassword(password, candidate.passwordSalt);
+      // Compare hashes only — the plaintext password is never stored or compared directly.
+      if (candidateHash !== candidate.passwordHash) {
+        return { data: null, error: { message: "Invalid email or password." } };
+      }
+      const user = candidate;
+
       const session: LocalSession = {
         access_token: crypto.randomUUID(),
-        expires_at: nowPlusMinutes(60),
+        expires_at: nowPlusMinutes(SESSION_TIMEOUT_MINUTES),
         user: asAuthUser(user),
       };
       saveSession(session);
@@ -507,9 +598,16 @@ export const supabase = {
         return { data: null, error: { message: "User record not found." } };
       }
 
+      // Security: `role` drives authorization (see accessControl.ts / ProtectedRoute).
+      // It must never be settable through the generic profile-update path, or any
+      // authenticated user could grant themselves elevated permissions (e.g.
+      // SYSTEM_ADMIN) simply by editing their own profile. Strip it here as a
+      // defense-in-depth measure regardless of what any calling UI submits.
+      const { role: _ignoredRole, ...safeData } = data;
+
       target.user_metadata = {
         ...(target.user_metadata ?? {}),
-        ...data,
+        ...safeData,
       };
       saveUsers(users);
 
@@ -536,13 +634,13 @@ export const supabase = {
       },
 
       insert: (payload: Record<string, unknown> | Array<Record<string, unknown>>) => {
-        const tables = getTables();
-        const target = ensureTable(tables, table);
         const rows = (Array.isArray(payload) ? payload : [payload]).map((row) =>
           normalizeRow(row)
         );
-        target.push(...rows);
-        saveTables(tables);
+        mutateTables((tables) => {
+          const target = ensureTable(tables, table);
+          target.push(...rows);
+        });
         return new InsertBuilder(rows);
       },
     };
@@ -610,6 +708,7 @@ export const importLocalAppBackup = (backup: LocalAppBackup): void => {
   writeJSON(STORAGE_KEYS.tables, backup.data.tables ?? seedTables());
   writeJSON(STORAGE_KEYS.uploads, backup.data.uploads ?? []);
   localStorage.setItem(STORAGE_KEYS.backupVersion, String(backup.version ?? 1));
+  setTablesVersion(0);
 
   const session = getSession();
   emitAuthChange(session ? "TOKEN_REFRESHED" : "SIGNED_OUT", session);
@@ -619,6 +718,7 @@ export const resetLocalAppData = (): void => {
   localStorage.removeItem(STORAGE_KEYS.users);
   localStorage.removeItem(STORAGE_KEYS.session);
   localStorage.removeItem(STORAGE_KEYS.tables);
+  localStorage.removeItem(STORAGE_KEYS.tablesVersion);
   localStorage.removeItem(STORAGE_KEYS.uploads);
   localStorage.removeItem(STORAGE_KEYS.backupVersion);
   ensureSeededState();

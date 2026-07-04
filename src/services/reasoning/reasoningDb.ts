@@ -107,9 +107,19 @@ export async function insertReasoningResult(
     confidence_score: resultData.confidence_score,
     reasoning_steps: stepIds,
     compliance_checks: checkIds,
-    supporting_evidence: (resultData.supporting_evidence as Json[] || []).map(item => 
-      typeof item === 'string' ? JSON.parse(item) : item
-    ),
+    supporting_evidence: (resultData.supporting_evidence as Json[] || []).map(item => {
+      if (typeof item !== 'string') {
+        return item;
+      }
+      try {
+        return JSON.parse(item);
+      } catch {
+        // Not all evidence strings are guaranteed to be JSON (e.g. plain-text
+        // citations) — fall back to the raw string rather than throwing and
+        // surfacing a generic error for what is recoverable data.
+        return item;
+      }
+    }),
     metadata: resultData.metadata as Record<string, unknown> | undefined
   };
 }

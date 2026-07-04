@@ -3,6 +3,22 @@ import { toast } from "@/hooks/use-toast";
 
 export type AIProvider = "openai" | "gemini";
 
+/**
+ * Error thrown by the AI provider calls below, carrying the HTTP status code
+ * (when available) so callers like useAIChat's retry logic can distinguish
+ * permanent client errors (4xx — bad API key, malformed request) from
+ * transient failures (5xx, network errors) worth retrying.
+ */
+export class AIServiceError extends Error {
+  status?: number;
+
+  constructor(message: string, status?: number) {
+    super(message);
+    this.name = "AIServiceError";
+    this.status = status;
+  }
+}
+
 interface AIMessage {
   role: string;
   content: string;
@@ -105,7 +121,10 @@ const callOpenAIChatCompletions = async ({
   };
 
   if (!response.ok) {
-    throw new Error(payload.error?.message || `OpenAI request failed (${response.status})`);
+    throw new AIServiceError(
+      payload.error?.message || `OpenAI request failed (${response.status})`,
+      response.status
+    );
   }
 
   return {
@@ -183,7 +202,10 @@ const callGeminiChatCompletions = async ({
   };
 
   if (!response.ok) {
-    throw new Error(payload.error?.message || `Gemini request failed (${response.status})`);
+    throw new AIServiceError(
+      payload.error?.message || `Gemini request failed (${response.status})`,
+      response.status
+    );
   }
 
   return {
