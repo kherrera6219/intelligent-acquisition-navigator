@@ -1,5 +1,7 @@
 # Intelligent Acquisition Navigator
 
+[![CI](https://github.com/kherrera6219/intelligent-acquisition-navigator/actions/workflows/ci.yml/badge.svg)](https://github.com/kherrera6219/intelligent-acquisition-navigator/actions/workflows/ci.yml)
+
 Intelligent Acquisition Navigator is a React + TypeScript web app for federal acquisition workflows.  
 It combines compliance-aware guidance, role-based UX, and AI-assisted reasoning for teams working with FAR/DFARS and agency supplements.
 
@@ -128,4 +130,6 @@ npm run test
 1. Create a feature branch from `main`
 2. Make changes with tests where applicable
 3. Run lint and tests
-4. Open a pull request with a clear summary and validation notes
+4. Open a pull request using the provided PR template with a clear summary and validation notes
+
+CI (`.github/workflows/ci.yml`) runs lint, tests, and a production build on every push and pull request targeting `main`. Code owners (`.github/CODEOWNERS`) are automatically requested for review.
