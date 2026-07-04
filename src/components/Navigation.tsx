@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { useToast } from '@/components/ui/use-toast';
 import { accessControl } from '@/lib/security/accessControl';
@@ -13,8 +13,8 @@ import { SystemStatus } from './navigation/SystemStatus';
 import { Separator } from '@/components/ui/separator';
 
 const Navigation = () => {
-  const [activeRoute, setActiveRoute] = useState('/dashboard');
   const [errors, setErrors] = useState<number>(0);
+  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -40,15 +40,14 @@ const Navigation = () => {
 
   const handleNavigation = async (route: string) => {
     try {
-      setActiveRoute(route);
       await auditLogger.log({
         action: 'NAVIGATION',
         resourceType: 'ROUTE',
         resourceId: route,
-        details: { previousRoute: activeRoute }
+        details: { previousRoute: location.pathname }
       });
       navigate(route);
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Navigation Failed",
@@ -67,7 +66,7 @@ const Navigation = () => {
       });
       accessControl.logout();
       navigate('/login');
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Logout Failed",
@@ -104,7 +103,7 @@ const Navigation = () => {
               <NavigationItem
                 key={item.route}
                 {...item}
-                isActive={activeRoute === item.route}
+                isActive={location.pathname === item.route}
                 onClick={() => handleNavigation(item.route)}
               />
             );
@@ -125,7 +124,7 @@ const Navigation = () => {
               <NavigationItem
                 key={item.route}
                 {...item}
-                isActive={activeRoute === item.route}
+                isActive={location.pathname === item.route}
                 onClick={() => handleNavigation(item.route)}
               />
             );
@@ -146,7 +145,7 @@ const Navigation = () => {
               <NavigationItem
                 key={item.route}
                 {...item}
-                isActive={activeRoute === item.route}
+                isActive={location.pathname === item.route}
                 onClick={() => handleNavigation(item.route)}
               />
             );
@@ -156,7 +155,7 @@ const Navigation = () => {
 
       <SystemStatus 
         errors={errors}
-        onClick={() => handleNavigation('/system-status')}
+        onClick={() => handleNavigation('/sitemap')}
       />
 
       <NavigationFooter 

@@ -29,7 +29,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           id="main-content" 
           className={cn(
             "transition-all duration-300",
-            !isAuthPage && !isHomePage && "ml-64 p-8",
+            !isAuthPage && !isHomePage && "md:ml-64 p-4 md:p-8",
             isAuthPage && "flex items-center justify-center min-h-screen"
           )}
           initial={{ opacity: 0, y: 20 }}

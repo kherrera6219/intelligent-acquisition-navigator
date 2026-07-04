@@ -24,6 +24,10 @@ interface AzureAIResponse {
 
 let client: OpenAIClient | null = null;
 
+const getDeploymentId = (): string => {
+  return (import.meta.env.VITE_AZURE_DEPLOYMENT_ID as string | undefined) || 'gpt-4o';
+};
+
 const initializeClient = (apiKey: string) => {
   if (!apiKey) {
     toast({
@@ -64,7 +68,7 @@ export const getAICompletion = async (messages: Array<{ role: string; content: s
       throw new Error('Azure OpenAI client not initialized');
     }
 
-    const deploymentId = 'gpt-4o';
+    const deploymentId = getDeploymentId();
     const result = await client.getChatCompletions(deploymentId, messages, {
       maxTokens: 4096,
       temperature: 1,
@@ -130,7 +134,7 @@ export const getResearchCompletion = async (query: string, apiKey: string) => {
     };
 
     const result = await client.getChatCompletions(
-      'gpt-4o',
+      getDeploymentId(),
       [
         systemMessage,
         { role: "user", content: query }

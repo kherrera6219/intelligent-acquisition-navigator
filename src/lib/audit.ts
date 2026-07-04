@@ -59,9 +59,9 @@ class AuditLogger {
     try {
       await this.apiClient.get('/health-check');
       this.isAPIAvailable = true;
-    } catch (error) {
+    } catch {
       this.isAPIAvailable = false;
-      console.warn('Audit logging API is not available, falling back to local storage');
+      this.storeDiagnostic('Audit logging API is not available; using local storage fallback.');
     }
   }
 
@@ -103,8 +103,8 @@ class AuditLogger {
       const logs = JSON.parse(localStorage.getItem('failedAuditLogs') || '[]');
       logs.push(failureLog);
       localStorage.setItem('failedAuditLogs', JSON.stringify(logs));
-    } catch (e) {
-      console.error('Failed to store local audit log:', e);
+    } catch {
+      this.storeDiagnostic('Failed to store audit log in local storage.');
     }
   }
 
@@ -117,8 +117,8 @@ class AuditLogger {
     try {
       const queryString = filters ? `?${new URLSearchParams(this.serializeFilters(filters))}` : '';
       return await this.apiClient.get<AuditLog[]>(`/audit-logs${queryString}`);
-    } catch (error) {
-      console.warn('Failed to fetch audit logs:', error);
+    } catch {
+      this.storeDiagnostic('Failed to fetch audit logs from API.');
       return [];
     }
   }
@@ -135,8 +135,22 @@ class AuditLogger {
       }
       
       localStorage.removeItem('failedAuditLogs');
-    } catch (error) {
-      console.error('Failed to retry failed audit logs:', error);
+    } catch {
+      this.storeDiagnostic('Failed to retry pending audit logs.');
+    }
+  }
+
+  private storeDiagnostic(message: string): void {
+    try {
+      const key = 'auditLoggerDiagnostics';
+      const diagnostics = JSON.parse(localStorage.getItem(key) || '[]') as Array<{
+        message: string;
+        timestamp: string;
+      }>;
+      diagnostics.unshift({ message, timestamp: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(diagnostics.slice(0, 100)));
+    } catch {
+      // Intentionally ignored: diagnostic logging must never break app flow.
     }
   }
 

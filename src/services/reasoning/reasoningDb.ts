@@ -2,6 +2,17 @@
 import { supabase } from "@/integrations/supabase/client";
 import { ComplianceCheck, ReasoningStep, ReasoningResult } from "@/types/reasoning";
 import { Json } from "@/integrations/supabase/types";
+import { errorTracker } from "@/lib/security/errorTracking";
+
+const trackReasoningDbError = (message: string, error: Error) => {
+  errorTracker.trackError({
+    message: `${message}: ${error.message}`,
+    stack: error.stack,
+    severity: 'HIGH',
+    errorType: 'SYSTEM',
+    status: 'NEW',
+  });
+};
 
 export async function insertReasoningStep(step: Omit<ReasoningStep, 'id'>): Promise<string> {
   const { data, error } = await supabase
@@ -15,7 +26,7 @@ export async function insertReasoningStep(step: Omit<ReasoningStep, 'id'>): Prom
     .single();
 
   if (error) {
-    console.error('Error inserting reasoning step:', error);
+    trackReasoningDbError('Error inserting reasoning step', error);
     throw error;
   }
 
@@ -33,7 +44,7 @@ export async function insertComplianceCheck(check: Omit<ComplianceCheck, 'id'>):
     .single();
 
   if (error) {
-    console.error('Error inserting compliance check:', error);
+    trackReasoningDbError('Error inserting compliance check', error);
     throw error;
   }
 
@@ -57,7 +68,7 @@ export async function insertReasoningResult(
     .single();
 
   if (resultError) {
-    console.error('Error inserting reasoning result:', resultError);
+    trackReasoningDbError('Error inserting reasoning result', resultError);
     throw resultError;
   }
 
@@ -72,7 +83,7 @@ export async function insertReasoningResult(
     .insert(stepRelations);
 
   if (stepsError) {
-    console.error('Error inserting step relations:', stepsError);
+    trackReasoningDbError('Error inserting step relations', stepsError);
     throw stepsError;
   }
 
@@ -87,7 +98,7 @@ export async function insertReasoningResult(
     .insert(checkRelations);
 
   if (checksError) {
-    console.error('Error inserting check relations:', checksError);
+    trackReasoningDbError('Error inserting check relations', checksError);
     throw checksError;
   }
 
@@ -99,34 +110,34 @@ export async function insertReasoningResult(
     supporting_evidence: (resultData.supporting_evidence as Json[] || []).map(item => 
       typeof item === 'string' ? JSON.parse(item) : item
     ),
-    metadata: resultData.metadata as Record<string, any> | undefined
+    metadata: resultData.metadata as Record<string, unknown> | undefined
   };
 }
 
-export async function getReasoningSteps(stepIds: string[]): Promise<any[]> {
+export async function getReasoningSteps(stepIds: string[]): Promise<ReasoningStep[]> {
   const { data, error } = await supabase
     .from('reasoning_steps')
     .select('*')
     .in('id', stepIds);
 
   if (error) {
-    console.error('Error fetching reasoning steps:', error);
+    trackReasoningDbError('Error fetching reasoning steps', error);
     throw error;
   }
 
-  return data || [];
+  return (data || []) as unknown as ReasoningStep[];
 }
 
-export async function getComplianceChecks(checkIds: string[]): Promise<any[]> {
+export async function getComplianceChecks(checkIds: string[]): Promise<ComplianceCheck[]> {
   const { data, error } = await supabase
     .from('compliance_checks')
     .select('*')
     .in('id', checkIds);
 
   if (error) {
-    console.error('Error fetching compliance checks:', error);
+    trackReasoningDbError('Error fetching compliance checks', error);
     throw error;
   }
 
-  return data || [];
+  return (data || []) as unknown as ComplianceCheck[];
 }

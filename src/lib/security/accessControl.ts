@@ -1,4 +1,7 @@
 
+import { auditLogger } from '../audit';
+import { errorTracker } from './errorTracking';
+
 export type Permission =
   | 'READ_SOLICITATIONS'
   | 'WRITE_SOLICITATIONS'
@@ -112,7 +115,7 @@ export class AccessControl {
       if (this.securityContext && this.securityContext.authMethod.expiresAt < new Date()) {
         this.logout();
         // Trigger re-authentication
-        window.location.href = '/login';
+        window.location.assign('/login');
       }
     }, 60000); // Check every minute
   }
@@ -198,7 +201,3 @@ export class AccessControl {
 }
 
 export const accessControl = AccessControl.getInstance();
-
-// Import the audit logger and error tracker
-import { auditLogger } from '../audit';
-import { errorTracker } from './errorTracking';
