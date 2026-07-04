@@ -12,11 +12,11 @@ interface CodeEnvironmentProps {
 
 export const CodeEnvironment = ({ isOpen, onClose }: CodeEnvironmentProps) => {
   const [copied, setCopied] = useState(false);
-  const [code, setCode] = useState(`# Python environment simulation
+  const code = `# Python environment simulation
 def hello_world():
     print("Hello from simulated Python environment!")
     
-hello_world()`);
+hello_world()`;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(code);

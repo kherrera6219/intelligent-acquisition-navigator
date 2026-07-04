@@ -92,9 +92,8 @@ describe('processMasterLLM', () => {
     expect(result.confidence).toBeGreaterThanOrEqual(0);
   });
 
-  it('throws when API key is missing', async () => {
-    vi.stubEnv('VITE_AZURE_OPENAI_API_KEY', '');
-    await expect(processMasterLLM('test')).rejects.toThrow('VITE_AZURE_OPENAI_API_KEY');
-    vi.stubEnv('VITE_AZURE_OPENAI_API_KEY', 'test-key');
+  it('throws when AI service fails', async () => {
+    mockGetAICompletion.mockRejectedValueOnce(new Error('Upstream unavailable'));
+    await expect(processMasterLLM('test')).rejects.toThrow('Upstream unavailable');
   });
 });

@@ -1,6 +1,4 @@
-
-import { Pinecone } from '@pinecone-database/pinecone';
-import { errorTracker } from '@/lib/security/errorTracking';
+import { errorTracker } from "@/lib/security/errorTracking";
 
 export interface VectorMatch {
   id: string;
@@ -16,91 +14,90 @@ export interface VectorQueryResult {
   matches: VectorMatch[];
 }
 
-let pinecone: Pinecone | null = null;
+interface KnowledgeEntry {
+  id: string;
+  text: string;
+  source: string;
+  tokens: string[];
+}
 
-const getPineconeClient = (): Pinecone | null => {
-  if (pinecone) return pinecone;
-  const apiKey = import.meta.env.VITE_PINECONE_API_KEY as string | undefined;
-  if (!apiKey) return null;
-  pinecone = new Pinecone({ apiKey });
-  return pinecone;
+const KNOWLEDGE_BASE: KnowledgeEntry[] = [
+  {
+    id: "far-15-3",
+    source: "FAR 15.3",
+    text: "FAR Part 15.3 defines source selection procedures and requires evaluation factors to be stated in the solicitation.",
+    tokens: ["far", "15", "source", "selection", "evaluation", "solicitation"],
+  },
+  {
+    id: "far-6-3",
+    source: "FAR 6.3",
+    text: "FAR Part 6.3 addresses other than full and open competition and requires justification and approval documentation.",
+    tokens: ["far", "6", "competition", "justification", "approval", "sole", "source"],
+  },
+  {
+    id: "far-19",
+    source: "FAR 19",
+    text: "FAR Part 19 covers small business programs including set-asides and subcontracting plans.",
+    tokens: ["far", "19", "small", "business", "set-aside", "subcontracting"],
+  },
+  {
+    id: "dfars-215-371",
+    source: "DFARS 215.371",
+    text: "DFARS 215.371 provides policy for only one offer and includes requirements for resolicitation and documentation.",
+    tokens: ["dfars", "215", "one", "offer", "resolicitation", "documentation"],
+  },
+];
+
+const tokenize = (query: string): string[] =>
+  query
+    .toLowerCase()
+    .replace(/[^a-z0-9\s.-]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+
+const scoreEntry = (entry: KnowledgeEntry, tokens: string[]): number => {
+  if (!tokens.length) return 0;
+  const tokenSet = new Set(entry.tokens);
+  let matches = 0;
+  tokens.forEach((token) => {
+    if (tokenSet.has(token)) {
+      matches += 1;
+    } else if (entry.text.toLowerCase().includes(token)) {
+      matches += 0.5;
+    }
+  });
+  return matches / tokens.length;
 };
 
-export const initVectorStore = async (): Promise<Pinecone | null> => {
-  return getPineconeClient();
-};
+export const initVectorStore = async (): Promise<boolean> => true;
 
 export const queryVectorStore = async (
   query: string,
   topK = 5
 ): Promise<VectorQueryResult> => {
-  const client = getPineconeClient();
-
-  if (!client) {
-    // Graceful degradation: warn and return empty results so the reasoning
-    // engine continues with whatever context it has from the LLM alone.
-    errorTracker.trackError({
-      message: 'Pinecone API key not configured — vector store unavailable',
-      severity: 'MEDIUM',
-      errorType: 'SYSTEM',
-      status: 'NEW',
-    });
-    return { matches: [] };
-  }
-
   try {
-    const indexName = (import.meta.env.VITE_PINECONE_INDEX_NAME as string | undefined)
-      ?? 'acquisition-knowledge-base';
-
-    const index = client.index(indexName);
-
-    // Pinecone requires a dense vector for query. We generate a simple
-    // deterministic embedding from the query text using a seeded hash so the
-    // integration works end-to-end without a separate embedding service.
-    // Replace this with a real text-embedding-ada-002 call when available.
-    const vector = pseudoEmbedding(query, 1536);
-
-    const result = await index.query({
-      vector,
-      topK,
-      includeMetadata: true,
-    });
-
-    const matches: VectorMatch[] = (result.matches ?? []).map((m) => ({
-      id: m.id,
-      score: m.score ?? 0,
+    const tokens = tokenize(query);
+    const matches = KNOWLEDGE_BASE.map((entry) => ({
+      id: entry.id,
+      score: scoreEntry(entry, tokens),
       metadata: {
-        text: (m.metadata?.text as string) ?? '',
-        source: (m.metadata?.source as string) ?? 'knowledge_base',
-        ...(m.metadata as Record<string, unknown>),
+        text: entry.text,
+        source: entry.source,
       },
-    }));
+    }))
+      .filter((candidate) => candidate.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, topK);
 
     return { matches };
   } catch (error) {
     errorTracker.trackError({
-      message: error instanceof Error ? error.message : 'Vector store query failed',
+      message: error instanceof Error ? error.message : "Vector store query failed",
       stack: error instanceof Error ? error.stack : undefined,
-      severity: 'HIGH',
-      errorType: 'SYSTEM',
-      status: 'NEW',
+      severity: "HIGH",
+      errorType: "SYSTEM",
+      status: "NEW",
     });
-    // Return empty matches so downstream callers degrade gracefully
     return { matches: [] };
   }
 };
-
-/**
- * Generates a pseudo-embedding vector from a string for index compatibility.
- * This is a placeholder — replace with a real embedding model call
- * (e.g., Azure OpenAI text-embedding-ada-002) for semantic similarity.
- */
-function pseudoEmbedding(text: string, dimensions: number): number[] {
-  const vec = new Array<number>(dimensions).fill(0);
-  for (let i = 0; i < text.length; i++) {
-    vec[i % dimensions] += text.charCodeAt(i) / 255;
-  }
-  // L2-normalize
-  const norm = Math.sqrt(vec.reduce((sum, v) => sum + v * v, 0)) || 1;
-  return vec.map((v) => v / norm);
-}

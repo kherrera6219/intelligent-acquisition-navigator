@@ -21,18 +21,13 @@ Always base recommendations on FAR/DFARS requirements. Be specific about applica
 Respond ONLY with valid JSON.`;
 
 export const processMasterLLM = async (input: string): Promise<MasterLLMResponse> => {
-  const apiKey = import.meta.env.VITE_AZURE_OPENAI_API_KEY as string;
-  if (!apiKey) {
-    throw new Error('Azure OpenAI API key (VITE_AZURE_OPENAI_API_KEY) is not configured');
-  }
-
   try {
     const response = await getAICompletion(
       [
         { role: "system", content: MASTER_SYSTEM_PROMPT },
         { role: "user", content: input },
       ],
-      apiKey
+      undefined
     );
 
     const raw = response.choices[0]?.message?.content ?? '{}';

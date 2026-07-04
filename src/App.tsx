@@ -13,6 +13,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import LoginForm from "./components/auth/LoginForm";
+import { ProtectedRoute, PublicOnlyRoute } from "./components/auth/ProtectedRoute";
 import SignUpForm from "./components/auth/SignUpForm";
 import UserProfile from "./components/auth/UserProfile";
 import PasswordReset from "./components/auth/PasswordReset";
@@ -46,18 +47,18 @@ const App = () => (
               <Route path="/about" element={<ErrorBoundary fallback={PageErrorFallback}><About /></ErrorBoundary>} />
               <Route path="/contact" element={<ErrorBoundary fallback={PageErrorFallback}><Contact /></ErrorBoundary>} />
               <Route path="/privacy" element={<ErrorBoundary fallback={PageErrorFallback}><Privacy /></ErrorBoundary>} />
-              <Route path="/login" element={<ErrorBoundary fallback={PageErrorFallback}><LoginForm /></ErrorBoundary>} />
-              <Route path="/signup" element={<ErrorBoundary fallback={PageErrorFallback}><SignUpForm /></ErrorBoundary>} />
-              <Route path="/profile" element={<ErrorBoundary fallback={PageErrorFallback}><UserProfile /></ErrorBoundary>} />
-              <Route path="/reset-password" element={<ErrorBoundary fallback={PageErrorFallback}><PasswordReset /></ErrorBoundary>} />
-              <Route path="/dashboard" element={<ErrorBoundary fallback={PageErrorFallback}><Dashboard /></ErrorBoundary>} />
-              <Route path="/proposals" element={<ErrorBoundary fallback={PageErrorFallback}><Proposals /></ErrorBoundary>} />
-              <Route path="/chat" element={<ErrorBoundary fallback={PageErrorFallback}><Chat /></ErrorBoundary>} />
+              <Route path="/login" element={<ErrorBoundary fallback={PageErrorFallback}><PublicOnlyRoute><LoginForm /></PublicOnlyRoute></ErrorBoundary>} />
+              <Route path="/signup" element={<ErrorBoundary fallback={PageErrorFallback}><PublicOnlyRoute><SignUpForm /></PublicOnlyRoute></ErrorBoundary>} />
+              <Route path="/profile" element={<ErrorBoundary fallback={PageErrorFallback}><ProtectedRoute><UserProfile /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/reset-password" element={<ErrorBoundary fallback={PageErrorFallback}><PublicOnlyRoute><PasswordReset /></PublicOnlyRoute></ErrorBoundary>} />
+              <Route path="/dashboard" element={<ErrorBoundary fallback={PageErrorFallback}><ProtectedRoute><Dashboard /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/proposals" element={<ErrorBoundary fallback={PageErrorFallback}><ProtectedRoute requiredPermission="READ_PROPOSALS"><Proposals /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/chat" element={<ErrorBoundary fallback={PageErrorFallback}><ProtectedRoute><Chat /></ProtectedRoute></ErrorBoundary>} />
               <Route path="/sitemap" element={<ErrorBoundary fallback={PageErrorFallback}><Sitemap /></ErrorBoundary>} />
-              <Route path="/knowledge-base" element={<ErrorBoundary fallback={PageErrorFallback}><KnowledgeBase /></ErrorBoundary>} />
-              <Route path="/acquisition/solicitation-review" element={<ErrorBoundary fallback={PageErrorFallback}><SolicitationReview /></ErrorBoundary>} />
-              <Route path="/acquisition/market-research" element={<ErrorBoundary fallback={PageErrorFallback}><MarketResearch /></ErrorBoundary>} />
-              <Route path="/acquisition/document-control" element={<ErrorBoundary fallback={PageErrorFallback}><DocumentControl /></ErrorBoundary>} />
+              <Route path="/knowledge-base" element={<ErrorBoundary fallback={PageErrorFallback}><ProtectedRoute><KnowledgeBase /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/acquisition/solicitation-review" element={<ErrorBoundary fallback={PageErrorFallback}><ProtectedRoute requiredPermission="READ_SOLICITATIONS"><SolicitationReview /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/acquisition/market-research" element={<ErrorBoundary fallback={PageErrorFallback}><ProtectedRoute requiredPermission="READ_SOLICITATIONS"><MarketResearch /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/acquisition/document-control" element={<ErrorBoundary fallback={PageErrorFallback}><ProtectedRoute requiredPermission="MANAGE_CONTRACTS"><DocumentControl /></ProtectedRoute></ErrorBoundary>} />
             </Routes>
           </MainLayout>
           <Toaster />

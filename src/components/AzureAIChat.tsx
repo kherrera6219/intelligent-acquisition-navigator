@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Loader2, Key, AlertCircle } from "lucide-react";
+import { Loader2, Key } from "lucide-react";
 import { getAICompletion } from '@/services/azure/aiService';
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,7 +32,7 @@ export const AzureAIChat = () => {
           title: "API Key Validated",
           description: "Your API key has been successfully validated.",
         });
-      } catch (error) {
+      } catch {
         toast({
           title: "Invalid API Key",
           description: "Please check your API key and try again.",
@@ -68,7 +68,7 @@ export const AzureAIChat = () => {
         content: response.choices[0].message.content
       };
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
+    } catch {
       toast({
         title: "Connection Error",
         description: "Unable to reach the AI service. Please check your internet connection and try again.",

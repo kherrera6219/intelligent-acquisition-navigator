@@ -33,7 +33,7 @@ export const BlockchainRecords = () => {
       });
       
       setRecord('');
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to store record on blockchain",

@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/universal/Card";
 import { Grid } from "@/components/ui/universal/Grid";
@@ -19,6 +19,7 @@ import {
   FolderOpen,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Document {
   id: string;
@@ -28,33 +29,6 @@ interface Document {
   lastModified: string;
   owner: string;
 }
-
-const mockDocuments: Document[] = [
-  {
-    id: "1",
-    title: "Federal Acquisition Regulation Update 2024",
-    type: "Policy",
-    status: "approved",
-    lastModified: "2024-02-15",
-    owner: "John Smith",
-  },
-  {
-    id: "2",
-    title: "IT Equipment Procurement Guidelines",
-    type: "Procedure",
-    status: "review",
-    lastModified: "2024-02-14",
-    owner: "Sarah Johnson",
-  },
-  {
-    id: "3",
-    title: "Vendor Evaluation Template",
-    type: "Template",
-    status: "draft",
-    lastModified: "2024-02-13",
-    owner: "Michael Brown",
-  },
-];
 
 const getStatusColor = (status: Document["status"]) => {
   switch (status) {
@@ -81,18 +55,54 @@ const StatusIcon = ({ status }: { status: Document["status"] }) => {
 const DocumentControl = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const filtered = mockDocuments.filter(
+  const { data: documents = [] } = useQuery({
+    queryKey: ["documents"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("documents")
+        .select("*")
+        .order("lastModified", { ascending: false });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return (data ?? []) as Document[];
+    },
+  });
+
+  const filtered = documents.filter(
     (d) =>
       d.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       d.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       d.owner.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    const documentNumber = documents.length + 1;
+    const { error } = await supabase.from("documents").insert({
+      title: `New Acquisition Document ${documentNumber}`,
+      type: "Policy",
+      status: "draft",
+      lastModified: new Date().toISOString().slice(0, 10),
+      owner: "Contract Specialist",
+    });
+
+    if (error) {
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    await queryClient.invalidateQueries({ queryKey: ["documents"] });
     toast({
-      title: "Upload Started",
-      description: "Your document is being processed...",
+      title: "Upload complete",
+      description: "A new draft document has been added to document control.",
     });
   };
 
@@ -122,8 +132,7 @@ const DocumentControl = () => {
             </Button>
             <Button
               onClick={handleUpload}
-              className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500
-                     hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
+              className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 hover:from-violet-600 hover:via-fuchsia-600 hover:to-pink-600"
               aria-label="Upload a new document"
             >
               <Upload className="h-5 w-5 mr-2" aria-hidden="true" />

@@ -8,8 +8,6 @@ import './styles/application.css';
 // Validate required environment variables at startup (dev only to avoid leaking var names in prod)
 if (import.meta.env.DEV) {
   const required = [
-    'VITE_SUPABASE_URL',
-    'VITE_SUPABASE_ANON_KEY',
     'VITE_AZURE_ENDPOINT',
     'VITE_AZURE_OPENAI_API_KEY',
   ] as const;

@@ -58,13 +58,8 @@ export const useAzureAI = (
 
   return useMutation({
     mutationFn: async (messages: AIChatMessage[]) => {
-      const apiKey = import.meta.env.VITE_AZURE_OPENAI_API_KEY as string;
-      if (!apiKey) {
-        throw new Error('Azure OpenAI API key (VITE_AZURE_OPENAI_API_KEY) is not configured');
-      }
-
       return withRetry(async () => {
-        const response = await getAICompletion(messages, apiKey);
+        const response = await getAICompletion(messages);
         // Normalise to the AIResponse shape expected by consumers
         return {
           choices: response.choices.map((c) => ({

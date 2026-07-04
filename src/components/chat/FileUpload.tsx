@@ -4,6 +4,7 @@ import { Upload, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { errorTracker } from "@/lib/security/errorTracking";
 
 interface FileUploadProps {
   conversationId: string;
@@ -58,7 +59,13 @@ export const FileUpload = ({ conversationId, onUploadComplete }: FileUploadProps
         onUploadComplete(document.id);
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      errorTracker.trackError({
+        message: error instanceof Error ? error.message : "File upload failed.",
+        stack: error instanceof Error ? error.stack : undefined,
+        severity: "MEDIUM",
+        errorType: "APPLICATION",
+        status: "NEW",
+      });
       toast({
         title: "Upload failed",
         description: "There was an error uploading your file. Please try again.",

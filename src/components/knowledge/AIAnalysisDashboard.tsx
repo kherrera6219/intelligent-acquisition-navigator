@@ -5,6 +5,13 @@ import { Card } from "@/components/ui/card";
 import { MetricsChart } from "@/components/MetricsChart";
 import { AIAnalysisRecord } from "@/types/knowledge";
 
+interface MonthlyMetric {
+  month: string;
+  efficiency: number;
+  compliance: number;
+  risk: number;
+}
+
 export const AIAnalysisDashboard = () => {
   const { data: analysisRecords, isLoading } = useQuery({
     queryKey: ['ai-analysis-records'],
@@ -21,7 +28,7 @@ export const AIAnalysisDashboard = () => {
   });
 
   // Process data for the metrics chart
-  const chartData = analysisRecords?.reduce((acc: any[], record) => {
+  const chartData = analysisRecords?.reduce<MonthlyMetric[]>((acc, record) => {
     const date = new Date(record.created_at);
     const month = date.toLocaleString('default', { month: 'short' });
     
@@ -43,6 +50,16 @@ export const AIAnalysisDashboard = () => {
 
   const averageConfidence = analysisRecords?.reduce((sum, record) => 
     sum + record.confidence_score, 0) / (analysisRecords?.length || 1);
+
+  if (isLoading) {
+    return (
+      <Card className="p-6">
+        <div className="flex items-center justify-center h-[300px] text-muted-foreground">
+          Loading AI analysis metrics...
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-6">

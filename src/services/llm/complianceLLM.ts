@@ -24,18 +24,13 @@ Be conservative: flag anything that could be non-compliant as medium or high ris
 Respond ONLY with valid JSON.`;
 
 export const checkCompliance = async (suggestion: string): Promise<ComplianceCheck> => {
-  const apiKey = import.meta.env.VITE_AZURE_OPENAI_API_KEY as string;
-  if (!apiKey) {
-    throw new Error('Azure OpenAI API key (VITE_AZURE_OPENAI_API_KEY) is not configured');
-  }
-
   try {
     const response = await getAICompletion(
       [
         { role: "system", content: COMPLIANCE_SYSTEM_PROMPT },
         { role: "user", content: `Evaluate compliance for the following:\n\n${suggestion}` },
       ],
-      apiKey
+      undefined
     );
 
     const raw = response.choices[0]?.message?.content ?? '{}';

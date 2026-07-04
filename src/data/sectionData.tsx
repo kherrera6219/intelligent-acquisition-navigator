@@ -1,5 +1,5 @@
 
-import { Globe, Clock, Shield, Activity, Database, Brain, Cloud } from 'lucide-react';
+import { Globe, Shield, Database, Brain } from 'lucide-react';
 import React from 'react';
 
 export const sectionData = {

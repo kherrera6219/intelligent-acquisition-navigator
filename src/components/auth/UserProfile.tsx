@@ -1,4 +1,5 @@
 
+import { useEffect, useRef, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -6,7 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { User, Building, Shield, Mail, Settings } from "lucide-react";
+import { User, Building, Shield, Mail, Settings, Download, Upload, RotateCcw } from "lucide-react";
+import {
+  supabase,
+  exportLocalAppBackup,
+  importLocalAppBackup,
+  resetLocalAppData,
+  type LocalAppBackup,
+} from "@/integrations/supabase/client";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -20,6 +28,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 const UserProfile = () => {
   const { toast } = useToast();
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -37,14 +46,93 @@ const UserProfile = () => {
     },
   });
 
-  const onSubmit = async (_data: ProfileFormData) => {
-    // TODO: persist profile updates to Supabase user metadata
-    await new Promise<void>((resolve) => setTimeout(resolve, 300));
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const metadata = (data?.user?.user_metadata ?? {}) as Record<string, unknown>;
+      reset({
+        fullName: String(metadata.fullName ?? ""),
+        email: data?.user?.email ?? "",
+        organization: String(metadata.organization ?? ""),
+        department: String(metadata.department ?? ""),
+        role: String(metadata.role ?? ""),
+      });
+    });
+  }, [reset]);
+
+  const onSubmit = async (data: ProfileFormData) => {
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        fullName: data.fullName,
+        organization: data.organization,
+        department: data.department,
+        role: data.role,
+      },
+    });
+
+    if (error) {
+      toast({
+        title: "Profile update failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Profile Updated",
       description: "Your profile has been updated successfully.",
     });
-    reset(_data); // mark form as pristine again
+    reset(data); // mark form as pristine again
+  };
+
+  const handleExportBackup = () => {
+    const backup = exportLocalAppBackup();
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `ian-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    toast({
+      title: "Backup exported",
+      description: "Local application data backup has been downloaded.",
+    });
+  };
+
+  const handleImportBackup = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    try {
+      const content = await file.text();
+      const backup = JSON.parse(content) as LocalAppBackup;
+      importLocalAppBackup(backup);
+      toast({
+        title: "Backup imported",
+        description: "Local application data has been restored.",
+      });
+      window.location.reload();
+    } catch {
+      toast({
+        title: "Import failed",
+        description: "The selected file is not a valid backup.",
+        variant: "destructive",
+      });
+    } finally {
+      event.currentTarget.value = "";
+    }
+  };
+
+  const handleResetData = () => {
+    resetLocalAppData();
+    toast({
+      title: "Data reset complete",
+      description: "Local data has been reset to seeded defaults.",
+    });
+    window.location.reload();
   };
 
   return (
@@ -55,16 +143,41 @@ const UserProfile = () => {
             <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400">
               User Profile
             </h2>
+            <div className="flex gap-2">
+            <input
+              ref={importInputRef}
+              type="file"
+              accept="application/json"
+              className="hidden"
+              onChange={handleImportBackup}
+            />
+            <Button variant="outline" className="flex items-center gap-2" onClick={handleExportBackup}>
+              <Download className="h-4 w-4" aria-hidden="true" />
+              Export Backup
+            </Button>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={() => importInputRef.current?.click()}
+            >
+              <Upload className="h-4 w-4" aria-hidden="true" />
+              Import Backup
+            </Button>
+            <Button variant="outline" className="flex items-center gap-2" onClick={handleResetData}>
+              <RotateCcw className="h-4 w-4" aria-hidden="true" />
+              Reset Demo Data
+            </Button>
             {isDirty && (
               <Button
-                variant="outline"
-                onClick={() => reset()}
-                className="flex items-center gap-2"
+                 variant="outline"
+                 onClick={() => reset()}
+                 className="flex items-center gap-2"
               >
-                <Settings className="h-4 w-4" aria-hidden="true" />
-                Discard Changes
+                 <Settings className="h-4 w-4" aria-hidden="true" />
+                 Discard Changes
               </Button>
             )}
+            </div>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
