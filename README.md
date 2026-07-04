@@ -17,7 +17,7 @@ It combines compliance-aware guidance, role-based UX, and AI-assisted reasoning 
 - React 18, TypeScript, Vite
 - Tailwind CSS + Radix UI + shadcn/ui
 - TanStack React Query
-- Azure OpenAI integration
+- OpenAI or Google Gemini integration (selectable provider)
 - Local in-app retrieval for RAG context
 - Vitest + Testing Library
 
@@ -44,13 +44,14 @@ cp .env.example .env.local
 
 Required variables:
 
-- `VITE_AZURE_ENDPOINT`
-- `VITE_AZURE_OPENAI_API_KEY`
+- `VITE_AI_PROVIDER` (`openai` or `gemini`)
+- `VITE_OPENAI_API_KEY` (required when `VITE_AI_PROVIDER=openai`)
+- `VITE_GEMINI_API_KEY` (required when `VITE_AI_PROVIDER=gemini`)
 
 Optional client variables:
 
-- `VITE_AZURE_DEPLOYMENT_ID`
-- `VITE_AZURE_OPENAI_API_VERSION`
+- `VITE_OPENAI_MODEL` (default: `gpt-4o-mini`)
+- `VITE_GEMINI_MODEL` (default: `gemini-1.5-flash`)
 - `VITE_CONTACT_EMAIL`
 - `VITE_CONTACT_PHONE`
 
@@ -82,7 +83,7 @@ src/
   services/        AI, RAG, reasoning, and integration logic
   hooks/           Reusable React hooks
   lib/             Shared utilities (audit, security, error handling)
-  integrations/    External clients (Supabase)
+  integrations/    Local self-contained data/auth compatibility layer
   providers/       App-level providers
   config/          Navigation and app configuration
   types/           Shared TypeScript types

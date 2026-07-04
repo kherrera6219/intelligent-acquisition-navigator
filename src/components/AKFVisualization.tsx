@@ -19,7 +19,7 @@ const AKFVisualization = () => {
               4D Acquisition Knowledge Framework v32.4
             </CardTitle>
             <p className="text-violet-100 leading-relaxed">
-              Enterprise Knowledge Base with Azure Cloud and OpenAI Integration
+              Enterprise Knowledge Base with OpenAI and Gemini Integration
             </p>
           </div>
         </CardHeader>

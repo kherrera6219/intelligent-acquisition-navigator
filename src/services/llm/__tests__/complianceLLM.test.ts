@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('@/services/azure/aiService', () => ({
+vi.mock('@/services/ai/aiService', () => ({
   getAICompletion: vi.fn(),
 }));
 
@@ -8,9 +8,9 @@ vi.mock('@/components/ui/use-toast', () => ({
   toast: vi.fn(),
 }));
 
-vi.stubEnv('VITE_AZURE_OPENAI_API_KEY', 'test-key');
+vi.stubEnv('VITE_OPENAI_API_KEY', 'test-key');
 
-import { getAICompletion } from '@/services/azure/aiService';
+import { getAICompletion } from '@/services/ai/aiService';
 import { checkCompliance } from '../complianceLLM';
 
 const mockGetAICompletion = vi.mocked(getAICompletion);

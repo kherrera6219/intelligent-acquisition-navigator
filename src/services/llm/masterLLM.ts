@@ -1,5 +1,5 @@
 
-import { getAICompletion } from "@/services/azure/aiService";
+import { getAICompletion } from "@/services/ai/aiService";
 import { toast } from "@/components/ui/use-toast";
 
 export interface MasterLLMResponse {

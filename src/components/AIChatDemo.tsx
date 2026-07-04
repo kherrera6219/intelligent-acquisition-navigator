@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Loader2, Key } from "lucide-react";
-import { getAICompletion } from '@/services/azure/aiService';
+import { getAICompletion } from '@/services/ai/aiService';
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -13,7 +13,7 @@ interface Message {
   content: string;
 }
 
-export const AzureAIChat = () => {
+export const AIChatDemo = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [apiKey, setApiKey] = useState('');
@@ -50,7 +50,7 @@ export const AzureAIChat = () => {
     if (!apiKey) {
       toast({
         title: "API Key Required",
-        description: "Please enter your Azure OpenAI API key to start chatting.",
+        description: "Please enter your OpenAI or Gemini API key to start chatting.",
         variant: "destructive"
       });
       return;
@@ -88,9 +88,9 @@ export const AzureAIChat = () => {
               type="password"
               value={apiKey}
               onChange={(e) => handleApiKeyChange(e.target.value)}
-              placeholder="Enter Azure OpenAI API Key"
+              placeholder="Enter AI Provider API Key"
               className="pr-10"
-              aria-label="Azure OpenAI API Key"
+              aria-label="AI Provider API Key"
               disabled={isValidatingKey}
             />
             {isValidatingKey && (
