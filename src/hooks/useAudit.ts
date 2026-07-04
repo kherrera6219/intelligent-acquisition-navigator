@@ -24,7 +24,6 @@ export const useCreateAuditLog = () => {
           description: 'Failed to create audit log entry',
           variant: 'destructive',
         });
-        console.error('Audit log error:', error);
       }
     },
   });

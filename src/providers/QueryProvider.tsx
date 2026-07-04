@@ -37,7 +37,7 @@ export const QueryProvider = ({ children }: QueryProviderProps) => {
               resourceId: 'query',
               severity: 'WARNING',
               details: { error: error.message }
-            }).catch(console.error);
+            }).catch(() => undefined);
 
             // Show toast
             toast({
@@ -67,7 +67,7 @@ export const QueryProvider = ({ children }: QueryProviderProps) => {
               resourceId: 'mutation',
               severity: 'ERROR',
               details: { error: error.message }
-            }).catch(console.error);
+            }).catch(() => undefined);
 
             // Show toast
             toast({

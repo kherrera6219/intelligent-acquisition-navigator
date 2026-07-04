@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Mail, ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { errorTracker } from "@/lib/security/errorTracking";
 
 const PasswordReset = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -27,7 +27,7 @@ const PasswordReset = () => {
       if (error) throw error;
 
       // Call our custom function to create a reset token
-      const { data, error: fnError } = await supabase
+      const { error: fnError } = await supabase
         .rpc('create_password_reset_token', { user_email: email });
 
       if (fnError) throw fnError;
@@ -37,10 +37,19 @@ const PasswordReset = () => {
         title: "Reset link sent",
         description: "Check your email for password reset instructions.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error
+        ? error.message
+        : "Failed to send reset link. Please try again.";
+      errorTracker.trackError({
+        message,
+        severity: 'MEDIUM',
+        errorType: 'APPLICATION',
+        status: 'NEW',
+      });
       toast({
         title: "Error",
-        description: error.message || "Failed to send reset link. Please try again.",
+        description: message,
         variant: "destructive",
       });
     } finally {

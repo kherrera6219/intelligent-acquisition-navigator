@@ -12,6 +12,7 @@ import Pricing from "./pages/Pricing";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
+import LoginForm from "./components/auth/LoginForm";
 import SignUpForm from "./components/auth/SignUpForm";
 import UserProfile from "./components/auth/UserProfile";
 import PasswordReset from "./components/auth/PasswordReset";
@@ -45,6 +46,7 @@ const App = () => (
               <Route path="/about" element={<ErrorBoundary fallback={PageErrorFallback}><About /></ErrorBoundary>} />
               <Route path="/contact" element={<ErrorBoundary fallback={PageErrorFallback}><Contact /></ErrorBoundary>} />
               <Route path="/privacy" element={<ErrorBoundary fallback={PageErrorFallback}><Privacy /></ErrorBoundary>} />
+              <Route path="/login" element={<ErrorBoundary fallback={PageErrorFallback}><LoginForm /></ErrorBoundary>} />
               <Route path="/signup" element={<ErrorBoundary fallback={PageErrorFallback}><SignUpForm /></ErrorBoundary>} />
               <Route path="/profile" element={<ErrorBoundary fallback={PageErrorFallback}><UserProfile /></ErrorBoundary>} />
               <Route path="/reset-password" element={<ErrorBoundary fallback={PageErrorFallback}><PasswordReset /></ErrorBoundary>} />

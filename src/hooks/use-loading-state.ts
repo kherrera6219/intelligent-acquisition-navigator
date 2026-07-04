@@ -48,7 +48,7 @@ export function useLoadingState(options: UseLoadingStateOptions = {}) {
         resourceId: 'async_operation',
         severity: 'WARNING',
         details: { error: err.message }
-      }).catch(console.error);
+      }).catch(() => undefined);
 
       // Handle error
       if (options.onError) {
