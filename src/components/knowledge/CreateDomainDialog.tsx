@@ -65,7 +65,7 @@ export const CreateDomainDialog = () => {
       
       // Refetch domains list
       queryClient.invalidateQueries({ queryKey: ["knowledge-domains"] });
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Error",

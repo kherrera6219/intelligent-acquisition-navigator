@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { useAzureAI } from "@/hooks/useAzureAI";
+import { useAIChat } from "@/hooks/useAIChat";
 import { CodeEnvironment } from "@/components/CodeEnvironment";
 import { ChatToolbar } from "@/components/chat/ChatToolbar";
 import { ChatSelectors } from "@/components/chat/ChatSelectors";
@@ -28,7 +28,7 @@ const Chat = () => {
   const lastSubmitRef = useRef<number>(0);
   const { toast } = useToast();
 
-  const aiMutation = useAzureAI(
+  const aiMutation = useAIChat(
     messages,
     {
       onSuccess: async (data) => {

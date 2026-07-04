@@ -1,5 +1,5 @@
 
-import { Globe, Clock, Shield, Activity, Database, Brain, Cloud } from 'lucide-react';
+import { Globe, Shield, Database, Brain } from 'lucide-react';
 import React from 'react';
 
 export const sectionData = {
@@ -21,14 +21,14 @@ export const sectionData = {
     key: 'ai',
     title: 'AI Integration',
     formula: 'AI(AKF) = GPT₄ᵗ + EMB₃ + VIS₄ + LLM₂ + GEM',
-    description: 'Multi-model AI system with Azure OpenAI and LangChain integration',
+    description: 'Multi-model AI system with OpenAI and Google Gemini integration',
     icon: <Brain className="w-6 h-6" />,
     components: [
       { name: 'GPT-4 Turbo', description: 'Advanced NLP with 128k context window' },
       { name: 'Text Embedding 3', description: '3072-dimensional semantic embeddings' },
       { name: 'Vision Analysis', description: 'Document and image processing capabilities' },
       { name: 'LangChain Pipeline', description: 'Optimized RAG with hybrid search' },
-      { name: 'Safety & Ethics', description: 'Azure content safety and responsible AI' }
+      { name: 'Safety & Ethics', description: 'Provider-native content safety and responsible AI' }
     ]
   },
   database: {

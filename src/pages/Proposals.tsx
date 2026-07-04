@@ -1,9 +1,12 @@
 
 import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileText, Search, Filter, Plus, Clock, CheckCircle, XCircle, FolderOpen } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 type ProposalStatus = "pending" | "approved" | "rejected";
 
@@ -15,33 +18,6 @@ interface Proposal {
   submittedDate: string;
   status: ProposalStatus;
 }
-
-const mockProposals: Proposal[] = [
-  {
-    id: "1",
-    title: "Office Supplies Procurement Q1",
-    vendor: "SupplyTech Solutions",
-    amount: 24500,
-    submittedDate: "2024-02-10",
-    status: "pending"
-  },
-  {
-    id: "2",
-    title: "IT Equipment Refresh",
-    vendor: "TechVendor Pro",
-    amount: 185000,
-    submittedDate: "2024-02-08",
-    status: "approved"
-  },
-  {
-    id: "3",
-    title: "Facility Maintenance Services",
-    vendor: "MaintenanceCorp",
-    amount: 95000,
-    submittedDate: "2024-02-05",
-    status: "rejected"
-  }
-];
 
 const getStatusColor = (status: ProposalStatus) => {
   switch (status) {
@@ -68,11 +44,56 @@ const StatusIcon = ({ status }: { status: ProposalStatus }) => {
 
 const Proposals = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const filtered = mockProposals.filter((p) =>
+  const { data: proposals = [] } = useQuery({
+    queryKey: ["proposals"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("proposals")
+        .select("*")
+        .order("submittedDate", { ascending: false });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return (data ?? []) as Proposal[];
+    },
+  });
+
+  const filtered = proposals.filter((p) =>
     p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.vendor.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleCreateProposal = async () => {
+    const proposalNumber = proposals.length + 1;
+    const { error } = await supabase.from("proposals").insert({
+      title: `New Proposal ${proposalNumber}`,
+      vendor: "Pending Vendor",
+      amount: 0,
+      submittedDate: new Date().toISOString().slice(0, 10),
+      status: "pending",
+      review_time_minutes: 0,
+    });
+
+    if (error) {
+      toast({
+        title: "Create failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    await queryClient.invalidateQueries({ queryKey: ["proposals"] });
+    toast({
+      title: "Proposal created",
+      description: "A new draft proposal has been added.",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,6 +108,7 @@ const Proposals = () => {
           <Button
             className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500"
             aria-label="Create new proposal"
+            onClick={handleCreateProposal}
           >
             <Plus className="h-5 w-5 mr-2" aria-hidden="true" />
             New Proposal

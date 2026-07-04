@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock Azure AI service so tests don't make real API calls
-vi.mock('@/services/azure/aiService', () => ({
+// Mock AI service so tests don't make real API calls
+vi.mock('@/services/ai/aiService', () => ({
   getAICompletion: vi.fn(),
 }));
 
@@ -10,9 +10,9 @@ vi.mock('@/components/ui/use-toast', () => ({
 }));
 
 // Stub the API key
-vi.stubEnv('VITE_AZURE_OPENAI_API_KEY', 'test-key');
+vi.stubEnv('VITE_OPENAI_API_KEY', 'test-key');
 
-import { getAICompletion } from '@/services/azure/aiService';
+import { getAICompletion } from '@/services/ai/aiService';
 import { processMasterLLM } from '../masterLLM';
 
 const mockGetAICompletion = vi.mocked(getAICompletion);
@@ -92,9 +92,8 @@ describe('processMasterLLM', () => {
     expect(result.confidence).toBeGreaterThanOrEqual(0);
   });
 
-  it('throws when API key is missing', async () => {
-    vi.stubEnv('VITE_AZURE_OPENAI_API_KEY', '');
-    await expect(processMasterLLM('test')).rejects.toThrow('VITE_AZURE_OPENAI_API_KEY');
-    vi.stubEnv('VITE_AZURE_OPENAI_API_KEY', 'test-key');
+  it('throws when AI service fails', async () => {
+    mockGetAICompletion.mockRejectedValueOnce(new Error('Upstream unavailable'));
+    await expect(processMasterLLM('test')).rejects.toThrow('Upstream unavailable');
   });
 });

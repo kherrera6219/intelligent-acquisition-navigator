@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { accessControl } from '@/lib/security/accessControl';
 import { errorTracker } from '@/lib/security/errorTracking';
 import { auditLogger } from '@/lib/audit';
+import { supabase } from '@/integrations/supabase/client';
 import { navigationItems } from '@/config/navigationItems';
 import { NavigationItem } from './navigation/NavigationItem';
 import { NavigationFooter } from './navigation/NavigationFooter';
@@ -64,6 +65,10 @@ const Navigation = () => {
         resourceId: 'user',
         severity: 'INFO'
       });
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
       accessControl.logout();
       navigate('/login');
     } catch {

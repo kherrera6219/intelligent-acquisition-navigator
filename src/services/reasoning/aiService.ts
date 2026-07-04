@@ -1,5 +1,5 @@
 
-import { getAICompletion } from "@/services/azure/aiService";
+import { getAICompletion } from "@/services/ai/aiService";
 import { errorTracker } from "@/lib/security/errorTracking";
 
 export async function generateWithAI(prompt: string, apiKey: string): Promise<string> {

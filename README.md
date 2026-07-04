@@ -1,71 +1,135 @@
-# Welcome to your GPT Engineer project
+# Intelligent Acquisition Navigator
 
-## Project info
+[![CI](https://github.com/kherrera6219/intelligent-acquisition-navigator/actions/workflows/ci.yml/badge.svg)](https://github.com/kherrera6219/intelligent-acquisition-navigator/actions/workflows/ci.yml)
 
-**URL**: https://run.gptengineer.app/projects/2a2633f0-2a6c-4c1d-bf41-392702a00634/improve
+Intelligent Acquisition Navigator is a React + TypeScript web app for federal acquisition workflows.  
+It combines compliance-aware guidance, role-based UX, and AI-assisted reasoning for teams working with FAR/DFARS and agency supplements.
 
-## How can I edit this code?
+## Core capabilities
 
-There are several ways of editing your application.
+- AI-assisted acquisition chat with role and regulation context
+- Solicitation review workflows (RFI/RFP/RFQ/SOW/PWS)
+- Market research and document control pages
+- Knowledge base and proposal management screens
+- Compliance and reasoning pipeline with traceable outputs
+- Self-contained local auth and data persistence
 
-**Use GPT Engineer**
+## Tech stack
 
-Simply visit the GPT Engineer project at [GPT Engineer](https://gptengineer.app/projects/2a2633f0-2a6c-4c1d-bf41-392702a00634/improve) and start prompting.
+- React 18, TypeScript, Vite
+- Tailwind CSS + Radix UI + shadcn/ui
+- TanStack React Query
+- OpenAI or Google Gemini integration (selectable provider)
+- Local in-app retrieval for RAG context
+- Vitest + Testing Library
 
-Changes made via gptengineer.app will be committed automatically to this repo.
+## Getting started
 
-**Use your preferred IDE**
+### 1. Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in the GPT Engineer UI.
+- Node.js 20+ recommended
+- npm
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 2. Install dependencies
 
-Follow these steps:
+```bash
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 3. Configure environment
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Copy `.env.example` to `.env.local` and set all required values:
 
-# Step 3: Install the necessary dependencies.
-npm i
+```bash
+cp .env.example .env.local
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Required variables:
+
+- `VITE_AI_PROVIDER` (`openai` or `gemini`)
+- `VITE_OPENAI_API_KEY` (required when `VITE_AI_PROVIDER=openai`)
+- `VITE_GEMINI_API_KEY` (required when `VITE_AI_PROVIDER=gemini`)
+
+Optional client variables:
+
+- `VITE_OPENAI_MODEL` (default: `gpt-4o-mini`)
+- `VITE_GEMINI_MODEL` (default: `gemini-1.5-flash`)
+- `VITE_CONTACT_EMAIL`
+- `VITE_CONTACT_PHONE`
+
+### 4. Run the app
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The dev server runs on `http://localhost:8080`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Scripts
 
-**Use GitHub Codespaces**
+- `npm run dev` - start dev server
+- `npm run build` - create production build
+- `npm run build:dev` - create development-mode build
+- `npm run preview` - preview production build locally
+- `npm run lint` - run ESLint
+- `npm run test` - run Vitest once
+- `npm run test:watch` - run Vitest in watch mode
+- `npm run test:coverage` - generate coverage report
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project structure
 
-## What technologies are used for this project?
+```text
+src/
+  components/      UI and feature components
+  pages/           Route-level pages
+  services/        AI, RAG, reasoning, and integration logic
+  hooks/           Reusable React hooks
+  lib/             Shared utilities (audit, security, error handling)
+  integrations/    Local self-contained data/auth compatibility layer
+  providers/       App-level providers
+  config/          Navigation and app configuration
+  types/           Shared TypeScript types
 
-This project is built with .
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Key routes
 
-## How can I deploy this project?
+- `/` - landing page
+- `/login`, `/signup`, `/reset-password` - auth flows
+- `/dashboard`
+- `/chat`
+- `/knowledge-base`
+- `/proposals`
+- `/acquisition/solicitation-review`
+- `/acquisition/market-research`
+- `/acquisition/document-control`
 
-All GPT Engineer projects can be deployed directly via the GPT Engineer app.
+## Testing
 
-Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/2a2633f0-2a6c-4c1d-bf41-392702a00634/improve) and click on Share -> Publish.
+Run all tests:
 
-## I want to use a custom domain - is that possible?
+```bash
+npm run test
+```
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
+Run lint + tests before opening a PR:
+
+```bash
+npm run lint
+npm run test
+```
+
+## Security and secrets
+
+- Do not commit `.env.local`
+- All `VITE_*` values are exposed to the browser bundle; use a scoped/rotated key for local app usage
+- Rotate keys immediately if exposure is suspected
+
+## Contributing
+
+1. Create a feature branch from `main`
+2. Make changes with tests where applicable
+3. Run lint and tests
+4. Open a pull request using the provided PR template with a clear summary and validation notes
+
+CI (`.github/workflows/ci.yml`) runs lint, tests, and a production build on every push and pull request targeting `main`. Code owners (`.github/CODEOWNERS`) are automatically requested for review.

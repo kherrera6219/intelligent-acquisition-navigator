@@ -9,7 +9,7 @@ export interface KnowledgeDomain {
   coordinates?: string; 
   created_at: string;
   updated_at: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AIAnalysisRecord {
@@ -19,7 +19,7 @@ export interface AIAnalysisRecord {
   response_text: string;
   confidence_score: number;
   created_at: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   validated_at?: string;
   validated_by?: string;
 }
@@ -30,5 +30,5 @@ export interface ComponentRelationship {
   target_component_id: string;
   relationship_type: string;
   weight?: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }

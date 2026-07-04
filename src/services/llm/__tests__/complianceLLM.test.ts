@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('@/services/azure/aiService', () => ({
+vi.mock('@/services/ai/aiService', () => ({
   getAICompletion: vi.fn(),
 }));
 
@@ -8,9 +8,9 @@ vi.mock('@/components/ui/use-toast', () => ({
   toast: vi.fn(),
 }));
 
-vi.stubEnv('VITE_AZURE_OPENAI_API_KEY', 'test-key');
+vi.stubEnv('VITE_OPENAI_API_KEY', 'test-key');
 
-import { getAICompletion } from '@/services/azure/aiService';
+import { getAICompletion } from '@/services/ai/aiService';
 import { checkCompliance } from '../complianceLLM';
 
 const mockGetAICompletion = vi.mocked(getAICompletion);
@@ -64,7 +64,7 @@ describe('checkCompliance', () => {
     expect(result.suggestions.length).toBeGreaterThan(0);
   });
 
-  it('normalises invalid riskLevel to medium', async () => {
+  it('normalises invalid riskLevel to high (fail-closed)', async () => {
     mockGetAICompletion.mockResolvedValueOnce(makeResponse(JSON.stringify({
       approved: true,
       reason: 'OK',
@@ -73,6 +73,30 @@ describe('checkCompliance', () => {
     })));
 
     const result = await checkCompliance('test');
-    expect(result.riskLevel).toBe('medium');
+    expect(result.riskLevel).toBe('high');
+  });
+
+  it('fails closed (approved: false) when the approved field is missing', async () => {
+    mockGetAICompletion.mockResolvedValueOnce(makeResponse(JSON.stringify({
+      reason: 'Ambiguous response with no approval field.',
+      riskLevel: 'low',
+      suggestions: [],
+    })));
+
+    const result = await checkCompliance('test');
+    expect(result.approved).toBe(false);
+    expect(result.suggestions.length).toBeGreaterThan(0);
+  });
+
+  it('fails closed (approved: false) when the approved field has the wrong type', async () => {
+    mockGetAICompletion.mockResolvedValueOnce(makeResponse(JSON.stringify({
+      approved: 'yes',
+      reason: 'Non-boolean approval value.',
+      riskLevel: 'low',
+      suggestions: [],
+    })));
+
+    const result = await checkCompliance('test');
+    expect(result.approved).toBe(false);
   });
 });

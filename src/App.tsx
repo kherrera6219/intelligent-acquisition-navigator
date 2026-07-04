@@ -1,4 +1,5 @@
 
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,24 +7,29 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ErrorBoundary } from "@/lib/error/ErrorBoundary";
 import { MainLayout } from "@/components/layout/MainLayout";
-import Index from "./pages/Index";
-import Features from "./pages/Features";
-import Pricing from "./pages/Pricing";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Privacy from "./pages/Privacy";
-import LoginForm from "./components/auth/LoginForm";
-import SignUpForm from "./components/auth/SignUpForm";
-import UserProfile from "./components/auth/UserProfile";
-import PasswordReset from "./components/auth/PasswordReset";
-import Dashboard from "./pages/Dashboard";
-import Proposals from "./pages/Proposals";
-import Chat from "./pages/Chat";
-import Sitemap from "./pages/Sitemap";
-import SolicitationReview from "./pages/acquisition/SolicitationReview";
-import MarketResearch from "./pages/acquisition/MarketResearch";
-import DocumentControl from "./pages/acquisition/DocumentControl";
-import KnowledgeBase from "./pages/KnowledgeBase";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ProtectedRoute, PublicOnlyRoute } from "./components/auth/ProtectedRoute";
+
+// Route-level code splitting: each page/screen is only downloaded when visited,
+// keeping the initial bundle small. See PageSuspense fallback below.
+const Index = lazy(() => import("./pages/Index"));
+const Features = lazy(() => import("./pages/Features"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const LoginForm = lazy(() => import("./components/auth/LoginForm"));
+const SignUpForm = lazy(() => import("./components/auth/SignUpForm"));
+const UserProfile = lazy(() => import("./components/auth/UserProfile"));
+const PasswordReset = lazy(() => import("./components/auth/PasswordReset"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Proposals = lazy(() => import("./pages/Proposals"));
+const Chat = lazy(() => import("./pages/Chat"));
+const Sitemap = lazy(() => import("./pages/Sitemap"));
+const SolicitationReview = lazy(() => import("./pages/acquisition/SolicitationReview"));
+const MarketResearch = lazy(() => import("./pages/acquisition/MarketResearch"));
+const DocumentControl = lazy(() => import("./pages/acquisition/DocumentControl"));
+const KnowledgeBase = lazy(() => import("./pages/KnowledgeBase"));
 
 /** Lightweight per-route fallback shown instead of a full blank page. */
 const PageErrorFallback = (
@@ -33,6 +39,20 @@ const PageErrorFallback = (
   </div>
 );
 
+/** Shown briefly while a lazily-loaded route chunk downloads. */
+const PageLoadingFallback = (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <LoadingSpinner size="lg" />
+  </div>
+);
+
+/** Wraps a route element with both an error boundary and a Suspense loading fallback. */
+const PageSuspense = ({ children }: { children: React.ReactNode }) => (
+  <ErrorBoundary fallback={PageErrorFallback}>
+    <Suspense fallback={PageLoadingFallback}>{children}</Suspense>
+  </ErrorBoundary>
+);
+
 const App = () => (
   <ErrorBoundary>
     <QueryProvider>
@@ -40,24 +60,24 @@ const App = () => (
         <BrowserRouter>
           <MainLayout>
             <Routes>
-              <Route path="/" element={<ErrorBoundary fallback={PageErrorFallback}><Index /></ErrorBoundary>} />
-              <Route path="/features" element={<ErrorBoundary fallback={PageErrorFallback}><Features /></ErrorBoundary>} />
-              <Route path="/pricing" element={<ErrorBoundary fallback={PageErrorFallback}><Pricing /></ErrorBoundary>} />
-              <Route path="/about" element={<ErrorBoundary fallback={PageErrorFallback}><About /></ErrorBoundary>} />
-              <Route path="/contact" element={<ErrorBoundary fallback={PageErrorFallback}><Contact /></ErrorBoundary>} />
-              <Route path="/privacy" element={<ErrorBoundary fallback={PageErrorFallback}><Privacy /></ErrorBoundary>} />
-              <Route path="/login" element={<ErrorBoundary fallback={PageErrorFallback}><LoginForm /></ErrorBoundary>} />
-              <Route path="/signup" element={<ErrorBoundary fallback={PageErrorFallback}><SignUpForm /></ErrorBoundary>} />
-              <Route path="/profile" element={<ErrorBoundary fallback={PageErrorFallback}><UserProfile /></ErrorBoundary>} />
-              <Route path="/reset-password" element={<ErrorBoundary fallback={PageErrorFallback}><PasswordReset /></ErrorBoundary>} />
-              <Route path="/dashboard" element={<ErrorBoundary fallback={PageErrorFallback}><Dashboard /></ErrorBoundary>} />
-              <Route path="/proposals" element={<ErrorBoundary fallback={PageErrorFallback}><Proposals /></ErrorBoundary>} />
-              <Route path="/chat" element={<ErrorBoundary fallback={PageErrorFallback}><Chat /></ErrorBoundary>} />
-              <Route path="/sitemap" element={<ErrorBoundary fallback={PageErrorFallback}><Sitemap /></ErrorBoundary>} />
-              <Route path="/knowledge-base" element={<ErrorBoundary fallback={PageErrorFallback}><KnowledgeBase /></ErrorBoundary>} />
-              <Route path="/acquisition/solicitation-review" element={<ErrorBoundary fallback={PageErrorFallback}><SolicitationReview /></ErrorBoundary>} />
-              <Route path="/acquisition/market-research" element={<ErrorBoundary fallback={PageErrorFallback}><MarketResearch /></ErrorBoundary>} />
-              <Route path="/acquisition/document-control" element={<ErrorBoundary fallback={PageErrorFallback}><DocumentControl /></ErrorBoundary>} />
+              <Route path="/" element={<PageSuspense><Index /></PageSuspense>} />
+              <Route path="/features" element={<PageSuspense><Features /></PageSuspense>} />
+              <Route path="/pricing" element={<PageSuspense><Pricing /></PageSuspense>} />
+              <Route path="/about" element={<PageSuspense><About /></PageSuspense>} />
+              <Route path="/contact" element={<PageSuspense><Contact /></PageSuspense>} />
+              <Route path="/privacy" element={<PageSuspense><Privacy /></PageSuspense>} />
+              <Route path="/login" element={<PageSuspense><PublicOnlyRoute><LoginForm /></PublicOnlyRoute></PageSuspense>} />
+              <Route path="/signup" element={<PageSuspense><PublicOnlyRoute><SignUpForm /></PublicOnlyRoute></PageSuspense>} />
+              <Route path="/profile" element={<PageSuspense><ProtectedRoute><UserProfile /></ProtectedRoute></PageSuspense>} />
+              <Route path="/reset-password" element={<PageSuspense><PublicOnlyRoute><PasswordReset /></PublicOnlyRoute></PageSuspense>} />
+              <Route path="/dashboard" element={<PageSuspense><ProtectedRoute><Dashboard /></ProtectedRoute></PageSuspense>} />
+              <Route path="/proposals" element={<PageSuspense><ProtectedRoute requiredPermission="READ_PROPOSALS"><Proposals /></ProtectedRoute></PageSuspense>} />
+              <Route path="/chat" element={<PageSuspense><ProtectedRoute><Chat /></ProtectedRoute></PageSuspense>} />
+              <Route path="/sitemap" element={<PageSuspense><Sitemap /></PageSuspense>} />
+              <Route path="/knowledge-base" element={<PageSuspense><ProtectedRoute><KnowledgeBase /></ProtectedRoute></PageSuspense>} />
+              <Route path="/acquisition/solicitation-review" element={<PageSuspense><ProtectedRoute requiredPermission="READ_SOLICITATIONS"><SolicitationReview /></ProtectedRoute></PageSuspense>} />
+              <Route path="/acquisition/market-research" element={<PageSuspense><ProtectedRoute requiredPermission="READ_SOLICITATIONS"><MarketResearch /></ProtectedRoute></PageSuspense>} />
+              <Route path="/acquisition/document-control" element={<PageSuspense><ProtectedRoute requiredPermission="MANAGE_CONTRACTS"><DocumentControl /></ProtectedRoute></PageSuspense>} />
             </Routes>
           </MainLayout>
           <Toaster />

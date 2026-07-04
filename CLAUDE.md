@@ -6,7 +6,7 @@ Guidance for AI assistants working in this codebase.
 
 **Intelligent Acquisition Navigator** is a federal acquisition workflow management system with AI/LLM capabilities. It helps contracting professionals (Contract Specialists, Contracting Officers, Program Managers, etc.) navigate FAR/DFARS compliance, review solicitation documents, conduct market research, and get AI-powered acquisition guidance.
 
-**Stack:** React 18 + TypeScript + Vite | Tailwind CSS + shadcn/ui | Azure OpenAI (GPT-4o) + Pinecone RAG | Supabase (PostgreSQL + Auth)
+**Stack:** React 18 + TypeScript + Vite | Tailwind CSS + shadcn/ui | OpenAI or Google Gemini (selectable provider) | Self-contained local persistence (no backend database)
 
 ---
 
@@ -36,18 +36,16 @@ Use **npm**. `bun.lockb` is a legacy artifact and can be ignored.
 **Required:** Copy `.env.example` to `.env.local` and fill in all values before running the app. Missing variables will cause an explicit startup error in development.
 
 ```
-VITE_SUPABASE_URL          — Supabase project URL
-VITE_SUPABASE_ANON_KEY     — Supabase anon/public key (rotate if exposed)
-VITE_AZURE_ENDPOINT        — Azure OpenAI resource endpoint
-VITE_AZURE_OPENAI_API_KEY  — Azure OpenAI API key
-VITE_AZURE_DEPLOYMENT_ID   — Deployment name (default: gpt-4o)
-VITE_PINECONE_API_KEY      — Pinecone API key (optional; RAG degrades gracefully without it)
-VITE_PINECONE_INDEX_NAME   — Pinecone index (default: acquisition-knowledge-base)
-VITE_CONTACT_EMAIL         — Contact page email (optional; falls back to default)
-VITE_CONTACT_PHONE         — Contact page phone (optional; falls back to default)
+VITE_AI_PROVIDER          — AI provider selection: "openai" or "gemini" (default: openai)
+VITE_OPENAI_API_KEY       — OpenAI API key (required when VITE_AI_PROVIDER=openai)
+VITE_OPENAI_MODEL         — OpenAI model (default: gpt-4o-mini)
+VITE_GEMINI_API_KEY       — Google Gemini API key (required when VITE_AI_PROVIDER=gemini)
+VITE_GEMINI_MODEL         — Gemini model (default: gemini-1.5-flash)
+VITE_CONTACT_EMAIL        — Contact page email (optional; falls back to default)
+VITE_CONTACT_PHONE        — Contact page phone (optional; falls back to default)
 ```
 
-> **Security:** Never commit `.env.local`. Secrets are validated at startup and must never be hardcoded in source files. The Supabase anon key committed prior to March 2026 has been rotated.
+> **Security:** Never commit `.env.local`. Secrets are validated at startup and must never be hardcoded in source files. The app is self-contained — the only external network call is to the configured AI provider (OpenAI or Gemini).
 
 ---
 
@@ -73,12 +71,12 @@ src/
 │   ├── Proposals.tsx
 │   └── Index.tsx        # Landing page
 ├── services/            # Business logic & external integrations
-│   ├── azure/           # Azure OpenAI GPT-4o (aiService.ts)
+│   ├── ai/              # Provider-agnostic OpenAI/Gemini chat completions (aiService.ts)
 │   ├── llm/             # masterLLM.ts (orchestrator), complianceLLM.ts
-│   ├── rag/             # vectorStore.ts — Pinecone integration
+│   ├── rag/             # vectorStore.ts — local lexical retrieval (no external vector DB)
 │   └── reasoning/       # ReasoningEngine.ts, aiService.ts, reasoningDb.ts
 ├── hooks/               # Custom React hooks
-│   ├── useAzureAI.ts    # Mutation hook — direct Azure calls + 3-attempt retry/backoff
+│   ├── useAIChat.ts     # Mutation hook — calls the configured AI provider + 3-attempt retry/backoff
 │   ├── useAudit.ts      # Audit logging hook
 │   └── useQueryWithCache.ts
 ├── types/               # TypeScript interfaces (never inline in components)
@@ -98,8 +96,8 @@ src/
 │   └── setup.ts         # @testing-library/jest-dom setup
 ├── integrations/
 │   └── supabase/
-│       ├── client.ts    # Supabase client — reads from VITE_SUPABASE_* env vars
-│       └── types.ts     # Auto-generated DB types — DO NOT EDIT MANUALLY
+│       ├── client.ts    # Local self-contained auth/data/storage compatibility layer (localStorage-backed)
+│       └── types.ts     # Shared DB-shaped types — DO NOT EDIT MANUALLY
 ├── providers/
 │   └── QueryProvider.tsx  # React Query + global error handling
 ├── config/
@@ -143,24 +141,23 @@ App.tsx  (global ErrorBoundary)
 
 ```
 User Query
-  → useAzureAI hook (3-attempt exponential backoff: 2s → 4s → 8s)
-  → masterLLM.ts (orchestrator — real Azure GPT-4o call, JSON-structured response)
+  → useAIChat hook (3-attempt exponential backoff: 2s → 4s → 8s)
+  → masterLLM.ts (orchestrator — real OpenAI/Gemini call, JSON-structured response)
   → ReasoningEngine.ts (multi-step reasoning — analytical/inductive/deductive templates)
-  → complianceLLM.ts (FAR/agency compliance check — real Azure GPT-4o call)
-  → vectorStore.ts (Pinecone RAG — gracefully degrades to empty matches if unconfigured)
-  → Conclusion with FAR citations stored in Supabase reasoning_results table
+  → complianceLLM.ts (FAR/agency compliance check — real OpenAI/Gemini call)
+  → vectorStore.ts (local lexical RAG — no external vector DB dependency)
+  → Conclusion with FAR citations stored in local persisted reasoning_results table
 ```
 
-> **AI Services:** All LLM calls go through `getAICompletion()` in `src/services/azure/aiService.ts`.
-> There is no backend proxy — calls are made browser-side using the Azure SDK.
-> The dead `src/pages/api/azure-ai.ts` Express route has been removed.
+> **AI Services:** All LLM calls go through `getAICompletion()` in `src/services/ai/aiService.ts`.
+> There is no backend proxy — calls are made browser-side directly to the configured provider (OpenAI or Gemini), selected via `VITE_AI_PROVIDER`.
 
 ### Data Flow
 
 ```
-Pages → Custom Hooks (useAzureAI, etc.) → Services → External APIs
+Pages → Custom Hooks (useAIChat, etc.) → Services → Configured AI Provider (OpenAI or Gemini)
                                         ↓
-                              Supabase (PostgreSQL + Auth)
+                    Local persisted data (src/integrations/supabase/client.ts, localStorage-backed)
 ```
 
 ---
@@ -211,7 +208,7 @@ import { Button } from "../../../components/ui/button";
 ### TypeScript
 
 - All shared interfaces live in `src/types/` and are named exports
-- `src/integrations/supabase/types.ts` is **auto-generated** — do not edit manually; regenerate via Supabase CLI
+- `src/integrations/supabase/types.ts` is a local compatibility types file — do not edit manually; it defines the shared shapes for locally persisted tables
 - Path aliases: `@/*` → `./src/*`
 - `noImplicitAny: true` and `strictNullChecks: true` are enabled — do not use `any` without justification
 - `src/components/ui/` is excluded from ESLint (shadcn generated files)
@@ -268,7 +265,7 @@ const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof
 ### Authentication
 
 - **PIV/CAC card:** Not yet implemented. `authenticateWithPIV()` and `authenticateWithCAC()` return `false` and log a `SECURITY` error. Do not bypass.
-- **Password auth:** Via Supabase Auth (`supabase.auth.signUp()` / `supabase.auth.signInWithPassword()`).
+- **Password auth:** Via the local self-contained auth compatibility layer (`supabase.auth.signUp()` / `supabase.auth.signInWithPassword()`), backed by localStorage.
 - **Session timeout:** 15 minutes (enforced by `AccessControl` singleton).
 
 ### Permissions
@@ -334,9 +331,10 @@ DFARS, GSARS, HHSARS, DEARS, DOSAR, AIDAR, DLAD, NMCARS, AFFARS, EPAAR, FEHBAR, 
 
 | Service | Purpose | Config |
 |---|---|---|
-| Azure OpenAI (GPT-4o) | LLM responses | `VITE_AZURE_ENDPOINT` + `VITE_AZURE_OPENAI_API_KEY` |
-| Pinecone | Vector search (RAG) | `VITE_PINECONE_API_KEY` + `VITE_PINECONE_INDEX_NAME` |
-| Supabase | Database + Auth | `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` |
+| OpenAI | LLM responses (when `VITE_AI_PROVIDER=openai`) | `VITE_OPENAI_API_KEY` (+ optional `VITE_OPENAI_MODEL`) |
+| Google Gemini | LLM responses (when `VITE_AI_PROVIDER=gemini`) | `VITE_GEMINI_API_KEY` (+ optional `VITE_GEMINI_MODEL`) |
+
+> This is the only external network dependency. RAG, auth, and data persistence are all local/self-contained.
 
 ---
 
@@ -355,14 +353,14 @@ npm run test:coverage # with coverage
 ```
 src/lib/security/__tests__/accessControl.test.ts   — Permission matrix unit tests
 src/lib/__tests__/audit.test.ts                    — AuditLogger unit tests
-src/services/rag/__tests__/vectorStore.test.ts     — RAG graceful degradation tests
+src/services/rag/__tests__/vectorStore.test.ts     — Local lexical RAG tests
 src/services/llm/__tests__/masterLLM.test.ts       — MasterLLM response parsing tests
 src/services/llm/__tests__/complianceLLM.test.ts   — ComplianceLLM response parsing tests
 src/services/reasoning/__tests__/ReasoningEngine.test.ts — Full pipeline integration tests
 ```
 
 **Conventions:**
-- Mock all external services (Azure, Pinecone, Supabase) in unit tests
+- Mock the AI provider service (`@/services/ai/aiService`) and any other external boundary in unit tests
 - Use `vi.stubEnv()` to control `import.meta.env` values in tests
 - All mocks go at the top level of the test file (hoisting requirement)
 
@@ -370,7 +368,7 @@ src/services/reasoning/__tests__/ReasoningEngine.test.ts — Full pipeline integ
 
 ## Common Pitfalls
 
-1. **Do not edit `src/integrations/supabase/types.ts`** — it is auto-generated from the database schema.
+1. **Do not edit `src/integrations/supabase/types.ts`** — it defines shared local table shapes; keep it in sync with `src/integrations/supabase/client.ts` seed data manually.
 2. **Do not add custom CSS** in component files; use Tailwind classes exclusively.
 3. **Always use `@/` imports** — relative imports across feature boundaries make refactoring fragile.
 4. **Wrap AI/async calls in React Query** — avoids inconsistent loading/error states.
@@ -378,5 +376,6 @@ src/services/reasoning/__tests__/ReasoningEngine.test.ts — Full pipeline integ
 6. **Use the audit logger** for any user-initiated action — required for compliance traceability.
 7. **Access control:** Every new permission must be added to `accessControl.ts` AND assigned to the correct roles before being referenced in `navigationItems.ts`.
 8. **PIV/CAC auth stubs return `false`** — do not assume they succeed. Backend WebAuthn integration required before enabling.
-9. **Pinecone RAG degrades gracefully** — if `VITE_PINECONE_API_KEY` is not set, `queryVectorStore()` returns `{ matches: [] }` and the reasoning engine continues with LLM-only context.
+9. **The local lexical RAG has no external dependency** — `queryVectorStore()` always scores against the seeded local knowledge base; there is no degraded/unconfigured state to worry about.
 10. **`src/components/ui/` is excluded from ESLint** — do not put application logic there.
+11. **AI provider is selected via `VITE_AI_PROVIDER`** — only one of `VITE_OPENAI_API_KEY` / `VITE_GEMINI_API_KEY` needs to be set, matching the active provider.

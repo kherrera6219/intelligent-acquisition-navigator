@@ -1,6 +1,7 @@
 
 import { auditLogger } from '../audit';
 import { errorTracker } from './errorTracking';
+import { SESSION_TIMEOUT_MS } from './sessionPolicy';
 
 export type Permission =
   | 'READ_SOLICITATIONS'
@@ -97,7 +98,7 @@ const rolePermissions: Record<Role, Permission[]> = {
 export class AccessControl {
   private static instance: AccessControl;
   private securityContext: SecurityContext | null = null;
-  private readonly sessionTimeout = 1000 * 60 * 15; // 15 minutes
+  private readonly sessionTimeout = SESSION_TIMEOUT_MS;
 
   private constructor() {
     this.startSessionMonitor();
@@ -108,6 +109,14 @@ export class AccessControl {
       AccessControl.instance = new AccessControl();
     }
     return AccessControl.instance;
+  }
+
+  /** Canonical session lifetime in milliseconds — the single source of truth
+   * consumed by both the session monitor below and session-issuing code
+   * (e.g. ProtectedRoute, the local auth client) so the enforced timeout and
+   * the documented policy never drift apart. */
+  getSessionTimeoutMs(): number {
+    return this.sessionTimeout;
   }
 
   private startSessionMonitor() {

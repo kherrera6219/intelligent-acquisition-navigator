@@ -87,10 +87,10 @@ describe('ReasoningEngine — orchestration integration', () => {
   });
 
   it('propagates errors and tracks them', async () => {
-    mockGenerate.mockRejectedValueOnce(new Error('Azure 503'));
+    mockGenerate.mockRejectedValueOnce(new Error('Upstream provider 503'));
     const engine = new ReasoningEngine(mockRules, 'test-api-key');
 
-    await expect(engine.processReasoning([], mockContext)).rejects.toThrow('Azure 503');
+    await expect(engine.processReasoning([], mockContext)).rejects.toThrow('Upstream provider 503');
 
     const { errorTracker } = await import('@/lib/security/errorTracking');
     expect(errorTracker.trackError).toHaveBeenCalledWith(

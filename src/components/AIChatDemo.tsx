@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Loader2, Key, AlertCircle } from "lucide-react";
-import { getAICompletion } from '@/services/azure/aiService';
+import { Loader2, Key } from "lucide-react";
+import { getAICompletion } from '@/services/ai/aiService';
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -13,7 +13,7 @@ interface Message {
   content: string;
 }
 
-export const AzureAIChat = () => {
+export const AIChatDemo = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [apiKey, setApiKey] = useState('');
@@ -32,7 +32,7 @@ export const AzureAIChat = () => {
           title: "API Key Validated",
           description: "Your API key has been successfully validated.",
         });
-      } catch (error) {
+      } catch {
         toast({
           title: "Invalid API Key",
           description: "Please check your API key and try again.",
@@ -50,7 +50,7 @@ export const AzureAIChat = () => {
     if (!apiKey) {
       toast({
         title: "API Key Required",
-        description: "Please enter your Azure OpenAI API key to start chatting.",
+        description: "Please enter your OpenAI or Gemini API key to start chatting.",
         variant: "destructive"
       });
       return;
@@ -68,7 +68,7 @@ export const AzureAIChat = () => {
         content: response.choices[0].message.content
       };
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
+    } catch {
       toast({
         title: "Connection Error",
         description: "Unable to reach the AI service. Please check your internet connection and try again.",
@@ -88,9 +88,9 @@ export const AzureAIChat = () => {
               type="password"
               value={apiKey}
               onChange={(e) => handleApiKeyChange(e.target.value)}
-              placeholder="Enter Azure OpenAI API Key"
+              placeholder="Enter AI Provider API Key"
               className="pr-10"
-              aria-label="Azure OpenAI API Key"
+              aria-label="AI Provider API Key"
               disabled={isValidatingKey}
             />
             {isValidatingKey && (

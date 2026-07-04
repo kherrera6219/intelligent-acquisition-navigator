@@ -39,7 +39,7 @@ export const navigationItems = [
     icon: Search,
     label: 'Market Research',
     route: '/acquisition/market-research',
-    permission: 'MANAGE_EVALUATIONS' as const,
+    permission: 'READ_SOLICITATIONS' as const,
     description: 'Conduct acquisition-focused market research'
   },
   {

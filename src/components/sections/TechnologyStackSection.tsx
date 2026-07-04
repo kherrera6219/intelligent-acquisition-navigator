@@ -7,7 +7,7 @@ import { DualLLMProcessor } from "@/components/DualLLMProcessor";
 import { RAGProcessor } from "@/components/RAGProcessor";
 import { BlockchainRecords } from "@/components/BlockchainRecords";
 import AKFVisualization from "@/components/AKFVisualization";
-import { AzureAIChat } from "@/components/AzureAIChat";
+import { AIChatDemo } from "@/components/AIChatDemo";
 
 export const TechnologyStackSection = () => {
   return (
@@ -116,7 +116,7 @@ export const TechnologyStackSection = () => {
         >
           <div className="max-w-3xl mx-auto">
             <h3 id="ai-assistant-title" className="text-2xl font-semibold text-white mb-6 text-center">Try Our AI Assistant</h3>
-            <AzureAIChat />
+            <AIChatDemo />
           </div>
         </div>
 

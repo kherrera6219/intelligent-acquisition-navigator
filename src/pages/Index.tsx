@@ -23,7 +23,7 @@ const ANIMATION_NODES = Array.from({ length: 11 }, (_, i) => ({
 
 const Index = () => {
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(true);
-  const [isLoaded, setIsLoaded] = useState(true); // no artificial delay
+  const [isLoaded, _setIsLoaded] = useState(true); // no artificial delay
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
 
